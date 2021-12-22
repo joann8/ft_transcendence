@@ -17,12 +17,12 @@ export class UserController {
         return this.userService.findAll();
     }
 
-    @Get(':id')
+    @Get(':id_pseudo') // SEARCH BY PSEUDO INSTEAD OF PK
     getOne(@Param() userId : string) {
         return this.userService.findOne(userId);
     }
 
-    @Delete(':id')
+    @Delete(':id_pseudo') // SAME
     removeOne(@Param() userId : string ) {
         return this.userService.remove(userId);
     }
