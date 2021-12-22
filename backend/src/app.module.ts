@@ -5,6 +5,9 @@ import { AppService } from './app.service';
 import { User } from './user/user.entity';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
+import { ChatModule } from './chat/chat.module';
+import { Chat } from './chat/chat.entity';
+import { ChatService } from './chat/chat.service';
 
 @Module({
   imports: [
@@ -15,12 +18,13 @@ import { UserModule } from './user/user.module';
       username: 'root',
       password: 'root',
       database: 'test',
-      entities: [User],
+      entities: [User, Chat],
       synchronize: true,
     }),
     UserModule,
+    ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService, UserService],
+  providers: [AppService, UserService, ChatService],
 })
 export class AppModule {}

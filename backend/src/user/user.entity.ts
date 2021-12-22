@@ -1,3 +1,4 @@
+import { Chat } from "src/chat/chat.entity";
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, OneToMany, PrimaryColumn} from "typeorm";
 
 
@@ -43,5 +44,7 @@ export class User {
 
     @Column({default: false})
     achievement2: boolean
-    
+
+    @OneToMany(type => Chat, chat => chat.id_chat)
+    chatList: Chat[];
 }
