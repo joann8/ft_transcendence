@@ -5,7 +5,6 @@ import { AppService } from './app.service';
 import { User } from './user/user.entity';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
-import { UserHttpModule } from './user/user-http.module';
 
 @Module({
   imports: [
@@ -20,7 +19,6 @@ import { UserHttpModule } from './user/user-http.module';
       synchronize: true,
     }),
     UserModule,
-    UserHttpModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService],
