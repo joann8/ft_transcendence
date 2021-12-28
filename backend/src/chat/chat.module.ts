@@ -8,6 +8,6 @@ import { Chat } from './chat.entity';
   imports: [TypeOrmModule.forFeature([Chat])],
   exports: [TypeOrmModule],
   providers: [ChatService],
-  controllers: [ChatController]
+  controllers: [ChatController],
 })
 export class ChatModule {}

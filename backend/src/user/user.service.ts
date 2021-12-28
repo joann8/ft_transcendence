@@ -3,14 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './create-user.dto';
 import { User } from './user.entity';
-import { QueryFailedError } from 'typeorm';
-import { DatabaseError } from 'pg-protocol';
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) { }
+  ) {}
 
   //Gerer le filtrage des donnes pour le DTO
   async createEntity(createUserDto: CreateUserDto) {
@@ -18,12 +16,10 @@ export class UserService {
       const newUser = await this.usersRepository.create(createUserDto);
       await this.usersRepository.save(newUser);
       return newUser;
-
-    }
-    catch (error){
-        console.log(error)
-        if (error.code === '23505')
-          throw new ConflictException('login already exist')
+    } catch (error) {
+      console.log(error);
+      if (error.code === '23505')
+        throw new ConflictException('login already exist');
     }
   }
 
@@ -35,9 +31,8 @@ export class UserService {
 
   async findOne(id: string) {
     const ret = await this.usersRepository.findOne(id);
-    if (!ret)
-      throw new HttpException('This user does not exist', 404);
-    return ret; 
+    if (!ret) throw new HttpException('This user does not exist', 404);
+    return ret;
   }
 
   async remove(id: string): Promise<void> {
