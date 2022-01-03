@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Request } from '@nestjs/common';
 import { error } from 'console';
 import { CreateUserDto } from './create-user.dto';
 import { UserService } from './user.service';
@@ -13,8 +13,8 @@ export class UserController {
     }
 
     @Get()
-    getAll() {
-        return this.userService.findAll();
+    async getAll(@Request() req) {
+        return (req.user);
     }
 
     @Get(':id_pseudo') // SEARCH BY PSEUDO INSTEAD OF PK

@@ -26,6 +26,8 @@
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.2",
+    "passport": "^0.4.1",
+    "passport-42": "^1.2.6",
     "pg-protocol": "^1.5.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
