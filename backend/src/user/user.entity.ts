@@ -14,10 +14,10 @@ export class User {
 	@Column({ unique: true })
 	id_pseudo: string;
 
-	@Column({ default: null })
+	@Column()
 	avatar: string;
 
-	@Column({ default: null, unique: true })
+	@Column({ unique: true })
 	email: string;
 
 	@Column({ default: false })

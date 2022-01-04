@@ -28,9 +28,7 @@ export class UserService {
 	}
 
 	async findOne(id: string) {
-		const ret = await this.usersRepository.findOne(id);
-		if (!ret) throw new HttpException('This user does not exist', 404);
-		return ret;
+		return this.usersRepository.findOne(id);
 	}
 
 	async remove(id: string): Promise<void> {

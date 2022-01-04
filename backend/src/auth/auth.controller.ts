@@ -1,7 +1,18 @@
-import { Controller } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { Controller, Get, Redirect, Request, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('login')
 export class AuthController {
-	constructor(private readonly authService: AuthService) {}
+	@Get('42')
+	@UseGuards(AuthGuard('42'))
+	async login(@Request() req) {
+		return req.user;
+	}
+
+	@Get('42/redirect')
+	@UseGuards(AuthGuard('42'))
+	@Redirect('/user')
+	async redirect(@Request() req) {
+		return req.user;
+	}
 }

@@ -11,7 +11,7 @@ services:
       - '5432:5432'
     volumes:
       #Reel:#Virtuel
-      - /null:/faux
+      - /var/pg_db:/var/pg_db
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4

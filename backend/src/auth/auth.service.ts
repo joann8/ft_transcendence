@@ -7,14 +7,14 @@ export class AuthService {
 	constructor(private userService: UserService) {}
 
 	async findOrCreate42User(profile: Profile): Promise<any> {
-		let user = await this.userService.findOne(profile.id); // VERIFIER
+		let user = await this.userService.findOne(profile.id);
 		if (!user) {
 			try {
 				user = await this.userService.createEntity({
 					id: profile.id,
-					id_pseudo: profile.login,
-					avatar: profile.image_url,
-					email: profile.email,
+					id_pseudo: profile.username,
+					avatar: profile.photos[0].value,
+					email: profile.emails[0].value,
 				});
 			} catch (err) {
 				console.error(err);
