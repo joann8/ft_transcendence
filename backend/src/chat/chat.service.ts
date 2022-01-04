@@ -4,24 +4,20 @@ import { Repository } from 'typeorm';
 import { Chat } from './chat.entity';
 import { CreateChatDto } from './create-chat-dto';
 
-
 @Injectable()
 export class ChatService {
-    constructor(
-        @InjectRepository(Chat)
-        private chatRepository: Repository<Chat>,
-    ) {}
+	constructor(
+		@InjectRepository(Chat)
+		private chatRepository: Repository<Chat>,
+	) {}
 
-    findAll(){
-        return this.chatRepository.find();
-    }
+	findAll() {
+		return this.chatRepository.find();
+	}
 
-    async createOne(createChatDto : CreateChatDto) {
-        const newChat = await this.chatRepository.create(createChatDto);
-        await this.chatRepository.save(newChat);
-        return newChat;
-    }
-
-
-
+	async createOne(createChatDto: CreateChatDto) {
+		const newChat = await this.chatRepository.create(createChatDto);
+		await this.chatRepository.save(newChat);
+		return newChat;
+	}
 }

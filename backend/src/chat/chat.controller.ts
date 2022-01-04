@@ -4,14 +4,14 @@ import { CreateChatDto } from './create-chat-dto';
 
 @Controller('chat')
 export class ChatController {
-    constructor(private readonly chatService : ChatService) {}
-    
-    @Get()
-    findAll(){
-        return  this.chatService.findAll();
-    }
-    @Post()
-    createOne(@Body() createChatDto : CreateChatDto){
-        return this.chatService.createOne(createChatDto);
-    }
+	constructor(private readonly chatService: ChatService) {}
+
+	@Get()
+	findAll() {
+		return this.chatService.findAll();
+	}
+	@Post()
+	createOne(@Body() createChatDto: CreateChatDto) {
+		return this.chatService.createOne(createChatDto);
+	}
 }

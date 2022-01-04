@@ -1,50 +1,45 @@
-import { Chat } from "src/chat/chat.entity";
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, OneToMany, PrimaryColumn} from "typeorm";
+import { Chat } from 'src/chat/chat.entity';
+import { Column, Entity, ManyToMany, OneToMany, PrimaryColumn } from 'typeorm';
 
-
-enum status {
-    OFFLINE,
-    INLINE,
+export enum status {
+	OFFLINE,
+	INLINE,
 }
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number
+	@PrimaryColumn({ unique: true })
+	id: number;
 
-    @Column({unique: true})
-    id_pseudo: string
+	@Column({ unique: true })
+	id_pseudo: string;
 
-    @Column({default: "/default/path/to/avatar"})
-    avatar: string
+	@Column({ default: null })
+	avatar: string;
 
-    @Column({default: "default@default.fr", unique: true})
-    email: string
+	@Column({ default: null, unique: true })
+	email: string;
 
-    @Column({default: "123456789"})
-    password: string
+	@Column({ default: false })
+	admin: boolean;
 
-    @Column({default: 3000})
-    elo: number
+	@Column({ default: 3000 })
+	elo: number;
 
-    @Column({default: false})
-    admin: boolean
+	// A GERER: TOM
+	@Column({ default: status.OFFLINE })
+	status: status;
 
-    @Column({default: status.OFFLINE})
-    status: status
+	// SETUP: ADRIEN -- A GERER: TOM
+	@Column({ default: false })
+	two_factor: boolean;
 
-    @Column({default: false})
-    two_factor: boolean
+	@Column({ default: false })
+	achievement1: boolean;
 
-    @Column({default: false})
-    isAuth: boolean
+	@Column({ default: false })
+	achievement2: boolean;
 
-    @Column({default: false})
-    achievement1: boolean
-
-    @Column({default: false})
-    achievement2: boolean
-
-    @OneToMany(type => Chat, chat => chat.id_chat)
-    chatList: Chat[];
+	@OneToMany((type) => Chat, (chat) => chat.id_chat)
+	chatList: Chat[];
 }

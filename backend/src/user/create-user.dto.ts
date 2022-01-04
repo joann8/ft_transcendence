@@ -1,4 +1,14 @@
+import { IsEmail, IsNotEmpty, IsPositive } from 'class-validator';
+
 export class CreateUserDto {
-    id_pseudo: string;
-    email: string;
+	@IsPositive()
+	id: number;
+
+	@IsNotEmpty()
+	id_pseudo: string;
+
+	avatar: string;
+
+	@IsEmail()
+	email: string;
 }

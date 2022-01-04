@@ -1,4 +1,4 @@
 export class CreateChatDto {
-    topic: string;
-    chanOwner: number;
+	topic: string;
+	chanOwner: number;
 }

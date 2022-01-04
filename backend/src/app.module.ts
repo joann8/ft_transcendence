@@ -11,22 +11,22 @@ import { ChatService } from './chat/chat.service';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'root',
-      password: 'root',
-      database: 'test',
-      entities: [User, Chat],
-      synchronize: true,
-    }),
-    UserModule,
-    ChatModule,
-    AuthModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService, UserService, ChatService],
+	imports: [
+		TypeOrmModule.forRoot({
+			type: 'postgres',
+			host: 'localhost',
+			port: 5432,
+			username: 'root',
+			password: 'root',
+			database: 'test',
+			entities: [User, Chat],
+			synchronize: true,
+		}),
+		UserModule,
+		ChatModule,
+		AuthModule,
+	],
+	controllers: [AppController],
+	providers: [AppService, UserService, ChatService],
 })
 export class AppModule {}
