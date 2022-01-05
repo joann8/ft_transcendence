@@ -25,7 +25,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
 		if (!user) {
 			throw new HttpException('User could not be created', 500);
 		}
-		// ACCESS AND REFRESH ??
-		return cb(null, user);
+		return user;
 	}
 }

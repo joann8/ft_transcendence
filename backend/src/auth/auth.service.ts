@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { Profile } from 'passport-42';
+import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class AuthService {
-	constructor(private userService: UserService) {}
+	constructor(
+		private userService: UserService,
+		private jwtService: JwtService
+	) {}
 
 	async findOrCreate42User(profile: Profile): Promise<any> {
 		let user = await this.userService.findOne(profile.id);
@@ -22,5 +27,20 @@ export class AuthService {
 			}
 		}
 		return user;
+	}
+
+	async login(user: User)
+	{
+		return {
+			access_token: this.jwtService.sign({
+				username: user.id_pseudo,
+				sub: user.id
+			})
+		}
+	}
+
+	async getUSerById(id: string): Promise<User>
+	{
+		return this.userService.findOne(id);
 	}
 }

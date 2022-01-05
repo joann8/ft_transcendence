@@ -23,11 +23,11 @@ export class UserService {
 
 	//Gerer les erreur si data pas dans la DB
 	//findAll(): Promise<User[]> {
-	async findAll() {
+	async findAll(): Promise<User[]> {
 		return this.usersRepository.find();
 	}
 
-	async findOne(id: string) {
+	async findOne(id: string): Promise<User> {
 		return this.usersRepository.findOne(id);
 	}
 
