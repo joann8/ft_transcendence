@@ -8,13 +8,13 @@ export class AuthController {
 
 	@Get('42')
 	@UseGuards(FortyTwoAuthGuard)
-	async login(@Req() req) {
-		console.log('login', req.user);
-	}
+	async login() {}
 
 	@Get('42/redirect')
 	@UseGuards(FortyTwoAuthGuard)
-	async redir(@Req() req) {
-		console.log('redirect', req.user);
+	@Redirect('/user')
+	async redir(@Req() req, @Res({ passthrough: true }) res) {
+		const access_token = this.authService.login(req.user);
+		res.cookie('access_token', access_token);
 	}
 }

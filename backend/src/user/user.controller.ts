@@ -5,8 +5,8 @@ import {
 	Get,
 	Param,
 	Post,
-	Request,
 	HttpException,
+	Headers,
 	UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -23,8 +23,8 @@ export class UserController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get()
-	async getCurrentUser(@Request() req) {
-		return req.user;
+	async getCurrentUser(@Headers() head) {
+		console.log(head);
 	}
 
 	@Get(':id_pseudo') // SEARCH BY PSEUDO INSTEAD OF PK
