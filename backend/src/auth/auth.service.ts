@@ -8,7 +8,7 @@ import { User } from 'src/user/user.entity';
 export class AuthService {
 	constructor(
 		private userService: UserService,
-		private jwtService: JwtService
+		private jwtService: JwtService,
 	) {}
 
 	async findOrCreate42User(profile: Profile): Promise<any> {
@@ -29,18 +29,14 @@ export class AuthService {
 		return user;
 	}
 
-	async login(user: User)
-	{
-		return {
-			access_token: this.jwtService.sign({
-				username: user.id_pseudo,
-				sub: user.id
-			})
-		}
+	async login(user: User) {
+		return this.jwtService.sign({
+			username: user.id_pseudo,
+			sub: user.id,
+		});
 	}
 
-	async getUSerById(id: string): Promise<User>
-	{
+	async getUSerById(id: string): Promise<User> {
 		return this.userService.findOne(id);
 	}
 }

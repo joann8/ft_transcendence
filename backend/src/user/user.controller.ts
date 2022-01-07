@@ -6,10 +6,8 @@ import {
 	Param,
 	Post,
 	HttpException,
-	Headers,
-	UseGuards,
+	Req,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateUserDto } from './create-user.dto';
 import { UserService } from './user.service';
 
@@ -21,10 +19,9 @@ export class UserController {
 		return this.userService.createEntity(createUserDto);
 	}
 
-	@UseGuards(JwtAuthGuard)
 	@Get()
-	async getCurrentUser(@Headers() head) {
-		console.log(head);
+	async getCurrentUser(@Req() req) {
+		return req.user;
 	}
 
 	@Get(':id_pseudo') // SEARCH BY PSEUDO INSTEAD OF PK
