@@ -1,17 +1,15 @@
 import { Strategy, Profile, VerifyCallback } from 'passport-42';
 import { PassportStrategy } from '@nestjs/passport';
 import { HttpException, Injectable } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
 	constructor(private authService: AuthService) {
 		super({
-			clientID:
-				'1f8537877222f60ace53005c32c16aca6011f033aee8fd27fc9b05c9c29ee9be', // MUST BE ENV
-			clientSecret:
-				'd3d95f37b797b1cd54afe9eced1c9bb2e999cc8720acade02138bd3610450e96', // MUST BE ENV
-			callbackURL: 'http://127.0.0.1:3000/login/42/redirect',
+			clientID: process.env['FT_CLIENT_ID'],
+			clientSecret: process.env['FT_CLIENT_SECRET'],
+			callbackURL: process.env['FT_CALLBACK_URL'],
 		});
 	}
 
@@ -25,6 +23,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
 		if (!user) {
 			throw new HttpException('User could not be created', 500);
 		}
-		return user;
+		return cb(null, user);
 	}
 }

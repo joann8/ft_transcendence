@@ -8,6 +8,6 @@ async function bootstrap() {
 	// cookieParser middleware as global for parsing cookies
 	app.use(cookieParser());
 
-	await app.listen(3000);
+	await app.listen(process.env['BACKEND_PORT']);
 }
 bootstrap();

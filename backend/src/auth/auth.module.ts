@@ -1,21 +1,24 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { FortyTwoStrategy } from './fortyTwo.startegy';
+import { FortyTwoStrategy } from './strategies/ft.startegy';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
-import { JwtStrategy } from './jwt.strategy';
 import { UserModule } from 'src/user/user.module';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAuthGuard } from './guards/jwt_auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { ConfigModule } from '@nestjs/config';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
 	imports: [
+		ConfigModule.forRoot({
+			envFilePath: 'src/auth/config/auth.env',
+		}),
 		UserModule,
 		PassportModule,
 		JwtModule.register({
-			secret: jwtConstants.secret, // CHANGE IT AND PUT IT ENV
+			secret: process.env['JWT_SECRET'],
 			signOptions: { expiresIn: '1h' },
 		}),
 	],

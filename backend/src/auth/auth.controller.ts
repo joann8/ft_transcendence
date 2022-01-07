@@ -1,7 +1,7 @@
 import { Controller, Get, Redirect, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { FortyTwoAuthGuard } from './fortyTwo-auth.guard';
-import { Public } from './jwt-auth.guard';
+import { FortyTwoAuthGuard } from './guards/ft_auth.guard';
+import { Public } from './guards/jwt_auth.guard';
 
 @Controller('login')
 export class AuthController {
