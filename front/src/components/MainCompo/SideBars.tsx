@@ -9,9 +9,12 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { mainListItems } from './ListItems';
+//import { mainListItems } from './ListItems';
+import MainListItems from './ListItems';
 import List from '@mui/material/List';
 import { Avatar } from '@mui/material';
+import Test from '../Test'
+import App from '../../App';
 
 
 /* Notification clochette
@@ -22,90 +25,92 @@ import Badge from '@mui/material/Badge';
 const drawerWidth: number = 240;
 
 interface AppBarProps extends MuiAppBarProps {
-    open?: boolean;
- }
+  open?: boolean;
+}
 
 const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== 'open',
-  })<AppBarProps>(({ theme, open }) => ({
-    zIndex: theme.zIndex.drawer + 1,
+  shouldForwardProp: (prop) => prop !== 'open',
+})<AppBarProps>(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(['width', 'margin'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
+      duration: theme.transitions.duration.enteringScreen,
     }),
-    ...(open && {
-      marginLeft: drawerWidth,
-      width: `calc(100% - ${drawerWidth}px)`,
-      transition: theme.transitions.create(['width', 'margin'], {
+  }),
+}));
+
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme, open }) => ({
+    '& .MuiDrawer-paper': {
+      position: 'relative',
+      whiteSpace: 'nowrap',
+      width: drawerWidth,
+      transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
       }),
-    }),
-  }));
-
-  const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
-      '& .MuiDrawer-paper': {
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: drawerWidth,
+      boxSizing: 'border-box',
+      ...(!open && {
+        overflowX: 'hidden',
         transition: theme.transitions.create('width', {
           easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.enteringScreen,
+          duration: theme.transitions.duration.leavingScreen,
         }),
-        boxSizing: 'border-box',
-        ...(!open && {
-          overflowX: 'hidden',
-          transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-          }),
-          width: theme.spacing(7),
-          [theme.breakpoints.up('sm')]: {
-            width: theme.spacing(9),
-          },
-        }),
-      },
-    }),
-  );
+        width: theme.spacing(7),
+        [theme.breakpoints.up('sm')]: {
+          width: theme.spacing(9),
+        },
+      }),
+    },
+  }),
+);
 
-function SideBarsCompo() {
-    
-    const [open, setOpen] = React.useState(true);
-    const toggleDrawer = () => {
-        setOpen(!open);
-      };
+export default function SideBar(props: any) {
 
-      return (
-        <Fragment>
-            <AppBar position="absolute" open={open}>
-                    <Toolbar
-                        sx={{
-                        pr: '24px', // keep right padding when drawer closed
-                        }}
-                    >
-                        <IconButton
-                            edge="start"
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={toggleDrawer}
-                            sx={{
-                                marginRight: '36px',
-                                ...(open && { display: 'none' }),
-                            }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography
-                            component="h1"
-                            variant="h6"
-                            color="inherit"
-                            noWrap
-                            sx={{ flexGrow: 1 }}
-                        >
-                            Welcome to Transcendence!
-                        </Typography>
-                            {/* Notification clochette en haut a droite
+  const test = <Test/>
+  const [open, setOpen] = React.useState(true);
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
+
+  return (
+    <Fragment>
+      <AppBar position="absolute" open={open}>
+        <Toolbar
+          sx={{
+            pr: '24px', // keep right padding when drawer closed
+          }}
+        >
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={toggleDrawer}
+            sx={{
+              marginRight: '36px',
+              ...(open && { display: 'none' }),
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            sx={{ flexGrow: 1 }}
+          >
+            Welcome to Transcendence!
+          </Typography>
+          {/* Notification clochette en haut a droite
                             <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
                                 <NotificationsIcon />
@@ -113,41 +118,37 @@ function SideBarsCompo() {
                             
                             </IconButton>
                             */}
-                          <Typography sx={{margin: 1 }}>
-                            Jacher
-                          </Typography>
-                          <Divider orientation="vertical"  sx={{ margin: 1}} />
-                          <Avatar sx={{border: 1}}>
-                            JA
-                          </Avatar>
-                          <Divider orientation="vertical"  sx={{ margin: 1}} />
-                            
-                    </Toolbar>
-            </AppBar>
+          <Typography sx={{ margin: 1 }}>
+            Jacher
+          </Typography>
+          <Divider orientation="vertical" sx={{ margin: 1 }} />
+          <Avatar sx={{ border: 1 }}>
+            JA
+          </Avatar>
+          <Divider orientation="vertical" sx={{ margin: 1 }} />
 
-            <Drawer variant="permanent" open={open}>
-                <Toolbar
-                    sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                    px: [1],
-                    }}
-                >
-                    <IconButton onClick={toggleDrawer}>
-                    <ChevronLeftIcon />
-                    </IconButton>
-                </Toolbar>
-                <Divider />
-                <List>{mainListItems}</List>
-                <Divider />
-            </Drawer>
+        </Toolbar>
+      </AppBar>
 
-        </Fragment>
-    )
-}
+      <Drawer variant="permanent" open={open}>
+        <Toolbar
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            px: [1],
+          }}
+        >
+          <IconButton onClick={toggleDrawer}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </Toolbar>
+        <Divider />
+        {/*  <List>{mainListItems}</List>*/}
+        <MainListItems handleCanvas={props.handleCanvas} />
+        <Divider />
+      </Drawer>
 
-export default function SideBar()
-{
-    return <SideBarsCompo />;
+    </Fragment>
+  )
 }

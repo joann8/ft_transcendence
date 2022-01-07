@@ -15,6 +15,46 @@ import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 */
 
+
+
+function MainListItems(props: any) {
+
+  console.log(props.value)
+  return (
+    <div>
+      <ListItem button onClick={() => props.handleCanvas(1)}>
+        <ListItemIcon>
+          <ProfileIcon />
+        </ListItemIcon>
+        <ListItemText primary="Profile" />
+      </ListItem>
+      <ListItem button>
+        <ListItemIcon>
+          <PlayIcon />
+        </ListItemIcon>
+        <ListItemText primary="Game" />
+      </ListItem>
+      <ListItem button>
+        <ListItemIcon>
+          <LeaderIcon />
+        </ListItemIcon>
+        <ListItemText primary="Leaderboard" />
+      </ListItem>
+      <ListItem button>
+        <ListItemIcon>
+          <ChatIcon />
+        </ListItemIcon>
+        <ListItemText primary="Chat" />
+      </ListItem>
+
+    </div>
+  )
+}
+
+export default MainListItems
+
+/*
+
 export const mainListItems = (
   <div>
     <ListItem button>
@@ -44,6 +84,7 @@ export const mainListItems = (
   
   </div>
 );
+*/
 
 /* Pour faire un deuxieme sous menu
 export const secondaryListItems = (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@mui/material';
@@ -10,30 +10,26 @@ import Homepage from './components/Homepage/Homepage';
 import NoPage from './components/Errors/NoPage';
 import {Route, Routes, Link, BrowserRouter as Router} from 'react-router-dom';
 import { Typography } from '@mui/material';
+import Test from './components/Test'
 
-function App() {
+function App(props: any) {
 
+  const homePage = <Homepage/>
+  const testPage = <Test/>
+  const [canvas, setCanvas] = useState(homePage)
+
+  const handleCanvas = (iconId: any) => {
+    console.log("Profile click")
+    setCanvas(testPage)
+  }
   const mdTheme = createTheme();
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex' }}>
-       
         <CssBaseline />
-        <SideBar />
-        <Router>
-          <Routes>
-            <Route path="/">
-              <Route index element={<Homepage />} />
-              <Route path="mycontent" element={<MyContent/>} />
-              <Route path="*" element={<NoPage />} />
-            </Route>
-          </Routes>
-        </Router>
-        {/*<SideBar />*/}
-        
+        <SideBar handleCanvas={handleCanvas} />
+        {canvas}
         {/*<Homepage />*/}
-
-        {/*<MyContent /> */}   
       </Box>
         
     </ThemeProvider>
