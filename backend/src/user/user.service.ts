@@ -1,6 +1,6 @@
-import { ConflictException, HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create_user.dto';
 import { User } from './entities/user.entity';
 
@@ -33,5 +33,9 @@ export class UserService {
 
 	async remove(id: string): Promise<void> {
 		await this.usersRepository.delete(id);
+	}
+
+	async update(user: User): Promise<UpdateResult> {
+		return this.usersRepository.update(user.id, user);
 	}
 }

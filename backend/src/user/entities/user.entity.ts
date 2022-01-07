@@ -2,8 +2,8 @@ import { Chat } from 'src/chat/entities/chat.entity';
 import { Column, Entity, ManyToMany, OneToMany, PrimaryColumn } from 'typeorm';
 
 export enum status {
-	OFFLINE,
-	INLINE,
+	OFFLINE = 'OFFLINE',
+	ONLINE = 'ONLINE',
 }
 
 @Entity()
