@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './create-user.dto';
 import { User } from './user.entity';
+import { QueryFailedError } from 'typeorm';
+import { DatabaseError } from 'pg-protocol';
+import { Observable } from 'rxjs';
 @Injectable()
 export class UserService {
   constructor(

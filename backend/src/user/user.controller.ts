@@ -11,18 +11,18 @@ export class UserController {
     return this.userService.createEntity(createUserDto);
   }
 
-  @Get()
-  getAll() {
-    return this.userService.findAll();
-  }
+    @Get()
+    getAll() {
+        return this.userService.findAll();
+    }
 
-  @Get(':id')
-  getOne(@Param() userId: string) {
-    return this.userService.findOne(userId);
-  }
+    @Get(':id_pseudo') // SEARCH BY PSEUDO INSTEAD OF PK
+    getOne(@Param() userId : string) {
+        return this.userService.findOne(userId);
+    }
 
-  @Delete(':id')
-  removeOne(@Param() userId: string) {
-    return this.userService.remove(userId);
+    @Delete(':id_pseudo') // SAME
+    removeOne(@Param() userId : string ) {
+        return this.userService.remove(userId);
+    }
   }
-}
