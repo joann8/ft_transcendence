@@ -1,40 +1,44 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Copyright from '../MainCompo/Copyright';
 import Image from './squidgame.jpg'
 import { Fragment } from 'react';
-import { Typography } from '@mui/material';
+import { Button, CardActionArea, Typography } from '@mui/material';
+import Game from '../Game';
 
-const styles = {
-  paperContainer: {
-    backgroundImage: `url(`+ `${Image}` + ')',
-    backgroundPosition: 'center',
-    backgrounfSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    flexGrow: 1,
-    overflow: 'auto',
-   
-  }
-};
 
-function HomepageCompo() {
+
+
+//function HomepageCompo(props: any) {
+export default function Homepage(props: any) {
+  const styles = {
+    cardCont: {
+      backgroundImage: `url(`+ `${Image}` + ')',
+      backgroundPosition: 'left',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+      width: '100%',
+      height: '100vh',
+      overflow: 'auto',
+    }
+  };
   return (       
         <Fragment>
-          <Grid container spacing={3}>
-
-          <Paper style={styles.paperContainer}>
-            <Typography> Squid Game? </Typography> 
+          <Paper style={styles.cardCont}>
+            <Toolbar />
+            <Grid container alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
+              <Grid item >
+                <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => props.handleCanvas(<Game />)}> Let's play!</Button>
+              </Grid>
+            </Grid>
           </Paper>
-          <Copyright/>
-          </Grid >
          </Fragment>
   );
 }
 
-export default function Homepage() {
-  return <HomepageCompo />;
+/*
+export default function Homepage(props: any) {
+  return <HomepageCompo handleCanvas={props.handleCanvas} />;
 }
+*/

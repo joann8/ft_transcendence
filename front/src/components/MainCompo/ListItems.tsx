@@ -68,25 +68,25 @@ export const mainListItems = (
   <div>
     <ListItem button>
       <ListItemIcon>
-        <ProfileIcon />
+        <ProfileIcon fontSize="large"/>
       </ListItemIcon>
       <ListItemText primary="Profile" />
     </ListItem>
     <ListItem button>
       <ListItemIcon>
-        <PlayIcon />
+        <PlayIcon fontSize="large"/>
       </ListItemIcon>
       <ListItemText primary="Game" />
     </ListItem>
     <ListItem button>
       <ListItemIcon>
-        <LeaderIcon />
+        <LeaderIcon fontSize="large" />
       </ListItemIcon>
       <ListItemText primary="Leaderboard" />
     </ListItem>
     <ListItem button>
       <ListItemIcon>
-        <ChatIcon />
+        <ChatIcon fontSize="large"/>
       </ListItemIcon>
       <ListItemText primary="Chat" />
     </ListItem>

@@ -12,7 +12,7 @@ function Root() {
     <Router>
       <Routes>
         <Route path="/" element={<App />}>
-          <Route index element={<Homepage />} />
+          {/*<Route index element={<Homepage />} />*/}
           <Route path="mycontent" element={<MyContent />} />
           <Route path="*" element={<NoPage />} />
         </Route>
