@@ -8,6 +8,7 @@ import PlayIcon from '@mui/icons-material/PlayCircleOutlined';
 import ChatIcon from '@mui/icons-material/MarkChatUnreadOutlined';
 import ProfileIcon from '@mui/icons-material/AccountCircleOutlined';
 import LeaderIcon from '@mui/icons-material/EmojiEventsOutlined';
+import { makeStyles } from '@mui/material';
 
 /* Pour une deuxieme liste
 import ListSubheader from '@mui/material/ListSubheader';
@@ -15,29 +16,35 @@ import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 */
 
+/*
+const styles : any = makeStyles ({
+  icn:{
+    fontSize: "large"},
+})
+*/
 export const mainListItems = (
   <div>
     <ListItem button>
       <ListItemIcon>
-        <ProfileIcon />
+        <ProfileIcon fontSize="large"/>
       </ListItemIcon>
       <ListItemText primary="Profile" />
     </ListItem>
     <ListItem button>
       <ListItemIcon>
-        <PlayIcon />
+        <PlayIcon fontSize="large"/>
       </ListItemIcon>
       <ListItemText primary="Game" />
     </ListItem>
     <ListItem button>
       <ListItemIcon>
-        <LeaderIcon />
+        <LeaderIcon fontSize="large" />
       </ListItemIcon>
       <ListItemText primary="Leaderboard" />
     </ListItem>
     <ListItem button>
       <ListItemIcon>
-        <ChatIcon />
+        <ChatIcon fontSize="large"/>
       </ListItemIcon>
       <ListItemText primary="Chat" />
     </ListItem>
