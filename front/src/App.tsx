@@ -10,18 +10,18 @@ import Homepage from './components/Homepage/Homepage';
 import NoPage from './components/Errors/NoPage';
 import {Route, Routes, Link, BrowserRouter as Router} from 'react-router-dom';
 import { Typography } from '@mui/material';
-import Test from './components/Test'
+
 
 function App(props: any) {
 
   const homePage = <Homepage/>
-  const testPage = <Test/>
   const [canvas, setCanvas] = useState(homePage)
 
   const handleCanvas = (iconId: any) => {
     console.log("Profile click")
-    setCanvas(testPage)
+    setCanvas(iconId)
   }
+
   const mdTheme = createTheme();
   return (
     <ThemeProvider theme={mdTheme}>

@@ -13,7 +13,6 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MainListItems from './ListItems';
 import List from '@mui/material/List';
 import { Avatar } from '@mui/material';
-import Test from '../Test'
 import App from '../../App';
 
 
@@ -74,7 +73,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export default function SideBar(props: any) {
 
-  const test = <Test/>
   const [open, setOpen] = React.useState(true);
 
   const toggleDrawer = () => {
