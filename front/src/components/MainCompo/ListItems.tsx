@@ -8,39 +8,50 @@ import PlayIcon from '@mui/icons-material/PlayCircleOutlined';
 import ChatIcon from '@mui/icons-material/MarkChatUnreadOutlined';
 import ProfileIcon from '@mui/icons-material/AccountCircleOutlined';
 import LeaderIcon from '@mui/icons-material/EmojiEventsOutlined';
-
+import Profile from '../Profile';
+import Chat from '../Chat';
+import Game from '../Game';
+import Leaderboard from '../Leaderboard';
 /* Pour une deuxieme liste
 import ListSubheader from '@mui/material/ListSubheader';
 import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 */
 
-
+const pageList  = {
+  test: <Leaderboard/>,
+  profile: <Profile/>,
+  chat: <Chat/>,
+  game: <Game/>
+}
 
 function MainListItems(props: any) {
 
   console.log(props.value)
   return (
     <div>
-      <ListItem button onClick={() => props.handleCanvas(1)}>
+      <ListItem button onClick={() => props.handleCanvas(pageList.profile)}>
         <ListItemIcon>
           <ProfileIcon />
         </ListItemIcon>
         <ListItemText primary="Profile" />
       </ListItem>
-      <ListItem button>
+
+      <ListItem button onClick={() => props.handleCanvas(pageList.game)}>
         <ListItemIcon>
           <PlayIcon />
         </ListItemIcon>
         <ListItemText primary="Game" />
       </ListItem>
-      <ListItem button>
+
+      <ListItem button onClick={() => props.handleCanvas(pageList.test)}>
         <ListItemIcon>
           <LeaderIcon />
         </ListItemIcon>
         <ListItemText primary="Leaderboard" />
       </ListItem>
-      <ListItem button>
+
+      <ListItem button onClick={() => props.handleCanvas(pageList.chat)}>
         <ListItemIcon>
           <ChatIcon />
         </ListItemIcon>

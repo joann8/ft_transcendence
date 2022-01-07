@@ -1,7 +1,7 @@
 import { Toolbar, Grid } from "@mui/material";
 import React, { Fragment } from "react";
 
-export default function Test() {
+export default function Leaderboard() {
     console.log("ici ?")
     return (
         <Fragment>
@@ -9,7 +9,6 @@ export default function Test() {
             <Grid container alignItems="center" justifyContent="center">
                 <Grid item>
                     <h1> Test Page Adrien</h1>
-
                 </Grid>
             </Grid>
         </Fragment>
