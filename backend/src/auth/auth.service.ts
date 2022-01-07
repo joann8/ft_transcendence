@@ -32,10 +32,12 @@ export class AuthService {
 	}
 
 	async login(user: User) {
-		return this.jwtService.sign({
+		const access_token = await this.jwtService.sign({
 			username: user.id_pseudo,
 			sub: user.id,
 		});
+		console.log(user.id_pseudo, ': logged', access_token);
+		return access_token;
 	}
 
 	async getUSerById(id: string): Promise<User> {
