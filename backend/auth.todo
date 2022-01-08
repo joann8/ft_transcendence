@@ -1,6 +1,10 @@
-- Gerer les roles @admin et @user (guards)
+DEVELOPPEMENT:
+- Gerer les roles @admin (guards)
+- Gestion du passage user -> admin ou accorder admin à certain id uniquements des la connexion
 - ajouter les routes de creation/modification d'un user pour @admin
 - Redirection vers / ou /login/42 lorsque le client est déconnecté
 - Est-it possible de lier un jwt à une à une ip ?
-- En production, reduire la durée de vie des jwt pour augmenter la securité
-- Gestion du passage user -> admin ou accorder admin à certain id uniquements des la connexion
+
+PRODUCTION:
+- Passer en HTTPS (Uncomment main.ts & modifier FT_CALLBACK_URL)
+- Réduire la durée de vie des JWT

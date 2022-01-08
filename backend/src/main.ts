@@ -5,15 +5,16 @@ import * as fs from 'fs';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-	// HTTPS application params
+	/* HTTPS application params
 	const httpsOptions = {
 		key: fs.readFileSync('./secrets/private-key.pem'),
 		cert: fs.readFileSync('./secrets/public-certificate.pem'),
 	};
+	*/
 
 	// Application creation and configuration
 	const app = await NestFactory.create(AppModule, {
-		httpsOptions,
+		// httpsOptions,
 	});
 
 	// cookieParser middleware as global for parsing cookies
