@@ -6,5 +6,9 @@ DEVELOPPEMENT:
 - Est-it possible de lier un jwt à une à une ip ?
 
 PRODUCTION:
-- Passer en HTTPS (Uncomment main.ts & modifier FT_CALLBACK_URL)
+- Passer en HTTPS (Uncomment main.ts - generer certificat lors du deploiement - modifier FT_CALLBACK_URL)
 - Réduire la durée de vie des JWT
+
+AUTRE:
+- Commande de generation de certificat et clé pour HTTPS:
+	mkdir secrets && openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out secrets/public-certificate.pem -keyout secrets/private-key.pem -subj "/C=FR/ST=Paris/L=Paris/O=42 School/OU=tvachera/CN=ft_transcendence"
