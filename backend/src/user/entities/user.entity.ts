@@ -1,13 +1,30 @@
+import { Profile } from 'passport-42';
 import { Chat } from 'src/chat/entities/chat.entity';
-import { Column, Entity, ManyToMany, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 export enum status {
 	OFFLINE = 'OFFLINE',
 	ONLINE = 'ONLINE',
 }
 
+export enum user_role {
+	USER = 'user',
+	ADMIN = 'admin',
+}
+
+/*	
+	User class definition.
+	Thanks to update the dtos when updating this class
+*/
 @Entity()
 export class User {
+	constructor(id: number, id_pseudo: string, email: string, avatar: string) {
+		this.id = id;
+		this.id_pseudo = id_pseudo;
+		this.email = email;
+		this.avatar = avatar;
+	}
+
 	@PrimaryColumn({ unique: true })
 	id: number;
 
@@ -20,17 +37,17 @@ export class User {
 	@Column({ unique: true })
 	email: string;
 
-	@Column({ default: false })
-	admin: boolean;
+	@Column({ default: user_role.USER })
+	role: user_role;
 
 	@Column({ default: 3000 })
 	elo: number;
 
-	// A GERER: TOM
+	// TODO: TOM
 	@Column({ default: status.OFFLINE })
 	status: status;
 
-	// SETUP: ADRIEN -- A GERER: TOM
+	// TODO: TOM
 	@Column({ default: false })
 	two_factor: boolean;
 

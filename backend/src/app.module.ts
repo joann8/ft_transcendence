@@ -24,6 +24,7 @@ import { ConfigModule } from '@nestjs/config';
 			password: 'root',
 			database: 'test',
 			entities: [User, Chat],
+			// FIXME: REMOVE IN PRODUCTION
 			synchronize: true,
 		}),
 		UserModule,
