@@ -21,6 +21,29 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
+<<<<<<< HEAD
+  constructor(private readonly userService: UserService) {}
+  @Post()
+  createUser(@Body() createUserDto: CreateUserDto) {
+    return this.userService.createEntity(createUserDto);
+  }
+
+    @Get()
+    getAll() {
+        return this.userService.findAll();
+    }
+
+    @Get(':id_pseudo') // SEARCH BY PSEUDO INSTEAD OF PK
+    getOne(@Param() userId : string) {
+        return this.userService.findOne(userId);
+    }
+
+    @Delete(':id_pseudo') // SAME
+    removeOne(@Param() userId : string ) {
+        return this.userService.remove(userId);
+    }
+  }
+=======
 	constructor(private readonly userService: UserService) {}
 
 	// CREATE AN USER (Admin only)
@@ -73,3 +96,4 @@ export class UserController {
 		this.userService.remove(req.user.id);
 	}
 }
+>>>>>>> master

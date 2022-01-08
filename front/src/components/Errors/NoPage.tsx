@@ -1,14 +1,25 @@
+
 import * as React from 'react';
 import Copyright from '../MainCompo/Copyright';
 import { Fragment } from 'react';
 import { Typography } from '@mui/material';
 import { Box } from '@mui/material';
-
+import { Paper } from '@mui/material';
+import { Toolbar } from '@mui/material';
+import { Grid } from '@mui/material';
 
 function NoPageCompo() {
+    const styles = {
+      defaultStyle: {
+        backgroundColor: 'blue',
+        width: '100%',
+        height: '100vh',
+      }
+    };
+    
   return (       
-    <Fragment>
-        <Box
+        <Fragment>
+          <Box
           component="main"
           sx={{
             backgroundColor: (theme) =>
@@ -20,10 +31,14 @@ function NoPageCompo() {
             overflow: 'auto',
           }}
         >
-        <Typography variant="h1" align="center"> NO SUCH PAGE </Typography> 
-        </Box>
-        <Copyright/>
-      </Fragment>
+            <Toolbar />
+            <Grid container alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
+              <Grid item >
+                <Typography variant="h2"> No Such Page </Typography> 
+              </Grid>
+            </Grid>
+          </Box>
+         </Fragment>
   );
 }
 
