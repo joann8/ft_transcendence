@@ -5,7 +5,7 @@ import {
 	IsPositive,
 	Min,
 } from 'class-validator';
-import { Chat } from 'src/chat/entities/chat.entity';
+import { Chat } from 'src/chat/chat.entity';
 import { status, user_role } from '../entities/user.entity';
 
 export class CreateUserDto {

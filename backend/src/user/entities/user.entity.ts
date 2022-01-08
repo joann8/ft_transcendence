@@ -1,5 +1,4 @@
-import { Profile } from 'passport-42';
-import { Chat } from 'src/chat/entities/chat.entity';
+import { Chat } from 'src/chat/chat.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 export enum status {
