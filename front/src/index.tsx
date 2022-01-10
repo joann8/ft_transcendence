@@ -41,7 +41,7 @@ function Root() {
           <Route index element={<Homepage />} />
           <Route path="game">
            <Route index element={< GameMenu/>} />
-           <Route path="module" element={<GamePage/>} />
+           <Route path="game" element={<GamePage/>} />
           </Route>
           <Route path="chat" element={<Chat />} />
           <Route path="profile" element={<Profile />} />

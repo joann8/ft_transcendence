@@ -10,9 +10,10 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import { PropsMenuButton } from './GameTypes';
 import { AnyMxRecord } from 'node:dns';
+import { useNavigate } from 'react-router';
 
 //const optionsTable=[["Play against a friend", "Play Random"], ["Watch a friend", "Watch Random"]];
-const optionsPage=[["GamePage", "HomePage"], ["HomePage", "HomePage"]];
+const optionsPage=[["/", "/game/game"], ["/", "/"]];
 
 
 export default function SplitButton( props: PropsMenuButton) {
@@ -21,11 +22,12 @@ export default function SplitButton( props: PropsMenuButton) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = React.useState(1);
+  let navigate = useNavigate();
 
   const handleClick = () =>  {
     console.info(`You clicked ${options[selectedIndex]}`);
     console.log(`You clicked ${options[selectedIndex]}`);
-    return (`<${optionsPage[props.buttonNb][selectedIndex]}/>`)
+    return (navigate(`${optionsPage[props.buttonNb][selectedIndex]}`))
 
   };
 
