@@ -8,51 +8,55 @@ import PlayIcon from "@mui/icons-material/PlayCircleOutlined";
 import ChatIcon from "@mui/icons-material/MarkChatUnreadOutlined";
 import ProfileIcon from "@mui/icons-material/AccountCircleOutlined";
 import LeaderIcon from "@mui/icons-material/EmojiEventsOutlined";
+import HomeIcon from '@mui/icons-material/Home'; 
 import Profile from "../Profile";
 import Chat from "../Chat/Chat";
 import Leaderboard from "../Leaderboard";
+
 import GameMenu from "../Game/GameMenu";
 import GamePage from "../Game/GamePage";
+import { useNavigate } from "react-router";
+
 /* Pour une deuxieme liste
 import ListSubheader from '@mui/material/ListSubheader';
 import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 */
 
-const pageList = {
-  test: <Leaderboard />,
-  profile: <Profile />,
-  chat: <Chat />,
-  //game: <GameMenu/>,
-  game: <GamePage/>,
-};
-
 function MainListItems(props: any) {
   console.log(props.value);
+  let navigate = useNavigate()
   return (
     <div>
-      <ListItem button onClick={() => props.handleCanvas(pageList.profile)}>
+      <ListItem button onClick={() => navigate("/")}>
+        <ListItemIcon>
+          <HomeIcon />
+        </ListItemIcon>
+        <ListItemText primary="Home" />
+      </ListItem>
+
+      <ListItem button onClick={() => navigate("/profile")}>
         <ListItemIcon>
           <ProfileIcon />
         </ListItemIcon>
         <ListItemText primary="Profile" />
       </ListItem>
 
-      <ListItem button onClick={() => props.handleCanvas(pageList.game)}>
+      <ListItem button onClick={() => navigate("/game")}>
         <ListItemIcon>
           <PlayIcon />
         </ListItemIcon>
         <ListItemText primary="Game" />
       </ListItem>
 
-      <ListItem button onClick={() => props.handleCanvas(pageList.test)}>
+      <ListItem button onClick={() => navigate("/leaderboard")}>
         <ListItemIcon>
           <LeaderIcon />
         </ListItemIcon>
         <ListItemText primary="Leaderboard" />
       </ListItem>
 
-      <ListItem button onClick={() => props.handleCanvas(pageList.chat)}>
+      <ListItem button onClick={() => navigate("/chat")}>
         <ListItemIcon>
           <ChatIcon />
         </ListItemIcon>

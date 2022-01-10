@@ -18,14 +18,15 @@ import { Chat } from './chat/chat.entity';
 		}),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
-			host: 'localhost',
-			port: 5432,
-			username: 'root',
-			password: 'root',
-			database: 'test',
+			host: process.env['DATABASE_HOST'],
+			port: parseInt(process.env['DATABASE_PORT']),
+			username: process.env['DATABASE_USERNAME'],
+			password: process.env['DATABASE_PASSWORD'],
+			database: process.env['DATABASE_NAME'],
 			entities: [User, Chat],
-			// FIXME: REMOVE IN PRODUCTION
+			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
+			keepConnectionAlive: true,
 		}),
 		UserModule,
 		ChatModule,

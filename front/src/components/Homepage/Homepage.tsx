@@ -5,9 +5,11 @@ import Paper from '@mui/material/Paper';
 import Image from '../Images/black.jpg'
 import { Fragment } from 'react';
 import { Button, CardActionArea, Typography } from '@mui/material';
+
 import GameMenu from '../Game/GameMenu';
 import GamePage from '../Game/GamePage';
-
+import Game from '../Game';
+import { useNavigate } from 'react-router';
 
 
 export default function Homepage(props: any) {
@@ -22,14 +24,16 @@ export default function Homepage(props: any) {
       overflow: 'auto',
     }
   };
+
+    let navigate = useNavigate()
+
   return (       
         <Fragment>
           <Paper style={styles.backgroundImage}>
            {/*} <Toolbar />*/}
             <Grid container alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
               <Grid item >
-                <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => props.handleCanvas(<GameMenu />)}> Let's play a Game!</Button> 
-                <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => props.handleCanvas(<GamePage />)}> Let's play a Game!</Button>
+                <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => navigate("/game")}> Let's play!</Button>
               </Grid>
             </Grid>
           </Paper>
