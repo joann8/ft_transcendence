@@ -10,6 +10,7 @@ import Homepage from "./components/Homepage/Homepage";
 import NoPage from "./components/Errors/NoPage";
 import { Route, Routes, Link, BrowserRouter as Router } from "react-router-dom";
 import { Typography } from "@mui/material";
+import Game from './components/Game'
 
 function App(props: any) {
 
@@ -47,7 +48,7 @@ function App(props: any) {
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <SideBar handleCanvas={handleCanvas} />
-        {canvas}
+        {/*canvas*/}
         {/*<Homepage />*/}
       </Box>
     </ThemeProvider>
