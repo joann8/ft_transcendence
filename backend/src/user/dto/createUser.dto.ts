@@ -33,9 +33,6 @@ export class CreateUserDto {
 	status: status;
 
 	@IsOptional()
-	two_factor: boolean;
-
-	@IsOptional()
 	achievement1: boolean;
 
 	@IsOptional()

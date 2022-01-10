@@ -27,13 +27,15 @@ export class UserController {
 	@Post()
 	@UseGuards(AdminGuard)
 	async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-		return this.userService.createEntity(createUserDto);
+		return this.userService.createEntity(
+			Object.assign(new User(), createUserDto),
+		);
 	}
 	// UPDATE AN USER (Admin only)
 	@Put()
 	@UseGuards(AdminGuard)
 	async updateUSer(@Body() updateUserDto: UpdateUserDto): Promise<User> {
-		await this.userService.update(updateUserDto);
+		await this.userService.update(updateUserDto.id, updateUserDto);
 		return this.userService.findOne(updateUserDto.id.toString());
 	}
 	// DELETE AN USER (Admin only)
@@ -63,7 +65,7 @@ export class UserController {
 		@Body() updateCurrentUserDto: UpdateCurrentUserDto,
 	): Promise<User> {
 		Object.assign(req.user, updateCurrentUserDto);
-		await this.userService.update(req.user);
+		await this.userService.update(req.user.id, req.user);
 		return this.userService.findOne(req.user.id.toString());
 	}
 	// DELETE MY PROFILE

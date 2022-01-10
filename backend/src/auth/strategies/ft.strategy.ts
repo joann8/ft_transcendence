@@ -7,9 +7,9 @@ import { AuthService } from '../auth.service';
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
 	constructor(private authService: AuthService) {
 		super({
-			clientID: process.env['FT_CLIENT_ID'],
-			clientSecret: process.env['FT_CLIENT_SECRET'],
-			callbackURL: process.env['FT_CALLBACK_URL'],
+			clientID: process.env.FT_CLIENT_ID,
+			clientSecret: process.env.FT_CLIENT_SECRET,
+			callbackURL: process.env.FT_CALLBACK_URL,
 		});
 	}
 
