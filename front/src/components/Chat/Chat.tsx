@@ -23,7 +23,7 @@ function Chat() {
     >
       <Toolbar />
       <Container disableGutters maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Grid container columnSpacing={5} rowSpacing={6}>
+        <Grid container columnSpacing={2} rowSpacing={2}>
           <ChatRooms></ChatRooms>
           <CurrentChat />
           <ChatUsers></ChatUsers>
