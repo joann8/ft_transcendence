@@ -24,8 +24,9 @@ import { Chat } from './chat/chat.entity';
 			password: 'root',
 			database: 'test',
 			entities: [User, Chat],
-			// FIXME: REMOVE IN PRODUCTION
+			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
+			keepConnectionAlive: true,
 		}),
 		UserModule,
 		ChatModule,
