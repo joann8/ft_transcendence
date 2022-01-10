@@ -28,6 +28,7 @@ async function bootstrap() {
 		}),
 	);
 
+	app.enableCors();
 	await app.listen(process.env['BACKEND_PORT']);
 }
 bootstrap();
