@@ -12,7 +12,6 @@ import {
 	Patch,
 	Redirect,
 } from '@nestjs/common';
-import { Public } from 'src/auth/decorators/public.decorator';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateCurrentUserDto } from './dto/updateCurrentUser.dto';
