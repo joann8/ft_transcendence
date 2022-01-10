@@ -12,6 +12,7 @@ import {
 	Patch,
 	Redirect,
 } from '@nestjs/common';
+import { Public } from 'src/auth/decorators/public.decorator';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateCurrentUserDto } from './dto/updateCurrentUser.dto';
@@ -43,6 +44,7 @@ export class UserController {
 		this.userService.remove(userId);
 	}
 	// SEARCH AN USER
+	@Public()
 	@Get(':id_pseudo')
 	async getUser(@Param() userId: string): Promise<User> {
 		const user = await this.userService.findOne(userId);

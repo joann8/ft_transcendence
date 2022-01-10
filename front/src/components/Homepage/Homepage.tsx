@@ -6,6 +6,7 @@ import Image from './squidgame.jpg'
 import { Fragment } from 'react';
 import { Button, CardActionArea, Typography } from '@mui/material';
 import Game from '../Game';
+import { useNavigate } from 'react-router';
 
 
 
@@ -23,13 +24,16 @@ export default function Homepage(props: any) {
       overflow: 'auto',
     }
   };
+
+    let navigate = useNavigate()
+
   return (       
         <Fragment>
           <Paper style={styles.cardCont}>
             <Toolbar />
             <Grid container alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
               <Grid item >
-                <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => props.handleCanvas(<Game />)}> Let's play!</Button>
+                <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => navigate("/game")}> Let's play!</Button>
               </Grid>
             </Grid>
           </Paper>
