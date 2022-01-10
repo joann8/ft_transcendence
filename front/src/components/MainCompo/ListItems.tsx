@@ -11,15 +11,17 @@ import LeaderIcon from "@mui/icons-material/EmojiEventsOutlined";
 import HomeIcon from '@mui/icons-material/Home'; 
 import Profile from "../Profile";
 import Chat from "../Chat/Chat";
-import Game from "../Game";
 import Leaderboard from "../Leaderboard";
+
+import GameMenu from "../Game/GameMenu";
+import GamePage from "../Game/GamePage";
 import { useNavigate } from "react-router";
+
 /* Pour une deuxieme liste
 import ListSubheader from '@mui/material/ListSubheader';
 import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 */
-
 
 function MainListItems(props: any) {
   console.log(props.value);
@@ -60,6 +62,7 @@ function MainListItems(props: any) {
         </ListItemIcon>
         <ListItemText primary="Chat" />
       </ListItem>
+
     </div>
   );
 }

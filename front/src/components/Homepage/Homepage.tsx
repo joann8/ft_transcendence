@@ -2,25 +2,25 @@ import * as React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Image from './squidgame.jpg'
+import Image from '../Images/black.jpg'
 import { Fragment } from 'react';
 import { Button, CardActionArea, Typography } from '@mui/material';
+
+import GameMenu from '../Game/GameMenu';
+import GamePage from '../Game/GamePage';
 import Game from '../Game';
 import { useNavigate } from 'react-router';
 
 
-
-
-//function HomepageCompo(props: any) {
 export default function Homepage(props: any) {
   const styles = {
-    cardCont: {
+    backgroundImage: {
       backgroundImage: `url(`+ `${Image}` + ')',
       backgroundPosition: 'left',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'cover',
       width: '100%',
-      height: '100vh',
+      height: '100%',
       overflow: 'auto',
     }
   };
@@ -29,8 +29,8 @@ export default function Homepage(props: any) {
 
   return (       
         <Fragment>
-          <Paper style={styles.cardCont}>
-            <Toolbar />
+          <Paper style={styles.backgroundImage}>
+           {/*} <Toolbar />*/}
             <Grid container alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
               <Grid item >
                 <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => navigate("/game")}> Let's play!</Button>

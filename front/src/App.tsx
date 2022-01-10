@@ -23,9 +23,6 @@ function App(props: any) {
   const [canvas, setCanvas] = useState(homePage);
 
 
-
-
-
   const mdTheme = createTheme();
   {/*const mdTheme = createTheme({
     palette: {

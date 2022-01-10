@@ -6,6 +6,10 @@ import { Route, Routes, Link, BrowserRouter as Router } from "react-router-dom";
 import MyContent from "./components/MyContent/MyContent";
 import Homepage from "./components/Homepage/Homepage";
 import NoPage from "./components/Errors/NoPage";
+
+import GameMenu from "./components/Game/GameMenu";
+import GamePage from "./components/Game/GamePage";
+
 import Game from "./components/Game";
 import Leaderboard from "./components/Leaderboard";
 import Chat from "./components/Chat/Chat";
@@ -36,8 +40,8 @@ function Root() {
         <Route path="/" element={<SideBars />}>
           <Route index element={<Homepage />} />
           <Route path="game">
-           <Route index element={< Game/>} />
-           <Route path="module" element={<GameModule/>} />
+           <Route index element={< GameMenu/>} />
+           <Route path="module" element={<GamePage/>} />
           </Route>
           <Route path="chat" element={<Chat />} />
           <Route path="profile" element={<Profile />} />
