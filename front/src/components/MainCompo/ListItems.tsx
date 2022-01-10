@@ -10,8 +10,9 @@ import ProfileIcon from "@mui/icons-material/AccountCircleOutlined";
 import LeaderIcon from "@mui/icons-material/EmojiEventsOutlined";
 import Profile from "../Profile";
 import Chat from "../Chat/Chat";
-import Game from "../Game";
 import Leaderboard from "../Leaderboard";
+import GameMenu from "../Game/GameMenu";
+import GamePage from "../Game/GamePage";
 /* Pour une deuxieme liste
 import ListSubheader from '@mui/material/ListSubheader';
 import LayersIcon from '@mui/icons-material/Layers';
@@ -22,7 +23,8 @@ const pageList = {
   test: <Leaderboard />,
   profile: <Profile />,
   chat: <Chat />,
-  game: <Game />,
+  //game: <GameMenu/>,
+  game: <GamePage/>,
 };
 
 function MainListItems(props: any) {
@@ -56,6 +58,7 @@ function MainListItems(props: any) {
         </ListItemIcon>
         <ListItemText primary="Chat" />
       </ListItem>
+
     </div>
   );
 }
