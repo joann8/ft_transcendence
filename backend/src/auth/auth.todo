@@ -1,8 +1,8 @@
 DEVELOPPEMENT:
 - Est-it possible de lier un jwt à une à une ip ?
-- Authentification à deux facteurs
 - serialiser user en sortie afin d'eviter de transmettre des informations sensibles
 - ONLINE delay
+- clean auth.conytroller
 
 PRODUCTION:
 - Passer en HTTPS (Uncomment main.ts - generer certificat lors du deploiement - modifier FT_CALLBACK_URL)
