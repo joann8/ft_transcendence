@@ -1,34 +1,58 @@
 import { Container, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import * as React from "react";
+import Messages from "./Messages";
+import PostMessage from "./PostMessage";
+import { Message } from "./types";
 
 const useStyle = makeStyles({
-  messagesContainer: {
-    height: "450px",
-    backgroundColor: "red",
-    borderRadius: "10px",
-    border: "solid",
-  },
   formMessageContainer: {
-    height: "100px",
+    height: "130px",
     backgroundColor: "yellow",
   },
 });
-
 function CurrentChat() {
   const classes = useStyle();
+  const myRef = React.useRef<null | HTMLDivElement>(null);
+  const [messageList, setMessageList] = React.useState<Message[]>([
+    {
+      user: "Joann",
+      content: "9h30",
+      hour: "22h31",
+    },
+    {
+      user: "Joann",
+      content: "@Thib tu confirmes?",
+      hour: "22h31",
+    },
+    {
+      user: "Thib",
+      content: "Yes je serais là ;)",
+      hour: "22h41",
+    },
+    {
+      user: "Thib",
+      content: "Je pars de chez moi",
+      hour: "9h30",
+    },
+  ]);
+  function postMessage(message: Message) {
+    setMessageList([...messageList, message]);
+  }
+  React.useEffect(() => {
+    if (myRef && myRef.current) {
+      myRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [messageList]);
+
   return (
     <Grid item xs={12} md={4} lg={6}>
-      <Grid container rowSpacing={6}>
+      <Grid container rowSpacing={2}>
         <Grid item xs={12} md={12} lg={12}>
-          <Container className={classes.messagesContainer}>
-            LISTE DES MESSAGES
-          </Container>
+          <Messages innerref={myRef} messageList={messageList}></Messages>
         </Grid>
         <Grid item xs={12} md={12} lg={12}>
-          <Container className={classes.formMessageContainer}>
-            FORMULAIRE MESSAGE
-          </Container>
+          <PostMessage submit={postMessage}></PostMessage>
         </Grid>
       </Grid>
     </Grid>
