@@ -36,19 +36,18 @@ export class AuthController {
 	@Get('login/42/redirect')
 	@UseGuards(FortyTwoAuthGuard)
 	async redir(@Req() req, @Res({ passthrough: true }) res) {
-		const { access_token, user } = await this.authService.login(req.user);
+		const { access_token, user } = await this.authService.login(req);
 		console.log(`${user.id_pseudo} logged in with 42 intranet !`);
 		res.cookie('access_token', access_token);
 		// FIXME: REMOVE IN PRODUCTION
 		console.log(`access_token=${access_token}`);
-		return access_token;
+		return { access_token };
 	}
 	// LOGIN WITH 2FA
 	@Public()
 	@Post('2fa/authenticate')
 	@UseGuards(JwtAuthGuard)
 	@HttpCode(200)
-	@Redirect('/user')
 	async authenticateTwoFa(
 		@Req() req,
 		@Res({ passthrough: true }) res,
@@ -71,9 +70,11 @@ export class AuthController {
 		console.log(`${req.user.id_pseudo} authenticate with 2FA !`);
 		// FIXME: REMOVE IN PRODUCTION
 		console.log(`access_token=${access_token}`);
+		return req.user;
 	}
 	// LOGOUT FROM MY PROFILE
 	@Post('logout')
+	@HttpCode(200)
 	@Redirect('/')
 	async logoutCurrentUser(
 		@Req() req,
@@ -85,6 +86,7 @@ export class AuthController {
 	}
 	// GIVE ADMIN ROLE TO USER (dto is in charge of secret verification)
 	@Post('admin')
+	@HttpCode(200)
 	@Redirect('/user')
 	async goAdmin(@Req() req, @Body() adminSecret: SecretDto): Promise<void> {
 		if (adminSecret.secret !== process.env['ADMIN_SECRET']) {
@@ -92,8 +94,9 @@ export class AuthController {
 		}
 		this.authService.setAdmin(req.user);
 	}
-	// REMOVE ADMIN ROLE FROM USER
+	// REMOVE ADMIN ROLE FROM CURRENT USER
 	@Delete('admin')
+	@HttpCode(200)
 	@Redirect('/user')
 	async removeAdmin(@Req() req): Promise<void> {
 		this.authService.removeAdmin(req.user);
@@ -101,6 +104,9 @@ export class AuthController {
 	// GENERATE 2FA QR CODE
 	@Get('2fa/generate')
 	async generateTwoFaQRCode(@Req() req, @Res() res: Response) {
+		if (req.user.two_factor_enabled) {
+			throw new ForbiddenException('2FA is already on for this user');
+		}
 		const { otpauthUrl } =
 			await this.authService.generateTwoFactorAuthentificationSecret(
 				req.user,
@@ -110,11 +116,14 @@ export class AuthController {
 	// ENABLE 2FA FOR CURRENT USER
 	@Post('2fa/turn-on')
 	@HttpCode(200)
-	async activateTwoFa(
+	async enableTwoFa(
 		@Req() req,
 		@Res({ passthrough: true }) res,
 		@Body() { secret }: SecretDto,
 	) {
+		if (req.user.two_factor_enabled) {
+			throw new ForbiddenException('2FA is already on for this user');
+		}
 		if (!this.authService.isTwoFaCodeValid(secret, req.user)) {
 			throw new UnauthorizedException(
 				'Wrong authentication code. Please try to generate 2FA QR Code first',
@@ -131,16 +140,14 @@ export class AuthController {
 		// FIXME: REMOVE IN PRODUCTION
 		console.log(`access_token=${access_token}`);
 	}
-	// DISABLE 2FA FOR CURRENT USER
+	// DISABLE 2FA FOR CURRENT USER - Access token still valid
 	@Post('2fa/turn-off')
 	@HttpCode(200)
-	async desactivateTwoFa(@Req() req, @Res({ passthrough: true }) res) {
+	async disableTwoFa(@Req() req, @Res({ passthrough: true }) res) {
+		if (!req.user.two_factor_enabled) {
+			throw new ForbiddenException('2FA is already off for this user');
+		}
 		await this.authService.turnOffTwoFaAuth(req.user);
-		res.clearCookie('access_token');
-		const { access_token } = await this.authService.login(req.user);
-		res.cookie('access_token', access_token);
 		console.log(`${req.user.id_pseudo} turned off 2FA...`);
-		// FIXME: REMOVE IN PRODUCTION
-		console.log(`access_token=${access_token}`);
 	}
 }

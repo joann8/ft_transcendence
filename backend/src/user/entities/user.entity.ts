@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Chat } from 'src/chat/chat.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
@@ -40,6 +41,7 @@ export class User {
 	status?: status;
 
 	@Column({ nullable: true })
+	@Exclude()
 	two_factor_secret?: string;
 
 	@Column({ default: false })

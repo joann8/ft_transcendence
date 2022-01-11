@@ -62,7 +62,7 @@ export class AuthService {
 	}
 
 	async generateTwoFactorAuthentificationSecret(user: User) {
-		const secret = authenticator.generateSecret();
+		const secret = user.two_factor_secret || authenticator.generateSecret();
 		const otpauthUrl = authenticator.keyuri(
 			user.email,
 			process.env.TWO_FACTOR_AUTH_APP_NAME,

@@ -11,6 +11,8 @@ import {
 	UseGuards,
 	Patch,
 	Redirect,
+	UseInterceptors,
+	ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -46,6 +48,7 @@ export class UserController {
 	}
 	// SEARCH AN USER
 	@Get(':id_pseudo')
+	@UseInterceptors(ClassSerializerInterceptor)
 	async getUser(@Param() userId: string): Promise<User> {
 		const user = await this.userService.findOne(userId);
 		if (!user) {
@@ -55,11 +58,13 @@ export class UserController {
 	}
 	// GET MY PROFILE
 	@Get()
+	@UseInterceptors(ClassSerializerInterceptor)
 	async getCurrentUser(@Req() req): Promise<User> {
 		return req.user;
 	}
 	// UPDATE MY PROFILE (Look at UpdateCurrentUserDto for available options)
 	@Patch()
+	@UseInterceptors(ClassSerializerInterceptor)
 	async updateCurrentUser(
 		@Req() req,
 		@Body() updateCurrentUserDto: UpdateCurrentUserDto,
