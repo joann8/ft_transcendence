@@ -56,7 +56,7 @@ function Root() {
     return (
       <Router>
         <Routes>
-          <Route path="/login" element={<Login setLogin={setLogin} />} />
+          <Route path="/login" element={<Login count={count} login={isLoggedIn} setLogin={setLogin} />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </Router>
@@ -69,6 +69,7 @@ function Root() {
         <Routes>
           <Route path="/" element={<SideBars login={isLoggedIn} setLogin={setLogin} />}>
             <Route index element={<Homepage />} />
+            <Route path="login" element={<Login login={isLoggedIn}/>}/>
             <Route path="game">
               <Route index element={< GameMenu />} />
               <Route path="game" element={<GamePage />} />
