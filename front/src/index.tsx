@@ -2,7 +2,7 @@ import React, { createContext, Fragment, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { Route, Routes, Link, BrowserRouter as Router } from "react-router-dom";
+import { Route, Routes, Link, BrowserRouter as Router, Navigate } from "react-router-dom";
 import MyContent from "./components/MyContent/MyContent";
 import Homepage from "./components/Homepage/Homepage";
 import NoPage from "./components/Errors/NoPage";
@@ -41,21 +41,11 @@ function Root() {
   const [isMounted, setMounted] = useState(false)
 
 
-  //Deals with Tom's back end to check Authentication
-  function handleLogin ()
-  {
-    //const authSuccess = checkWithBackend()
-    const authSuccess = true
-    console.log("authentication here")
-    if (authSuccess)
-      setLogin(true)
-  }
 
   //Deal with logout code
   useEffect(() => {
 
-    if (!isLoggedIn && isMounted)
-    {
+    if (!isLoggedIn && isMounted) {
       setCount(count + 1)
       console.log("Logout process")
     }
@@ -64,16 +54,13 @@ function Root() {
 
   if (!isLoggedIn) {
     return (
-      <Fragment>
-        <Toolbar />
-        <Grid container alignItems="center" justifyContent="center">
-          <Grid item>
-            <h1> Login Page</h1>
-            <button type="submit" onClick={() => handleLogin()}> Login </button>
-            <p> {`Logout code was executed : ${count} times`} </p>
-          </Grid>
-        </Grid>
-      </Fragment>)
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login setLogin={setLogin} />} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      </Router>
+    )
   }
   else {
     return (
