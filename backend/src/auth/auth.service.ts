@@ -6,6 +6,7 @@ import { User, status, user_role } from 'src/user/entities/user.entity';
 import { authenticator } from 'otplib';
 import { Response } from 'express';
 import { toFileStream } from 'qrcode';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -34,12 +35,36 @@ export class AuthService {
 		return user;
 	}
 
-	async login(user: User) {
-		const access_token = await this.jwtService.sign({
+	async generateAccessToken(user: User, isTwoFa: boolean = false) {
+		const access_token = this.jwtService.sign({
 			sub: user.id,
 			mail: user.email,
+			isTwoFa: isTwoFa,
 		});
-		return { user, access_token };
+		return access_token;
+	}
+
+	async generateRefreshToken(user: User, isTwoFa: boolean = false) {
+		const refresh_token = this.jwtService.sign(
+			{
+				sub: user.id,
+				mail: user.email,
+				isTwoFa: isTwoFa,
+			},
+			{
+				secret: process.env.REFRESH_SECRET,
+				expiresIn: '1d',
+			},
+		);
+		const hash = await bcrypt.hash(refresh_token, 10);
+		await this.userService.update(user.id, { refresh_token: hash });
+		return refresh_token;
+	}
+
+	async generateTokens(user: User, isTwoFa: boolean = false) {
+		const access_token = await this.generateAccessToken(user, isTwoFa);
+		const refresh_token = await this.generateRefreshToken(user, isTwoFa);
+		return { access_token, refresh_token };
 	}
 
 	async getUSerById(id: string): Promise<User> {
@@ -47,18 +72,18 @@ export class AuthService {
 	}
 
 	async logout(user: User): Promise<void> {
-		user.status = status.OFFLINE;
-		await this.userService.update(user.id, user);
+		await this.userService.update(user.id, {
+			status: status.OFFLINE,
+			refresh_token: null,
+		});
 	}
 
 	async setAdmin(user: User): Promise<void> {
-		user.role = user_role.ADMIN;
-		await this.userService.update(user.id, user);
+		await this.userService.update(user.id, { role: user_role.ADMIN });
 	}
 
 	async removeAdmin(user: User): Promise<void> {
-		user.role = user_role.USER;
-		await this.userService.update(user.id, user);
+		await this.userService.update(user.id, { role: user_role.USER });
 	}
 
 	async generateTwoFactorAuthentificationSecret(user: User) {
@@ -96,14 +121,5 @@ export class AuthService {
 			two_factor_enabled: false,
 			two_factor_secret: null,
 		});
-	}
-
-	async getTwoFaAccessToken(user: User, isTwoFa = false) {
-		const access_token = await this.jwtService.sign({
-			sub: user.id,
-			mail: user.email,
-			isTwoFa: isTwoFa,
-		});
-		return access_token;
 	}
 }

@@ -4,7 +4,10 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 
 @Injectable()
-export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
+export class FortyTwoStrategy extends PassportStrategy(
+	Strategy,
+	'forty-two-strategy',
+) {
 	constructor(private authService: AuthService) {
 		super({
 			clientID: process.env.FT_CLIENT_ID,

@@ -1,6 +1,5 @@
 DEVELOPPEMENT:
 - ONLINE delay
-- Refresh token
 
 PRODUCTION:
 - Passer en HTTPS (Uncomment main.ts - generer certificat lors du deploiement - modifier FT_CALLBACK_URL)

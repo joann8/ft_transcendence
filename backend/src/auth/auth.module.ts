@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TwoFaJwtAuthGuard } from './guards/twofajwt_auth.guard';
 import { TwoFaJwtStrategy } from './strategies/twofajwt.strategy';
+import { RefreshJwtStrategy } from './strategies/refreshjwt.strategy';
 
 @Module({
 	imports: [
@@ -20,7 +21,7 @@ import { TwoFaJwtStrategy } from './strategies/twofajwt.strategy';
 		PassportModule,
 		JwtModule.register({
 			secret: process.env.JWT_SECRET,
-			signOptions: { expiresIn: '7h' },
+			signOptions: { expiresIn: '1h' },
 		}),
 	],
 	providers: [
@@ -28,6 +29,7 @@ import { TwoFaJwtStrategy } from './strategies/twofajwt.strategy';
 		FortyTwoStrategy,
 		JwtStrategy,
 		TwoFaJwtStrategy,
+		RefreshJwtStrategy,
 		{ provide: APP_GUARD, useClass: TwoFaJwtAuthGuard },
 	],
 	controllers: [AuthController],

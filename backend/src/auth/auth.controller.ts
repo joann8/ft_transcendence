@@ -13,12 +13,12 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { SecretDto } from './dto/adminSecret.dto';
 import { FortyTwoAuthGuard } from './guards/ft_auth.guard';
 import { JwtAuthGuard } from './guards/jwt_auth.guard';
+import { JwtRefreshGuard } from './guards/refreshjwt_auth.guard';
 
 @Controller()
 export class AuthController {
@@ -31,14 +31,15 @@ export class AuthController {
 	@Redirect('/user')
 	async login(): Promise<void> {}
 	// 42 CALLBACK URL
-	// TODO: Verifier que l'hote appelant est bien l'intra 42 uniquement ?
 	@Public()
 	@Get('login/42/redirect')
 	@UseGuards(FortyTwoAuthGuard)
 	async redir(@Req() req, @Res({ passthrough: true }) res) {
-		const { access_token, user } = await this.authService.login(req);
-		console.log(`${user.id_pseudo} logged in with 42 intranet !`);
+		const { access_token, refresh_token } =
+			await this.authService.generateTokens(req.user);
+		console.log(`${req.user.id_pseudo} logged in with 42 intranet !`);
 		res.cookie('access_token', access_token);
+		res.cookie('refresh_token', refresh_token, { path: '/refresh' });
 		// FIXME: REMOVE IN PRODUCTION
 		console.log(`access_token=${access_token}`);
 		return { access_token };
@@ -61,19 +62,17 @@ export class AuthController {
 		if (!this.authService.isTwoFaCodeValid(secret, req.user)) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
-		const access_token = await this.authService.getTwoFaAccessToken(
-			req.user.id,
-			true,
-		);
-		res.clearCookie('access_token');
+		const { access_token, refresh_token } =
+			await this.authService.generateTokens(req.user.id, true);
 		res.cookie('access_token', access_token);
+		res.cookie('refresh_token', refresh_token, { path: '/refresh' });
 		console.log(`${req.user.id_pseudo} authenticate with 2FA !`);
 		// FIXME: REMOVE IN PRODUCTION
 		console.log(`access_token=${access_token}`);
 		return req.user;
 	}
 	// LOGOUT FROM MY PROFILE
-	@Post('logout')
+	@Get('logout')
 	@HttpCode(200)
 	@Redirect('/')
 	async logoutCurrentUser(
@@ -81,6 +80,7 @@ export class AuthController {
 		@Res({ passthrough: true }) res,
 	): Promise<void> {
 		res.clearCookie('access_token');
+		res.clearCookie('refresh_token');
 		this.authService.logout(req.user);
 		console.log(`${req.user.id_pseudo} logged out...`);
 	}
@@ -130,12 +130,10 @@ export class AuthController {
 			);
 		}
 		await this.authService.turnOnTwoFaAuth(req.user);
-		const access_token = await this.authService.getTwoFaAccessToken(
-			req.user.id,
-			true,
-		);
-		res.clearCookie('access_token');
+		const { access_token, refresh_token } =
+			await this.authService.generateTokens(req.user.id, true);
 		res.cookie('access_token', access_token);
+		res.cookie('refresh_token', refresh_token, { path: '/refresh' });
 		console.log(`${req.user.id_pseudo} turned on 2FA !`);
 		// FIXME: REMOVE IN PRODUCTION
 		console.log(`access_token=${access_token}`);
@@ -149,5 +147,19 @@ export class AuthController {
 		}
 		await this.authService.turnOffTwoFaAuth(req.user);
 		console.log(`${req.user.id_pseudo} turned off 2FA...`);
+	}
+	// REFRESH TOKEN
+	@Public()
+	@UseGuards(JwtRefreshGuard)
+	@Get('refresh')
+	async refresh(@Req() req, @Res({ passthrough: true }) res) {
+		const access_token = await this.authService.generateAccessToken(
+			req.user,
+			req.user.two_factor_enabled,
+		);
+		res.cookie('access_token', access_token);
+		console.log(`${req.user.id_pseudo} refreshed his access_token !`);
+		// FIXME: REMOVE IN PRODUCTION
+		console.log(`access_token=${access_token}`);
 	}
 }

@@ -5,6 +5,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 export enum status {
 	OFFLINE = 'OFFLINE',
 	ONLINE = 'ONLINE',
+	IN_GAME = 'IN GAME',
 }
 
 export enum user_role {
@@ -36,16 +37,19 @@ export class User {
 	@Column({ default: 3000 })
 	elo?: number;
 
-	// TODO: TOM
 	@Column({ default: status.OFFLINE })
 	status?: status;
+
+	@Column({ default: false })
+	two_factor_enabled?: boolean;
 
 	@Column({ nullable: true })
 	@Exclude()
 	two_factor_secret?: string;
 
-	@Column({ default: false })
-	two_factor_enabled?: boolean;
+	@Column({ nullable: true })
+	@Exclude()
+	refresh_token?: string;
 
 	@Column({ default: false })
 	achievement1?: boolean;
