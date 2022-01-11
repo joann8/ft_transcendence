@@ -3,7 +3,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Image from '../Images/black.jpg'
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { Button, CardActionArea, Typography } from '@mui/material';
 
 import GameMenu from '../Game/GameMenu';
@@ -26,6 +26,7 @@ export default function Homepage(props: any) {
   };
 
     let navigate = useNavigate()
+    const [count, setCount] = useState(0)
 
   return (       
         <Fragment>
@@ -33,6 +34,8 @@ export default function Homepage(props: any) {
            {/*} <Toolbar />*/}
             <Grid container alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
               <Grid item >
+              <Button color="primary" variant="contained" style={{fontSize: 50}}> {count} </Button>
+              <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => setCount(count + 1)}> Add one </Button>
                 <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => navigate("/game")}> Let's play!</Button>
               </Grid>
             </Grid>

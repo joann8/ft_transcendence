@@ -149,7 +149,7 @@ export default function SideBar(props: any) {
             </Toolbar>
             <Divider />
             {/*  <List>{mainListItems}</List>*/}
-            <MainListItems handleCanvas={props.handleCanvas} />
+            <MainListItems login={props.login} setLogin={props.setLogin} />
             <Divider />
           </Drawer>
           <Outlet/>

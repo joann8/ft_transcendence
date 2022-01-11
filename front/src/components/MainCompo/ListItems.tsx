@@ -8,7 +8,8 @@ import PlayIcon from "@mui/icons-material/PlayCircleOutlined";
 import ChatIcon from "@mui/icons-material/MarkChatUnreadOutlined";
 import ProfileIcon from "@mui/icons-material/AccountCircleOutlined";
 import LeaderIcon from "@mui/icons-material/EmojiEventsOutlined";
-import HomeIcon from '@mui/icons-material/Home'; 
+import HomeIcon from '@mui/icons-material/Home';
+import LogoutIcon from '@mui/icons-material/Logout'; 
 import Profile from "../Profile";
 import Chat from "../Chat/Chat";
 import Leaderboard from "../Leaderboard";
@@ -24,8 +25,16 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 */
 
 function MainListItems(props: any) {
-  console.log(props.value);
+
+
+  const handleChange = () => {
+    console.log("handleChange")
+    props.handleLogout()
+  }
+
   let navigate = useNavigate()
+
+
   return (
     <div>
       <ListItem button onClick={() => navigate("/")}>
@@ -61,6 +70,20 @@ function MainListItems(props: any) {
           <ChatIcon />
         </ListItemIcon>
         <ListItemText primary="Chat" />
+      </ListItem>
+
+      <ListItem button onClick={() => props.setLogin(false)}>
+        <ListItemIcon>
+          <LogoutIcon/>
+        </ListItemIcon>
+        <ListItemText primary="Logout" />
+      </ListItem>
+
+
+      <ListItem >
+        <ListItemIcon>
+        </ListItemIcon>
+        <ListItemText primary={props.login? "Logged IN" : "Logged OUT"} />
       </ListItem>
 
     </div>
