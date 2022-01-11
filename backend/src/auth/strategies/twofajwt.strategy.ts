@@ -1,11 +1,14 @@
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class TwoFaJwtStrategy extends PassportStrategy(
+	Strategy,
+	'jwt-two-factors',
+) {
 	constructor(private authService: AuthService) {
 		super({
 			jwtFromRequest: (req: Request) => {
@@ -29,6 +32,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 				'Token does not match any user in DB',
 			);
 		}
-		return user;
+		if (!user.two_factor_enabled || payload.isTwoFa) {
+			return user;
+		}
+		throw new UnauthorizedException('Please authenticate with 2FA');
 	}
 }

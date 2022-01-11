@@ -1,6 +1,5 @@
 DEVELOPPEMENT:
-- Est-it possible de lier un jwt à une à une ip ?
-- Authentification à deux facteurs
+- ONLINE delay
 
 PRODUCTION:
 - Passer en HTTPS (Uncomment main.ts - generer certificat lors du deploiement - modifier FT_CALLBACK_URL)

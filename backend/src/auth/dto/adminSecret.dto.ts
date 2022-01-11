@@ -1,6 +1,6 @@
-import { Equals, IsDefined } from 'class-validator';
+import { IsDefined } from 'class-validator';
 
-export class AdminSecretDto {
+export class SecretDto {
 	@IsDefined()
 	secret: string;
 }

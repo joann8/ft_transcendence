@@ -7,7 +7,4 @@ export class UpdateCurrentUserDto {
 
 	@IsOptional()
 	avatar: string;
-
-	@IsOptional()
-	two_factor: boolean;
 }

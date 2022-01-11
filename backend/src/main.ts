@@ -19,7 +19,7 @@ async function bootstrap() {
 	});
 	// Enable CORS
 	app.enableCors({
-		origin: process.env['FRONTEND_URL'],
+		origin: process.env.FRONTEND_URL,
 	});
 	// cookieParser middleware as global for parsing cookies
 	app.use(cookieParser());
@@ -31,7 +31,7 @@ async function bootstrap() {
 			skipMissingProperties: false,
 		}),
 	);
-	await app.listen(process.env['BACKEND_PORT']);
+	await app.listen(process.env.BACKEND_PORT);
 
 	// FIXME: NOT IN PRODUCTION (HOT RELOAD)
 	if (module.hot) {

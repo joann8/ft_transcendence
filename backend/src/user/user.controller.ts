@@ -11,6 +11,8 @@ import {
 	UseGuards,
 	Patch,
 	Redirect,
+	UseInterceptors,
+	ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
@@ -28,13 +30,15 @@ export class UserController {
 	@Post()
 	@UseGuards(AdminGuard)
 	async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-		return this.userService.createEntity(createUserDto);
+		return this.userService.createEntity(
+			Object.assign(new User(), createUserDto),
+		);
 	}
 	// UPDATE AN USER (Admin only)
 	@Put()
 	@UseGuards(AdminGuard)
 	async updateUSer(@Body() updateUserDto: UpdateUserDto): Promise<User> {
-		await this.userService.update(updateUserDto);
+		await this.userService.update(updateUserDto.id, updateUserDto);
 		return this.userService.findOne(updateUserDto.id.toString());
 	}
 	// DELETE AN USER (Admin only)
@@ -46,6 +50,7 @@ export class UserController {
 	// SEARCH AN USER
 	@Public()
 	@Get(':id_pseudo')
+	@UseInterceptors(ClassSerializerInterceptor)
 	async getUser(@Param() userId: string): Promise<User> {
 		const user = await this.userService.findOne(userId);
 		if (!user) {
@@ -55,17 +60,19 @@ export class UserController {
 	}
 	// GET MY PROFILE
 	@Get()
+	@UseInterceptors(ClassSerializerInterceptor)
 	async getCurrentUser(@Req() req): Promise<User> {
 		return req.user;
 	}
 	// UPDATE MY PROFILE (Look at UpdateCurrentUserDto for available options)
 	@Patch()
+	@UseInterceptors(ClassSerializerInterceptor)
 	async updateCurrentUser(
 		@Req() req,
 		@Body() updateCurrentUserDto: UpdateCurrentUserDto,
 	): Promise<User> {
 		Object.assign(req.user, updateCurrentUserDto);
-		await this.userService.update(req.user);
+		await this.userService.update(req.user.id, req.user);
 		return this.userService.findOne(req.user.id.toString());
 	}
 	// DELETE MY PROFILE
