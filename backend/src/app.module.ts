@@ -10,6 +10,7 @@ import { ChatService } from './chat/chat.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { Chat } from './chat/chat.entity';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
 	imports: [
@@ -31,6 +32,7 @@ import { Chat } from './chat/chat.entity';
 		UserModule,
 		ChatModule,
 		AuthModule,
+		AdminModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, UserService, ChatService],
