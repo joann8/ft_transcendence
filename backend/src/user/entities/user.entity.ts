@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Chat } from 'src/chat/chat.entity';
+import { Chat } from 'src/chat/entities/chat.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 export enum status {

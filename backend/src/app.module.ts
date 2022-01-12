@@ -9,7 +9,8 @@ import { ChatModule } from './chat/chat.module';
 import { ChatService } from './chat/chat.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { Chat } from './chat/chat.entity';
+import { Chat } from './chat/entities/chat.entity';
+import { Message } from './chat/messages/entities/message.entity';
 
 @Module({
 	imports: [
@@ -23,7 +24,7 @@ import { Chat } from './chat/chat.entity';
 			username: process.env.DATABASE_USERNAME,
 			password: process.env.DATABASE_PASSWORD,
 			database: process.env.DATABASE_NAME,
-			entities: [User, Chat],
+			entities: [User, Chat, Message],
 			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
 			keepConnectionAlive: true,

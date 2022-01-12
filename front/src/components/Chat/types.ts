@@ -54,4 +54,5 @@ export type {
   CurrentChatProps,
   ChatRoomsProps,
   ChatUsersProps,
+  chatRoom,
 };

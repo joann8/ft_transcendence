@@ -4,72 +4,72 @@ import Toolbar from "@mui/material/Toolbar";
 import * as React from "react";
 import CurrentChat from "./CurrentChat";
 import ChatRooms from "./ChatRooms";
-import { makeStyles } from "@mui/styles";
-import { Message } from "./types";
+import axios from "axios";
+import { Message, chatRoom } from "./types";
 import ChatUsers from "./ChatUsers";
 
-let chatRooms = [
-  {
-    id: 0,
-    name: "chatroom1",
-    users: ["Joann", "Thib"],
-    messageList: [
-      {
-        user: "Joann",
-        content: "message de joann",
-        hour: "22h31",
-      },
-      {
-        user: "Thib",
-        content: "message de thib",
-        hour: "22h31",
-      },
-    ],
-  },
-  {
-    id: 1,
-    name: "chatroom2",
-    users: ["Adrien", "Tom"],
-    messageList: [
-      {
-        user: "Adrien",
-        content: "message de Adrien",
-        hour: "22h31",
-      },
-      {
-        user: "Tom",
-        content: "message de Tom",
-        hour: "22h31",
-      },
-    ],
-  },
-];
-
 function Chat() {
+  /*
+   *   REFS
+   */
+
   const myRef = React.useRef<null | HTMLDivElement>(null);
-  const [chatRoom, setChatRoom] = React.useState(chatRooms[0]);
+
+  /*
+   *   STATES
+   */
+  const [chatRooms, setChatRooms] = React.useState<chatRoom[]>([]);
+  const [chatRoom, setChatRoom] = React.useState<chatRoom>();
   const [currentRoomIndex, setCurrentRoomIndex] = React.useState(0);
-  const [messageList, setMessageList] = React.useState<Message[]>(
-    chatRooms[0].messageList
-  );
-  const [userList, setUserList] = React.useState(chatRooms[0].users);
-  function postMessage(message: Message) {
-    chatRooms[chatRoom.id].messageList = [...messageList, message];
-    setMessageList([...messageList, message]);
-  }
-  function changeRoom(index: number) {
-    setCurrentRoomIndex(index);
-    setChatRoom(chatRooms[index]);
-  }
+  const [messageList, setMessageList] = React.useState<Message[]>([]);
+  const [userList, setUserList] = React.useState<string[]>([]);
+
+  /*
+   *   HOOKS
+   */
+
   React.useEffect(() => {
-    setMessageList(chatRoom.messageList);
-    setUserList(chatRoom.users);
+    const fetchData = async () => {
+      const result = await axios("http://localhost:3001/chat");
+      setChatRooms(result.data);
+      setChatRoom(result.data[0]);
+      setMessageList(result.data[0].messageList);
+      setUserList(result.data[0].users);
+    };
+    fetchData();
+  }, []);
+
+  React.useEffect(() => {
+    if (chatRoom) {
+      setMessageList(chatRoom.messageList);
+      setUserList(chatRoom.users);
+    }
   }, [chatRoom]);
+
   React.useEffect(() => {
     if (myRef && myRef.current) {
       myRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
   }, [messageList]);
+
+  /*
+   *   FUNCTIONS
+   */
+
+  function postMessage(message: Message) {
+    if (chatRoom) {
+      chatRooms[chatRoom.id].messageList = [...messageList, message];
+      setMessageList([...messageList, message]);
+    }
+  }
+
+  function changeRoom(index: number) {
+    setCurrentRoomIndex(index);
+    setChatRoom(chatRooms[index]);
+  }
+  /*
+   *   RENDER
+   */
   return (
     <Box
       component="main"

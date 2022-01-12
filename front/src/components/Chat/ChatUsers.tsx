@@ -27,7 +27,6 @@ function ChatUsers({ userList }: ChatUsersProps) {
   return (
     <Grid item xs={12} md={4} lg={3} className={classes.ChatUsersContainer}>
       {userList.map((user, index) => {
-        console.log(user);
         return (
           <Button key={index} onClick={handleClick} className={classes.elem}>
             {user}

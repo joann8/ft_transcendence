@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Chat } from './chat.entity';
-import { CreateChatDto } from './create-chat-dto';
+import { Chat } from './entities/chat.entity';
+import { CreateChatDto } from './dto/create-chat-dto';
 
 @Injectable()
 export class ChatService {
@@ -11,7 +11,7 @@ export class ChatService {
 		private chatRepository: Repository<Chat>,
 	) {}
 
-	findAll() {
+	async findAll() {
 		return this.chatRepository.find();
 	}
 
@@ -19,5 +19,13 @@ export class ChatService {
 		const newChat = this.chatRepository.create(createChatDto);
 		await this.chatRepository.save(newChat);
 		return newChat;
+	}
+
+	async removeOne(id: number) {
+		return this.chatRepository.delete(id);
+	}
+
+	async removeAll() {
+		return this.chatRepository.delete();
 	}
 }

@@ -27,7 +27,6 @@ function ChatRooms({ currentIndex, changeRoom, chatRooms }: ChatRoomsProps) {
   function handleClick(event: React.MouseEvent) {
     const element = event.currentTarget as HTMLInputElement;
     const index = element.getAttribute("data-index");
-    console.log(index);
     if (index) changeRoom(+index);
   }
   return (
