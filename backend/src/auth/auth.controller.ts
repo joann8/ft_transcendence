@@ -13,6 +13,7 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { userInfo } from 'os';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { SecretDto } from './dto/adminSecret.dto';
@@ -34,21 +35,21 @@ export class AuthController {
 	@Public()
 	@Get('login/42/redirect')
 	@UseGuards(FortyTwoAuthGuard)
+	@Redirect('/user')
 	async redir(@Req() req, @Res({ passthrough: true }) res) {
 		const { access_token, refresh_token } =
 			await this.authService.generateTokens(req.user);
 		console.log(`${req.user.id_pseudo} logged in with 42 intranet !`);
 		res.cookie('access_token', access_token);
-		res.cookie('refresh_token', refresh_token, { path: '/refresh' });
+		res.cookie('refresh_token', refresh_token);
 		// FIXME: REMOVE IN PRODUCTION
 		console.log(`access_token=${access_token}`);
-		return { access_token };
 	}
 	// LOGIN WITH 2FA
 	@Public()
 	@Post('2fa/authenticate')
 	@UseGuards(JwtAuthGuard)
-	@HttpCode(200)
+	@Redirect('/user')
 	async authenticateTwoFa(
 		@Req() req,
 		@Res({ passthrough: true }) res,
@@ -63,18 +64,16 @@ export class AuthController {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
 		const { access_token, refresh_token } =
-			await this.authService.generateTokens(req.user.id, true);
+			await this.authService.generateTokens(req.user, true);
 		res.cookie('access_token', access_token);
-		res.cookie('refresh_token', refresh_token, { path: '/refresh' });
+		res.cookie('refresh_token', refresh_token);
 		console.log(`${req.user.id_pseudo} authenticate with 2FA !`);
 		// FIXME: REMOVE IN PRODUCTION
 		console.log(`access_token=${access_token}`);
-		return req.user;
 	}
 	// LOGOUT FROM MY PROFILE
 	@Get('logout')
 	@HttpCode(200)
-	@Redirect('/')
 	async logoutCurrentUser(
 		@Req() req,
 		@Res({ passthrough: true }) res,
@@ -83,11 +82,11 @@ export class AuthController {
 		res.clearCookie('refresh_token');
 		this.authService.logout(req.user);
 		console.log(`${req.user.id_pseudo} logged out...`);
+		console.log(req.user);
 	}
 	// GIVE ADMIN ROLE TO USER (dto is in charge of secret verification)
 	@Post('admin')
 	@HttpCode(200)
-	@Redirect('/user')
 	async goAdmin(@Req() req, @Body() adminSecret: SecretDto): Promise<void> {
 		if (adminSecret.secret !== process.env['ADMIN_SECRET']) {
 			throw new ForbiddenException('Wrong secret');
@@ -97,7 +96,6 @@ export class AuthController {
 	// REMOVE ADMIN ROLE FROM CURRENT USER
 	@Delete('admin')
 	@HttpCode(200)
-	@Redirect('/user')
 	async removeAdmin(@Req() req): Promise<void> {
 		this.authService.removeAdmin(req.user);
 	}
@@ -129,11 +127,11 @@ export class AuthController {
 				'Wrong authentication code. Please try to generate 2FA QR Code first',
 			);
 		}
-		await this.authService.turnOnTwoFaAuth(req.user);
 		const { access_token, refresh_token } =
-			await this.authService.generateTokens(req.user.id, true);
+			await this.authService.generateTokens(req.user, true);
+		await this.authService.turnOnTwoFaAuth(req.user);
 		res.cookie('access_token', access_token);
-		res.cookie('refresh_token', refresh_token, { path: '/refresh' });
+		res.cookie('refresh_token', refresh_token);
 		console.log(`${req.user.id_pseudo} turned on 2FA !`);
 		// FIXME: REMOVE IN PRODUCTION
 		console.log(`access_token=${access_token}`);

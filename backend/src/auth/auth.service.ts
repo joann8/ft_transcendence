@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { Profile } from 'passport-42';
-import { JwtSecretRequestType, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { User, status, user_role } from 'src/user/entities/user.entity';
 import { authenticator } from 'otplib';
 import { Response } from 'express';

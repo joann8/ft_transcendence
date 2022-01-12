@@ -71,8 +71,7 @@ export class UserController {
 		@Req() req,
 		@Body() updateCurrentUserDto: UpdateCurrentUserDto,
 	): Promise<User> {
-		Object.assign(req.user, updateCurrentUserDto);
-		await this.userService.update(req.user.id, req.user);
+		await this.userService.update(req.user.id, updateCurrentUserDto);
 		return this.userService.findOne(req.user.id.toString());
 	}
 	// DELETE MY PROFILE
