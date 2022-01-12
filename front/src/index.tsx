@@ -2,7 +2,7 @@ import React, { createContext, Fragment, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { Route, Routes, Link, BrowserRouter as Router, Navigate } from "react-router-dom";
+import { Route, Routes, Link, BrowserRouter as Router, Navigate, useNavigate } from "react-router-dom";
 import MyContent from "./components/MyContent/MyContent";
 import Homepage from "./components/Homepage/Homepage";
 import NoPage from "./components/Errors/NoPage";
@@ -21,6 +21,8 @@ import GameIndex from "./components/GameModule";
 import GameModule from "./components/GameModule";
 import Login from "./components/Login";
 import { setFlagsFromString } from "v8";
+import PrivateRoute from "./components/PrivateRoute";
+import Test from "./Test";
 
 
 
@@ -35,56 +37,112 @@ useEffect(() => {
 
 function Root() {
 
-  const [isLoggedIn, setLogin] = useState(false);
-  const [test, setTest] = useState(true)
+  const [isAuth, setAuth] = useState(false);
   const [count, setCount] = useState(0)
   const [isMounted, setMounted] = useState(false)
 
 
 
+  /*
+  let isAuth = false
+
+  const setAuth = (bool : boolean) => {
+    isAuth = bool
+  }
+  */
+
+  //Deal with starting Component. Executed once only
+  useEffect(() => {
+    setMounted(true)
+    console.log("useEffect onMount isAuth = ", isAuth)
+  }, [])
+
+  useEffect(() => {
+    
+    console.log("useEffect Root is rendered")
+  })
+
   //Deal with logout code
+  /*
   useEffect(() => {
 
-    if (!isLoggedIn && isMounted) {
+    if (!isAuth && isMounted) {
       setCount(count + 1)
       console.log("Logout process")
     }
-    setMounted(true)
-  }, [isLoggedIn])
+  }, [isAuth])
+  */
 
-  if (!isLoggedIn) {
-    return (
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login count={count} login={isLoggedIn} setLogin={setLogin} />} />
-          <Route path="*" element={<Navigate to="/login" />} />
-        </Routes>
-      </Router>
-    )
-  }
-  else {
-    return (
-      <Router>
-        {/*<SideBars />*/}
-        <Routes>
-          <Route path="/" element={<SideBars login={isLoggedIn} setLogin={setLogin} />}>
-            <Route index element={<Homepage />} />
-            <Route path="login" element={<Login login={isLoggedIn}/>}/>
-            <Route path="game">
-              <Route index element={< GameMenu />} />
-              <Route path="game" element={<GamePage />} />
-            </Route>
-            <Route path="chat" element={<Chat />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="leaderboard" element={<Leaderboard />} />
-            <Route path="*" element={<NoPage />} />
+  /*
+    if (!isAuth) {
+      return (
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login count={count} login={isAuth} setLogin={setLogin} />} />
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        </Router>
+      )
+    }
+    else {
+      */
+  return (
+    <Router>
+      <Routes>
+        <Route path="/test" element={<Test/>}/>
+        <Route path="/login" element={<Login login={isAuth} setLogin={setAuth} />} />
+
+        <Route path="/" element={
+          <PrivateRoute login={isAuth}> <SideBars login={isAuth} setLogin={setAuth} /> </PrivateRoute>}>
+          <Route index element={
+            <PrivateRoute login={isAuth}> <Homepage /> </PrivateRoute>} />
+
+          <Route path="game">
+            <Route index element={
+              <PrivateRoute login={isAuth}> < GameMenu /></PrivateRoute>} />
+            <Route path="game" element={
+              <PrivateRoute login={isAuth}> <GamePage /> </PrivateRoute>} />
           </Route>
-        </Routes>
 
-      </Router>
-    );
-  }
+          <Route path="chat" element={
+            <PrivateRoute login={isAuth}> <Chat /> </PrivateRoute>} />
+          <Route path="profile" element={
+            <PrivateRoute login={isAuth}> <Profile /> </PrivateRoute>} />
+          <Route path="leaderboard" element={
+            <PrivateRoute login={isAuth}> <Leaderboard /> </PrivateRoute>} />
+            </Route>
+        {/*<Route path="*" element={<NoPage />} />*/}
+      </Routes>
+    </Router>
+  );
 }
+/*
+return (
+<Router>
+ <Routes>
+   <Route path="/login" element={<Login login={isAuth} setLogin={setAuth} />} />
+   <Route path="/" element={
+     <PrivateRoute login={isAuth}>
+       <SideBars login={isAuth} setLogin={setAuth} />
+     </PrivateRoute>}>
+       <PrivateRoute></PrivateRoute>
+     <Route index element={<Homepage />} />
+     <Route path="game">
+       <Route index element={< GameMenu />} />
+       <Route path="game" element={<GamePage />} />
+     </Route>
+     <Route path="chat" element={<Chat />} />
+     <Route path="profile" element={<Profile />} />
+     <Route path="leaderboard" element={<Leaderboard />} />
+    {/* <Route path="*" element={<NoPage />} />}
+   </Route>
+   <Route path="*" element={<NoPage />} />
+ </Routes>
+</Router>
+);
+}
+*/
+
 export default Root;
 
 ReactDOM.render(
