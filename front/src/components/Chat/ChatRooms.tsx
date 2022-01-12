@@ -1,25 +1,63 @@
-import { Container, Typography, Grid } from "@mui/material";
+import { Button, Typography, Grid, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-
 import * as React from "react";
+import { ChatRoomsProps, ThemeOptions } from "./types";
 
-const useStyle = makeStyles({
-  chatRoomsContainer: {
+const useStyle = makeStyles((theme: ThemeOptions) => ({
+  chatRoomsContainer: () => ({
+    margin: "0",
+    padding: "0",
     width: "100%",
     height: "600px",
-    backgroundColor: "blue",
-  },
-});
+    backgroundColor: "white",
+    borderRadius: "10px",
+    overflowY: "hidden",
+    overflowX: "hidden",
+    paddingRight: "10px",
+  }),
+  chatRoom: () => ({
+    width: "100%",
+    margin: "0",
+    padding: "0",
+  }),
+}));
 
-function ChatRooms() {
+function ChatRooms({ currentIndex, changeRoom, chatRooms }: ChatRoomsProps) {
   const classes = useStyle();
-
+  function handleClick(event: React.MouseEvent) {
+    const element = event.currentTarget as HTMLInputElement;
+    const index = element.getAttribute("data-index");
+    console.log(index);
+    if (index) changeRoom(+index);
+  }
   return (
-    <Grid item xs={12} md={4} lg={3}>
-      <Container className={classes.chatRoomsContainer}>
-        {" "}
-        ZONE DES CHATROOMS
-      </Container>
+    <Grid item xs={12} md={4} lg={3} className={classes.chatRoomsContainer}>
+      {chatRooms.map((room, index) => {
+        if (index !== currentIndex) {
+          return (
+            <Button
+              key={index}
+              data-index={index}
+              onClick={handleClick}
+              className={classes.chatRoom}
+            >
+              {room.name}
+            </Button>
+          );
+        } else {
+          return (
+            <Button
+              key={index}
+              data-index={index}
+              onClick={handleClick}
+              color="secondary"
+              className={classes.chatRoom}
+            >
+              {room.name}
+            </Button>
+          );
+        }
+      })}
     </Grid>
   );
 }

@@ -1,6 +1,6 @@
 import { Container, Typography, Avatar, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { CurrentChatProps, MessageProps, ThemeOptions } from "./types";
+import { MessagesProps, MessageProps, ThemeOptions } from "./types";
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
   messagesContainer: () => ({
@@ -10,7 +10,6 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
     height: "500px",
     backgroundColor: "white",
     borderRadius: "10px",
-    //border: "solid",
     overflowY: "scroll",
     overflowX: "hidden",
   }),
@@ -48,7 +47,7 @@ function Message({ message }: MessageProps) {
       columnSpacing={3}
       rowSpacing={0}
       className={classes.message}
-      justifyContent="flex-end"
+      //justifyContent="flex-end"
     >
       <Grid item xs={12} md={12} lg={12}>
         <Typography component="p" align="center" variant="caption">
@@ -85,7 +84,7 @@ function Message({ message }: MessageProps) {
     </Grid>
   );
 }
-function Messages({ messageList, innerref }: CurrentChatProps) {
+function Messages({ messageList, innerref }: MessagesProps) {
   const classes = useStyle();
 
   return (

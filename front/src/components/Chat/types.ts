@@ -1,11 +1,27 @@
+type chatRoom = {
+  id: number;
+  name: string;
+  users: string[];
+  messageList: {
+    user: string;
+    content: string;
+    hour: string;
+  }[];
+};
+
 type Message = {
   user: string;
   content: string;
   hour: string;
 };
+type MessagesProps = {
+  messageList: Message[];
+  innerref: React.MutableRefObject<HTMLDivElement | null>;
+};
 type CurrentChatProps = {
   messageList: Message[];
   innerref: React.MutableRefObject<HTMLDivElement | null>;
+  submit: (message: Message) => void;
 };
 type MessageProps = {
   key: number;
@@ -13,6 +29,11 @@ type MessageProps = {
 };
 type MessagePostProps = {
   submit: (message: Message) => void;
+};
+type ChatRoomsProps = {
+  currentIndex: number;
+  changeRoom: (index: number) => void;
+  chatRooms: chatRoom[];
 };
 type ThemeOptions = {
   palette: {
@@ -23,8 +44,10 @@ type ThemeOptions = {
 };
 export type {
   Message,
-  CurrentChatProps,
+  MessagesProps,
   MessageProps,
   ThemeOptions,
   MessagePostProps,
+  CurrentChatProps,
+  ChatRoomsProps,
 };
