@@ -14,6 +14,7 @@ import {
 	UseInterceptors,
 	ClassSerializerInterceptor,
 } from '@nestjs/common';
+import { Public } from 'src/auth/decorators/public.decorator';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateCurrentUserDto } from './dto/updateCurrentUser.dto';
@@ -47,6 +48,7 @@ export class UserController {
 		this.userService.remove(userId);
 	}
 	// SEARCH AN USER
+	@Public()
 	@Get(':id_pseudo')
 	@UseInterceptors(ClassSerializerInterceptor)
 	async getUser(@Param() userId: string): Promise<User> {
@@ -69,8 +71,7 @@ export class UserController {
 		@Req() req,
 		@Body() updateCurrentUserDto: UpdateCurrentUserDto,
 	): Promise<User> {
-		Object.assign(req.user, updateCurrentUserDto);
-		await this.userService.update(req.user.id, req.user);
+		await this.userService.update(req.user.id, updateCurrentUserDto);
 		return this.userService.findOne(req.user.id.toString());
 	}
 	// DELETE MY PROFILE

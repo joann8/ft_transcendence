@@ -32,7 +32,7 @@ export class UserService {
 		await this.usersRepository.delete(id);
 	}
 
-	async update(id: number, user: Object | User): Promise<UpdateResult> {
+	async update(id: number, user: Partial<User>): Promise<UpdateResult> {
 		return this.usersRepository.update(id, user);
 	}
 }
