@@ -35,6 +35,9 @@ type ChatRoomsProps = {
   changeRoom: (index: number) => void;
   chatRooms: chatRoom[];
 };
+type ChatUsersProps = {
+  userList: string[];
+};
 type ThemeOptions = {
   palette: {
     primary: {
@@ -50,4 +53,5 @@ export type {
   MessagePostProps,
   CurrentChatProps,
   ChatRoomsProps,
+  ChatUsersProps,
 };

@@ -15,7 +15,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
     overflowX: "hidden",
     paddingRight: "10px",
   }),
-  chatRoom: () => ({
+  elem: () => ({
     width: "100%",
     margin: "0",
     padding: "0",
@@ -39,7 +39,7 @@ function ChatRooms({ currentIndex, changeRoom, chatRooms }: ChatRoomsProps) {
               key={index}
               data-index={index}
               onClick={handleClick}
-              className={classes.chatRoom}
+              className={classes.elem}
             >
               {room.name}
             </Button>
@@ -51,13 +51,16 @@ function ChatRooms({ currentIndex, changeRoom, chatRooms }: ChatRoomsProps) {
               data-index={index}
               onClick={handleClick}
               color="secondary"
-              className={classes.chatRoom}
+              className={classes.elem}
             >
               {room.name}
             </Button>
           );
         }
       })}
+      <Button variant="contained" className={classes.elem}>
+        CREATE ROOM
+      </Button>
     </Grid>
   );
 }

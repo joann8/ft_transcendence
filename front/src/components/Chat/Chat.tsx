@@ -12,7 +12,7 @@ let chatRooms = [
   {
     id: 0,
     name: "chatroom1",
-    users: ["Joann, Thib"],
+    users: ["Joann", "Thib"],
     messageList: [
       {
         user: "Joann",
@@ -29,7 +29,7 @@ let chatRooms = [
   {
     id: 1,
     name: "chatroom2",
-    users: ["Adrien, Tom"],
+    users: ["Adrien", "Tom"],
     messageList: [
       {
         user: "Adrien",
@@ -52,6 +52,7 @@ function Chat() {
   const [messageList, setMessageList] = React.useState<Message[]>(
     chatRooms[0].messageList
   );
+  const [userList, setUserList] = React.useState(chatRooms[0].users);
   function postMessage(message: Message) {
     chatRooms[chatRoom.id].messageList = [...messageList, message];
     setMessageList([...messageList, message]);
@@ -62,6 +63,7 @@ function Chat() {
   }
   React.useEffect(() => {
     setMessageList(chatRoom.messageList);
+    setUserList(chatRoom.users);
   }, [chatRoom]);
   React.useEffect(() => {
     if (myRef && myRef.current) {
@@ -94,7 +96,7 @@ function Chat() {
             messageList={messageList}
             submit={postMessage}
           />
-          <ChatUsers></ChatUsers>
+          <ChatUsers userList={userList}></ChatUsers>
         </Grid>
       </Container>
     </Box>
