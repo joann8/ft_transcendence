@@ -13,6 +13,7 @@ import {
 	Redirect,
 	UseInterceptors,
 	ClassSerializerInterceptor,
+	NotFoundException,
 } from '@nestjs/common';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
@@ -54,7 +55,7 @@ export class UserController {
 	async getUser(@Param() userId: string): Promise<User> {
 		const user = await this.userService.findOne(userId);
 		if (!user) {
-			throw new HttpException('This user does not exist', 404);
+			throw new NotFoundException('This user does not exist');
 		}
 		return user;
 	}

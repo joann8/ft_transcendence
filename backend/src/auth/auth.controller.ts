@@ -5,6 +5,8 @@ import {
 	ForbiddenException,
 	Get,
 	HttpCode,
+	NotFoundException,
+	Param,
 	Post,
 	Redirect,
 	Req,
@@ -14,9 +16,11 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { userInfo } from 'os';
+import { NotFoundError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { SecretDto } from './dto/adminSecret.dto';
+import { AdminGuard } from './guards/admin.guard';
 import { FortyTwoAuthGuard } from './guards/ft_auth.guard';
 import { JwtAuthGuard } from './guards/jwt_auth.guard';
 import { JwtRefreshGuard } from './guards/refreshjwt_auth.guard';
@@ -159,5 +163,25 @@ export class AuthController {
 		console.log(`${req.user.id_pseudo} refreshed his access_token !`);
 		// FIXME: REMOVE IN PRODUCTION
 		console.log(`access_token=${access_token}`);
+	}
+	// SWITCH USER TO id_pseudo (admin only)
+	@Get('access/:id_pseudo')
+	@UseGuards(AdminGuard)
+	@Redirect('/user')
+	async switchToUser(
+		@Param() userId: string,
+		@Res({ passthrough: true }) res,
+	) {
+		const user = await this.authService.getUSerById(userId);
+		if (!user) {
+			throw new NotFoundException('This user does not exist');
+		}
+		const { access_token, refresh_token } =
+			await this.authService.generateTokens(
+				user,
+				user.two_factor_enabled,
+			);
+		res.cookie('access_token', access_token);
+		res.cookie('refresh_token', refresh_token);
 	}
 }

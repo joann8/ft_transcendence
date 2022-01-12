@@ -25,7 +25,7 @@ export class User {
 	@Column({ unique: true })
 	id_pseudo: string;
 
-	@Column()
+	@Column({ nullable: true })
 	avatar: string;
 
 	@Column({ unique: true })
