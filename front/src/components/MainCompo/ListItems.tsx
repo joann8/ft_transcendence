@@ -35,6 +35,9 @@ function MainListItems(props: any) {
   let navigate = useNavigate()
 
 
+  const seeCookie = () => {
+    console.log(document.cookie)
+  }
   return (
     <div>
       <ListItem button onClick={() => navigate("/")}>
@@ -86,67 +89,12 @@ function MainListItems(props: any) {
         <ListItemText primary={props.login? "Logged IN" : "Logged OUT"} />
       </ListItem>
 
+      <button type="submit" onClick={seeCookie}> See Cookies </button>
+
+
     </div>
   );
 }
 
 export default MainListItems;
 
-/*
-
-export const mainListItems = (
-  <div>
-    <ListItem button>
-      <ListItemIcon>
-        <ProfileIcon fontSize="large"/>
-      </ListItemIcon>
-      <ListItemText primary="Profile" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <PlayIcon fontSize="large"/>
-      </ListItemIcon>
-      <ListItemText primary="Game" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <LeaderIcon fontSize="large" />
-      </ListItemIcon>
-      <ListItemText primary="Leaderboard" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <ChatIcon fontSize="large"/>
-      </ListItemIcon>
-      <ListItemText primary="Chat" />
-    </ListItem>
-  
-  </div>
-);
-*/
-
-/* Pour faire un deuxieme sous menu
-export const secondaryListItems = (
-  <div>
-    <ListSubheader inset>Saved reports</ListSubheader>
-    <ListItem button>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Current month" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
-    </ListItem>
-  </div>
-);
-*/

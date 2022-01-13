@@ -1,10 +1,23 @@
-import { Toolbar, Grid } from "@mui/material";
-import React, { Fragment } from "react";
-import { Navigate } from "react-router";
+import React from "react";
+import { Navigate, useLocation } from "react-router";
 
-function PrivateRoute(props : any){
-                    //call to TomBackEnd
+function PrivateRoute(props: any) {
+    const currentUrl = useLocation()
+    console.log(currentUrl)
+        //call to TomBackEnd
+    /*const auth = fetch(`${urlBackEnd}/login/42`,
+    {  
+        redirection_info : ${currentUrl}
+        jwtCookie_info : ${currentJwtCookie}
+    }
+    //Cas 1 : Auth ok --> Redirection vers currentUrl
+    //Cas 2: Auth necessaire --> Back_End redirection
+            //Auth double facteur --> en interne dans Back_end ?
+            // Auth fini --> Redirection vers currentUrl
+
+    //Cas 3 : Auth failed : Retry auth ? 
+    */
     const auth = props.login
-    return (auth ?  props.children : <Navigate to="/login"/>)
+    return (auth ? props.children : <Navigate to="/login" />)
 }
 export default PrivateRoute
