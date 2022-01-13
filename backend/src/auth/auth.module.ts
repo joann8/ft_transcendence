@@ -32,6 +32,7 @@ import { RefreshJwtStrategy } from './strategies/refreshjwt.strategy';
 		RefreshJwtStrategy,
 		{ provide: APP_GUARD, useClass: TwoFaJwtAuthGuard },
 	],
+	exports: [AuthService],
 	controllers: [AuthController],
 })
 export class AuthModule {}
