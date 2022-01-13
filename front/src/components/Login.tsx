@@ -45,8 +45,8 @@ export default function Login(props: any) {
 
 
         console.log("42 redirection done")
-
-      /*  if (props.login === false) {
+/*
+      if (props.login === false) {
             props.setLogin(true)
             console.log("Login.tsx : isAuth =", props.login)
             navigate("/")

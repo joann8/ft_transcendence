@@ -37,7 +37,7 @@ useEffect(() => {
 
 function Root() {
 
-  const [isAuth, setAuth] = useState(false);
+  const [isAuth, setAuth] = useState((document.cookie !== '') ? true : false);
   const [count, setCount] = useState(0)
   const [isMounted, setMounted] = useState(false)
 
@@ -53,6 +53,8 @@ function Root() {
 
   //Deal with starting Component. Executed once only
   useEffect(() => {
+    const tmp = document.cookie
+ 
     setMounted(true)
     console.log("useEffect onMount isAuth = ", isAuth)
   }, [])
@@ -90,8 +92,7 @@ function Root() {
     <Router>
       <Routes>
         <Route path="/test" element={<Test/>}/>
-        <Route path="/login" element={<Login login={isAuth} setLogin={setAuth} />} />
-
+        <Route path="/login" element={ isAuth ?  <Navigate to="/"/> : <Login login={isAuth} setLogin={setAuth} /> }/>
         <Route path="/" element={
           <PrivateRoute login={isAuth}> <SideBars login={isAuth} setLogin={setAuth} /> </PrivateRoute>}>
           <Route index element={

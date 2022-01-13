@@ -46,6 +46,8 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
+
+
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     '& .MuiDrawer-paper': {
@@ -153,6 +155,8 @@ export default function SideBar(props: any) {
             <Divider />
           </Drawer>
           <Outlet/>
+
+
 
         </Box>
       </ThemeProvider>

@@ -17,6 +17,8 @@ import Leaderboard from "../Leaderboard";
 import GameMenu from "../Game/GameMenu";
 import GamePage from "../Game/GamePage";
 import { useNavigate } from "react-router";
+import { Cookie } from "@mui/icons-material";
+import cookie  from "react-cookie";
 
 /* Pour une deuxieme liste
 import ListSubheader from '@mui/material/ListSubheader';
@@ -27,9 +29,10 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 function MainListItems(props: any) {
 
 
-  const handleChange = () => {
-    console.log("handleChange")
-    props.handleLogout()
+  const handleLogout = () => {
+    //delete le cookie
+      document.cookie = "accept_token; expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+    props.setLogin(false)
   }
 
   let navigate = useNavigate()
@@ -75,7 +78,7 @@ function MainListItems(props: any) {
         <ListItemText primary="Chat" />
       </ListItem>
 
-      <ListItem button onClick={() => props.setLogin(false)}>
+      <ListItem button onClick={handleLogout}>
         <ListItemIcon>
           <LogoutIcon/>
         </ListItemIcon>
