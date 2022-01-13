@@ -5,7 +5,7 @@ import {
 	IsPositive,
 	Min,
 } from 'class-validator';
-import { Chat } from 'src/chat/entities/chat.entity';
+import { Channel } from 'src/chat/channel/entities/channel.entity';
 import { status, user_role } from '../entities/user.entity';
 
 export class CreateUserDto {
@@ -39,5 +39,5 @@ export class CreateUserDto {
 	achievement2: boolean;
 
 	@IsOptional()
-	chatList: Chat[];
+	chatList: Channel[];
 }

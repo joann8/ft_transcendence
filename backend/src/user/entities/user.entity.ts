@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Chat } from 'src/chat/entities/chat.entity';
+import { Channel } from 'src/chat/channel/entities/channel.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 export enum status {
@@ -57,6 +57,6 @@ export class User {
 	@Column({ default: false })
 	achievement2?: boolean;
 
-	@OneToMany((type) => Chat, (chat) => chat.id_chat)
-	chatList?: Chat[];
+	@OneToMany((type) => Channel, (channel) => channel.id_channel)
+	channelList?: Channel[];
 }

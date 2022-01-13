@@ -6,6 +6,5 @@ export class Message {
 	@PrimaryGeneratedColumn()
 	id_message: number;
 	@Column({ default: 'default' })
-	//mettre en unique ?
 	content: string;
 }

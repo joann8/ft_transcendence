@@ -11,13 +11,24 @@ export class MessagesService {
 	) {}
 
 	async findAll() {
-		return 'ceci est la liste de tout les messages';
-		//return this.messageRepository.find();
+		return this.messageRepository.find();
 	}
-
+	async findOne(id: number) {
+		return this.messageRepository.findOne(id);
+	}
 	async createOne(createMessageDto: CreateMessageDto) {
 		const newChat = this.messageRepository.create(createMessageDto);
 		await this.messageRepository.save(newChat);
 		return newChat;
+	}
+	async removeOne(id: number) {
+		return this.messageRepository.delete(id);
+	}
+
+	async removeAll() {
+		const entities = await this.findAll();
+		return this.messageRepository.delete(
+			entities.map((elem) => elem.id_message),
+		);
 	}
 }

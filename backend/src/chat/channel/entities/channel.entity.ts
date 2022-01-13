@@ -2,9 +2,9 @@ import { User } from 'src/user/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Chat {
+export class Channel {
 	@PrimaryGeneratedColumn()
-	id_chat: number;
+	id_channel: number;
 	@Column({ default: 'default' })
 	name: string;
 	//@ManyToOne((type) => User, (user) => user.id)

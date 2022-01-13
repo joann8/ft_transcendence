@@ -1,6 +1,6 @@
 import { IsDefined } from 'class-validator';
 
-export class CreateChatDto {
+export class CreateChannelDto {
 	@IsDefined()
 	name: string;
 }
