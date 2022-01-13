@@ -5,7 +5,7 @@ import {
 	IsPositive,
 	Min,
 } from 'class-validator';
-import { Channel } from 'diagnostics_channel';
+import { Channel } from '../../chat/channel/entities/channel.entity';
 import { status, user_role } from '../entities/user.entity';
 
 export class UpdateUserDto {
