@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { Channel } from './entities/channel.entity';
 import { CreateChannelDto } from './dto/create-channel-dto';
+import { Message } from '../messages/entities/message.entity';
 
 @Injectable()
 export class ChannelService {
@@ -13,6 +14,9 @@ export class ChannelService {
 
 	async findAll() {
 		return this.channelRepository.find();
+	}
+	async findMessagesOfOne(id: number) {
+		return await getRepository(Message).find({ channel: { id: id } });
 	}
 	async findOne(id: number) {
 		return this.channelRepository.findOne(id);
@@ -29,8 +33,6 @@ export class ChannelService {
 
 	async removeAll() {
 		const entities = await this.findAll();
-		return this.channelRepository.delete(
-			entities.map((elem) => elem.id_channel),
-		);
+		return this.channelRepository.delete(entities.map((elem) => elem.id));
 	}
 }

@@ -1,6 +1,13 @@
 import { Exclude } from 'class-transformer';
 import { Channel } from 'src/chat/channel/entities/channel.entity';
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+	Column,
+	Entity,
+	JoinTable,
+	ManyToMany,
+	OneToMany,
+	PrimaryColumn,
+} from 'typeorm';
 
 export enum status {
 	OFFLINE = 'OFFLINE',
@@ -57,6 +64,7 @@ export class User {
 	@Column({ default: false })
 	achievement2?: boolean;
 
-	@OneToMany((type) => Channel, (channel) => channel.id_channel)
-	channelList?: Channel[];
+	@ManyToMany((type) => Channel)
+	@JoinTable()
+	channels: Channel[];
 }

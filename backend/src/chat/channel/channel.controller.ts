@@ -13,34 +13,39 @@ import { CreateChannelDto } from './dto/create-channel-dto';
 
 @Controller('channel')
 export class ChannelController {
-	constructor(private readonly chatService: ChannelService) {}
+	constructor(private readonly channelService: ChannelService) {}
 
 	@Public()
 	@Get('/')
 	findAll() {
-		return this.chatService.findAll();
+		return this.channelService.findAll();
+	}
+	@Public()
+	@Get(':id/messages')
+	findChannelOfOne(@Param('id', ParseIntPipe) id: number) {
+		return this.channelService.findMessagesOfOne(id);
 	}
 	@Public()
 	@Get(':id')
 	findOne(@Param('id', ParseIntPipe) id: number) {
-		return this.chatService.findOne(id);
+		return this.channelService.findOne(id);
 	}
 	@Public()
 	@Post()
 	createOne(@Body() createChannelDto: CreateChannelDto) {
 		console.log(createChannelDto);
-		return this.chatService.createOne(createChannelDto);
+		return this.channelService.createOne(createChannelDto);
 	}
 
 	@Public()
 	@Delete()
 	removeAll() {
-		return this.chatService.removeAll();
+		return this.channelService.removeAll();
 	}
 
 	@Public()
 	@Delete(':id')
 	removeOne(@Param('id', ParseIntPipe) id: number) {
-		return this.chatService.removeOne(id);
+		return this.channelService.removeOne(id);
 	}
 }

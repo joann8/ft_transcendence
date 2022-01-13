@@ -41,5 +41,5 @@ export class UpdateUserDto {
 	achievement2: boolean;
 
 	@IsOptional()
-	chatList: Channel[];
+	channels: Channel[];
 }

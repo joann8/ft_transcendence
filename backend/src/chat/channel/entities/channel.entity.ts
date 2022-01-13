@@ -1,12 +1,27 @@
+import { Message } from 'src/chat/messages/entities/message.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+	Column,
+	Entity,
+	JoinTable,
+	ManyToMany,
+	ManyToOne,
+	OneToMany,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Channel {
 	@PrimaryGeneratedColumn()
-	id_channel: number;
+	id: number;
 	@Column({ default: 'default' })
 	name: string;
-	//@ManyToOne((type) => User, (user) => user.id)
-	//chanOwner: number;
+	@OneToMany((type) => Message, (message) => message.channel, {
+		cascade: true,
+	})
+	messages: Message[];
+
+	@ManyToMany((type) => User)
+	@JoinTable()
+	users: User[];
 }

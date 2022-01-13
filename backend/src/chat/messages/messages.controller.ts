@@ -22,6 +22,11 @@ export class MessagesController {
 		return this.messagesService.findAll();
 	}
 	@Public()
+	@Get(':id/channel')
+	findMessagesOfOne(@Param('id', ParseIntPipe) id: number) {
+		return this.messagesService.findMessagesOfOne(id);
+	}
+	@Public()
 	@Get(':id')
 	findOne(@Param('id', ParseIntPipe) id: number) {
 		return this.messagesService.findOne(id);

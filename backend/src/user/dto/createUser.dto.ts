@@ -39,5 +39,5 @@ export class CreateUserDto {
 	achievement2: boolean;
 
 	@IsOptional()
-	chatList: Channel[];
+	channels: Channel[];
 }
