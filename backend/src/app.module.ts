@@ -11,6 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { Chat } from './chat/chat.entity';
 import { AdminModule } from './admin/admin.module';
+import { EventsModule } from './events/events.module';
+import { EventsGateway } from './events/events.gateway';
 
 @Module({
 	imports: [
@@ -33,8 +35,9 @@ import { AdminModule } from './admin/admin.module';
 		ChatModule,
 		AuthModule,
 		AdminModule,
+		EventsModule
 	],
 	controllers: [AppController],
-	providers: [AppService, UserService, ChatService],
+	providers: [AppService, UserService, ChatService, EventsGateway],
 })
 export class AppModule {}

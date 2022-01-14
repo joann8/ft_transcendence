@@ -8,6 +8,7 @@ import { Typography } from '@mui/material';
 import RuleSet from './RuleSet';
 import { Container } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import GamePong from './GamePong';
 
 const useStyle = makeStyles({
   gameWindow: {
@@ -46,6 +47,7 @@ export default function GamePage() {
                     <Grid item spacing={2} xs={12} >
                       <Container className={classes.gameWindow} >
                         <Typography> Game Window </Typography>
+                        <GamePong width={800} height={600} />
                       </Container>
                     </Grid>
                     <RuleSet />
