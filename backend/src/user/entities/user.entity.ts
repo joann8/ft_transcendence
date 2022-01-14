@@ -1,10 +1,12 @@
 import { Exclude } from 'class-transformer';
 import { Channel } from 'src/chat/channel/entities/channel.entity';
+import { Message } from 'src/chat/messages/entities/message.entity';
 import {
 	Column,
 	Entity,
 	JoinTable,
 	ManyToMany,
+	ManyToOne,
 	OneToMany,
 	PrimaryColumn,
 } from 'typeorm';
@@ -64,7 +66,7 @@ export class User {
 	@Column({ default: false })
 	achievement2?: boolean;
 
-	@ManyToMany((type) => Channel)
+	@ManyToMany((type) => Channel, (channel) => channel.id, { cascade: true })
 	@JoinTable()
-	channels?: Channel[];
+	channels: Channel[];
 }

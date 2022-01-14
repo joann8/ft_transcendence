@@ -9,19 +9,22 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
+import { CreateChannelDto } from '../dto/create-channel-dto';
 
 @Entity()
 export class Channel {
 	@PrimaryGeneratedColumn()
 	id: number;
+
 	@Column({ default: 'default' })
 	name: string;
+
 	@OneToMany((type) => Message, (message) => message.channel, {
 		cascade: true,
 	})
 	messages: Message[];
 
-	@ManyToMany((type) => User)
+	@ManyToMany((type) => User, (user) => user.id, { cascade: true })
 	@JoinTable()
 	users: User[];
 }

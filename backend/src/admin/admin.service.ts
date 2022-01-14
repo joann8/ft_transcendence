@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
+import { CreateUserDto } from 'src/user/dto/createUser.dto';
 import { User, user_role } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 
@@ -14,7 +15,7 @@ export class AdminService {
 		await this.userService.update(user.id, { role: user_role.USER });
 	}
 
-	async createUser(user: User) {
+	async createUser(user: CreateUserDto) {
 		await this.userService.createEntity(user);
 		return this.userService.findOne(user.id.toString());
 	}

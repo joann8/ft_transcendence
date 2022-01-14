@@ -39,7 +39,4 @@ export class UpdateUserDto {
 
 	@IsOptional()
 	achievement2: boolean;
-
-	@IsOptional()
-	channels: Channel[];
 }

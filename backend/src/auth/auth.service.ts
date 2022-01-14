@@ -11,6 +11,7 @@ import { authenticator } from 'otplib';
 import { Response } from 'express';
 import { toFileStream } from 'qrcode';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/user/dto/createUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,7 @@ export class AuthService {
 					id_pseudo: profile.username,
 					email: profile.emails[0].value,
 					avatar: profile.photos[0].value,
-				});
+				} as CreateUserDto);
 			} catch (err) {
 				console.error(err);
 				return null;

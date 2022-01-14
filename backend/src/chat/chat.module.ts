@@ -4,5 +4,6 @@ import { MessagesModule } from './messages/messages.module';
 
 @Module({
 	imports: [ChannelModule, MessagesModule],
+	exports: [ChannelModule, MessagesModule],
 })
 export class ChatModule {}

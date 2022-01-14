@@ -35,6 +35,6 @@ import { AdminModule } from './admin/admin.module';
 		AdminModule,
 	],
 	controllers: [AppController],
-	providers: [AppService, UserService, ChatModule],
+	providers: [AppService, UserService],
 })
 export class AppModule {}
