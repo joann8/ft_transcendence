@@ -10,7 +10,7 @@ import ProfileIcon from "@mui/icons-material/AccountCircleOutlined";
 import LeaderIcon from "@mui/icons-material/EmojiEventsOutlined";
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout'; 
-import Profile from "../Profile";
+import Profile from "../Profile/Profile";
 import Chat from "../Chat/Chat";
 import Leaderboard from "../Leaderboard";
 
@@ -29,18 +29,10 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 function MainListItems(props: any) {
 
 
-  const handleLogout = () => {
-    //delete le cookie
-      document.cookie = "accept_token; expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
-    props.setLogin(false)
-  }
-
   let navigate = useNavigate()
 
 
-  const seeCookie = () => {
-    console.log(document.cookie)
-  }
+ 
   return (
     <div>
       <ListItem button onClick={() => navigate("/")}>
@@ -77,23 +69,6 @@ function MainListItems(props: any) {
         </ListItemIcon>
         <ListItemText primary="Chat" />
       </ListItem>
-
-      <ListItem button onClick={handleLogout}>
-        <ListItemIcon>
-          <LogoutIcon/>
-        </ListItemIcon>
-        <ListItemText primary="Logout" />
-      </ListItem>
-
-
-      <ListItem >
-        <ListItemIcon>
-        </ListItemIcon>
-        <ListItemText primary={props.login? "Logged IN" : "Logged OUT"} />
-      </ListItem>
-
-      <button type="submit" onClick={seeCookie}> See Cookies </button>
-
 
     </div>
   );

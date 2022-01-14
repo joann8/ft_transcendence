@@ -19,6 +19,7 @@ function PrivateRoute(props: any) {
 
     //Cas 3 : Auth failed : Retry auth ? 
     */
+   
     const auth = props.login
     console.log("Private Route auth = ", auth)
     return (auth ? props.children : <Navigate to="/login" />)

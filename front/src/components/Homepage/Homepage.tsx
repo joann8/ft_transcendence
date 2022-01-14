@@ -6,9 +6,7 @@ import Image from '../Images/black.jpg'
 import { Fragment, useState } from 'react';
 import { Button, CardActionArea, Typography } from '@mui/material';
 
-import GameMenu from '../Game/GameMenu';
-import GamePage from '../Game/GamePage';
-import Game from '../Game';
+
 import { useNavigate } from 'react-router';
 
 

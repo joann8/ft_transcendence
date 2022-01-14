@@ -5,7 +5,6 @@ import Paper from '@mui/material/Paper';
 import Image from '../Images/heads.jpg'
 import { Fragment } from 'react';
 import { Button, CardActionArea, Typography } from '@mui/material';
-import Game from '../Game';
 import RuleSet from './RuleSet';
 import SplitButton from './SplitButton';
 
