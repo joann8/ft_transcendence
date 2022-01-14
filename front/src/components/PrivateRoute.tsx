@@ -5,7 +5,9 @@ function PrivateRoute(props: any) {
     const currentUrl = useLocation()
     console.log(currentUrl)
         //call to TomBackEnd
-    /*const auth = fetch(`${urlBackEnd}/login/42`,
+    /*const auth = fetch(`${urlBackEnd}/login/42), {
+        myJwt : 
+    } ou autre ?
     {  
         redirection_info : ${currentUrl}
         jwtCookie_info : ${currentJwtCookie}
@@ -21,4 +23,5 @@ function PrivateRoute(props: any) {
     console.log("Private Route auth = ", auth)
     return (auth ? props.children : <Navigate to="/login" />)
 }
+
 export default PrivateRoute

@@ -13,12 +13,9 @@ export default function Login(props: any) {
 
     //Deals with Tom's back end to check Authentication
     function handleLogin() {
-
         //Get backEnd Json
-
-        window.location.href = urlBackEndLogin
-
         
+        window.location.href = urlBackEndLogin
      /*   const res = fetch(url42Auth,
             {
                 mode: 'cors'
@@ -42,8 +39,6 @@ export default function Login(props: any) {
                     }
                     fetchData();
         */
-
-
         console.log("42 redirection done")
 /*
       if (props.login === false) {

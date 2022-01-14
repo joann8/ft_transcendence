@@ -23,6 +23,7 @@ import Login from "./components/Login";
 import { setFlagsFromString } from "v8";
 import PrivateRoute from "./components/PrivateRoute";
 import Test from "./Test";
+import TwoFactor from "./components/Two_Factor";
 
 
 
@@ -91,13 +92,13 @@ function Root() {
   return (
     <Router>
       <Routes>
-        <Route path="/test" element={<Test/>}/>
         <Route path="/login" element={ isAuth ?  <Navigate to="/"/> : <Login login={isAuth} setLogin={setAuth} /> }/>
         <Route path="/" element={
           <PrivateRoute login={isAuth}> <SideBars login={isAuth} setLogin={setAuth} /> </PrivateRoute>}>
           <Route index element={
             <PrivateRoute login={isAuth}> <Homepage /> </PrivateRoute>} />
-
+        <Route path="twofactor" element={
+            <PrivateRoute login={isAuth}> <TwoFactor/> </PrivateRoute>} />  
           <Route path="game">
             <Route index element={
               <PrivateRoute login={isAuth}> < GameMenu /></PrivateRoute>} />

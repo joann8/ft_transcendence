@@ -34,7 +34,7 @@ export class AuthController {
 	@Public()
 	@Get('login/42/redirect')
 	@UseGuards(FortyTwoAuthGuard)
-	@Redirect('http://127.0.0.1:3000/chat')
+	@Redirect('http://127.0.0.1:3000/')
 	async redir(@Req() req, @Res({ passthrough: true }) res) {
 		const { access_token, refresh_token } =
 			await this.authService.generateTokens(req.user);
