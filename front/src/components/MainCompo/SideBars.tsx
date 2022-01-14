@@ -1,21 +1,18 @@
-import * as React from 'react';
-import { Fragment } from 'react';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-//import { mainListItems } from './ListItems';
-import MainListItems from './ListItems';
-import List from '@mui/material/List';
-import { Avatar, Box, CssBaseline } from '@mui/material';
-import App from '../../App';
-import { Outlet } from 'react-router';
-
+import * as React from "react";
+import { Fragment } from "react";
+import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import MuiDrawer from "@mui/material/Drawer";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import MainListItems from "./ListItems";
+import { Avatar, Box, CssBaseline } from "@mui/material";
+import { Outlet } from "react-router";
+import useFromApi from "../../ApiCalls/useFromApi";
 
 /* Notification clochette
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -29,58 +26,57 @@ interface AppBarProps extends MuiAppBarProps {
 }
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
+  shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
+  transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
+    transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    '& .MuiDrawer-paper': {
-      position: 'relative',
-      whiteSpace: 'nowrap',
-      width: drawerWidth,
-      transition: theme.transitions.create('width', {
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  "& .MuiDrawer-paper": {
+    position: "relative",
+    whiteSpace: "nowrap",
+    width: drawerWidth,
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    boxSizing: "border-box",
+    ...(!open && {
+      overflowX: "hidden",
+      transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
+        duration: theme.transitions.duration.leavingScreen,
       }),
-      boxSizing: 'border-box',
-      ...(!open && {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing(7),
-        [theme.breakpoints.up('sm')]: {
-          width: theme.spacing(9),
-        },
-      }),
-    },
-  }),
-);
+      width: theme.spacing(7),
+      [theme.breakpoints.up("sm")]: {
+        width: theme.spacing(9),
+      },
+    }),
+  },
+}));
 
 export default function SideBar(props: any) {
-
   const [open, setOpen] = React.useState(true);
+  const { error, isPending, data: user } = useFromApi("/user");
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
   const mdTheme = createTheme();
-
 
   return (
     <Fragment>
@@ -90,7 +86,7 @@ export default function SideBar(props: any) {
           <AppBar position="absolute" open={open}>
             <Toolbar
               sx={{
-                pr: '24px', // keep right padding when drawer closed
+                pr: "24px", // keep right padding when drawer closed
               }}
             >
               <IconButton
@@ -99,8 +95,8 @@ export default function SideBar(props: any) {
                 aria-label="open drawer"
                 onClick={toggleDrawer}
                 sx={{
-                  marginRight: '36px',
-                  ...(open && { display: 'none' }),
+                  marginRight: "36px",
+                  ...(open && { display: "none" }),
                 }}
               >
                 <MenuIcon />
@@ -122,24 +118,21 @@ export default function SideBar(props: any) {
                             
                             </IconButton>
                             */}
-              <Typography sx={{ margin: 1 }}>
-                Jacher
-              </Typography>
+              {user && (
+                <Typography sx={{ margin: 1 }}>{user.id_pseudo}</Typography>
+              )}
               <Divider orientation="vertical" sx={{ margin: 1 }} />
-              <Avatar sx={{ border: 1 }}>
-                JA
-              </Avatar>
+              {user && <Avatar src={user.avatar}></Avatar>}
               <Divider orientation="vertical" sx={{ margin: 1 }} />
-
             </Toolbar>
           </AppBar>
 
           <Drawer variant="permanent" open={open}>
             <Toolbar
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
                 px: [1],
               }}
             >
@@ -149,13 +142,12 @@ export default function SideBar(props: any) {
             </Toolbar>
             <Divider />
             {/*  <List>{mainListItems}</List>*/}
-            <MainListItems login={props.login} setLogin={props.setLogin} />
+            <MainListItems />
             <Divider />
           </Drawer>
-          <Outlet/>
-
+          <Outlet />
         </Box>
       </ThemeProvider>
     </Fragment>
-  )
+  );
 }
