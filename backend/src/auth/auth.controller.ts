@@ -33,13 +33,15 @@ export class AuthController {
 	@Public()
 	@Get('login/42/redirect')
 	@UseGuards(FortyTwoAuthGuard)
-	@Redirect('/user')
+	@Redirect('http://127.0.0.1:3000/')
 	async redir(@Req() req, @Res({ passthrough: true }) res) {
 		const { access_token, refresh_token } = await this.authService.ft_login(
 			req.user,
 		);
 		res.cookie('access_token', access_token);
 		res.cookie('refresh_token', refresh_token);
+		if (req.user.two_fa_enabled)
+			res.redirect('http://127.0.0.1:3000/twofactor');
 	}
 	// LOGIN WITH 2FA
 	@Public()
