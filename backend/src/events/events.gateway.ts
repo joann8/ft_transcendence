@@ -124,7 +124,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     // Fonctions de communications avec le front
 
     @SubscribeMessage('join_queue')
-    joinQueue(client: Socket) {
+    async joinQueue(client: Socket) : Promise <void> {
         if (this.clients.has(client))
             return; 
         this.clients.add(client);
@@ -148,7 +148,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     
     @SubscribeMessage('up_paddle')
-    handleUpPaddle(@ConnectedSocket() client : Socket, direction : string): void {
+    async handleUpPaddle(@ConnectedSocket() client : Socket, direction : string): Promise<void> {
         let match = this.matches.find(item => item.game.player1.socketId === client || item.game.player2.socketId === client);
         if (match)
             match.game.player1.socketId === client? this.updatePaddle(match.game.player1, -1) : this.updatePaddle(match.game.player2, -1);    
@@ -233,7 +233,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
     }
 
-    private resetGame(game : Game)
+    private async resetGame(game : Game) : Promise<void>
     {
         game.ball = {
             x: width / 2,

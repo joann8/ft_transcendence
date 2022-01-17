@@ -11,8 +11,10 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { Chat } from './chat/chat.entity';
 import { AdminModule } from './admin/admin.module';
-import { EventsModule } from './events/events.module';
-import { EventsGateway } from './events/events.gateway';
+import { PongModule } from './game/pong.module';
+import { PongGateway } from './game/pong.gateway';
+//import { EventsModule } from './events/events.module';
+//import { EventsGateway } from './events/events.gateway';
 
 @Module({
 	imports: [
@@ -35,9 +37,9 @@ import { EventsGateway } from './events/events.gateway';
 		ChatModule,
 		AuthModule,
 		AdminModule,
-		EventsModule
+		PongModule
 	],
 	controllers: [AppController],
-	providers: [AppService, UserService, ChatService, EventsGateway],
+	providers: [AppService, UserService, ChatService, PongGateway],
 })
 export class AppModule {}
