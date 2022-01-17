@@ -1,7 +1,8 @@
 import { Strategy, Profile, VerifyCallback } from 'passport-42';
 import { PassportStrategy } from '@nestjs/passport';
-import { HttpException, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
 import { AuthService } from '../auth.service';
+import { status, user_role } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(
@@ -22,10 +23,17 @@ export class FortyTwoStrategy extends PassportStrategy(
 		profile: Profile,
 		cb: VerifyCallback,
 	): Promise<any> {
-		const user = await this.authService.findOrCreate42User(profile);
+		const { user, created } = await this.authService.findOrCreate42User(
+			profile,
+		);
 		if (!user) {
 			throw new HttpException('User could not be created', 500);
+		} else if (user.status === status.BAN) {
+			throw new ForbiddenException(
+				'You are ban from this website, get out of my sight',
+			);
 		}
-		return cb(null, user);
+		user.status = status.ONLINE;
+		return { user, created };
 	}
 }

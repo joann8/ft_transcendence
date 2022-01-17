@@ -1,44 +1,56 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { AuthService } from 'src/auth/auth.service';
-import { CreateUserDto } from 'src/user/dto/createUser.dto';
-import { User, user_role } from 'src/user/entities/user.entity';
+import {
+	ForbiddenException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
+import { status, User, user_role } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AdminService {
-	constructor(
-		private userService: UserService,
-		private authService: AuthService,
-	) {}
+	constructor(private userService: UserService) {}
 
 	async removeAdmin(user: User) {
+		if (user.role === user_role.OWNER) {
+			throw new ForbiddenException(
+				"You can't remove your admin rights, boss",
+			);
+		}
 		await this.userService.update(user.id, { role: user_role.USER });
 	}
 
-	async createUser(user: CreateUserDto) {
-		await this.userService.createEntity(user);
-		return this.userService.findOne(user.id.toString());
-	}
-
-	async updateUser(id: number, user: Partial<User>) {
-		await this.userService.update(id, user);
-		return this.userService.findOne(id.toString());
-	}
-
-	async removeUser(id: string) {
-		await this.userService.remove(id);
-	}
-
-	async getUserAccess(id: string) {
+	async removeAdminRole(id: string) {
 		const user = await this.userService.findOne(id);
 		if (!user) {
 			throw new NotFoundException('This user does not exist');
 		}
-		const { access_token, refresh_token } =
-			await this.authService.generateTokens(
-				user,
-				user.two_factor_enabled,
+		if (user.role === user_role.OWNER) {
+			throw new ForbiddenException(
+				"You can't remove admin rights from the boss",
 			);
-		return { access_token, refresh_token };
+		}
+		await this.userService.update(user.id, { role: user_role.USER });
+	}
+
+	async banUser(admin: User, id: string) {
+		const user = await this.userService.findOne(id);
+		if (!user) {
+			throw new NotFoundException('This user does not exist');
+		}
+		if (user.role === user_role.OWNER) {
+			throw new ForbiddenException("You can't ban the boss");
+		}
+		if (admin.role === user_role.ADMIN && user.role === user_role.ADMIN) {
+			throw new ForbiddenException("You can't ban another admin");
+		}
+		await this.userService.update(user.id, { status: status.BAN });
+	}
+
+	async setAdmin(id: string) {
+		const user = await this.userService.findOne(id);
+		if (!user) {
+			throw new NotFoundException('This user does not exist');
+		}
+		await this.userService.update(user.id, { role: user_role.ADMIN });
 	}
 }

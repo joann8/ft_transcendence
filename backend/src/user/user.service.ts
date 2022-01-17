@@ -21,6 +21,10 @@ export class UserService {
 		}
 	}
 
+	async getNbUsers(): Promise<number> {
+		return this.usersRepository.count();
+	}
+
 	async findAll(): Promise<User[]> {
 		return this.usersRepository.find();
 	}
