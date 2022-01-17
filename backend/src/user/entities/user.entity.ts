@@ -6,11 +6,13 @@ export enum status {
 	OFFLINE = 'OFFLINE',
 	ONLINE = 'ONLINE',
 	IN_GAME = 'IN GAME',
+	BAN = 'BAN',
 }
 
 export enum user_role {
-	USER = 'user',
+	OWNER = 'owner',
 	ADMIN = 'admin',
+	USER = 'user',
 }
 
 /*	
