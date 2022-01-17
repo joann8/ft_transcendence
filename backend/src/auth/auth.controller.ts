@@ -1,14 +1,12 @@
 import {
 	Body,
 	Controller,
-	ForbiddenException,
 	Get,
 	HttpCode,
 	Post,
 	Redirect,
 	Req,
 	Res,
-	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -33,13 +31,20 @@ export class AuthController {
 	@Public()
 	@Get('login/42/redirect')
 	@UseGuards(FortyTwoAuthGuard)
-	@Redirect('/user')
 	async redir(@Req() req, @Res({ passthrough: true }) res) {
+		let front_url = 'http://127.0.0.1:3000';
+		const { user, created } = req.user;
 		const { access_token, refresh_token } = await this.authService.ft_login(
-			req.user,
+			user,
 		);
 		res.cookie('access_token', access_token);
 		res.cookie('refresh_token', refresh_token);
+		if (created) {
+			front_url += '/'; // MODIFIER ROUTE POUR ACCEDER A LA MODIFICATION DES VARS USER LORS DE LA CREATION
+		} else if (user.two_fa_enabled) {
+			front_url += '/two_factors'; // MODIFIER ROUTE POUR ACCEDER A LA MODIFICATION DES VARS USER LORS DE LA CREATION
+		}
+		res.redirect(front_url);
 	}
 	// LOGIN WITH 2FA
 	@Public()
