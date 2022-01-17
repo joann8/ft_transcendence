@@ -19,8 +19,7 @@ export class UserController {
 	// GET MY PROFILE
 	@Get()
 	async getCurrentUser(@Req() req): Promise<User> {
-		console.log('here');
-		return this.userService.findMe(req.user.id);
+		return req.user;
 	}
 	// SEARCH AN USER
 	@Get(':id_pseudo')

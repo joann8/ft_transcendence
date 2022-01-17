@@ -11,7 +11,7 @@ export class UserService {
 		private usersRepository: Repository<User>,
 	) {}
 
-	async createEntity(user: CreateUserDto) {
+	async createEntity(user: User) {
 		try {
 			const newUser = await this.usersRepository.create(user);
 			await this.usersRepository.save(newUser);
@@ -34,17 +34,15 @@ export class UserService {
 			relations: ['channels'],
 		});
 		if (!user) {
-			throw new NotFoundException('This user does not exist');
+			throw new NotFoundException('This user does not exist1');
 		}
 		return user;
 	}
 
 	async findOne(id: string): Promise<User> {
-		const user = await this.usersRepository.findOne(id, {
-			relations: ['channels'],
-		});
+		const user = await this.usersRepository.findOne(id);
 		if (!user) {
-			throw new NotFoundException('This user does not exist');
+			throw new NotFoundException('This user does not exist2');
 		}
 		return user;
 	}

@@ -36,7 +36,8 @@ export class AuthService {
 					email: profile.emails[0].value,
 					avatar: profile.photos[0].value,
 					role: role,
-				} as CreateUserDto);
+					channels: [],
+				});
 			} catch (err) {
 				console.error(err);
 				return null;
