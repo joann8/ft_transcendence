@@ -13,6 +13,10 @@ import { Message } from '../messages/entities/message.entity';
 import { User } from 'src/user/entities/user.entity';
 import { channel } from 'diagnostics_channel';
 import { AddUserDto } from './dto/add-user-dto';
+import {
+	channelRole,
+	userChannelRole,
+} from './entities/userChannelRole.entity';
 
 @Injectable()
 export class ChannelService {
@@ -96,7 +100,12 @@ export class ChannelService {
 		const newChannel = this.channelRepository.create({
 			name: createChannelDto.name,
 		});
-		newChannel.users = [user];
+		const newRole = getRepository(userChannelRole).create({
+			user: user,
+			channel: newChannel,
+			role: channelRole.user,
+		});
+		newChannel.users = [newRole];
 		return await this.channelRepository.save(newChannel);
 	}
 
@@ -109,37 +118,37 @@ export class ChannelService {
 	 * TODO: CHECK ROLES && EXISTANCES
 	 */
 
-	async addOneUser(id: number, addUserDto: AddUserDto, user: User) {
-		const channel = await this.channelRepository.findOne(id, {
-			relations: ['users'],
-		});
-		const newUser = await getRepository(User).findOne({
-			where: { id_pseudo: addUserDto.name },
-		});
-		/* If the channel doesn't exist */
-		if (!channel) throw new NotFoundException("The channel doesn't exist");
-		/* If the new user doesn't exist */
-		if (!newUser)
-			throw new NotFoundException(
-				"The user you are trying to add doesn't exist",
-			);
-		/* If the user is already in the channel */
-		if (channel.users.find((elem) => elem.id_pseudo === addUserDto.name))
-			throw new ForbiddenException('User already in the channel');
-		/* If there is already 5 users in the channel */
-		if (channel.users.length >= 5)
-			throw new ForbiddenException(
-				'There is already 5 users in the channel',
-			);
-		/** If user who add isn't in the channel */
-		if (!channel.users.find((elem) => elem.id === user.id))
-			throw new ForbiddenException(
-				'Only users who belong to the channel can add users',
-			);
-		/** We save */
-		channel.users = [...channel.users, newUser];
-		return await this.channelRepository.save(channel);
-	}
+	//	async addOneUser(id: number, addUserDto: AddUserDto, user: User) {
+	//		const channel = await this.channelRepository.findOne(id, {
+	//			relations: ['users'],
+	//		});
+	//		const newUser = await getRepository(User).findOne({
+	//			where: { id_pseudo: addUserDto.name },
+	//		});
+	//		/* If the channel doesn't exist */
+	//		if (!channel) throw new NotFoundException("The channel doesn't exist");
+	//		/* If the new user doesn't exist */
+	//		if (!newUser)
+	//			throw new NotFoundException(
+	//				"The user you are trying to add doesn't exist",
+	//			);
+	//		/* If the user is already in the channel */
+	//		if (channel.users.find((elem) => elem.id_pseudo === addUserDto.name))
+	//			throw new ForbiddenException('User already in the channel');
+	//		/* If there is already 5 users in the channel */
+	//		if (channel.users.length >= 5)
+	//			throw new ForbiddenException(
+	//				'There is already 5 users in the channel',
+	//			);
+	//		/** If user who add isn't in the channel */
+	//		if (!channel.users.find((elem) => elem.id === user.id))
+	//			throw new ForbiddenException(
+	//				'Only users who belong to the channel can add users',
+	//			);
+	//		/** We save */
+	//		channel.users = [...channel.users, newUser];
+	//		return await this.channelRepository.save(channel);
+	//	}
 
 	/**
 	 * *REMOVE A CHANNEL

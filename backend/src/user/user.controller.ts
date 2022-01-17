@@ -27,6 +27,7 @@ export class UserController {
 	@Get()
 	@UseInterceptors(ClassSerializerInterceptor)
 	async getCurrentUser(@Req() req): Promise<User> {
+		console.log('here');
 		return this.userService.findMe(req.user.id);
 	}
 	// SEARCH AN USER

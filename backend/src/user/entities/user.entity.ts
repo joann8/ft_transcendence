@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { Channel } from 'src/chat/channel/entities/channel.entity';
+import { userChannelRole } from 'src/chat/channel/entities/userChannelRole.entity';
 import { Message } from 'src/chat/messages/entities/message.entity';
 import {
 	Column,
@@ -66,7 +67,9 @@ export class User {
 	@Column({ default: false })
 	achievement2?: boolean;
 
-	@ManyToMany((type) => Channel, (channel) => channel.users)
+	@OneToMany((type) => userChannelRole, (role) => role.user, {
+		cascade: true,
+	})
 	@JoinTable()
-	channels: Channel[];
+	channels: userChannelRole[];
 }

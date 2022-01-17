@@ -98,14 +98,14 @@ export class ChannelController {
 	 * @param addUserDto Object received from the request with the information needed to add a user
 	 */
 
-	@Put(':id')
+	/*@Put(':id')
 	addOneUser(
 		@Req() req,
 		@Param('id', ParseIntPipe) id: number,
 		@Body() addUserDto: AddUserDto,
 	) {
 		return this.channelService.addOneUser(id, addUserDto, req.user);
-	}
+	}*/
 
 	/**
 	 * ?DELETE

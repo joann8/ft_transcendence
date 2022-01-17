@@ -11,6 +11,7 @@ import { Channel } from './chat/channel/entities/channel.entity';
 import { Message } from './chat/messages/entities/message.entity';
 import { ChatModule } from './chat/chat.module';
 import { AdminModule } from './admin/admin.module';
+import { userChannelRole } from './chat/channel/entities/userChannelRole.entity';
 
 @Module({
 	imports: [
@@ -24,7 +25,7 @@ import { AdminModule } from './admin/admin.module';
 			username: process.env.DATABASE_USERNAME,
 			password: process.env.DATABASE_PASSWORD,
 			database: process.env.DATABASE_NAME,
-			entities: [User, Channel, Message],
+			entities: [User, Channel, Message, userChannelRole],
 			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
 			keepConnectionAlive: true,

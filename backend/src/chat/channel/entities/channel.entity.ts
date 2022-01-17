@@ -10,6 +10,7 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel-dto';
+import { userChannelRole } from './userChannelRole.entity';
 
 @Entity()
 export class Channel {
@@ -24,6 +25,8 @@ export class Channel {
 	})
 	messages: Message[];
 
-	@ManyToMany((type) => User, (user) => user.channels, { cascade: true })
-	users: User[];
+	@OneToMany((type) => userChannelRole, (role) => role.channel, {
+		onDelete: 'CASCADE',
+	})
+	users: userChannelRole[];
 }
