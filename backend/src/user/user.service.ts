@@ -26,14 +26,12 @@ export class UserService {
 	}
 
 	async findMe(id: number): Promise<User> {
-		console.log('findme');
 		const user = await this.usersRepository.findOne(id, {
 			relations: ['channels'],
 		});
 		if (!user) {
 			throw new NotFoundException('This user does not exist');
 		}
-		console.log(user.channels);
 		return user;
 	}
 

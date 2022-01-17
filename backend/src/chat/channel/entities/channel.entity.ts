@@ -25,6 +25,5 @@ export class Channel {
 	messages: Message[];
 
 	@ManyToMany((type) => User, (user) => user.channels, { cascade: true })
-	@JoinTable()
 	users: User[];
 }
