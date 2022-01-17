@@ -1,21 +1,38 @@
-import { Toolbar, Grid } from "@mui/material";
+import { Send } from "@mui/icons-material";
+import { Grid, Button, Typography, Paper } from "@mui/material";
 import React, { Fragment } from "react";
 
-export default function Login(props: any) {
-  function handleLogin() {
-    window.location.href = "http://127.0.0.1:3001/login/42";
-  }
+export default function Login() {
   return (
     <Fragment>
-      <Toolbar />
-      <Grid container alignItems="center" justifyContent="center">
+      <Grid
+        container
+        alignItems="center"
+        justifyContent="center"
+        direction={"column"}
+        margin={6}
+      >
         <Grid item>
-          <h1 className="Login-Title">TRANSCENDENCE</h1>
-          <button type="submit" onClick={() => handleLogin()}>
-            {" "}
-            Login{" "}
-          </button>
+          <Typography
+            variant="h3"
+            align="center"
+            fontFamily={"Arial Black"}
+            marginBottom={4}
+          >
+            TRANSCENDENCE
+          </Typography>
         </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            href="http://127.0.0.1:3001/login/42"
+            size="large"
+            endIcon={<Send />}
+          >
+            Login with 42
+          </Button>
+        </Grid>
+        <Paper></Paper>
       </Grid>
     </Fragment>
   );
