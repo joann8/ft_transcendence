@@ -66,7 +66,7 @@ export class User {
 	@Column({ default: false })
 	achievement2?: boolean;
 
-	@ManyToMany((type) => Channel, (channel) => channel.id, { cascade: true })
+	@ManyToMany((type) => Channel, (channel) => channel.users)
 	@JoinTable()
 	channels: Channel[];
 }
