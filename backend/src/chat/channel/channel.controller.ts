@@ -10,23 +10,99 @@ import {
 	Req,
 	UseGuards,
 } from '@nestjs/common';
+import { User } from 'src/user/entities/user.entity';
 import { UpdateDateColumn } from 'typeorm';
 import { ChannelService } from './channel.service';
 import { AddUserDto } from './dto/add-user-dto';
 import { CreateChannelDto } from './dto/create-channel-dto';
+import { Channel } from './entities/channel.entity';
+import { ParseChannelPipe } from './pipes/parse-channel.pipe';
+import { ParseUserPseudo } from './pipes/parse-user-pseudo.pipe';
 
 @Controller('channel')
 export class ChannelController {
 	constructor(private readonly channelService: ChannelService) {}
 
 	/**
-	 * ? GET
+	 * ! LIST ALL CHANNELS
 	 * *http://localhost:3001/channel
 	 * @returns All the channels that exist
 	 */
 	@Get('/')
 	findAll() {
 		return this.channelService.findAll();
+	}
+
+	/**
+	 * ! RETURN CHANNEL { ID }
+	 * *http://localhost:3001/channel/{id}
+	 * @param channel Current channel
+	 * @returns The details of the current channel
+	 */
+
+	@Get(':id')
+	findOne(@Param('id', ParseChannelPipe) channel: Channel) {
+		//return this.channelService.findOne(id);
+		return channel;
+	}
+
+	/**
+	 * ! CREATE A CHANNEL
+	 * *http://localhost:3001/channel
+	 * @param req Use the request param to get the current User
+	 * @param createChannelDto Object received from the request with the information needed to create a Channel
+	 * @returns The new channel entity what we have created
+	 */
+
+	@Post()
+	createOne(@Req() req, @Body() createChannelDto: CreateChannelDto) {
+		return this.channelService.createOne(createChannelDto, req.user);
+	}
+
+	/**
+	 * ! DELETE A CHANNEL
+	 * *http://localhost:3001/channel/{id}
+	 * @param id Current channels we will working on
+	 * @returns the entity what we have deleted
+	 */
+
+	@Delete(':id')
+	removeOne(@Param('id', ParseIntPipe) id: number) {
+		return this.channelService.removeOne(id);
+	}
+
+	/**
+	 * ! ADD {targetPseudo} TO CHANNEL {ID}
+	 * *http://localhost:3001/channel/{id}/add/{targetPseudo}
+	 * @param req Use the request param to get the current User
+	 * @param channel Current channel
+	 * @param targetUser User we are trying to add to the channel
+	 */
+
+	@Put(':id/add/:targetPseudo')
+	addOneUser(
+		@Req() req,
+		@Param('id', ParseChannelPipe) channel: Channel,
+		@Param('targetPseudo', ParseUserPseudo) targetUser: User,
+	) {
+		return this.channelService.addOneUser(channel, targetUser, req.user);
+	}
+
+	/**
+	 * ! KICK {targetPseudo} OF CHANNEL {ID}
+	 * *http://localhost:3001/channel/{id}/add/{targetPseudo}
+	 * @param req Use the request param to get the current User
+	 * @param channel Current channel
+	 * @param targetUser User we are trying to add to the channel
+	 * @returns the channel updated
+	 */
+	@Put(':id/kick/:targetPseudo')
+	kickOneUser(
+		@Req() req,
+		@Param('id', ParseChannelPipe) channel: Channel,
+		@Param('targetPseudo', ParseUserPseudo) targetUser: User,
+	) {
+		return this.channelService.kickOneUser(channel, targetUser, req.user);
 	}
 
 	/**
@@ -66,48 +142,6 @@ export class ChannelController {
 	}
 
 	/**
-	 * ?GET
-	 * *http://localhost:3001/channel/{id}
-	 * @param id Current channels we will working on
-	 * @returns The details of the current channel
-	 */
-
-	@Get(':id')
-	findOne(@Param('id', ParseIntPipe) id: number) {
-		return this.channelService.findOne(id);
-	}
-
-	/**
-	 * ?POST
-	 * *http://localhost:3001/channel
-	 * @param req Use the request param to get the current User
-	 * @param createChannelDto Object received from the request with the information needed to create a Channel
-	 * @returns The new channel entity what we have created
-	 */
-
-	@Post()
-	createOne(@Req() req, @Body() createChannelDto: CreateChannelDto) {
-		return this.channelService.createOne(createChannelDto, req.user);
-	}
-
-	/**
-	 * ?PUT
-	 * *http://localhost:3001/channel/{id}
-	 * @param req Use the request param to get the current User
-	 * @param id Current channels we will working on
-	 * @param addUserDto Object received from the request with the information needed to add a user
-	 */
-
-	/*@Put(':id')
-	addOneUser(
-		@Req() req,
-		@Param('id', ParseIntPipe) id: number,
-		@Body() addUserDto: AddUserDto,
-	) {
-		return this.channelService.addOneUser(id, addUserDto, req.user);
-	}*/
-
-	/**
 	 * ?DELETE
 	 * *http://localhost:3001/channel/
 	 * @returns All the deleted channels entities
@@ -115,17 +149,5 @@ export class ChannelController {
 	@Delete()
 	removeAll() {
 		return this.channelService.removeAll();
-	}
-
-	/**
-	 * ?DELETE
-	 * *http://localhost:3001/channel/{id}
-	 * @param id Current channels we will working on
-	 * @returns the entity what we have deleted
-	 */
-
-	@Delete(':id')
-	removeOne(@Param('id', ParseIntPipe) id: number) {
-		return this.channelService.removeOne(id);
 	}
 }

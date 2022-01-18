@@ -7,8 +7,11 @@ import {
 	Req,
 	Put,
 	Redirect,
+	Post,
+	ParseIntPipe,
 } from '@nestjs/common';
 import { UpdateCurrentUserDto } from './dto/updateCurrentUser.dto';
+import { CreateUserDto } from './dto/createUser.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
@@ -19,12 +22,22 @@ export class UserController {
 	// GET MY PROFILE
 	@Get()
 	async getCurrentUser(@Req() req): Promise<User> {
-		return req.user;
+		return this.userService.findOne(req.user.userId);
 	}
 	// SEARCH AN USER
-	@Get(':id_pseudo')
-	async getUser(@Param() userId: string): Promise<User> {
-		return this.userService.findOne(userId);
+	@Get(':id')
+	async getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+		return this.userService.findOne(id);
+	}
+	// DELETE AN USER
+	@Delete(':id')
+	async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+		return this.userService.deleteOne(id);
+	}
+	// CREATE AN USER
+	@Post()
+	async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+		return this.userService.createOne(createUserDto);
 	}
 	// UPDATE MY PROFILE (Look at UpdateCurrentUserDto for available options)
 	@Put()

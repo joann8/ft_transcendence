@@ -69,9 +69,6 @@ export class User {
 	@Column({ default: false })
 	achievement2?: boolean;
 
-	@OneToMany((type) => userChannelRole, (role) => role.user, {
-		cascade: true,
-	})
-	@JoinTable()
-	channels: userChannelRole[];
+	@OneToMany((type) => userChannelRole, (role) => role.user)
+	roles!: userChannelRole[];
 }

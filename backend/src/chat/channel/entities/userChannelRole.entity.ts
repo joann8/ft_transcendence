@@ -1,23 +1,30 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+	Column,
+	Entity,
+	JoinColumn,
+	ManyToMany,
+	ManyToOne,
+	PrimaryColumn,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Channel } from './channel.entity';
 export enum channelRole {
-	owner,
-	admin,
-	user,
-	banned,
+	owner = 'owner',
+	admin = 'admin',
+	user = 'user',
+	banned = 'banned',
 }
 @Entity()
 export class userChannelRole {
-	@PrimaryColumn()
-	userId: number;
-
-	@PrimaryColumn()
-	artistId: number;
-	@ManyToOne((type) => User, (user) => user.channels)
-	user: User;
-	@ManyToOne((type) => Channel, (channel) => channel.users)
-	channel: Channel;
+	@PrimaryGeneratedColumn()
+	public id!: number;
+	@ManyToOne((type) => User, (user) => user.roles)
+	@JoinColumn()
+	public user!: User;
+	@ManyToOne((type) => Channel, (channel) => channel.roles)
+	@JoinColumn()
+	public channel!: Channel;
 	@Column({ default: channelRole.user })
-	role: channelRole;
+	public role!: channelRole;
 }

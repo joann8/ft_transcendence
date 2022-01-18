@@ -25,8 +25,9 @@ export class Channel {
 	})
 	messages: Message[];
 
-	@OneToMany((type) => userChannelRole, (role) => role.channel, {
-		onDelete: 'CASCADE',
-	})
-	users: userChannelRole[];
+	@OneToMany(
+		(type) => userChannelRole,
+		(userChannelRole) => userChannelRole.channel,
+	)
+	roles!: userChannelRole[];
 }

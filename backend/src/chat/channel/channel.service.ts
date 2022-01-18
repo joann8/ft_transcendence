@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	ForbiddenException,
 	HttpException,
 	Injectable,
@@ -11,7 +12,7 @@ import { Channel } from './entities/channel.entity';
 import { CreateChannelDto } from './dto/create-channel-dto';
 import { Message } from '../messages/entities/message.entity';
 import { User } from 'src/user/entities/user.entity';
-import { channel } from 'diagnostics_channel';
+import { CheckRoles } from './decorators/channel-role.decorator';
 import { AddUserDto } from './dto/add-user-dto';
 import {
 	channelRole,
@@ -33,7 +34,7 @@ export class ChannelService {
 
 	async findAll() {
 		return await this.channelRepository.find({
-			relations: ['users'],
+			relations: ['roles'],
 		});
 	}
 
@@ -46,7 +47,7 @@ export class ChannelService {
 
 	async findAllofUser(user: User) {
 		if (user) {
-			return user.channels;
+			return user.roles;
 		}
 	}
 
@@ -70,9 +71,9 @@ export class ChannelService {
 
 	async findUsersOfOne(id: number) {
 		const channel = await getRepository(Channel).findOne(id, {
-			relations: ['users'],
+			relations: ['roles'],
 		});
-		return channel.users;
+		return channel.roles;
 	}
 
 	/**
@@ -83,8 +84,8 @@ export class ChannelService {
 	 */
 
 	async findOne(id: number) {
-		return this.channelRepository.findOne(id, {
-			relations: ['users'],
+		return await this.channelRepository.findOne(id, {
+			relations: ['roles', 'roles.user'],
 		});
 	}
 
@@ -97,58 +98,74 @@ export class ChannelService {
 	 */
 
 	async createOne(createChannelDto: CreateChannelDto, user: User) {
-		const newChannel = this.channelRepository.create({
-			name: createChannelDto.name,
-		});
+		const newChannel = await this.channelRepository.save(
+			this.channelRepository.create({
+				name: createChannelDto.name,
+			}),
+		);
 		const newRole = getRepository(userChannelRole).create({
 			user: user,
 			channel: newChannel,
-			role: channelRole.user,
+			role: channelRole.owner,
 		});
-		newChannel.users = [newRole];
-		return await this.channelRepository.save(newChannel);
+		await getRepository(userChannelRole).save(newRole);
+		return newChannel;
 	}
 
 	/**
 	 * *ADD A NEW USER IN A GIVEN CHANNEL
-	 * @param id The current channel we are working on
-	 * @param addUserDto The information about the user we are trying to add
+	 * @param channel The current channel we are working on
+	 * @param targetUser The information about the user we are trying to add
 	 * @param user The user who try to add a new user
 	 * @returns The channel entity updated
 	 * TODO: CHECK ROLES && EXISTANCES
 	 */
 
-	//	async addOneUser(id: number, addUserDto: AddUserDto, user: User) {
-	//		const channel = await this.channelRepository.findOne(id, {
-	//			relations: ['users'],
-	//		});
-	//		const newUser = await getRepository(User).findOne({
-	//			where: { id_pseudo: addUserDto.name },
-	//		});
-	//		/* If the channel doesn't exist */
-	//		if (!channel) throw new NotFoundException("The channel doesn't exist");
-	//		/* If the new user doesn't exist */
-	//		if (!newUser)
-	//			throw new NotFoundException(
-	//				"The user you are trying to add doesn't exist",
-	//			);
-	//		/* If the user is already in the channel */
-	//		if (channel.users.find((elem) => elem.id_pseudo === addUserDto.name))
-	//			throw new ForbiddenException('User already in the channel');
-	//		/* If there is already 5 users in the channel */
-	//		if (channel.users.length >= 5)
-	//			throw new ForbiddenException(
-	//				'There is already 5 users in the channel',
-	//			);
-	//		/** If user who add isn't in the channel */
-	//		if (!channel.users.find((elem) => elem.id === user.id))
-	//			throw new ForbiddenException(
-	//				'Only users who belong to the channel can add users',
-	//			);
-	//		/** We save */
-	//		channel.users = [...channel.users, newUser];
-	//		return await this.channelRepository.save(channel);
-	//	}
+	async addOneUser(channel: Channel, targetUser: User, user: User) {
+		/* If the user is already in the channel */
+		if (channel.roles.find((elem) => elem.user.id === targetUser.id))
+			throw new ForbiddenException('User already in the channel');
+		/* If there is already 5 users in the channel */
+		if (channel.roles.length >= 5)
+			throw new ForbiddenException(
+				'There is already 5 users in the channel',
+			);
+		/** If user who add isn't in the channel */
+		if (!channel.roles.find((elem) => elem.user.id === user.id))
+			throw new ForbiddenException(
+				'Only users who belong to the channel can add users',
+			);
+		/** We save */
+		const userChannelRoleRepo = getRepository(userChannelRole);
+
+		const newRole = await userChannelRoleRepo.save(
+			userChannelRoleRepo.create({
+				user: targetUser,
+				channel: channel,
+				role: channelRole.user,
+			}),
+		);
+		channel.roles.push(newRole);
+		return await this.channelRepository.save(channel);
+	}
+
+	/**
+	 * *KICK A USER OF A GIVEN CHANNEL
+	 * @param channel The current channel we are working on
+	 * @param targetUser The information about the user we are trying to add
+	 * @param user The user who try to add a new user
+	 * @returns The channel entity updated
+	 * TODO: CHECK ROLES && EXISTANCES
+	 */
+	@CheckRoles()
+	async kickOneUser(channel: Channel, targetUser: User, user: User) {
+		const targetUserRole = targetUser.roles.find(
+			(elem) => elem.channel.id === channel.id,
+		);
+		/** KICK */
+		await getRepository(userChannelRole).remove(targetUserRole);
+		return channel;
+	}
 
 	/**
 	 * *REMOVE A CHANNEL
@@ -158,6 +175,14 @@ export class ChannelService {
 	 */
 
 	async removeOne(id: number) {
+		const channel = await this.channelRepository.findOne(id);
+		console.log(channel);
+		const roles = await getRepository(userChannelRole).find({
+			where: {
+				channel: channel,
+			},
+		});
+		await getRepository(userChannelRole).remove(roles);
 		return this.channelRepository.delete(id);
 	}
 

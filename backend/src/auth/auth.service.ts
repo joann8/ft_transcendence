@@ -36,7 +36,7 @@ export class AuthService {
 					email: profile.emails[0].value,
 					avatar: profile.photos[0].value,
 					role: role,
-					channels: [],
+					roles: [],
 				});
 			} catch (err) {
 				console.error(err);
@@ -75,7 +75,7 @@ export class AuthService {
 	}
 
 	async getUSerById(id: string): Promise<User> {
-		return this.userService.findOne(id);
+		return this.userService.findOne(+id);
 	}
 
 	async generateAccessToken(user: User, isTwoFa: boolean = false) {

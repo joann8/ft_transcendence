@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { userChannelRole } from 'src/chat/channel/entities/userChannelRole.entity';
+import { getRepository, Repository, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { User } from './entities/user.entity';
 
@@ -31,7 +32,7 @@ export class UserService {
 
 	async findMe(id: number): Promise<User> {
 		const user = await this.usersRepository.findOne(id, {
-			relations: ['channels'],
+			relations: ['roles'],
 		});
 		if (!user) {
 			throw new NotFoundException('This user does not exist1');
@@ -39,10 +40,24 @@ export class UserService {
 		return user;
 	}
 
-	async findOne(id: string): Promise<User> {
-		return await this.usersRepository.findOne(id);
+	async createOne(createUserDto: CreateUserDto): Promise<User> {
+		return await this.usersRepository.save(
+			this.usersRepository.create(createUserDto),
+		);
 	}
 
+	async findOne(id: number): Promise<User> {
+		return await this.usersRepository.findOne(id, {
+			relations: ['roles', 'roles.channel'],
+		});
+	}
+	async deleteOne(id: number): Promise<User> {
+		const user = await this.usersRepository.findOne(id, {
+			relations: ['roles'],
+		});
+		await getRepository(userChannelRole).remove(user.roles);
+		return await this.usersRepository.remove(user);
+	}
 	async remove(id: string): Promise<void> {
 		await this.usersRepository.delete(id);
 	}
