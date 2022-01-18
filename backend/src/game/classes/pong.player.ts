@@ -19,8 +19,7 @@ export class Player {
         this._left = left;
         this._paddle = new Paddle(left);
         this._interval = setInterval(
-            () => this._paddle.update(),
-            Const.PADDLE_SPEED,
+            () => this._paddle.update(), Const.FPS
         );
     }
   
@@ -39,12 +38,16 @@ export class Player {
         {
             this._score = Const.MAX_SCORE;
             this._isWinner = true;
-            console.log(`Player ${this._socketId} on the ${this._left? 'left' : 'right'} won!`);
+            console.log(`SerScore ******* HOURA, we have a winner!  ==> Player ${this._socketId.id} on the ${this._left? 'left' : 'right'} won!`);
         }
         else
             this._score = newScore;
     }
 
+    public getInterval() : NodeJS.Timer {
+        return this._interval;
+    }
+    
     public IsWinner() : boolean {
         return this._isWinner;
     }
@@ -65,7 +68,9 @@ export class Player {
 
     //Other Functions
 
-    public disconnect() : void {
+    public disconnect(room : string) : void {
         clearInterval(this._interval);
+        this.getSocket().leave(room);
+        console.log(`[ Player (${this.getSocket().id}) left the room ]`);
     }
 }

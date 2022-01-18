@@ -56,8 +56,10 @@ export default function GamePong(props: PropsGame) {
     
     const [game, setGame] = useState(initGame);
 
-    socket.on("updateState", (updateState : any) => {
-        setGame(updateState);
+    useEffect(() => {
+        socket.on("updateState", (updateState : any) => {
+            setGame(updateState);
+        });
     });
 
     useEffect (() => {

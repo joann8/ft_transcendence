@@ -6,8 +6,8 @@ export class Const {
     //PADDLE
     static readonly PADDLE_H : number = 100;
     static readonly PADDLE_W : number = 8;
-    static readonly PADDLE_X_L: number = Const.PADDLE_W; //2?
-    static readonly PADDLE_X_R: number = Const.WIDTH - Const.PADDLE_W - Const.PADDLE_X_L; // pas sure
+    static readonly PADDLE_X_L: number = 0; //2?
+    static readonly PADDLE_X_R: number = Const.WIDTH - Const.PADDLE_W; // pas sure
     static readonly PADDLE_Y : number= (Const.HEIGHT / 2) - (Const.PADDLE_H /2)
     static readonly PADDLE_SPEED : number = 10;
 

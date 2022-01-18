@@ -14,7 +14,7 @@ export class Paddle {
         this._left = left;
         this._x = left? Const.PADDLE_X_L : Const.PADDLE_X_R;
         this._y = Const.PADDLE_Y;
-        this._y_tmp = -1;
+        this._y_tmp = Const.PADDLE_Y;
         this._speed = Const.PADDLE_SPEED;
         this._height = Const.PADDLE_H;
         this._height = Const.PADDLE_W;
@@ -40,10 +40,13 @@ export class Paddle {
         return this._height;
     }
 
+  
     public isLeft() : boolean {
         return this._left;
     }
 
+
+    
     // Other functions
 
     public up() : void {
@@ -57,15 +60,15 @@ export class Paddle {
     }
 
     public update() : void {
-        if (this._y_tmp !== this._y)
-            this._y = this._y_tmp;
+       if (this._y_tmp !== this._y)
+        this._y = this._y_tmp;
     }
 
     public reset() : void
     {
         this._x = this._left? Const.PADDLE_X_L : Const.PADDLE_X_R;
         this._y = Const.PADDLE_Y;
-        this._y_tmp = -1;
+        this._y_tmp = Const.PADDLE_Y;
         this._speed = Const.PADDLE_SPEED;
         //this._height = Const.PADDLE_H;
         //this._height = Const.PADDLE_W;
@@ -79,6 +82,5 @@ export class Paddle {
     public resume() : void
     {
         this._speed = Const.PADDLE_SPEED;
-
     }
 }
