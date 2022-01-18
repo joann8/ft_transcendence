@@ -21,6 +21,7 @@ import Login from "./components/Login";
 import { setFlagsFromString } from "v8";
 import PrivateRoute from "./components/PrivateRoute";
 import TwoFactor from "./components/Two_Factor";
+import Edit from "./components/Profile/Edit";
 
 
 
@@ -91,19 +92,22 @@ function Root() {
     <Router>
       <Routes>
         <Route path="/" element={<SideBars />}>
-        <Route index element={<Homepage />} />
-        <Route path="game">
-          <Route index element={< GameMenu />} />
-          <Route path="game" element={<GamePage />} />
+          <Route index element={<Homepage />} />
+          <Route path="game">
+            <Route index element={< GameMenu />} />
+            <Route path="game" element={<GamePage />} />
+          </Route>
+          <Route path="chat" element={<Chat />} />
+          <Route path="profile" >
+            <Route index element={<Profile />} />
+            <Route path="edit" element={<Edit/>}/>
+          </Route>
+          <Route path="leaderboard" element={<Leaderboard />} />
+          <Route path="*" element={<NoPage />} />
         </Route>
-        <Route path="chat" element={<Chat />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="leaderboard" element={<Leaderboard />} />
-       <Route path="*" element={<NoPage />} />
-      </Route>
-      <Route path="*" element={<NoPage />} />
-    </Routes>
-   </Router >
+        <Route path="*" element={<NoPage />} />
+      </Routes>
+    </Router >
   )
 }
 
