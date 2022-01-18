@@ -1,103 +1,35 @@
 import Particles from "react-tsparticles";
-import masksvg from "./masksvg.svg";
+import transcendence from "./transcendenceSVG.svg";
 
-export default function LoginMask() {
+export default function LoginParticlesTitle() {
   return (
     <Particles
       id="tsparticles"
       options={{
         autoPlay: true,
         background: {
-          color: {
-            value: "#000000",
-          },
+          image:
+            "url('https://wallpaperboat.com/wp-content/uploads/2021/10/18/79418/squid-game-04.jpg')",
           position: "center",
-          opacity: 1,
         },
-        fps_limit: 300,
         detectRetina: false,
         duration: 0,
         interactivity: {
           detectsOn: "window",
           events: {
             onHover: {
-              enable: true,
+              enable: false,
               mode: "bubble",
             },
             resize: true,
           },
           modes: {
-            attract: {
-              distance: 200,
-              duration: 0.4,
-              factor: 1,
-              maxSpeed: 50,
-              speed: 1,
-            },
             bubble: {
               distance: 40,
               duration: 2,
               mix: false,
               opacity: 8,
               size: 6,
-            },
-            connect: {
-              distance: 80,
-              links: {
-                opacity: 0.5,
-              },
-              radius: 60,
-            },
-            grab: {
-              distance: 400,
-              links: {
-                blink: false,
-                consent: false,
-                opacity: 1,
-              },
-            },
-            light: {
-              area: {
-                gradient: {
-                  start: {
-                    value: "#ffffff",
-                  },
-                  stop: {
-                    value: "#000000",
-                  },
-                },
-                radius: 1000,
-              },
-              shadow: {
-                color: {
-                  value: "#000000",
-                },
-                length: 2000,
-              },
-            },
-            push: {
-              default: true,
-              groups: [],
-              quantity: 4,
-            },
-            remove: {
-              quantity: 2,
-            },
-            repulse: {
-              distance: 200,
-              duration: 0.4,
-              factor: 100,
-              speed: 1,
-              maxSpeed: 50,
-            },
-            slow: {
-              factor: 1,
-              radius: 0,
-            },
-            trail: {
-              delay: 1,
-              pauseOnStop: false,
-              quantity: 1,
             },
           },
         },
@@ -174,8 +106,6 @@ export default function LoginMask() {
               sizeOffset: true,
             },
           },
-          gradient: [],
-          groups: {},
           life: {
             count: 0,
             delay: {
@@ -198,19 +128,19 @@ export default function LoginMask() {
           links: {
             blink: false,
             color: {
-              value: "#ffffff",
+              value: "#471919",
             },
             consent: false,
             distance: 50,
             enable: true,
             frequency: 1,
-            opacity: 0.2,
+            opacity: 0.5,
             shadow: {
-              blur: 5,
+              blur: 10,
               color: {
-                value: "#00ff00",
+                value: "#bbbfb5",
               },
-              enable: false,
+              enable: true,
             },
             triangles: {
               enable: false,
@@ -237,12 +167,6 @@ export default function LoginMask() {
             direction: "none",
             drift: 0,
             enable: true,
-            gravity: {
-              acceleration: 9.81,
-              enable: false,
-              inverse: false,
-              maxSpeed: 50,
-            },
             path: {
               clamp: true,
               delay: {
@@ -264,7 +188,7 @@ export default function LoginMask() {
             },
             random: false,
             size: false,
-            speed: 1,
+            speed: 0.2,
             spin: {
               acceleration: 0,
               enable: false,
@@ -274,7 +198,7 @@ export default function LoginMask() {
               enable: false,
               length: 10,
               fillColor: {
-                value: "#000000",
+                value: "#471919",
               },
             },
             vibrate: false,
@@ -287,7 +211,7 @@ export default function LoginMask() {
               factor: 1000,
             },
             limit: 0,
-            value: 300,
+            value: 200,
           },
           opacity: {
             random: {
@@ -423,14 +347,18 @@ export default function LoginMask() {
         themes: [],
         zLayers: 100,
         polygon: {
+          position: {
+            x: "50",
+            y: "10",
+          },
           draw: {
             enable: true,
             stroke: {
               color: {
-                value: "#ffffff",
+                value: "#471919",
               },
-              width: 0.5,
-              opacity: 0.5,
+              width: 3,
+              opacity: 1,
             },
           },
           enable: true,
@@ -441,9 +369,9 @@ export default function LoginMask() {
             radius: 10,
             type: "path",
           },
-          scale: 2,
+          scale: 1.2,
           type: "inline",
-          url: masksvg,
+          url: transcendence,
         },
       }}
     />
