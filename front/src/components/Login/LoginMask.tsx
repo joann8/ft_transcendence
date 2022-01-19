@@ -1,4 +1,5 @@
 import Particles from "react-tsparticles";
+import { PolygonMaskType, ResponsiveMode } from "tsparticles";
 import transcendence from "./transcendenceSVG.svg";
 
 export default function LoginParticlesTitle() {
@@ -13,12 +14,12 @@ export default function LoginParticlesTitle() {
           position: "center",
         },
         detectRetina: false,
-        duration: 0,
+        fullScreen: true,
         interactivity: {
           detectsOn: "window",
           events: {
             onHover: {
-              enable: false,
+              enable: true,
               mode: "bubble",
             },
             resize: true,
@@ -27,9 +28,9 @@ export default function LoginParticlesTitle() {
             bubble: {
               distance: 40,
               duration: 2,
-              mix: false,
+              mix: true,
               opacity: 8,
-              size: 6,
+              size: 3,
             },
           },
         },
@@ -205,11 +206,6 @@ export default function LoginParticlesTitle() {
             warp: false,
           },
           number: {
-            density: {
-              enable: false,
-              area: 2000,
-              factor: 1000,
-            },
             limit: 0,
             value: 200,
           },
@@ -347,8 +343,12 @@ export default function LoginParticlesTitle() {
         themes: [],
         zLayers: 100,
         polygon: {
+          enable: true,
+          scale: 1.7,
+          type: "inline" as PolygonMaskType,
+          url: transcendence,
           position: {
-            x: 50 ,
+            x: 50,
             y: 10,
           },
           draw: {
@@ -361,17 +361,13 @@ export default function LoginParticlesTitle() {
               opacity: 1,
             },
           },
-          enable: true,
           inline: {
             arrangement: "equidistant",
           },
           move: {
             radius: 10,
-            type: "path",
+            type: "radius",
           },
-          scale: 1.2,
-          type: "inline" as PolygonMaskType,
-          url: transcendence,
         },
       }}
     />
