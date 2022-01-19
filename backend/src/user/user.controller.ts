@@ -22,7 +22,7 @@ export class UserController {
 	// GET MY PROFILE
 	@Get()
 	async getCurrentUser(@Req() req): Promise<User> {
-		return this.userService.findOne(req.user.userId);
+		return req.user;
 	}
 	// SEARCH AN USER
 	@Get(':id')

@@ -18,6 +18,7 @@ import {
 	channelRole,
 	userChannelRole,
 } from './entities/userChannelRole.entity';
+import { CheckBann } from './decorators/channel-banned.decorator';
 
 @Injectable()
 export class ChannelService {
@@ -25,69 +26,6 @@ export class ChannelService {
 		@InjectRepository(Channel)
 		private channelRepository: Repository<Channel>,
 	) {}
-
-	/**
-	 * *GET ALL CHANNELS
-	 * @returns An array of all the channels entities
-	 * TODO: CHECK ROLES && EXISTANCE
-	 */
-
-	async findAll() {
-		return await this.channelRepository.find({
-			relations: ['roles'],
-		});
-	}
-
-	/**
-	 * *GET ALL CHANNELS OF A USER
-	 * @param user The user who try to add a new user
-	 * @returns An array of all the channels entities of the user
-	 * TODO: TODO: CHECK ROLES && EXISTANCE
-	 */
-
-	async findAllofUser(user: User) {
-		if (user) {
-			return user.roles;
-		}
-	}
-
-	/**
-	 * *GET ALL MESSAGES OF A CHANNEL
-	 * @param id The current channel
-	 * @returns An array of all messages entities of the channel
-	 * TODO: TODO: CHECK ROLES && EXISTANCE
-	 */
-
-	async findMessagesOfOne(id: number) {
-		return await getRepository(Message).find({ channel: { id: id } });
-	}
-
-	/**
-	 * *GET ALL USERS OF A CHANNEL
-	 * @param id Current channel
-	 * @returns An array of all users of the given channel
-	 * TODO: CHECK ROLES && EXISTANCE
-	 */
-
-	async findUsersOfOne(id: number) {
-		const channel = await getRepository(Channel).findOne(id, {
-			relations: ['roles'],
-		});
-		return channel.roles;
-	}
-
-	/**
-	 * *GET A CHANNEL
-	 * @param id Current channel
-	 * @returns the channel of the given id
-	 * TODO: CHECK ROLES && EXISTANCE
-	 */
-
-	async findOne(id: number) {
-		return await this.channelRepository.findOne(id, {
-			relations: ['roles', 'roles.user'],
-		});
-	}
 
 	/**
 	 * *CREATE A CHANNEL
@@ -109,18 +47,39 @@ export class ChannelService {
 			role: channelRole.owner,
 		});
 		await getRepository(userChannelRole).save(newRole);
-		return newChannel;
+		return await this.channelRepository.findOne(newChannel, {
+			relations: ['roles'],
+		});
 	}
 
+	/**
+	 * *REMOVE A CHANNEL
+	 * @param id current channel
+	 * @returns the removed entity
+	 * TODO: CHECK ROLES && EXISTANCES
+	 */
+
+	async removeOne(id: number) {
+		const channel = await this.channelRepository.findOne(id);
+		const roles = await getRepository(userChannelRole).find({
+			where: {
+				channel: channel,
+			},
+		});
+
+		await getRepository(userChannelRole).remove(roles);
+		await this.channelRepository.delete(id);
+		return channel;
+	}
 	/**
 	 * *ADD A NEW USER IN A GIVEN CHANNEL
 	 * @param channel The current channel we are working on
 	 * @param targetUser The information about the user we are trying to add
 	 * @param user The user who try to add a new user
-	 * @returns The channel entity updated
+	 * @returns The new relation created
 	 * TODO: CHECK ROLES && EXISTANCES
 	 */
-
+	@CheckBann()
 	async addOneUser(channel: Channel, targetUser: User, user: User) {
 		/* If the user is already in the channel */
 		if (channel.roles.find((elem) => elem.user.id === targetUser.id))
@@ -146,7 +105,8 @@ export class ChannelService {
 			}),
 		);
 		channel.roles.push(newRole);
-		return await this.channelRepository.save(channel);
+		await this.channelRepository.save(channel);
+		return newRole;
 	}
 
 	/**
@@ -157,33 +117,180 @@ export class ChannelService {
 	 * @returns The channel entity updated
 	 * TODO: CHECK ROLES && EXISTANCES
 	 */
-	@CheckRoles()
+	@CheckBann()
+	@CheckRoles('kick')
 	async kickOneUser(channel: Channel, targetUser: User, user: User) {
 		const targetUserRole = targetUser.roles.find(
 			(elem) => elem.channel.id === channel.id,
 		);
 		/** KICK */
-		await getRepository(userChannelRole).remove(targetUserRole);
+		if (targetUserRole.role !== 'banned')
+			await getRepository(userChannelRole).remove(targetUserRole);
 		return channel;
 	}
 
 	/**
-	 * *REMOVE A CHANNEL
-	 * @param id current channel
-	 * @returns the removed entity
-	 * TODO: CHECK ROLES && EXISTANCES
+	 * * MUTE A USER IN A CHANNEL
+	 * @param channel The current channel we are working on
+	 * @param targetUser The user to mute
+	 * @param user The user who mute
+	 * @returns
+	 */
+	@CheckBann()
+	@CheckRoles('muted')
+	async muteOneUser(channel: Channel, targetUser: User, user: User) {
+		const targetUserRole = targetUser.roles.find(
+			(elem) => elem.channel.id === channel.id,
+		);
+		/** MUTE */
+		targetUserRole.role = channelRole.muted;
+		getRepository(userChannelRole).save(targetUserRole);
+		return channel;
+	}
+
+	/**
+	 * * ADMIN A USER IN A CHANNEL
+	 * @param channel The current channel we are working on
+	 * @param targetUser The user to set as admin
+	 * @param user The user who want to set the user as admin
+	 * @returns
+	 */
+	@CheckBann()
+	@CheckRoles('admin')
+	async adminOneUser(channel: Channel, targetUser: User, user: User) {
+		const targetUserRole = targetUser.roles.find(
+			(elem) => elem.channel.id === channel.id,
+		);
+		/** MUTE */
+		targetUserRole.role = channelRole.admin;
+		getRepository(userChannelRole).save(targetUserRole);
+		return channel;
+	}
+
+	/**
+	 * * BANN A USER OF THE CHANNEL
+	 * @param channel The current channel we are working on
+	 * @param targetUser The user to bann
+	 * @param user The user who want to bann someone
+	 * @returns
+	 */
+	@CheckBann()
+	@CheckRoles('banned')
+	async bannOneUser(channel: Channel, targetUser: User, user: User) {
+		const targetUserRole = targetUser.roles.find(
+			(elem) => elem.channel.id === channel.id,
+		);
+		/** MUTE */
+		targetUserRole.role = channelRole.banned;
+		getRepository(userChannelRole).save(targetUserRole);
+		return channel;
+	}
+	/**
+	 * * RESET A USER IN THE CHANNEL
+	 * @param channel The current channel we are working on
+	 * @param targetUser The user to reset
+	 * @param user The user who want to reset someone
+	 * @returns
+	 */
+	@CheckBann()
+	@CheckRoles('user')
+	async resetOneUser(channel: Channel, targetUser: User, user: User) {
+		const targetUserRole = targetUser.roles.find(
+			(elem) => elem.channel.id === channel.id,
+		);
+		/** MUTE */
+		targetUserRole.role = channelRole.user;
+		getRepository(userChannelRole).save(targetUserRole);
+		return channel;
+	}
+	/**
+	 * * GET THE LIST OF USER CHANNELS
+	 * @param user Current user
+	 * @returns list of users's channels
+	 */
+	async findAllofMe(user: User) {
+		const list = user.roles.map((role) => role.channel);
+		return list;
+	}
+	/**
+	 * *GET ALL USERS OF A CHANNEL
+	 * @returns An array of all roles of the given channel
+	 * TODO: CHECK ROLES && EXISTANCE
+	 */
+	@CheckBann()
+	async findUsersOfOne(channel: Channel, targetUser: User, user: User) {
+		return channel.roles;
+	}
+	/**
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 */
+	/**
+	 * *GET ALL CHANNELS
+	 * @returns An array of all the channels entities
+	 * TODO: CHECK ROLES && EXISTANCE
 	 */
 
-	async removeOne(id: number) {
-		const channel = await this.channelRepository.findOne(id);
-		console.log(channel);
-		const roles = await getRepository(userChannelRole).find({
-			where: {
-				channel: channel,
-			},
+	async findAll() {
+		return await this.channelRepository.find({
+			relations: ['roles'],
 		});
-		await getRepository(userChannelRole).remove(roles);
-		return this.channelRepository.delete(id);
+	}
+
+	/**
+	 * *GET ALL MESSAGES OF A CHANNEL
+	 * @param id The current channel
+	 * @returns An array of all messages entities of the channel
+	 * TODO: TODO: CHECK ROLES && EXISTANCE
+	 */
+	@CheckBann()
+	async findMessagesOfOne(channel: Channel, targetUser: User, user: User) {
+		return await getRepository(Message).find({
+			where: { channel: channel },
+		});
+	}
+
+	/**
+	 * *GET A CHANNEL
+	 * @param id Current channel
+	 * @returns the channel of the given id
+	 * TODO: CHECK ROLES && EXISTANCE
+	 */
+
+	async findOne(id: number) {
+		return await this.channelRepository.findOne(id, {
+			relations: ['roles', 'roles.user'],
+		});
 	}
 
 	/**

@@ -14,6 +14,7 @@ export enum channelRole {
 	admin = 'admin',
 	user = 'user',
 	banned = 'banned',
+	muted = 'muted',
 }
 @Entity()
 export class userChannelRole {

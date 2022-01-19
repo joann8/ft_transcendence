@@ -93,7 +93,7 @@ export class ChannelController {
 	 * *http://localhost:3001/channel/{id}/add/{targetPseudo}
 	 * @param req Use the request param to get the current User
 	 * @param channel Current channel
-	 * @param targetUser User we are trying to add to the channel
+	 * @param targetUser User we are trying to kick to the channel
 	 * @returns the channel updated
 	 */
 	@Put(':id/kick/:targetPseudo')
@@ -106,48 +106,109 @@ export class ChannelController {
 	}
 
 	/**
-	 * ?GET
-	 * *http://localhost:3001/channel/user
+	 * ! MUTE {targetPseudo} OF CHANNEL {ID}
+	 * *http://localhost:3001/channel/{id}/mute/{targetPseudo}
 	 * @param req Use the request param to get the current User
-	 * @returns All the channels of the current user.
+	 * @param channel Current channel
+	 * @param targetUser User we are trying to mute to the channel
+	 * @returns the channel updated
 	 */
-
-	@Get('/user')
-	findAllofUser(@Req() req) {
-		return this.channelService.findAllofUser(req.user);
+	@Put(':id/mute/:targetPseudo')
+	muteOneUser(
+		@Req() req,
+		@Param('id', ParseChannelPipe) channel: Channel,
+		@Param('targetPseudo', ParseUserPseudo) targetUser: User,
+	) {
+		return this.channelService.muteOneUser(channel, targetUser, req.user);
 	}
 
 	/**
-	 * ?GET
+	 * ! ADMIN {targetPseudo} OF CHANNEL {ID}
+	 * *http://localhost:3001/channel/{id}/admin/{targetPseudo}
+	 * @param req Use the request param to get the current User
+	 * @param channel Current channel
+	 * @param targetUser User we are trying to set as admin
+	 * @returns the channel updated
+	 */
+	@Put(':id/admin/:targetPseudo')
+	adminOneUser(
+		@Req() req,
+		@Param('id', ParseChannelPipe) channel: Channel,
+		@Param('targetPseudo', ParseUserPseudo) targetUser: User,
+	) {
+		return this.channelService.adminOneUser(channel, targetUser, req.user);
+	}
+
+	/**
+	 * ! BANN {targetPseudo} OF CHANNEL {ID}
+	 * *http://localhost:3001/channel/{id}/bann/{targetPseudo}
+	 * @param req Use the request param to get the current User
+	 * @param channel Current channel
+	 * @param targetUser User we are trying to bann
+	 * @returns the channel updated
+	 */
+	@Put(':id/bann/:targetPseudo')
+	bannOneUser(
+		@Req() req,
+		@Param('id', ParseChannelPipe) channel: Channel,
+		@Param('targetPseudo', ParseUserPseudo) targetUser: User,
+	) {
+		return this.channelService.bannOneUser(channel, targetUser, req.user);
+	}
+
+	/**
+	 * ! RESET AS USER {targetPseudo} OF CHANNEL {ID}
+	 * *http://localhost:3001/channel/{id}/reset-as-user/{targetPseudo}
+	 * @param req Use the request param to get the current User
+	 * @param channel Current channel
+	 * @param targetUser User we are trying to reset
+	 * @returns the channel updated
+	 */
+	@Put(':id/reset-as-user/:targetPseudo')
+	resetOneUser(
+		@Req() req,
+		@Param('id', ParseChannelPipe) channel: Channel,
+		@Param('targetPseudo', ParseUserPseudo) targetUser: User,
+	) {
+		return this.channelService.resetOneUser(channel, targetUser, req.user);
+	}
+
+	/**
+	 * ! LIST ALL CHANNELS OF CURRENT USER
+	 * *http://localhost:3001/channel/me
+	 * @returns All the channels that exist
+	 */
+	@Get('/me')
+	findAllofMe(@Req() req) {
+		return this.channelService.findAllofMe(req.user);
+	}
+
+	/**
+	 * ! LIST ALL USERS OF A CURRENT CHANNEL
+	 * *http://localhost:3001/channel/{id}/users
+	 * @returns All the channels that exist
+	 */
+	@Get('/:id/users')
+	findUsersOfOne(
+		@Req() req,
+		@Param('id', ParseChannelPipe) channel: Channel,
+	) {
+		return this.channelService.findUsersOfOne(channel, null, req.user);
+	}
+
+	/**
+	 * ! LIST ALL MESSAGES OF A CURRENT CHANNEL
 	 * *http://localhost:3001/channel/{id}/messages
-	 * @param id Current channels we will working on
-	 * @returns All the messages of the current channel
+	 * @param req use to get current user
+	 * @param channel current channel
+	 * @returns messages list of the channel
 	 */
 
 	@Get(':id/messages')
-	findChannelOfOne(@Param('id', ParseIntPipe) id: number) {
-		return this.channelService.findMessagesOfOne(id);
-	}
-
-	/**
-	 * ?GET
-	 * *http://localhost:3001/channel/{id}/users
-	 * @param id Current channels we will working on
-	 * @returns All the users of the current channel
-	 */
-
-	@Get(':id/users')
-	findUsersOfOne(@Param('id', ParseIntPipe) id: number) {
-		return this.channelService.findUsersOfOne(id);
-	}
-
-	/**
-	 * ?DELETE
-	 * *http://localhost:3001/channel/
-	 * @returns All the deleted channels entities
-	 */
-	@Delete()
-	removeAll() {
-		return this.channelService.removeAll();
+	findChannelOfOne(
+		@Req() req,
+		@Param('id', ParseChannelPipe) channel: Channel,
+	) {
+		return this.channelService.findMessagesOfOne(channel, null, req.user);
 	}
 }
