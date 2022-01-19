@@ -103,7 +103,6 @@ export class AuthService {
 	}
 
 	async generateTokens(user: User, isTwoFa: boolean = false) {
-		console.log(user);
 		const access_token = await this.generateAccessToken(user, isTwoFa);
 		const refresh_token = await this.generateRefreshToken(user, isTwoFa);
 		return { access_token, refresh_token };
