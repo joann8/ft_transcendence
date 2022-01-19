@@ -9,13 +9,15 @@ import Character from "../Images/Sung-Gi-Hoon.jpg"
 import { flexbox } from "@mui/system";
 import Badge from '@mui/material/Badge';
 import EditIcon from '@mui/icons-material/Edit';
-import { AdminPanelSettings, VideogameAsset, VideogameAssetSharp } from "@mui/icons-material";
+import { AdminPanelSettings, SettingsBackupRestoreOutlined, VideogameAsset, VideogameAssetSharp } from "@mui/icons-material";
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import VideogameAssetSharpIcon from '@mui/icons-material/VideogameAssetSharp';
 import PeopleIcon from '@mui/icons-material/People';
 import { Navigate, useNavigate } from "react-router";
 import { isReturnStatement } from "typescript";
-import ModalProfile from "./ModalProfile";
+import MatchModal from "./MatchModal";
+import Leaderboard from "../Leaderboard";
+import Edit from "./Edit";
 
 let user = {
     id: 0,
@@ -91,7 +93,12 @@ export default function Profile() {
     };
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [boxOpen, setBoxOpen] = useState(false)
+    const [modalState, setModal] = useState({
+        match: false,
+        infos: false,
+        password: false,
+        avatar: false
+    })
 
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -100,16 +107,6 @@ export default function Profile() {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
-    function onEdit() {
-        console.log("onEdit")
-        navigate("/profile/edit")
-    }
-
-    const handleBox = useCallback(val => {
-        setBoxOpen(val)
-    }, [setBoxOpen])
-
 
     const boxTemplate = (
         <div>
@@ -162,8 +159,8 @@ export default function Profile() {
                             <Typography> Email </Typography>
                         </Grid>
                         <Grid item xs={4}>
-                            <Button variant="contained" onClick={() => setBoxOpen(true)} > Match history </Button>
-                            {boxOpen ? <ModalProfile component={boxTemplate} boxOpen={boxOpen} handleBox={handleBox} /> : null}
+                            <Button variant="contained" onClick={() => setModal({...modalState, match : true})} > Match history </Button>
+                            {modalState ? <MatchModal component={boxTemplate} modalState={modalState.match} setModal={setModal} /> : null}
                         </Grid>
                     </Grid>
                     <Grid container item xs={3} direction="column" style={backGround.firstRow}>
@@ -190,9 +187,14 @@ export default function Profile() {
                                         'aria-labelledby': 'basic-button',
                                     }}
                                 >
-                                    <MenuItem onClick={onEdit}>Infos</MenuItem>
-                                    <MenuItem onClick={onEdit}>Password</MenuItem>
-                                    <MenuItem onClick={onEdit}>Avatar</MenuItem>
+                                    {/*
+                                    <MenuItem onClick={() => {setEdit(1); setModal(true)}}>Infos</MenuItem>
+                                    {modal && (edit === 1) ? <MatchModal component={<Edit/>} modal={modal} handleBox={handleBox} /> : null}
+                                    <MenuItem onClick={() => onEdit(2)}>Password</MenuItem>
+                                    {modal && (edit === 2) ? <MatchModal component={<Edit/>} modal={modal} handleBox={handleBox} /> : null}
+                                    <MenuItem onClick={() => onEdit(3)}>Avatar</MenuItem>
+                                    {modal && (edit === 3) ? <MatchModal component={<Leaderboard/>} modal={modal} handleBox={handleBox} /> : null}*/}
+
                                 </Menu>
                             </div>
                         </Grid>

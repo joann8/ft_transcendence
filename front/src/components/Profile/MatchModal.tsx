@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { AnyRecord } from 'dns';
+import { useEffect } from 'react';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -18,19 +19,20 @@ const style = {
     p: 4,
 };
 
-export default function ModalProfile(props: any) {
-    const [modal, setModal] = React.useState(props.boxOpen);
-    React.useEffect(() => {
-        props.handleBox(modal);
-    }, [props.handleBox, modal])
+export default function MatchModal(props: any) {
+  /*  const [modal, setModal] = React.useState(props.modalState);
+    useEffect(() => {
+        props.setModal(modal);
+    }, [props.modalState])
+    */
 
 
-    const handleClose = () => setModal(false);
+    const handleClose = () => props.setModal(false);
 
     return (
         <div>
             <Modal
-                open={props.boxOpen}
+                open={props.modalState}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
