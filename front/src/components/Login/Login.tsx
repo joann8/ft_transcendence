@@ -5,16 +5,16 @@ import LoginMask from "./LoginMask";
 
 export default function Login() {
   return (
-    <div>
+    <Grid
+      container
+      alignItems="center"
+      justifyContent="center"
+      direction={"column"}
+      marginTop={29}
+      position={"relative"}
+    >
       <LoginMask />
-      <Grid
-        container
-        alignItems="center"
-        justifyContent="center"
-        direction={"column"}
-        marginTop={29}
-        position={"absolute"}
-      >
+      <Grid item>
         <Button
           variant="contained"
           href="http://127.0.0.1:3001/login/42"
@@ -24,6 +24,6 @@ export default function Login() {
           Login with 42
         </Button>
       </Grid>
-    </div>
+    </Grid>
   );
 }
