@@ -23,6 +23,52 @@ import InfoModal from "./LoadingModal ";
 import PasswordModal from "./PasswordModal ";
 import LoadingModal from "./LoadingModal ";
 
+
+const backGround = {
+
+    layout: {
+        //backgroundColor: "#555555",
+        backgroundImage: `url(` + `${Pink}` + ')',
+        backgroundOrigin: "bottom",
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        width: '100vw',
+        height: '100vh',
+        display: "flex",
+     /*   justifyContent: "center",
+        alignItem: "center"
+    */},
+    profile: {
+        backgroundOrigin: "center",
+        backgroundPosition: 'center',
+        marginTop: "100px",
+        marginLeft: "5px",
+        paddingRight: "5px",
+        display: "flex",
+        overflow: "hidden",
+        justifyContent: "space-evenly",
+        alignItems: "flex-start",
+        height: "65%",
+        width: "95%"
+    },
+
+    firstRow: {
+        color: "#FFFFFF",
+        backgroundColor: "#000000",
+        display: "flex",
+        alignItems: "center",
+        justifyConten: "center",
+        spacing: "2",
+        paddingRight: "10px",
+        paddingLeft: "10px",
+        opacity: 1,
+        borderRadius: "15px",
+        height: "40%",
+        overflow: "hidden"
+    }
+};
+
 let user = {
     id: 0,
     id_pseudo: "Seong Gi-Hun",
@@ -36,66 +82,17 @@ let user = {
     achievement2: false
 }
 
+const deepPink = "#ed1b76"
+const lightPink = "#f44786"
+const deepGreen = "#249f9c"
+const lightGreen = "#037a76"
+
+
 const backEndUrl = "http://localhost:3001"
 
 export default function Profile() {
 
-    const [ready, setReady] = useState(false)
-    const [error, setError] = useState(false)
-    const [items, setItems] = useState(user)
-    const [status, setStatus] = useState(0)
-
-    const navigate = useNavigate()
-    const deepPink = "#ed1b76"
-    const lightPink = "#f44786"
-    const deepGreen = "#249f9c"
-    const lightGreen = "#037a76"
-
-    const backGround = {
-
-        layout: {
-            //backgroundColor: "#555555",
-            backgroundImage: `url(` + `${Pink}` + ')',
-            backgroundOrigin: "bottom",
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            width: '100vw',
-            height: '100vh',
-            display: "flex",
-         /*   justifyContent: "center",
-            alignItem: "center"
-        */},
-        profile: {
-            backgroundOrigin: "center",
-            backgroundPosition: 'center',
-            marginTop: "100px",
-            marginLeft: "5px",
-            paddingRight: "5px",
-            display: "flex",
-            overflow: "hidden",
-            justifyContent: "space-evenly",
-            alignItems: "flex-start",
-            height: "65%",
-            width: "95%"
-        },
-
-        firstRow: {
-            color: "#FFFFFF",
-            backgroundColor: "#000000",
-            display: "flex",
-            alignItems: "center",
-            justifyConten: "center",
-            spacing: "2",
-            paddingRight: "10px",
-            paddingLeft: "10px",
-            opacity: 1,
-            borderRadius: "15px",
-            height: "40%",
-            overflow: "hidden"
-        }
-    };
-
+    const [isMount, setMount] = useState(false)
     const [loaded, setLoaded] = useState(false)
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [modalState, setModal] = useState({
@@ -104,6 +101,56 @@ export default function Profile() {
         password: false,
         avatar: false
     })
+    const [update, setUpdate] = useState(false)
+
+
+    const navigate = useNavigate()
+
+    const getUserData = function () {
+        fetch(`${backEndUrl}/user`)
+            .then((res) => {
+                if (res.status === 401) {
+                    navigate("/login");
+                }
+                else if (!res.ok) {
+                    throw new Error(res.statusText);
+                }
+                return res.json();
+            })
+            .then((resData) => {
+                console.log(resData)
+                setLoaded(true)
+            })
+            .catch((err) => {
+                console.log("Error caught")
+                //Get User infos
+            })
+    }
+
+    //On mount and Dismount
+    useEffect(() => {
+        //Get user infos on mount
+        if (!isMount) {
+            console.log("Profile Mount")
+            getUserData()
+            setMount(true)
+            //Get user infos
+        }
+        else {
+            console.log("Profile Dismount")
+        }
+    }, [])
+
+    //On every re-renderer
+    useEffect(() => {
+        console.log("Profile re-renderer")
+        if (update) {
+            console.log("An update was done")
+            setUpdate(false)
+
+        }
+    })
+
 
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -117,96 +164,95 @@ export default function Profile() {
 
     return (
         <Fragment>
-            {loaded ? 
-            <Paper style={backGround.layout}>
+            {loaded ?
+                <Paper style={backGround.layout}>
 
-                <Grid container columns={13} spacing={3} style={backGround.profile}>
+                    <Grid container columns={13} spacing={3} style={backGround.profile}>
 
-                    <Grid container item direction="column" justifyContent="flex-start" style={{
-                        paddingLeft: "15px",
-                        paddingRight: "15px"
-                    }} >
-                        <Grid item xs={12} >
-                            <TextField fullWidth style={{
-                                backgroundColor: "#FFFFFF",
-                                opacity: 0.7,
-                            }} defaultValue={"Search for players"} color="secondary">
-                            </TextField>
+                        <Grid container item direction="column" justifyContent="flex-start" style={{
+                            paddingLeft: "15px",
+                            paddingRight: "15px"
+                        }} >
+                            <Grid item xs={12} >
+                                <TextField fullWidth style={{
+                                    backgroundColor: "#FFFFFF",
+                                    opacity: 0.7,
+                                }} defaultValue={"Search for players"} color="secondary">
+                                </TextField>
+                            </Grid>
                         </Grid>
+
+                        <Grid container item xs={4} direction="column" style={backGround.firstRow}>
+                            <Grid item xs={6}>   <Avatar src={user.avatar} style={{
+                                width: "120px",
+                                height: "120px",
+                            }} /> <br /></Grid>
+                            <Grid item>
+
+                                <Typography variant="subtitle1" style={{
+                                    color: "#FFFFFF",
+                                    opacity: 1
+                                }}> {user.id_pseudo}</Typography>
+                            </Grid>
+                        </Grid>
+                        <Grid container xs={5} direction="column" item style={backGround.firstRow}>
+                            <Grid item xs={4}>
+                                <Typography> Rank: {user.elo} </Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Typography> Email: {user.email}</Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Button variant="contained" onClick={() => setModal({ ...modalState, match: true })} > Match history </Button>
+                                {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} /> : null}
+                            </Grid>
+                        </Grid>
+                        <Grid container item xs={3} direction="column" style={backGround.firstRow}>
+                            <Grid item xs={4}>
+                                <div>
+
+                                    <Button
+                                        id="basic-button"
+                                        variant="contained"
+                                        startIcon={<EditIcon />}
+                                        aria-controls={open ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
+                                        onClick={handleClick}
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleClose}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                    >
+
+                                        <MenuItem onClick={() => { setModal({ ...modalState, info: true }) }}>Infos</MenuItem>
+                                        {modalState.info ? <InfoModal modalState={modalState.info} setModal={setModal} /> : null}
+                                        <MenuItem onClick={() => { setModal({ ...modalState, password: true }) }}>Password</MenuItem>
+                                        {modalState.password ? <PasswordModal modalState={modalState.password} setModal={setModal} /> : null}
+                                        <MenuItem onClick={() => { setModal({ ...modalState, avatar: true }) }}>Avatar</MenuItem>
+                                        {modalState.avatar ? <AvatarModal modalState={modalState.avatar} setModal={setModal} /> : null}
+
+                                    </Menu>
+                                </div>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Button variant="contained" startIcon={<PeopleIcon />}> Friends </Button>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Button variant="contained" startIcon={<QrCodeIcon />}> Two factor </Button>
+                            </Grid>
+                        </Grid>
+
                     </Grid>
-
-                    <Grid container item xs={4} direction="column" style={backGround.firstRow}>
-                        <Grid item xs={6}>   <Avatar src={user.avatar} style={{
-                            width: "120px",
-                            height: "120px",
-                        }} /> <br /></Grid>
-                        <Grid item>
-
-                            <Typography variant="subtitle1" style={{
-                                color: "#FFFFFF",
-                                opacity: 1
-                            }}> {user.id_pseudo}</Typography>
-                        </Grid>
-                    </Grid>
-                    <Grid container xs={5} direction="column" item style={backGround.firstRow}>
-                        <Grid item xs={4}>
-                            <Typography> Rank: {user.elo} </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography> Email: {user.email}</Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Button variant="contained" onClick={() => setModal({ ...modalState, match: true })} > Match history </Button>
-                            {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} /> : null}
-                        </Grid>
-                    </Grid>
-                    <Grid container item xs={3} direction="column" style={backGround.firstRow}>
-                        <Grid item xs={4}>
-                            <div>
-
-                                <Button
-                                    id="basic-button"
-                                    variant="contained"
-                                    startIcon={<EditIcon />}
-                                    aria-controls={open ? 'basic-menu' : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={open ? 'true' : undefined}
-                                    onClick={handleClick}
-                                >
-                                    Edit
-                                </Button>
-                                <Menu
-                                    id="basic-menu"
-                                    anchorEl={anchorEl}
-                                    open={open}
-                                    onClose={handleClose}
-                                    MenuListProps={{
-                                        'aria-labelledby': 'basic-button',
-                                    }}
-                                >
-
-                                    <MenuItem onClick={() => {setModal({ ...modalState, info: true })}}>Infos</MenuItem>
-                                    {modalState.info ? <InfoModal modalState={modalState.info} setModal={setModal} /> : null}
-                                    <MenuItem onClick={() => {setModal({ ...modalState, password: true })}}>Password</MenuItem>
-                                    {modalState.password ? <PasswordModal modalState={modalState.password} setModal={setModal} /> : null}
-                                    <MenuItem onClick={() => {setModal({ ...modalState, avatar: true }) }}>Avatar</MenuItem>
-                                    {modalState.avatar ? <AvatarModal modalState={modalState.avatar} setModal={setModal} /> : null}
-
-
-                                </Menu>
-                            </div>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Button variant="contained" startIcon={<PeopleIcon />}> Friends </Button>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Button variant="contained" startIcon={<QrCodeIcon />}> Two factor </Button>
-                        </Grid>
-                    </Grid>
-
-                </Grid>
-            </Paper >
-            : <LoadingModal loaded={loaded} setLoaded={setLoaded}/>}
+                </Paper >
+                : <LoadingModal loaded={loaded} setLoaded={setLoaded} />}
         </Fragment >
     );
 }

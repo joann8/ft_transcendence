@@ -54,15 +54,9 @@ function Root() {
   //Deal with starting Component. Executed once only
   useEffect(() => {
     const tmp = document.cookie
-
     setMounted(true)
-    console.log("useEffect onMount isAuth = ", isAuth)
   }, [])
 
-  useEffect(() => {
-
-    console.log("useEffect Root is rendered")
-  })
 
   //Deal with logout code
   /*

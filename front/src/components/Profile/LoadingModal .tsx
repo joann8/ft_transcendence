@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { AnyRecord } from 'dns';
 import { useEffect } from 'react';
+import LoadingGif from '../Images/loadingGif.gif'
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -20,11 +21,11 @@ const style = {
 };
 
 export default function LoadingModal(props: any) {
-  /*  const [modal, setModal] = React.useState(props.modalState);
-    useEffect(() => {
-        props.setModal(modal);
-    }, [props.modalState])
-    */
+    /*  const [modal, setModal] = React.useState(props.modalState);
+      useEffect(() => {
+          props.setModal(modal);
+      }, [props.modalState])
+      */
 
 
     const handleClose = () => props.setLoaded(false);
@@ -40,11 +41,15 @@ export default function LoadingModal(props: any) {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                <div>
+                    <div>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
                             This is the Loading MODAL
                         </Typography>
-                        <Button onClick={handleLoading}> Loading FINISHED </Button>
+                        <Button variant="contained" onClick={handleLoading}> Loading FINISHED </Button>
+
+                        
+                        <img src={LoadingGif} alt="Loading the page"/>
+                        <br/>
 
                     </div>
                 </Box>
