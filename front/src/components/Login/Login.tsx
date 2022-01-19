@@ -1,22 +1,29 @@
-import { Toolbar, Grid } from "@mui/material";
-import React, { Fragment } from "react";
+import { Send } from "@mui/icons-material";
+import { Button, Grid } from "@mui/material";
+import React from "react";
+import LoginMask from "./LoginMask";
 
-export default function Login(props: any) {
-  function handleLogin() {
-    window.location.href = "http://127.0.0.1:3001/login/42";
-  }
+export default function Login() {
   return (
-    <Fragment>
-      <Toolbar />
-      <Grid container alignItems="center" justifyContent="center">
-        <Grid item>
-          <h1 className="Login-Title">TRANSCENDENCE</h1>
-          <button type="submit" onClick={() => handleLogin()}>
-            {" "}
-            Login{" "}
-          </button>
-        </Grid>
+    <div>
+      <LoginMask />
+      <Grid
+        container
+        alignItems="center"
+        justifyContent="center"
+        direction={"column"}
+        marginTop={29}
+        position={"absolute"}
+      >
+        <Button
+          variant="contained"
+          href="http://127.0.0.1:3001/login/42"
+          size="large"
+          endIcon={<Send />}
+        >
+          Login with 42
+        </Button>
       </Grid>
-    </Fragment>
+    </div>
   );
 }

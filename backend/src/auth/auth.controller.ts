@@ -25,7 +25,6 @@ export class AuthController {
 	@Public()
 	@Get('login/42')
 	@UseGuards(FortyTwoAuthGuard)
-	@Redirect('/user')
 	async login(): Promise<void> {}
 	// 42 CALLBACK URL
 	@Public()

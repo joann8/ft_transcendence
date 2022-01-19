@@ -21,19 +21,15 @@ export class UserService {
 	}
 
 	async getNbUsers(): Promise<number> {
-		return this.usersRepository.count();
+		return await this.usersRepository.count();
 	}
 
 	async findAll(): Promise<User[]> {
-		return this.usersRepository.find();
+		return await this.usersRepository.find();
 	}
 
 	async findOne(id: string): Promise<User> {
-		const user = this.usersRepository.findOne(id);
-		if (!user) {
-			throw new NotFoundException('This user does not exist');
-		}
-		return user;
+		return await this.usersRepository.findOne(id);
 	}
 
 	async remove(id: string): Promise<void> {
@@ -41,6 +37,6 @@ export class UserService {
 	}
 
 	async update(id: number, user: Partial<User>): Promise<UpdateResult> {
-		return this.usersRepository.update(id, user);
+		return await this.usersRepository.update(id, user);
 	}
 }
