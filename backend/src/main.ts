@@ -18,15 +18,16 @@ async function bootstrap() {
 		// httpsOptions,
 	});
 	// Enable CORS
-	/*
+	
 	app.enableCors({
 		origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_BIS],
 		credentials: true,
 	});
-	*/
-
+	
+/*
 	app.enableCors();
 	// cookieParser middleware as global for parsing cookies
+	*/
 	app.use(cookieParser());
 
 	// Enable dto validation globaly

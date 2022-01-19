@@ -23,6 +23,8 @@ import InfoModal from "./LoadingModal ";
 import PasswordModal from "./PasswordModal ";
 import LoadingModal from "./LoadingModal ";
 import { api_req_init } from "../../ApiCalls/var";
+import useFromApi from "../../ApiCalls/useFromApi";
+
 
 
 const backGround = {
@@ -107,10 +109,17 @@ export default function Profile() {
 
     const navigate = useNavigate()
 
-    const getUserData = function () {
-        fetch(`${backEndUrl}/user`, api_req_init)
+
+    console.log("Cookie : ", document.cookie)
+    const getUserData = async () => {
+        fetch(`${backEndUrl}/user`, {
+            method: "GET",
+            credentials: "include",
+            referrerPolicy: "same-origin"
+        })
             .then((res) => {
                 if (res.status === 401) {
+                   // console.log("redirection Login")
                     navigate("/login");
                 }
                 else if (!res.ok) {
@@ -119,21 +128,35 @@ export default function Profile() {
                 return res.json();
             })
             .then((resData) => {
-                console.log(resData)
-                setLoaded(true)
+                console.log("getUserData :", resData)
+                // setLoaded(true)
             })
             .catch((err) => {
                 console.log("Error caught")
                 //Get User infos
             })
     }
+    getUserData()
+
+
+    useEffect(() => {
+        console.log("Profile re-renderer")
+        if (!isMount) {
+            //   getUserData()
+        }
+        if (update) {
+            console.log("An update was done")
+            setUpdate(false)
+
+        }
+    })
 
     //On mount and Dismount
     useEffect(() => {
+
         //Get user infos on mount
         if (!isMount) {
             console.log("Profile Mount")
-            getUserData()
             setMount(true)
             //Get user infos
         }
@@ -142,15 +165,7 @@ export default function Profile() {
         }
     }, [])
 
-    //On every re-renderer
-    useEffect(() => {
-        console.log("Profile re-renderer")
-        if (update) {
-            console.log("An update was done")
-            setUpdate(false)
 
-        }
-    })
 
 
     const open = Boolean(anchorEl);

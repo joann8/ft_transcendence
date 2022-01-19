@@ -348,8 +348,8 @@ export default function LoginParticlesTitle() {
         zLayers: 100,
         polygon: {
           position: {
-            x: "50",
-            y: "10",
+            x: 50 ,
+            y: 10,
           },
           draw: {
             enable: true,
@@ -370,7 +370,7 @@ export default function LoginParticlesTitle() {
             type: "path",
           },
           scale: 1.2,
-          type: "inline",
+          type: "inline" as PolygonMaskType,
           url: transcendence,
         },
       }}
