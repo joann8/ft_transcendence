@@ -19,17 +19,18 @@ import MatchModal from "./MatchModal";
 import Leaderboard from "../Leaderboard";
 import Edit from "./Edit";
 import AvatarModal from "./AvatarModal";
-import InfoModal from "./InfoModal ";
+import InfoModal from "./LoadingModal ";
 import PasswordModal from "./PasswordModal ";
+import LoadingModal from "./LoadingModal ";
 
 let user = {
     id: 0,
-    id_pseudo: "",
-    email: "",
-    avatar: "",
-    role: "",
-    elo: 0,
-    status: "",
+    id_pseudo: "Seong Gi-Hun",
+    email: "Seaong@squid-game.io",
+    avatar: `${Character}`,
+    role: "NONE",
+    elo: 1000,
+    status: "Online",
     two_factor: false,
     achievement1: false,
     achievement2: false
@@ -95,6 +96,7 @@ export default function Profile() {
         }
     };
 
+    const [loaded, setLoaded] = useState(false)
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [modalState, setModal] = useState({
         match: false,
@@ -115,6 +117,7 @@ export default function Profile() {
 
     return (
         <Fragment>
+            {loaded ? 
             <Paper style={backGround.layout}>
 
                 <Grid container columns={13} spacing={3} style={backGround.profile}>
@@ -133,7 +136,7 @@ export default function Profile() {
                     </Grid>
 
                     <Grid container item xs={4} direction="column" style={backGround.firstRow}>
-                        <Grid item xs={6}>   <Avatar src={Character} style={{
+                        <Grid item xs={6}>   <Avatar src={user.avatar} style={{
                             width: "120px",
                             height: "120px",
                         }} /> <br /></Grid>
@@ -142,15 +145,15 @@ export default function Profile() {
                             <Typography variant="subtitle1" style={{
                                 color: "#FFFFFF",
                                 opacity: 1
-                            }}> 0123456789101112</Typography>
+                            }}> {user.id_pseudo}</Typography>
                         </Grid>
                     </Grid>
                     <Grid container xs={5} direction="column" item style={backGround.firstRow}>
                         <Grid item xs={4}>
-                            <Typography> Telephone </Typography>
+                            <Typography> Rank: {user.elo} </Typography>
                         </Grid>
                         <Grid item xs={4}>
-                            <Typography> Email </Typography>
+                            <Typography> Email: {user.email}</Typography>
                         </Grid>
                         <Grid item xs={4}>
                             <Button variant="contained" onClick={() => setModal({ ...modalState, match: true })} > Match history </Button>
@@ -203,6 +206,7 @@ export default function Profile() {
 
                 </Grid>
             </Paper >
+            : <LoadingModal loaded={loaded} setLoaded={setLoaded}/>}
         </Fragment >
     );
 }

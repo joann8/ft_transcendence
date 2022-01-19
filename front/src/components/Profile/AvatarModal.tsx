@@ -19,7 +19,7 @@ const style = {
     p: 4,
 };
 
-export default function MatchModal(props: any) {
+export default function AvatarModal(props: any) {
     /*  const [modal, setModal] = React.useState(props.modalState);
       useEffect(() => {
           props.setModal(modal);

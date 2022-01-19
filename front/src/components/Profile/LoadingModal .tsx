@@ -19,7 +19,7 @@ const style = {
     p: 4,
 };
 
-export default function PasswordModal(props: any) {
+export default function LoadingModal(props: any) {
   /*  const [modal, setModal] = React.useState(props.modalState);
     useEffect(() => {
         props.setModal(modal);
@@ -27,12 +27,14 @@ export default function PasswordModal(props: any) {
     */
 
 
-    const handleClose = () => props.setModal(false);
+    const handleClose = () => props.setLoaded(false);
+
+    const handleLoading = () => props.setLoaded(true);
 
     return (
         <div>
             <Modal
-                open={props.modalState}
+                open={!props.loaded}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -40,8 +42,9 @@ export default function PasswordModal(props: any) {
                 <Box sx={style}>
                 <div>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-                            This is the PASSWORD MODAL
+                            This is the Loading MODAL
                         </Typography>
+                        <Button onClick={handleLoading}> Loading FINISHED </Button>
 
                     </div>
                 </Box>
