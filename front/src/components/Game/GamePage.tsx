@@ -9,6 +9,8 @@ import RuleSet from './RuleSet';
 import { Container } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import GamePong from './GamePong';
+import { useLocation } from 'react-router';
+import GameWatch from './GameWatch';
 
 const useStyle = makeStyles({
   gameWindow: {
@@ -36,6 +38,15 @@ export default function GamePage() {
 
     const classes = useStyle(); 
 
+    let object;
+    const location = useLocation();
+    console.log(location);
+    
+    if (location.pathname === "/game/pong")
+      object = <GamePong width={800} height={600} />;
+    else if (location.pathname === "/game/watch")
+      object = <GameWatch width={800} height={600} />;
+
     return (       
         <Fragment>
             <Paper style={styles.backgroundImage}>
@@ -47,7 +58,8 @@ export default function GamePage() {
                     <Grid item spacing={2} xs={12} >
                       <Container className={classes.gameWindow} >
                         <Typography> Game Window </Typography>
-                        <GamePong width={800} height={600} />
+                        {object}
+                        {/* GamePong width={800} height={600} />*/}
                       </Container>
                     </Grid>
                     <RuleSet />

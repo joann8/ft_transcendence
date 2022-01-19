@@ -17,7 +17,7 @@ export class Paddle {
         this._y_tmp = Const.PADDLE_Y;
         this._speed = Const.PADDLE_SPEED;
         this._height = Const.PADDLE_H;
-        this._height = Const.PADDLE_W;
+        this._width = Const.PADDLE_W;
     }
 
     // Getters
@@ -59,7 +59,7 @@ export class Paddle {
         this._y_tmp = newY + this._height > Const.HEIGHT? Const.HEIGHT - this._height : newY;
     }
 
-    public update() : void {
+    public async update() : Promise<void> {
        if (this._y_tmp !== this._y)
         this._y = this._y_tmp;
     }
@@ -70,6 +70,7 @@ export class Paddle {
         this._y = Const.PADDLE_Y;
         this._y_tmp = Const.PADDLE_Y;
         this._speed = Const.PADDLE_SPEED;
+        
         //this._height = Const.PADDLE_H;
         //this._height = Const.PADDLE_W;
     }

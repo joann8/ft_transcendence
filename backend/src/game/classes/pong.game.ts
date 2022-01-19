@@ -34,7 +34,7 @@ export class Game {
         player2.join(this._room);
         console.log(`Player 1 (${player1.id}) and Player 2 (${player2.id}) join the room`);
         this._ball = new Ball();
-        this._state = States.WAIT; //Play?
+        this._state = States.PLAY;
         this._maxScore = Const.MAX_SCORE;
         this._public = [];
         this._interval = setInterval(() => this.play(), Const.FPS);
@@ -67,6 +67,9 @@ export class Game {
         return this._state;
     }
 
+    public setState(state : States) {
+        this._state = state;
+    }
 
     // Other Functions 
 
@@ -80,18 +83,6 @@ export class Game {
         }
        // console.log("has winner return 'false'");
         return false;
-    }
-
-    public pause() : void
-    {
-        this._state = States.PAUSE;
-        this._ball.pause();
-    }
-
-    public resume() : void
-    {
-        this._state = States.PLAY;
-        this._ball.resume();
     }
 
     public buildDataToReturn() : BroadcastObject {
@@ -121,8 +112,7 @@ export class Game {
         this._server.to(this._room).emit('updateState', currentState);
     }
 
-    public play() : void {
-        this.resume();
+    public async play() : Promise<void> {
         this.getBall().updateBall(this);
         this.broadcastState();
         if (this.hasWinner() === true)
@@ -143,9 +133,12 @@ export class Game {
         setTimeout(function(){}, 5000);
         if (this.hasWinner() === false)
         {
+            this._state = States.PLAY;
             this.getPlayer1().getPaddle().reset();
             this.getPlayer2().getPaddle().reset();
             this._interval = setInterval(() => this.play(), Const.FPS);
+            this.getPlayer1().setInterval((setInterval(() => this.getPlayer1().getPaddle().update(), Const.FPS))); 
+            this.getPlayer2().setInterval((setInterval(() => this.getPlayer2().getPaddle().update(), Const.FPS))); 
         }
         else
             this.stopMatch();
@@ -176,16 +169,38 @@ export class Game {
 
     public stopMatch() : void {
         this._state = States.OVER;
+        this.broadcastState();
+        this.removeAllSpectators();
         this.getPlayer1().disconnect(this._room);
         console.log(`---> Player 1 (${this.getPlayer1().getSocket().id}) left the room`);
         this.getPlayer2().disconnect(this._room);
         console.log(`--> Player 2 (${this.getPlayer2().getSocket().id}) left the room`);
+        /*
         if(this.getPlayer1().IsWinner() === true)
             this.sendFinalResult( this.getPlayer1(), this.getPlayer2());
         else
             this.sendFinalResult( this.getPlayer2(), this.getPlayer1());
+            */
         this._endFunction(this);
    
+    }
+
+    public addSpectator(client : Socket) : void
+    {
+        this._public.unshift(client);
+        client.join(this._room);
+    }
+
+    public removeSpectator(client : Socket) : void
+    {
+        client.leave(this._room);
+        this._public.splice(this._public.indexOf(client));
+    }
+
+    public removeAllSpectators() : void
+    {
+        while(this._public.length > 0)
+            this.removeSpectator(this._public.pop());
     }
 
 }

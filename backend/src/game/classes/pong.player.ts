@@ -1,5 +1,7 @@
 import { Socket } from "socket.io";
 import { Const } from "../static/pong.constants"
+import { States } from "../static/pong.states";
+import { Game } from "./pong.game";
 import { Paddle } from "./pong.paddle";
 
 export class Player {
@@ -47,6 +49,11 @@ export class Player {
     public getInterval() : NodeJS.Timer {
         return this._interval;
     }
+
+    public setInterval(interval : NodeJS.Timer)
+    {
+        this._interval = interval;
+    }
     
     public IsWinner() : boolean {
         return this._isWinner;
@@ -71,6 +78,19 @@ export class Player {
     public disconnect(room : string) : void {
         clearInterval(this._interval);
         this.getSocket().leave(room);
-        console.log(`[ Player (${this.getSocket().id}) left the room ]`);
+    }
+
+    public pauseGame(game : Game)
+    {
+        game.setState(States.PAUSE);
+        game.getBall().pause();
+
+    }
+
+    public resumeGame(game : Game)
+    {
+        game.setState(States.PLAY);
+        game.getBall().resume();
+        
     }
 }

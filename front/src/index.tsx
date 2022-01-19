@@ -22,7 +22,7 @@ import GameModule from "./components/GameModule";
 import Login from "./components/Login";
 import { setFlagsFromString } from "v8";
 
-
+//import {socketContext, socket} from "./contexts/SocketContext"
 
 /* LOGOUT
 let navigate = useNavigate();
@@ -72,7 +72,8 @@ function Root() {
             <Route path="login" element={<Login login={isLoggedIn}/>}/>
             <Route path="game">
               <Route index element={< GameMenu />} />
-              <Route path="game" element={<GamePage />} />
+              <Route path="pong" element={<GamePage />} />
+              <Route path="watch" element={<GamePage />} />
             </Route>
             <Route path="chat" element={<Chat />} />
             <Route path="profile" element={<Profile />} />
@@ -89,7 +90,9 @@ export default Root;
 
 ReactDOM.render(
   <React.StrictMode>
+  {/*  <socketContext.Provider value={socket}>*/}
     <Root />
+  {/*</socketContext.Provider>*/}
   </React.StrictMode>,
   document.getElementById("root")
 );

@@ -14,6 +14,7 @@ import { Const } from "./static/pong.constants";
 
 
 @WebSocketGateway(3002, {
+   // namespace: "/game",
     cors: { 
         origin:'*',
     },
@@ -54,7 +55,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         let match = this.matches.find((game) => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket() === client );
         if (match)
         {
-            console.log("HEEEEERE");
             match.disconnectPlayer(client);
            // this.clients.delete(match.getPlayer1().getSocket());      
            // this.clients.delete(match.getPlayer2().getSocket());      
@@ -62,7 +62,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         }
         else
         {
-            console.log("There");
             this.clients.delete(client);
             this.queue.splice(this.queue.indexOf(client));
         }
@@ -83,6 +82,11 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             this.logger.log(`start a match!`);
             this.matchInit()
         }
+        else
+        {
+            console.log("emit wait from server");
+            client.emit('wait');
+        }
     }
     
     @SubscribeMessage('down_paddle')
@@ -90,7 +94,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
         if (match)
         {
-            console.log("PADDLE DOWN")
+            //console.log("PADDLE DOWN")
             match.getPlayer1().getSocket() === client? match.getPlayer1().getPaddle().down():  match.getPlayer2().getPaddle().down();
         }
     }
@@ -101,17 +105,59 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket() === client);
         if (match)
         {
-            console.log("PADDLE UP")
+            //console.log("PADDLE UP")
             match.getPlayer1().getSocket() === client? match.getPlayer1().getPaddle().up():  match.getPlayer2().getPaddle().up();  
         }
      }
     
-    /* optionnel 
     @SubscribeMessage('pause')
-    handlePause(@ConnectedSocket() client : Socket, direction : string): void {
-        let player = 
+    async handlePause(@ConnectedSocket() client): Promise<void> {
+        let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
+        if (match)
+        {
+            match.getPlayer1().getSocket() === client? match.getPlayer1().pauseGame(match):  match.getPlayer2().pauseGame(match);
+        }
     }
-    */
+
+    @SubscribeMessage('resume')
+    async handleResume(@ConnectedSocket() client): Promise<void> {
+        let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
+        if (match)
+        {
+            match.getPlayer1().getSocket() === client? match.getPlayer1().resumeGame(match):  match.getPlayer2().resumeGame(match);
+        }
+    }
+
+    @SubscribeMessage('watch_random')
+    async handleWatchRandom(@ConnectedSocket() client): Promise<void> {
+        console.log("watch random received")
+        console.log(`number of match on going : ${this.matches.length}`);
+        if (this.matches.length > 0)
+        {
+            let index = Math.floor((Math.random() * (this.matches.length - 1)));
+            this.matches[index].addSpectator(client);
+        }
+        else
+        {
+            console.log("no game")
+
+            client.emit('no_current_match');
+        }    
+    }
+
+    @SubscribeMessage('unwatch_game')
+    async handleUnwatchGame(@ConnectedSocket() client : Socket): Promise<void> {
+        if (this.matches.length > 0)
+        {
+            let index = Math.floor((Math.random() * (this.matches.length - 1)));
+            this.matches[index].addSpectator(client);
+        }
+        else
+        {
+            client.emit('no_current_match');
+        }    
+    }
+    
     // Fonctions du Back pour calculer les nouvelles positions, le status du jeu, etc.
 
     private matchInit() {

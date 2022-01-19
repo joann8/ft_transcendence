@@ -13,7 +13,7 @@ import { AnyMxRecord } from 'node:dns';
 import { useNavigate } from 'react-router';
 
 //const optionsTable=[["Play against a friend", "Play Random"], ["Watch a friend", "Watch Random"]];
-const optionsPage=[["/", "/game/game"], ["/", "/"]];
+const optionsPage=[["/", "/game/pong"], ["/", "/game/watch"]];
 
 
 export default function SplitButton( props: PropsMenuButton) {

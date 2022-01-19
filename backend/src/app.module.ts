@@ -40,6 +40,6 @@ import { PongGateway } from './game/pong.gateway';
 		PongModule
 	],
 	controllers: [AppController],
-	providers: [AppService, UserService, ChatService, PongGateway],
+	providers: [AppService, UserService, ChatService],
 })
 export class AppModule {}

@@ -9,7 +9,7 @@ import { waitForElementToBeRemoved } from '@testing-library/react';
 //import { socketContext } from '../../contexts/SocketContext';
 //import { useContext } from 'react';
 
-export default function GamePong(props: PropsGame) {
+export default function GameWatch(props: PropsGame) {
 
     // All constants
     const ref = useRef<HTMLCanvasElement>(null!);
@@ -27,14 +27,7 @@ export default function GamePong(props: PropsGame) {
     const color_object : string = "#FFEE00";
     const font_text : string = "50px gameFont";
     const paddle_speed : number = 10;
-    /*
-    const enum Status {
-        WAIT, 
-        PLAY, 
-        PAUSE,
-        OVER, 
-    };
-    */
+
     const WAIT=0;
     const PLAY=1;
     const PAUSE=2;
@@ -58,6 +51,7 @@ export default function GamePong(props: PropsGame) {
     }
     
     const [game, setGame] = useState(initGame);
+    const [watching, setWatching] = useState(false);
     
     useEffect(() => {
         socket.on("updateState", (updateState : any) => {
@@ -65,11 +59,11 @@ export default function GamePong(props: PropsGame) {
         });
     });
 
-    
-    useEffect(()=> {
-        socket.on("wait", (args : any) => {
-            console.log("Wait received");
+    useEffect(() => {
+        socket.on("no_current_match", (updateState : any) => {
+            console.log("No current game received");
 
+            setWatching(false);
             let c : HTMLCanvasElement = ref.current; //canvas
             let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
            
@@ -79,30 +73,12 @@ export default function GamePong(props: PropsGame) {
             ctx.fillRect(0,0, width, height);        
             ctx.fillStyle = color_object;
             ctx.font = font_text; 
-            ctx.fillText("Waiting for another player", 100, height / 2);
+            ctx.fillText("No current game on going", 100, height / 2);
         });
     });
 
-    useEffect (() => {
-        window.addEventListener('keydown', (e) => {
-            if (e.code ==='ArrowUp') {
-                socket.emit ('up_paddle', 'down');
-            } else if (e.code ==='ArrowDown') {
-                socket.emit('down_paddle', 'down');
-            }
-        }
-        );
-
-        window.addEventListener('keyup', (e) => {
-            if (e.code ==='ArrowUp') {
-                socket.emit ('up_paddle', 'up');
-            } else if (e.code ==='ArrowDown'){
-                socket.emit('down_paddle', 'up');
-            }
-        }
-        );
-    }, []);
-        
+    
+          
     //Draw functions
     useEffect(() => {
         let c : HTMLCanvasElement = ref.current; //canvas
@@ -198,18 +174,19 @@ export default function GamePong(props: PropsGame) {
     }, [game]);
 
     let button;
-    if (game.state === WAIT)
-        button = <Button variant="contained" onClick={()=> socket.emit('join_queue')} > Join Game </Button>;
-    else if (game.state === PLAY)
-        button = <Button variant="contained" onClick={()=> socket.emit('pause')} > Pause the Game </Button>;
-    else if (game.state === PAUSE)
-        button = <Button variant="contained" onClick={()=> socket.emit('resume')} > Resume to Game </Button>;
-    else if (game.state === OVER)
-        button = <Button variant="contained" onClick={()=> socket.emit('join_queue')} > Start a new Game </Button>;
+    if (watching === false)
+        button = <Button variant="contained" onClick={()=> {
+            setWatching(true);
+            socket.emit('watch_random');
+        }} > Watch a Game </Button>;
+    else
+        button = <Button variant="contained" onClick={()=> {
+            setWatching(false);
+            socket.emit('unwatch_game')}
+        } > Stop the streaming </Button>;
     return (
         <Fragment>
             <canvas width={width} height={height} ref={ref}> 
-            
             </canvas>
             {button}
         </Fragment>
