@@ -20,11 +20,11 @@ const style = {
 };
 
 export default function MatchModal(props: any) {
-    /*  const [modal, setModal] = React.useState(props.modalState);
-      useEffect(() => {
-          props.setModal(modal);
-      }, [props.modalState])
-      */
+  /*  const [modal, setModal] = React.useState(props.modalState);
+    useEffect(() => {
+        props.setModal(modal);
+    }, [props.modalState])
+    */
 
 
     const handleClose = () => props.setModal(false);
@@ -38,9 +38,9 @@ export default function MatchModal(props: any) {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <div>
+                <div>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-                            This is the MATCH HISTORY MODAL
+                            This is the PASSWORD MODAL
                         </Typography>
 
                     </div>

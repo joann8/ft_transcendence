@@ -40,7 +40,7 @@ export default function MatchModal(props: any) {
                 <Box sx={style}>
                     <div>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-                            This is the MATCH HISTORY MODAL
+                            This is the AVATAR MODAL
                         </Typography>
 
                     </div>

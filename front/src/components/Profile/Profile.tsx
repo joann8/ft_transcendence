@@ -18,6 +18,9 @@ import { isReturnStatement } from "typescript";
 import MatchModal from "./MatchModal";
 import Leaderboard from "../Leaderboard";
 import Edit from "./Edit";
+import AvatarModal from "./AvatarModal";
+import InfoModal from "./InfoModal ";
+import PasswordModal from "./PasswordModal ";
 
 let user = {
     id: 0,
@@ -95,7 +98,7 @@ export default function Profile() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [modalState, setModal] = useState({
         match: false,
-        infos: false,
+        info: false,
         password: false,
         avatar: false
     })
@@ -108,16 +111,7 @@ export default function Profile() {
         setAnchorEl(null);
     };
 
-    const boxTemplate = (
-        <div>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-                Text in a modal
-            </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
-        </div>
-    )
+
 
     return (
         <Fragment>
@@ -159,8 +153,8 @@ export default function Profile() {
                             <Typography> Email </Typography>
                         </Grid>
                         <Grid item xs={4}>
-                            <Button variant="contained" onClick={() => setModal({...modalState, match : true})} > Match history </Button>
-                            {modalState ? <MatchModal component={boxTemplate} modalState={modalState.match} setModal={setModal} /> : null}
+                            <Button variant="contained" onClick={() => setModal({ ...modalState, match: true })} > Match history </Button>
+                            {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} /> : null}
                         </Grid>
                     </Grid>
                     <Grid container item xs={3} direction="column" style={backGround.firstRow}>
@@ -187,13 +181,14 @@ export default function Profile() {
                                         'aria-labelledby': 'basic-button',
                                     }}
                                 >
-                                    {/*
-                                    <MenuItem onClick={() => {setEdit(1); setModal(true)}}>Infos</MenuItem>
-                                    {modal && (edit === 1) ? <MatchModal component={<Edit/>} modal={modal} handleBox={handleBox} /> : null}
-                                    <MenuItem onClick={() => onEdit(2)}>Password</MenuItem>
-                                    {modal && (edit === 2) ? <MatchModal component={<Edit/>} modal={modal} handleBox={handleBox} /> : null}
-                                    <MenuItem onClick={() => onEdit(3)}>Avatar</MenuItem>
-                                    {modal && (edit === 3) ? <MatchModal component={<Leaderboard/>} modal={modal} handleBox={handleBox} /> : null}*/}
+
+                                    <MenuItem onClick={() => {setModal({ ...modalState, info: true })}}>Infos</MenuItem>
+                                    {modalState.info ? <InfoModal modalState={modalState.info} setModal={setModal} /> : null}
+                                    <MenuItem onClick={() => {setModal({ ...modalState, password: true })}}>Password</MenuItem>
+                                    {modalState.password ? <PasswordModal modalState={modalState.password} setModal={setModal} /> : null}
+                                    <MenuItem onClick={() => {setModal({ ...modalState, avatar: true }) }}>Avatar</MenuItem>
+                                    {modalState.avatar ? <AvatarModal modalState={modalState.avatar} setModal={setModal} /> : null}
+
 
                                 </Menu>
                             </div>
