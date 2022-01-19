@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import * as fs from 'fs';
@@ -18,8 +18,14 @@ async function bootstrap() {
 		// httpsOptions,
 	});
 	// Enable CORS
+<<<<<<< HEAD
 /*	app.enableCors({
 		origin: process.env.FRONTEND_URL,
+=======
+	app.enableCors({
+		origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_BIS],
+		credentials: true,
+>>>>>>> master
 	});
 	*/
 	app.enableCors();

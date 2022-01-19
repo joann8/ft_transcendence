@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import * as React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
@@ -9,41 +10,53 @@ import { Button, CardActionArea, Typography } from '@mui/material';
 
 import { useNavigate } from 'react-router';
 
+=======
+import * as React from "react";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Image from "../Images/black.jpg";
+import { Fragment, useState } from "react";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router";
+>>>>>>> master
 
 export default function Homepage(props: any) {
   const styles = {
     backgroundImage: {
-      backgroundImage: `url(`+ `${Image}` + ')',
-      backgroundPosition: 'left',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
-      width: '100%',
-      height: '100%',
-      overflow: 'auto',
-    }
+      backgroundImage: `url(` + `${Image}` + ")",
+      backgroundPosition: "left",
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
+      width: "100%",
+      height: "100%",
+      overflow: "auto",
+    },
   };
 
-    let navigate = useNavigate()
-    const [count, setCount] = useState(0)
-
-  return (       
-        <Fragment>
-          <Paper style={styles.backgroundImage}>
-           {/*} <Toolbar />*/}
-            <Grid container alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
-              <Grid item >
-              <Button color="primary" variant="contained" style={{fontSize: 50}}> {count} </Button>
-              <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => setCount(count + 1)}> Add one </Button>
-                <Button color="primary" variant="contained" style={{fontSize: 50}} onClick={() => navigate("/game")}> Let's play!</Button>
-              </Grid>
-            </Grid>
-          </Paper>
-         </Fragment>
+  let navigate = useNavigate();
+  return (
+    <Fragment>
+      <Paper style={styles.backgroundImage}>
+        {/*} <Toolbar />*/}
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="center"
+          style={{ height: "100vh" }}
+        >
+          <Grid item>
+            <Button
+              color="primary"
+              variant="contained"
+              style={{ fontSize: 50 }}
+              onClick={() => navigate("/game")}
+            >
+              {" "}
+              Let's play!
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
+    </Fragment>
   );
 }
-
-/*
-export default function Homepage(props: any) {
-  return <HomepageCompo handleCanvas={props.handleCanvas} />;
-}
-*/
