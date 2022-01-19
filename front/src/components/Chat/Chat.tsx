@@ -7,6 +7,7 @@ import ChatRooms from "./ChatRooms";
 import axios from "axios";
 import { Message, chatRoom } from "./types";
 import ChatUsers from "./ChatUsers";
+import useFromApi from "../../ApiCalls/useFromApi";
 
 function Chat() {
   /*
@@ -27,14 +28,19 @@ function Chat() {
   /*
    *   HOOKS
    */
-
+  //let data = useFromApi("/channel/me");
+  //console.log(data.data);
   React.useEffect(() => {
     const fetchData = async () => {
-      const result = await axios("http://localhost:3001/chat");
-      setChatRooms(result.data);
+      const result = await axios.get("http://localhost:3001/channel/me", {
+        withCredentials: true,
+        headers: { "Access-Control-Allow-Origin": "*" },
+      });
+      console.log(result);
+      /*setChatRooms(result.data);
       setChatRoom(result.data[0]);
       setMessageList(result.data[0].messageList);
-      setUserList(result.data[0].users);
+      setUserList(result.data[0].users);*/
     };
     fetchData();
   }, []);

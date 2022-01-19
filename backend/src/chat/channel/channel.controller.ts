@@ -40,11 +40,11 @@ export class ChannelController {
 	 * @returns The details of the current channel
 	 */
 
-	@Get(':id')
+	/*@Get(':id')
 	findOne(@Param('id', ParseChannelPipe) channel: Channel) {
 		//return this.channelService.findOne(id);
 		return channel;
-	}
+	}*/
 
 	/**
 	 * ! CREATE A CHANNEL
