@@ -29,7 +29,7 @@ function ChatUsers({ userList }: ChatUsersProps) {
       {userList.map((user, index) => {
         return (
           <Button key={index} onClick={handleClick} className={classes.elem}>
-            {user}
+            {user.role!}
           </Button>
         );
       })}

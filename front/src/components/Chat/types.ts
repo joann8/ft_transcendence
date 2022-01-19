@@ -8,7 +8,9 @@ type chatRoom = {
     hour: string;
   }[];
 };
-
+type User = {
+  role: "string";
+};
 type Message = {
   user: string;
   content: string;
@@ -36,7 +38,7 @@ type ChatRoomsProps = {
   chatRooms: chatRoom[];
 };
 type ChatUsersProps = {
-  userList: string[];
+  userList: User[];
 };
 type ThemeOptions = {
   palette: {

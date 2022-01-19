@@ -4,7 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import * as React from "react";
 import CurrentChat from "./CurrentChat";
 import ChatRooms from "./ChatRooms";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import { Message, chatRoom } from "./types";
 import ChatUsers from "./ChatUsers";
 import useFromApi from "../../ApiCalls/useFromApi";
@@ -23,32 +23,48 @@ function Chat() {
   const [chatRoom, setChatRoom] = React.useState<chatRoom>();
   const [currentRoomIndex, setCurrentRoomIndex] = React.useState(0);
   const [messageList, setMessageList] = React.useState<Message[]>([]);
-  const [userList, setUserList] = React.useState<string[]>([]);
+  const [userList, setUserList] = React.useState<any[]>([]);
+
+  /** BACK END CALLS */
+
+  const fetchChatrooms = async () => {
+    const app = axios.create({ withCredentials: true });
+    const result = await app.get("http://127.0.0.1:3001/channel/me");
+    setChatRooms(result.data);
+    setChatRoom(result.data[0]);
+  };
+
+  const fetchMessages = async () => {
+    const app = axios.create({ withCredentials: true });
+    const result = await app.get(
+      `http://127.0.0.1:3001/channel/${chatRoom.id}/messages`
+    );
+    setMessageList(result.data);
+    console.log(result.data);
+  };
+
+  const fetchUsers = async () => {
+    const app = axios.create({ withCredentials: true });
+    const result = await app.get(
+      `http://127.0.0.1:3001/channel/${chatRoom.id}/users`
+    );
+    console.log(result.data);
+
+    setUserList(result.data);
+  };
 
   /*
    *   HOOKS
    */
-  //let data = useFromApi("/channel/me");
-  //console.log(data.data);
+
   React.useEffect(() => {
-    const fetchData = async () => {
-      const result = await axios.get("http://localhost:3001/channel/me", {
-        withCredentials: true,
-        headers: { "Access-Control-Allow-Origin": "*" },
-      });
-      console.log(result);
-      /*setChatRooms(result.data);
-      setChatRoom(result.data[0]);
-      setMessageList(result.data[0].messageList);
-      setUserList(result.data[0].users);*/
-    };
-    fetchData();
+    fetchChatrooms();
   }, []);
 
   React.useEffect(() => {
     if (chatRoom) {
-      setMessageList(chatRoom.messageList);
-      setUserList(chatRoom.users);
+      fetchMessages();
+      fetchUsers();
     }
   }, [chatRoom]);
 
