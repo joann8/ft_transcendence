@@ -1,39 +1,29 @@
 import { Send } from "@mui/icons-material";
-import { Grid, Button, Typography, Paper } from "@mui/material";
-import React, { Fragment } from "react";
+import { Button, Grid } from "@mui/material";
+import React from "react";
+import LoginMask from "./LoginMask";
 
 export default function Login() {
   return (
-    <Fragment>
+    <div>
+      <LoginMask />
       <Grid
         container
         alignItems="center"
         justifyContent="center"
         direction={"column"}
-        margin={6}
+        marginTop={29}
+        position={"absolute"}
       >
-        <Grid item>
-          <Typography
-            variant="h3"
-            align="center"
-            fontFamily={"Arial Black"}
-            marginBottom={4}
-          >
-            TRANSCENDENCE
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            href="http://127.0.0.1:3001/login/42"
-            size="large"
-            endIcon={<Send />}
-          >
-            Login with 42
-          </Button>
-        </Grid>
-        <Paper></Paper>
+        <Button
+          variant="contained"
+          href="http://127.0.0.1:3001/login/42"
+          size="large"
+          endIcon={<Send />}
+        >
+          Login with 42
+        </Button>
       </Grid>
-    </Fragment>
+    </div>
   );
 }
