@@ -22,6 +22,7 @@ import AvatarModal from "./AvatarModal";
 import InfoModal from "./LoadingModal ";
 import PasswordModal from "./PasswordModal ";
 import LoadingModal from "./LoadingModal ";
+import { api_req_init } from "../../ApiCalls/var";
 
 
 const backGround = {
@@ -107,7 +108,7 @@ export default function Profile() {
     const navigate = useNavigate()
 
     const getUserData = function () {
-        fetch(`${backEndUrl}/user`)
+        fetch(`${backEndUrl}/user`, api_req_init)
             .then((res) => {
                 if (res.status === 401) {
                     navigate("/login");

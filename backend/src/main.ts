@@ -18,16 +18,13 @@ async function bootstrap() {
 		// httpsOptions,
 	});
 	// Enable CORS
-<<<<<<< HEAD
-/*	app.enableCors({
-		origin: process.env.FRONTEND_URL,
-=======
+	/*
 	app.enableCors({
 		origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_BIS],
 		credentials: true,
->>>>>>> master
 	});
 	*/
+
 	app.enableCors();
 	// cookieParser middleware as global for parsing cookies
 	app.use(cookieParser());
