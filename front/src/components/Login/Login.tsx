@@ -4,6 +4,7 @@ import { Box } from "@mui/system";
 import React, { useState } from "react";
 import LoginMask from "./LoginMask";
 import * as CSS from "csstype";
+import { useNavigate } from "react-router";
 
 const boxStyle = {
   position: "absolute" as "absolute",
@@ -25,15 +26,40 @@ const butonStyle = {
   margin: "auto",
 };
 
-export default function Login() {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const [title, setTitle] = useState("");
+export default function Login(props) {
+  const [open, setOpen] = useState(props.twofa);
+  const [secret, setSecret] = useState("");
   const [titleError, setTitleError] = useState(false);
+  const [helperError, setHelperError] = useState("");
+  const [isPending, setIsPending] = useState(false);
+  let nav = useNavigate();
 
-  const handleSubmit = (e) => {
-    // POST -> BACK
+  const handleClose = () => {
+    setOpen(false);
+    nav("/login");
+  };
+
+  const handleSubmit = async () => {
+    setIsPending(true);
+    fetch("http://127.0.0.1:3001/2fa/authenticate", {
+      method: "PUT",
+      credentials: "include",
+      referrerPolicy: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ secret: secret }),
+    }).then((res) => {
+      setIsPending(false);
+      if (!res.ok) {
+        console.log(res);
+        setTitleError(true);
+        res.json().then((data) => {
+          setHelperError(data.message);
+        });
+      } else {
+        setOpen(false);
+        nav("/");
+      }
+    });
   };
 
   return (
@@ -56,7 +82,6 @@ export default function Login() {
           Login with 42
         </Button>
       </Grid>
-      <Button onClick={handleOpen}>Open modal</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -66,23 +91,32 @@ export default function Login() {
         <Box sx={boxStyle} textAlign="center">
           <TextField
             className="twofa-text-field"
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => setSecret(e.target.value)}
             label="Please enter your 2FA code"
             variant="outlined"
             color="primary"
             fullWidth
             required
             error={titleError}
+            helperText={helperError}
           />
           <div style={butonStyle}>
-            <Button
-              type="submit"
-              color="primary"
-              variant="contained"
-              endIcon={<Send />}
-            >
-              Submit
-            </Button>
+            {!isPending && (
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                endIcon={<Send />}
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            )}
+            {isPending && (
+              <Button disabled color="primary">
+                Submiting...
+              </Button>
+            )}
           </div>
         </Box>
       </Modal>

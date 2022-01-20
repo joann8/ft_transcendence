@@ -17,7 +17,8 @@ function Root() {
     <Router>
       {/*<SideBars />*/}
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login/twofa" element={<Login twofa={true} />} />
+        <Route path="/login" element={<Login twofa={false} />} />
         <Route path="/" element={<SideBars />}>
           <Route index element={<Homepage />} />
           <Route path="game">
