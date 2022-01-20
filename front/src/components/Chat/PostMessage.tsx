@@ -9,33 +9,22 @@ const useStyle = makeStyles({
   formMessageContainer: {
     height: "56px",
     justifyContent: "center",
+    width: "100%",
   },
   submitButton: {
     height: "100%",
   },
   item: {
     backgroundColor: "white",
+    width: "100%",
   },
 });
 function PostMessage({ submit }: MessagePostProps) {
-  const [user, setUser] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const classes = useStyle();
   return (
     <Grid container className={classes.formMessageContainer} columnSpacing={1}>
-      <Grid item xs={4} md={4} lg={4}>
-        <TextField
-          id="outlined-basic"
-          label="User"
-          variant="outlined"
-          value={user}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setUser(e.currentTarget.value)
-          }
-          className={classes.item}
-        />
-      </Grid>
-      <Grid item xs={4} md={4} lg={4}>
+      <Grid item xs={8} md={8} lg={10}>
         <TextField
           id="outlined-basic"
           label="Message"
@@ -52,14 +41,9 @@ function PostMessage({ submit }: MessagePostProps) {
           variant="contained"
           className={classes.submitButton}
           onClick={() => {
-            /*if (user && content) {
-              const message: Message = {
-                user: user,
-                content: content,
-                hour: "9h00",
-              };
-              submit(message);
-            }*/
+            if (content) {
+              submit(content);
+            }
             return;
           }}
         >

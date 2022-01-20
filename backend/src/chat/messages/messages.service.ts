@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/user/entities/user.entity';
 import { getRepository, Repository } from 'typeorm';
 import { Channel } from '../channel/entities/channel.entity';
 import { CreateMessageDto } from './dto/create-message-dto';
@@ -11,27 +12,18 @@ export class MessagesService {
 		private messageRepository: Repository<Message>,
 	) {}
 
-	async findAll() {
-		return this.messageRepository.find();
-	}
-	async findMessagesOfOne(id: number) {
-		const message = this.messageRepository.findOne(id);
-		return await getRepository(Channel).find((await message).channel);
-	}
-	async findOne(id: number) {
-		return this.messageRepository.findOne(id);
-	}
-	async createOne(createMessageDto: CreateMessageDto) {
-		const newChat = this.messageRepository.create(createMessageDto);
-		await this.messageRepository.save(newChat);
-		return newChat;
-	}
-	async removeOne(id: number) {
-		return this.messageRepository.delete(id);
-	}
-
-	async removeAll() {
-		const entities = await this.findAll();
-		return this.messageRepository.delete(entities.map((elem) => elem.id));
+	async createOne(
+		channel: Channel,
+		user: User,
+		createMessageDto: CreateMessageDto,
+	) {
+		console.log('here');
+		const newMessage = this.messageRepository.create({
+			author: user,
+			channel: channel,
+			content: createMessageDto.content,
+		});
+		await this.messageRepository.save(newMessage);
+		return newMessage;
 	}
 }

@@ -1,13 +1,12 @@
-import { Container, Grid, Typography } from "@mui/material";
-import { Box, width } from "@mui/system";
+import { Container, Grid } from "@mui/material";
+import { Box } from "@mui/system";
 import Toolbar from "@mui/material/Toolbar";
 import * as React from "react";
 import MessageList from "./MessageList";
 import ChannelList from "./ChannelList";
-import axios, { Axios } from "axios";
 import { Message, Channel, userChannelRole } from "./types";
 import RoleList from "./RoleList";
-import useFromApi from "../../ApiCalls/useFromApi";
+import back from "./backConnection";
 
 function Chat() {
   /*
@@ -28,29 +27,37 @@ function Chat() {
   /** BACK END CALLS */
 
   const fetchChannelList = async () => {
-    const app = axios.create({ withCredentials: true });
-    const result = await app.get("http://127.0.0.1:3001/channel/me");
+    const result = await back.get("http://127.0.0.1:3001/channel/me");
     setChannelList(result.data);
     setcurrentChannel(result.data[0]);
   };
 
   const fetchMessages = async () => {
-    const app = axios.create({ withCredentials: true });
-    const result = await app.get(
+    const result = await back.get(
       `http://127.0.0.1:3001/channel/${currentChannel.id}/messages`
     );
-    setMessageList(result.data);
     console.log(result.data);
+
+    setMessageList(result.data);
   };
 
   const fetchUsers = async () => {
-    const app = axios.create({ withCredentials: true });
-    const result = await app.get(
+    const result = await back.get(
       `http://127.0.0.1:3001/channel/${currentChannel.id}/users`
     );
     console.log(result.data);
 
     setRoleList(result.data);
+  };
+
+  const fetchPostMessage = async (content: string) => {
+    const result = await back.post(
+      `http://127.0.0.1:3001/channel/${currentChannel.id}/messages`,
+      {
+        content: content,
+      }
+    );
+    console.log(result.data);
   };
 
   /*
@@ -78,10 +85,9 @@ function Chat() {
    *   FUNCTIONS
    */
 
-  function postMessage(message: Message) {
+  function postMessage(content: string) {
     if (currentChannel) {
-      channelList[currentChannel.id].messages = [...messageList, message];
-      setMessageList([...messageList, message]);
+      fetchPostMessage(content);
     }
   }
 
@@ -117,7 +123,7 @@ function Chat() {
             innerref={myRef}
             messageList={messageList}
             submit={postMessage}
-          />
+          ></MessageList>
           <RoleList roleList={roleList}></RoleList>
         </Grid>
       </Container>

@@ -1,7 +1,30 @@
-import { Button, Typography, Grid, Container } from "@mui/material";
+import {
+  Button,
+  Typography,
+  Grid,
+  Container,
+  Modal,
+  TextField,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { Box } from "@mui/system";
 import * as React from "react";
-import { ChannelListProps, ThemeOptions } from "./types";
+import back from "./backConnection";
+import CreateRoom from "./CreateRoom";
+import SearchRoom from "./SearchRoom";
+import { Channel, ChannelListProps, ThemeOptions } from "./types";
+
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
   channelListContainer: () => ({
@@ -19,6 +42,15 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
     width: "100%",
     margin: "0",
     padding: "0",
+  }),
+  name: () => ({
+    marginBottom: "5px",
+    marginTop: "5px",
+    width: "100%",
+  }),
+  button: () => ({
+    margin: "0 auto",
+    display: "block",
   }),
 }));
 
@@ -61,9 +93,8 @@ function ChannelList({
           );
         }
       })}
-      <Button variant="contained" className={classes.elem}>
-        CREATE ROOM
-      </Button>
+      <CreateRoom></CreateRoom>
+      <SearchRoom></SearchRoom>
     </Grid>
   );
 }

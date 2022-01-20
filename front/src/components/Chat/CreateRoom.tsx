@@ -1,7 +1,16 @@
-import { Button, Typography, Grid, Modal, Box, TextField } from "@mui/material";
+import {
+  Button,
+  Typography,
+  Grid,
+  Container,
+  Modal,
+  TextField,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { RoleListProps, ThemeOptions } from "./types";
+import { Box } from "@mui/system";
 import * as React from "react";
+import { ThemeOptions } from "./types";
+
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -13,19 +22,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-
 const useStyle = makeStyles((theme: ThemeOptions) => ({
-  RoleListContainer: () => ({
-    margin: "0",
-    padding: "0",
-    width: "100%",
-    height: "600px",
-    backgroundColor: "white",
-    borderRadius: "10px",
-    overflowY: "hidden",
-    overflowX: "hidden",
-    paddingRight: "10px",
-  }),
   elem: () => ({
     width: "100%",
     margin: "0",
@@ -42,29 +39,25 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function RoleList({ roleList }: RoleListProps) {
-  const [open, setOpen] = React.useState(false);
+function CreateRoom() {
+  const [open, setOpenCreate] = React.useState(false);
+  const [currentSearchRoom, setCurrentSearchRoom] = React.useState(0);
   const [content, setContent] = React.useState<string>("");
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const classes = useStyle();
-  function handleClick(event: React.MouseEvent) {}
+  const handleOpenCreate = () => setOpenCreate(true);
+  const handleCloseCreate = () => setOpenCreate(false);
   return (
-    <Grid item xs={12} md={4} lg={3} className={classes.RoleListContainer}>
-      {roleList.map((user, index) => {
-        return (
-          <Button key={index} onClick={handleClick} className={classes.elem}>
-            {user.user.id_pseudo}
-          </Button>
-        );
-      })}
-      <Button variant="contained" onClick={handleOpen} className={classes.elem}>
-        ADD USER
+    <>
+      <Button
+        variant="contained"
+        onClick={handleOpenCreate}
+        className={classes.elem}
+      >
+        CREATE ROOM
       </Button>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={handleCloseCreate}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -75,12 +68,12 @@ function RoleList({ roleList }: RoleListProps) {
             variant="h6"
             component="h2"
           >
-            ADD A USER
+            CREATE A CHANNEL ROOM
           </Typography>
           <TextField
             className={classes.name}
             id="outlined-basic"
-            label="PSEUDO"
+            label="Room name"
             variant="outlined"
             value={content}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -101,7 +94,8 @@ function RoleList({ roleList }: RoleListProps) {
           </Button>
         </Box>
       </Modal>
-    </Grid>
+    </>
   );
 }
-export default RoleList;
+
+export default CreateRoom;

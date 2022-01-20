@@ -12,16 +12,21 @@ import {
 } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { UpdateDateColumn } from 'typeorm';
+import { CreateMessageDto } from '../messages/dto/create-message-dto';
 import { ChannelService } from './channel.service';
 import { AddUserDto } from './dto/add-user-dto';
 import { CreateChannelDto } from './dto/create-channel-dto';
 import { Channel } from './entities/channel.entity';
 import { ParseChannelPipe } from './pipes/parse-channel.pipe';
 import { ParseUserPseudo } from './pipes/parse-user-pseudo.pipe';
+import { MessagesService } from '../messages/messages.service';
 
 @Controller('channel')
 export class ChannelController {
-	constructor(private readonly channelService: ChannelService) {}
+	constructor(
+		private readonly channelService: ChannelService,
+		private messageService: MessagesService,
+	) {}
 
 	/**
 	 * ! LIST ALL CHANNELS
@@ -194,6 +199,34 @@ export class ChannelController {
 		@Param('id', ParseChannelPipe) channel: Channel,
 	) {
 		return this.channelService.findUsersOfOne(channel, null, req.user);
+	}
+
+	/**
+	 * ! POST A MESSAGE
+	 * *http://localhost:3001/channel/{id}/messages
+	 * @param req to get the current user
+	 * @param channel current channel
+	 * @param createMesssageDto body of request for create a message
+	 * @returns the new message entity
+	 */
+	@Post('/:id/messages')
+	postMessage(
+		@Req() req,
+		@Param('id', ParseChannelPipe) channel: Channel,
+		@Body() createMesssageDto: CreateMessageDto,
+	) {
+		this.channelService.postMessage(
+			channel,
+			null,
+			req.user,
+			createMesssageDto,
+		);
+		/** WRITE MESSAGE */
+		return this.messageService.createOne(
+			channel,
+			req.user,
+			createMesssageDto,
+		);
 	}
 
 	/**

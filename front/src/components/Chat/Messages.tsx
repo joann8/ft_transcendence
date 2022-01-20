@@ -40,6 +40,15 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
 }));
 
 function Message({ message }: MessageProps) {
+  function formatDate(date: Date) {
+    var theMinutesNow = new Date().getTime() / (1000 * 60);
+    var theMinutesMessage = new Date(date).getTime() / (1000 * 60);
+    return `${
+      Math.ceil(theMinutesNow - theMinutesMessage - 60) < 60
+        ? `Math.ceil(theMinutesNow - theMinutesMessage - 60)`
+        : new Date(date).toLocaleDateString()
+    } min ago`;
+  }
   const classes = useStyle();
   return (
     <Grid
@@ -47,11 +56,10 @@ function Message({ message }: MessageProps) {
       columnSpacing={3}
       rowSpacing={0}
       className={classes.message}
-      //justifyContent="flex-end"
     >
       <Grid item xs={12} md={12} lg={12}>
         <Typography component="p" align="center" variant="caption">
-          hour
+          {formatDate(message.date)}
         </Typography>
       </Grid>
       {message.author.id_pseudo !== "Thib" ? (
@@ -72,7 +80,9 @@ function Message({ message }: MessageProps) {
           </Container>
         ) : (
           <Container className={classes.typo}>
-            <Typography variant="subtitle1">{message.author}</Typography>
+            <Typography variant="subtitle1">
+              {message.author.id_pseudo}
+            </Typography>
             <Typography
               component="div"
               color="white"

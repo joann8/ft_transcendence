@@ -1,24 +1,22 @@
 import {
 	BadRequestException,
 	ForbiddenException,
-	HttpException,
 	Injectable,
-	NotFoundException,
-	Req,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, getRepository, Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { Channel } from './entities/channel.entity';
 import { CreateChannelDto } from './dto/create-channel-dto';
 import { Message } from '../messages/entities/message.entity';
 import { User } from 'src/user/entities/user.entity';
 import { CheckRoles } from './decorators/channel-role.decorator';
-import { AddUserDto } from './dto/add-user-dto';
+
 import {
 	channelRole,
 	userChannelRole,
 } from './entities/userChannelRole.entity';
 import { CheckBann } from './decorators/channel-banned.decorator';
+import { CreateMessageDto } from '../messages/dto/create-message-dto';
 
 @Injectable()
 export class ChannelService {
@@ -221,6 +219,36 @@ export class ChannelService {
 	async findUsersOfOne(channel: Channel, targetUser: User, user: User) {
 		return channel.roles;
 	}
+
+	/**
+	 * *GET ALL MESSAGES OF A CHANNEL
+	 * @param id The current channel
+	 * @returns An array of all messages entities of the channel
+	 * TODO: TODO: CHECK ROLES && EXISTANCE
+	 */
+	@CheckBann()
+	async findMessagesOfOne(channel: Channel, targetUser: User, user: User) {
+		return await getRepository(Message).find({
+			where: { channel: channel },
+			relations: ['channel', 'author'],
+		});
+	}
+
+	@CheckBann()
+	async postMessage(
+		channel: Channel,
+		targetUser: User,
+		user: User,
+		createMesssageDto: CreateMessageDto,
+	) {
+		const userRole = user.roles.find(
+			(elem) => elem.channel.id === channel.id,
+		);
+		/** IF USER IS MUTED */
+		if (userRole.role === 'muted') {
+			throw new BadRequestException('You are muted');
+		}
+	}
 	/**
 	 *
 	 *
@@ -264,19 +292,6 @@ export class ChannelService {
 	async findAll() {
 		return await this.channelRepository.find({
 			relations: ['roles'],
-		});
-	}
-
-	/**
-	 * *GET ALL MESSAGES OF A CHANNEL
-	 * @param id The current channel
-	 * @returns An array of all messages entities of the channel
-	 * TODO: TODO: CHECK ROLES && EXISTANCE
-	 */
-	@CheckBann()
-	async findMessagesOfOne(channel: Channel, targetUser: User, user: User) {
-		return await getRepository(Message).find({
-			where: { channel: channel },
 		});
 	}
 

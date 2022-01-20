@@ -18,6 +18,7 @@ type Message = {
   content: string;
   channel: Channel;
   author: User;
+  date: Date;
 };
 
 type User = {
@@ -67,14 +68,14 @@ type MessagesProps = {
 type MessageListProps = {
   messageList: Message[];
   innerref: React.MutableRefObject<HTMLDivElement | null>;
-  submit: (message: Message) => void;
+  submit: (content: string) => void;
 };
 type MessageProps = {
   key: number;
   message: Message;
 };
 type MessagePostProps = {
-  submit: (message: Message) => void;
+  submit: (content: string) => void;
 };
 type ChannelListProps = {
   currentIndex: number;
@@ -84,6 +85,7 @@ type ChannelListProps = {
 type RoleListProps = {
   roleList: userChannelRole[];
 };
+
 type ThemeOptions = {
   palette: {
     primary: {
