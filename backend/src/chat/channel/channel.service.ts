@@ -103,7 +103,10 @@ export class ChannelService {
 			}),
 		);
 		channel.roles.push(newRole);
-		await this.channelRepository.save(channel);
+
+		const test = await getRepository(Channel).save(channel);
+		console.log('here');
+
 		return newRole;
 	}
 

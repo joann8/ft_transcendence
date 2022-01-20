@@ -28,6 +28,9 @@ export class Channel {
 	@OneToMany(
 		(type) => userChannelRole,
 		(userChannelRole) => userChannelRole.channel,
+		{
+			cascade: true,
+		},
 	)
 	roles!: userChannelRole[];
 }

@@ -78,14 +78,25 @@ type MessagePostProps = {
   submit: (content: string) => void;
 };
 type ChannelListProps = {
-  currentIndex: number;
-  changeRoom: (index: number) => void;
+  currentChannel: Channel;
+  changeChannel: React.Dispatch<React.SetStateAction<Channel>>;
+  fetchChannelList: () => Promise<void>;
   channelList: Channel[];
 };
-type RoleListProps = {
-  roleList: userChannelRole[];
+type CreateChannelProps = {
+  fetchChannelList: () => Promise<void>;
 };
+type RoleListProps = {
+  currentChannel: Channel;
 
+  roleList: userChannelRole[];
+  fetchUsers: () => Promise<void>;
+};
+type AddUserProps = {
+  currentChannel: Channel;
+
+  fetchUsers: () => Promise<void>;
+};
 type ThemeOptions = {
   palette: {
     primary: {
@@ -106,4 +117,6 @@ export type {
   Channel,
   User,
   userChannelRole,
+  CreateChannelProps,
+  AddUserProps,
 };

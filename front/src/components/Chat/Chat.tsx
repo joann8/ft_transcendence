@@ -19,8 +19,12 @@ function Chat() {
    *   STATES
    */
   const [channelList, setChannelList] = React.useState<Channel[]>([]);
-  const [currentChannel, setcurrentChannel] = React.useState<Channel>();
-  const [currentRoomIndex, setCurrentRoomIndex] = React.useState<number>(0);
+  const [currentChannel, setcurrentChannel] = React.useState<Channel>({
+    id: 0,
+    name: "",
+    messages: [],
+    roles: [],
+  });
   const [messageList, setMessageList] = React.useState<Message[]>([]);
   const [roleList, setRoleList] = React.useState<userChannelRole[]>([]);
 
@@ -29,7 +33,6 @@ function Chat() {
   const fetchChannelList = async () => {
     const result = await back.get("http://127.0.0.1:3001/channel/me");
     setChannelList(result.data);
-    setcurrentChannel(result.data[0]);
   };
 
   const fetchMessages = async () => {
@@ -46,7 +49,6 @@ function Chat() {
       `http://127.0.0.1:3001/channel/${currentChannel.id}/users`
     );
     console.log(result.data);
-
     setRoleList(result.data);
   };
 
@@ -90,11 +92,6 @@ function Chat() {
       fetchPostMessage(content);
     }
   }
-
-  function changeRoom(index: number) {
-    setCurrentRoomIndex(index);
-    setcurrentChannel(channelList[index]);
-  }
   /*
    *   RENDER
    */
@@ -115,16 +112,22 @@ function Chat() {
       <Container disableGutters maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Grid container columnSpacing={1} rowSpacing={0}>
           <ChannelList
-            currentIndex={currentRoomIndex}
-            changeRoom={changeRoom}
+            currentChannel={currentChannel}
+            changeChannel={setcurrentChannel}
             channelList={channelList}
+            fetchChannelList={fetchChannelList}
           ></ChannelList>
           <MessageList
             innerref={myRef}
             messageList={messageList}
             submit={postMessage}
           ></MessageList>
-          <RoleList roleList={roleList}></RoleList>
+
+          <RoleList
+            roleList={roleList}
+            fetchUsers={fetchUsers}
+            currentChannel={currentChannel}
+          ></RoleList>
         </Grid>
       </Container>
     </Box>

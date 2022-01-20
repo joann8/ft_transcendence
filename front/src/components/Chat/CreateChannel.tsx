@@ -9,7 +9,8 @@ import {
 import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
 import * as React from "react";
-import { ThemeOptions } from "./types";
+import back from "./backConnection";
+import { CreateChannelProps, ThemeOptions } from "./types";
 
 const style = {
   position: "absolute" as "absolute",
@@ -39,13 +40,19 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function CreateRoom() {
+function CreateChannel({ fetchChannelList }: CreateChannelProps) {
   const [open, setOpenCreate] = React.useState(false);
-  const [currentSearchRoom, setCurrentSearchRoom] = React.useState(0);
   const [content, setContent] = React.useState<string>("");
   const classes = useStyle();
   const handleOpenCreate = () => setOpenCreate(true);
   const handleCloseCreate = () => setOpenCreate(false);
+  const fetchPostChannel = async () => {
+    const result = await back.post(`http://127.0.0.1:3001/channel`, {
+      name: content,
+    });
+    fetchChannelList();
+    setOpenCreate(false);
+  };
   return (
     <>
       <Button
@@ -85,7 +92,7 @@ function CreateRoom() {
             variant="contained"
             onClick={() => {
               if (content) {
-                // submit(content);
+                fetchPostChannel();
               }
               return;
             }}
@@ -98,4 +105,4 @@ function CreateRoom() {
   );
 }
 
-export default CreateRoom;
+export default CreateChannel;

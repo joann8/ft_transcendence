@@ -45,7 +45,7 @@ function Message({ message }: MessageProps) {
     var theMinutesMessage = new Date(date).getTime() / (1000 * 60);
     return `${
       Math.ceil(theMinutesNow - theMinutesMessage - 60) < 60
-        ? `Math.ceil(theMinutesNow - theMinutesMessage - 60)`
+        ? `${Math.ceil(theMinutesNow - theMinutesMessage - 60)}`
         : new Date(date).toLocaleDateString()
     } min ago`;
   }

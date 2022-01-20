@@ -2,6 +2,7 @@ import { Button, Typography, Grid, Modal, Box, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { RoleListProps, ThemeOptions } from "./types";
 import * as React from "react";
+import AddUser from "./AddUser";
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -42,7 +43,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function RoleList({ roleList }: RoleListProps) {
+function RoleList({ roleList, fetchUsers, currentChannel }: RoleListProps) {
   const [open, setOpen] = React.useState(false);
   const [content, setContent] = React.useState<string>("");
 
@@ -59,48 +60,10 @@ function RoleList({ roleList }: RoleListProps) {
           </Button>
         );
       })}
-      <Button variant="contained" onClick={handleOpen} className={classes.elem}>
-        ADD USER
-      </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography
-            align="center"
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-          >
-            ADD A USER
-          </Typography>
-          <TextField
-            className={classes.name}
-            id="outlined-basic"
-            label="PSEUDO"
-            variant="outlined"
-            value={content}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setContent(e.currentTarget.value)
-            }
-          />
-          <Button
-            className={classes.button}
-            variant="contained"
-            onClick={() => {
-              if (content) {
-                // submit(content);
-              }
-              return;
-            }}
-          >
-            SUBMIT
-          </Button>
-        </Box>
-      </Modal>
+      <AddUser
+        fetchUsers={fetchUsers}
+        currentChannel={currentChannel}
+      ></AddUser>
     </Grid>
   );
 }

@@ -18,7 +18,9 @@ export class Message {
 	id: number;
 	@Column({ default: 'default' })
 	content: string;
-	@ManyToOne((type) => Channel, (channel) => channel.messages)
+	@ManyToOne((type) => Channel, (channel) => channel.messages, {
+		onDelete: 'CASCADE',
+	})
 	channel: Channel;
 	@ManyToOne((type) => User)
 	author: User;

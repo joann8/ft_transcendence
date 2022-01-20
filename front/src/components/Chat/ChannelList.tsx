@@ -10,7 +10,7 @@ import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
 import * as React from "react";
 import back from "./backConnection";
-import CreateRoom from "./CreateRoom";
+import CreateChannel from "./CreateChannel";
 import SearchRoom from "./SearchRoom";
 import { Channel, ChannelListProps, ThemeOptions } from "./types";
 
@@ -55,24 +55,28 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
 }));
 
 function ChannelList({
-  currentIndex,
-  changeRoom,
+  currentChannel,
+  changeChannel,
   channelList,
+  fetchChannelList,
 }: ChannelListProps) {
   const classes = useStyle();
   function handleClick(event: React.MouseEvent) {
     const element = event.currentTarget as HTMLInputElement;
-    const index = element.getAttribute("data-index");
-    if (index) changeRoom(+index);
+    const id = element.getAttribute("data-index");
+    if (id) {
+      const channel = channelList.find((channel) => channel.id === +id);
+      changeChannel(channel);
+    }
   }
   return (
     <Grid item xs={12} md={4} lg={3} className={classes.channelListContainer}>
       {channelList.map((room, index) => {
-        if (index !== currentIndex) {
+        if (room.id !== currentChannel.id) {
           return (
             <Button
               key={index}
-              data-index={index}
+              data-index={room.id}
               onClick={handleClick}
               className={classes.elem}
             >
@@ -93,7 +97,7 @@ function ChannelList({
           );
         }
       })}
-      <CreateRoom></CreateRoom>
+      <CreateChannel fetchChannelList={fetchChannelList}></CreateChannel>
       <SearchRoom></SearchRoom>
     </Grid>
   );
