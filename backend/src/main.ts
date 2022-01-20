@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import * as fs from 'fs';
@@ -19,7 +19,8 @@ async function bootstrap() {
 	});
 	// Enable CORS
 	app.enableCors({
-		origin: process.env.FRONTEND_URL,
+		origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_BIS],
+		credentials: true,
 	});
 	// cookieParser middleware as global for parsing cookies
 	app.use(cookieParser());

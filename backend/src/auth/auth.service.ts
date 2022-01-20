@@ -20,23 +20,29 @@ export class AuthService {
 	) {}
 
 	async findOrCreate42User(profile: Profile): Promise<any> {
+		let created = false;
 		let user = await this.userService.findOne(profile.id);
 		if (!user) {
+			let role = user_role.USER;
+			let u = await this.userService.getNbUsers();
+			if (!u) {
+				role = user_role.OWNER;
+			}
 			try {
 				user = await this.userService.createEntity({
 					id: profile.id,
 					id_pseudo: profile.username,
 					email: profile.emails[0].value,
 					avatar: profile.photos[0].value,
+					role: role,
 				});
 			} catch (err) {
 				console.error(err);
 				return null;
 			}
+			created = true;
 		}
-		user.status = status.ONLINE;
-		await this.userService.update(user.id, user);
-		return user;
+		return { user, created };
 	}
 
 	async ft_login(user: User) {

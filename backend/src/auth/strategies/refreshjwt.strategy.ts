@@ -1,9 +1,14 @@
 import { Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+	ForbiddenException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
 import * as bcrypt from 'bcrypt';
+import { status } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class RefreshJwtStrategy extends PassportStrategy(
@@ -32,6 +37,10 @@ export class RefreshJwtStrategy extends PassportStrategy(
 		if (!user || !user.refresh_token) {
 			throw new UnauthorizedException(
 				'Token does not match any user in DB',
+			);
+		} else if (user.status === status.BAN) {
+			throw new ForbiddenException(
+				'You are ban from this website, get out of my sight',
 			);
 		}
 		const match = await bcrypt.compare(

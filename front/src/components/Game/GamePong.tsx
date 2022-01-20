@@ -110,8 +110,7 @@ export default function GamePong(props: PropsGame) {
             } else if (e.code ==='ArrowDown'){
                 socket.emit('down_paddle', 'up');
             }
-        }
-        );
+        });
     }, []);
         
     //Draw functions

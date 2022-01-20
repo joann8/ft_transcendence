@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,8 +13,7 @@ import { Chat } from './chat/chat.entity';
 import { AdminModule } from './admin/admin.module';
 import { PongModule } from './game/pong.module';
 import { PongGateway } from './game/pong.gateway';
-//import { EventsModule } from './events/events.module';
-//import { EventsGateway } from './events/events.gateway';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
 	imports: [
@@ -40,6 +39,14 @@ import { PongGateway } from './game/pong.gateway';
 		PongModule
 	],
 	controllers: [AppController],
-	providers: [AppService, UserService, ChatService],
+	providers: [
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: ClassSerializerInterceptor,
+		},
+		AppService,
+		UserService,
+		ChatService,
+	],
 })
 export class AppModule {}

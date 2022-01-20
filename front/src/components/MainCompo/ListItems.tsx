@@ -8,15 +8,10 @@ import PlayIcon from "@mui/icons-material/PlayCircleOutlined";
 import ChatIcon from "@mui/icons-material/MarkChatUnreadOutlined";
 import ProfileIcon from "@mui/icons-material/AccountCircleOutlined";
 import LeaderIcon from "@mui/icons-material/EmojiEventsOutlined";
-import HomeIcon from '@mui/icons-material/Home';
-import LogoutIcon from '@mui/icons-material/Logout'; 
-import Profile from "../Profile";
-import Chat from "../Chat/Chat";
-import Leaderboard from "../Leaderboard";
-
-import GameMenu from "../Game/GameMenu";
-import GamePage from "../Game/GamePage";
+import HomeIcon from "@mui/icons-material/Home";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router";
+import { fetchFromApi } from "../../ApiCalls/fetchFromApi";
 
 /* Pour une deuxieme liste
 import ListSubheader from '@mui/material/ListSubheader';
@@ -24,17 +19,21 @@ import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 */
 
-function MainListItems(props: any) {
+function MainListItems() {
+  let navigate = useNavigate();
 
-
-  const handleChange = () => {
-    console.log("handleChange")
-    props.handleLogout()
+  function handleLogout() {
+    fetchFromApi("/logout")
+      .then((res) => {
+        if (!res.ok) {
+          throw Error(res.statusText);
+        }
+        navigate("/login");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
-
-  let navigate = useNavigate()
-
-
   return (
     <div>
       <ListItem button onClick={() => navigate("/")}>
@@ -72,81 +71,14 @@ function MainListItems(props: any) {
         <ListItemText primary="Chat" />
       </ListItem>
 
-      <ListItem button onClick={() => props.setLogin(false)}>
+      <ListItem button onClick={() => handleLogout()}>
         <ListItemIcon>
-          <LogoutIcon/>
+          <LogoutIcon />
         </ListItemIcon>
         <ListItemText primary="Logout" />
       </ListItem>
-
-
-      <ListItem >
-        <ListItemIcon>
-        </ListItemIcon>
-        <ListItemText primary={props.login? "Logged IN" : "Logged OUT"} />
-      </ListItem>
-
     </div>
   );
 }
 
 export default MainListItems;
-
-/*
-
-export const mainListItems = (
-  <div>
-    <ListItem button>
-      <ListItemIcon>
-        <ProfileIcon fontSize="large"/>
-      </ListItemIcon>
-      <ListItemText primary="Profile" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <PlayIcon fontSize="large"/>
-      </ListItemIcon>
-      <ListItemText primary="Game" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <LeaderIcon fontSize="large" />
-      </ListItemIcon>
-      <ListItemText primary="Leaderboard" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <ChatIcon fontSize="large"/>
-      </ListItemIcon>
-      <ListItemText primary="Chat" />
-    </ListItem>
-  
-  </div>
-);
-*/
-
-/* Pour faire un deuxieme sous menu
-export const secondaryListItems = (
-  <div>
-    <ListSubheader inset>Saved reports</ListSubheader>
-    <ListItem button>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Current month" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
-    </ListItem>
-  </div>
-);
-*/
