@@ -62,8 +62,8 @@ export default function GameWatch(props: PropsGame) {
     useEffect(() => {
         socket.on("no_current_match", (updateState : any) => {
             console.log("No current game received");
-
             setWatching(false);
+
             let c : HTMLCanvasElement = ref.current; //canvas
             let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
            
@@ -76,8 +76,7 @@ export default function GameWatch(props: PropsGame) {
             ctx.fillText("No current game on going", 100, height / 2);
         });
     });
-
-    
+   
           
     //Draw functions
     useEffect(() => {

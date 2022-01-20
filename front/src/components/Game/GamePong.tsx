@@ -5,6 +5,8 @@ import { useState, useEffect, useRef } from 'react';
 import socket from './socket';
 import { Button } from '@mui/material';
 import { waitForElementToBeRemoved } from '@testing-library/react';
+import { useLocation } from 'react-router';
+
 
 //import { socketContext } from '../../contexts/SocketContext';
 //import { useContext } from 'react';
@@ -59,6 +61,15 @@ export default function GamePong(props: PropsGame) {
     
     const [game, setGame] = useState(initGame);
     
+    /*
+    const useCheckLocation = () => {
+        const location = useLocation();
+        useEffect(() => {
+            console.log("location changed!");
+            socket.emit("my_disconnect");
+           }, [location]);
+    };
+    */
     useEffect(() => {
         socket.on("updateState", (updateState : any) => {
             setGame(updateState);
@@ -206,6 +217,9 @@ export default function GamePong(props: PropsGame) {
         button = <Button variant="contained" onClick={()=> socket.emit('resume')} > Resume to Game </Button>;
     else if (game.state === OVER)
         button = <Button variant="contained" onClick={()=> socket.emit('join_queue')} > Start a new Game </Button>;
+    
+    //useCheckLocation();
+    
     return (
         <Fragment>
             <canvas width={width} height={height} ref={ref}> 

@@ -55,7 +55,7 @@ export default function GamePage() {
                     <Grid item xs={12} style={{textAlign: "center"}} >
                         <Typography> PONG GAME</Typography>
                     </Grid>
-                    <Grid item spacing={2} xs={12} >
+                    <Grid item xs={12} >
                       <Container className={classes.gameWindow} >
                         <Typography> Game Window </Typography>
                         {object}
