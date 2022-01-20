@@ -71,7 +71,7 @@ const Drawer = styled(MuiDrawer, {
 
 export default function SideBar(props: any) {
   const [open, setOpen] = React.useState(true);
-  const { error, isPending, data: user } = useFromApi("/user");
+  //const { error, isPending, data: user } = useFromApi("/user");
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -110,6 +110,7 @@ export default function SideBar(props: any) {
               >
                 Welcome to Transcendence!
               </Typography>
+              
               {/* Notification clochette en haut a droite
                             <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
@@ -117,13 +118,15 @@ export default function SideBar(props: any) {
                             </Badge>
                             
                             </IconButton>
+                
                             */}
+                            {/*}
               {user && (
                 <Typography sx={{ margin: 1 }}>{user.id_pseudo}</Typography>
               )}
               <Divider orientation="vertical" sx={{ margin: 1 }} />
               {user && <Avatar src={user.avatar}></Avatar>}
-              <Divider orientation="vertical" sx={{ margin: 1 }} />
+              <Divider orientation="vertical" sx={{ margin: 1 }} />*/}
             </Toolbar>
           </AppBar>
 

@@ -3,9 +3,11 @@ import { Fragment } from 'react';
 import { PropsGame } from './GameTypes';
 import { useState, useEffect, useRef } from 'react';
 import socket from './socket';
-import { Button } from '@mui/material';
+import { Button, Modal } from '@mui/material';
 import { waitForElementToBeRemoved } from '@testing-library/react';
 import { useLocation } from 'react-router';
+import Grid from '@mui/material/Grid';
+
 
 
 //import { socketContext } from '../../contexts/SocketContext';
@@ -224,7 +226,12 @@ export default function GamePong(props: PropsGame) {
             <canvas width={width} height={height} ref={ref}> 
             
             </canvas>
-            {button}
+            <br/>
+            <Grid container alignItems="center" justifyContent="center" >
+              <Grid item xs={12} style={{textAlign: "center"}}>
+                  {button}
+                </Grid>
+            </Grid>
         </Fragment>
     );
 };
