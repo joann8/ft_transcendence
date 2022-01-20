@@ -1,10 +1,10 @@
 import { Button, Typography, Grid, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import * as React from "react";
-import { ChatRoomsProps, ThemeOptions } from "./types";
+import { ChannelListProps, ThemeOptions } from "./types";
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
-  chatRoomsContainer: () => ({
+  channelListContainer: () => ({
     margin: "0",
     padding: "0",
     width: "100%",
@@ -22,7 +22,11 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function ChatRooms({ currentIndex, changeRoom, chatRooms }: ChatRoomsProps) {
+function ChannelList({
+  currentIndex,
+  changeRoom,
+  channelList,
+}: ChannelListProps) {
   const classes = useStyle();
   function handleClick(event: React.MouseEvent) {
     const element = event.currentTarget as HTMLInputElement;
@@ -30,8 +34,8 @@ function ChatRooms({ currentIndex, changeRoom, chatRooms }: ChatRoomsProps) {
     if (index) changeRoom(+index);
   }
   return (
-    <Grid item xs={12} md={4} lg={3} className={classes.chatRoomsContainer}>
-      {chatRooms.map((room, index) => {
+    <Grid item xs={12} md={4} lg={3} className={classes.channelListContainer}>
+      {channelList.map((room, index) => {
         if (index !== currentIndex) {
           return (
             <Button
@@ -64,4 +68,4 @@ function ChatRooms({ currentIndex, changeRoom, chatRooms }: ChatRoomsProps) {
   );
 }
 
-export default ChatRooms;
+export default ChannelList;

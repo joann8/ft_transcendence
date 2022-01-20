@@ -51,18 +51,18 @@ function Message({ message }: MessageProps) {
     >
       <Grid item xs={12} md={12} lg={12}>
         <Typography component="p" align="center" variant="caption">
-          {message.hour}
+          hour
         </Typography>
       </Grid>
-      {message.user !== "Thib" ? (
+      {message.author.id_pseudo !== "Thib" ? (
         <Grid item xs={1} md={3} lg={1}>
-          <Avatar>{message.user[0]}</Avatar>
+          <Avatar>{message.author.id_pseudo[0]}</Avatar>
         </Grid>
       ) : (
         <div></div>
       )}
       <Grid item xs={11} md={9} lg={11}>
-        {message.user === "Thib" ? (
+        {message.author.id_pseudo === "Thib" ? (
           <Container className={classes.typo}>
             <Typography
               component="div"
@@ -72,7 +72,7 @@ function Message({ message }: MessageProps) {
           </Container>
         ) : (
           <Container className={classes.typo}>
-            <Typography variant="subtitle1">{message.user}</Typography>
+            <Typography variant="subtitle1">{message.author}</Typography>
             <Typography
               component="div"
               color="white"

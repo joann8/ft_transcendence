@@ -1,9 +1,9 @@
 import { Button, Typography, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ChatUsersProps, ThemeOptions } from "./types";
+import { RoleListProps, ThemeOptions } from "./types";
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
-  ChatUsersContainer: () => ({
+  RoleListContainer: () => ({
     margin: "0",
     padding: "0",
     width: "100%",
@@ -21,15 +21,15 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function ChatUsers({ userList }: ChatUsersProps) {
+function RoleList({ roleList }: RoleListProps) {
   const classes = useStyle();
   function handleClick(event: React.MouseEvent) {}
   return (
-    <Grid item xs={12} md={4} lg={3} className={classes.ChatUsersContainer}>
-      {userList.map((user, index) => {
+    <Grid item xs={12} md={4} lg={3} className={classes.RoleListContainer}>
+      {roleList.map((user, index) => {
         return (
           <Button key={index} onClick={handleClick} className={classes.elem}>
-            {user.role!}
+            {user.user.id_pseudo}
           </Button>
         );
       })}
@@ -39,4 +39,4 @@ function ChatUsers({ userList }: ChatUsersProps) {
     </Grid>
   );
 }
-export default ChatUsers;
+export default RoleList;

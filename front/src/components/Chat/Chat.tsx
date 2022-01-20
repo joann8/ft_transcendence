@@ -2,11 +2,11 @@ import { Container, Grid, Typography } from "@mui/material";
 import { Box, width } from "@mui/system";
 import Toolbar from "@mui/material/Toolbar";
 import * as React from "react";
-import CurrentChat from "./CurrentChat";
-import ChatRooms from "./ChatRooms";
+import MessageList from "./MessageList";
+import ChannelList from "./ChannelList";
 import axios, { Axios } from "axios";
-import { Message, chatRoom } from "./types";
-import ChatUsers from "./ChatUsers";
+import { Message, Channel, userChannelRole } from "./types";
+import RoleList from "./RoleList";
 import useFromApi from "../../ApiCalls/useFromApi";
 
 function Chat() {
@@ -19,25 +19,25 @@ function Chat() {
   /*
    *   STATES
    */
-  const [chatRooms, setChatRooms] = React.useState<chatRoom[]>([]);
-  const [chatRoom, setChatRoom] = React.useState<chatRoom>();
-  const [currentRoomIndex, setCurrentRoomIndex] = React.useState(0);
+  const [channelList, setChannelList] = React.useState<Channel[]>([]);
+  const [currentChannel, setcurrentChannel] = React.useState<Channel>();
+  const [currentRoomIndex, setCurrentRoomIndex] = React.useState<number>(0);
   const [messageList, setMessageList] = React.useState<Message[]>([]);
-  const [userList, setUserList] = React.useState<any[]>([]);
+  const [roleList, setRoleList] = React.useState<userChannelRole[]>([]);
 
   /** BACK END CALLS */
 
-  const fetchChatrooms = async () => {
+  const fetchChannelList = async () => {
     const app = axios.create({ withCredentials: true });
     const result = await app.get("http://127.0.0.1:3001/channel/me");
-    setChatRooms(result.data);
-    setChatRoom(result.data[0]);
+    setChannelList(result.data);
+    setcurrentChannel(result.data[0]);
   };
 
   const fetchMessages = async () => {
     const app = axios.create({ withCredentials: true });
     const result = await app.get(
-      `http://127.0.0.1:3001/channel/${chatRoom.id}/messages`
+      `http://127.0.0.1:3001/channel/${currentChannel.id}/messages`
     );
     setMessageList(result.data);
     console.log(result.data);
@@ -46,11 +46,11 @@ function Chat() {
   const fetchUsers = async () => {
     const app = axios.create({ withCredentials: true });
     const result = await app.get(
-      `http://127.0.0.1:3001/channel/${chatRoom.id}/users`
+      `http://127.0.0.1:3001/channel/${currentChannel.id}/users`
     );
     console.log(result.data);
 
-    setUserList(result.data);
+    setRoleList(result.data);
   };
 
   /*
@@ -58,15 +58,15 @@ function Chat() {
    */
 
   React.useEffect(() => {
-    fetchChatrooms();
+    fetchChannelList();
   }, []);
 
   React.useEffect(() => {
-    if (chatRoom) {
+    if (currentChannel) {
       fetchMessages();
       fetchUsers();
     }
-  }, [chatRoom]);
+  }, [currentChannel]);
 
   React.useEffect(() => {
     if (myRef && myRef.current) {
@@ -79,15 +79,15 @@ function Chat() {
    */
 
   function postMessage(message: Message) {
-    if (chatRoom) {
-      chatRooms[chatRoom.id].messageList = [...messageList, message];
+    if (currentChannel) {
+      channelList[currentChannel.id].messages = [...messageList, message];
       setMessageList([...messageList, message]);
     }
   }
 
   function changeRoom(index: number) {
     setCurrentRoomIndex(index);
-    setChatRoom(chatRooms[index]);
+    setcurrentChannel(channelList[index]);
   }
   /*
    *   RENDER
@@ -108,17 +108,17 @@ function Chat() {
       <Toolbar />
       <Container disableGutters maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Grid container columnSpacing={1} rowSpacing={0}>
-          <ChatRooms
+          <ChannelList
             currentIndex={currentRoomIndex}
             changeRoom={changeRoom}
-            chatRooms={chatRooms}
-          ></ChatRooms>
-          <CurrentChat
+            channelList={channelList}
+          ></ChannelList>
+          <MessageList
             innerref={myRef}
             messageList={messageList}
             submit={postMessage}
           />
-          <ChatUsers userList={userList}></ChatUsers>
+          <RoleList roleList={roleList}></RoleList>
         </Grid>
       </Container>
     </Box>

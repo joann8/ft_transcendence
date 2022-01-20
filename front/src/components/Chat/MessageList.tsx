@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 
 import Messages from "./Messages";
 import PostMessage from "./PostMessage";
-import { CurrentChatProps } from "./types";
+import { MessageListProps } from "./types";
 
 const useStyle = makeStyles({
   formMessageContainer: {
@@ -11,7 +11,7 @@ const useStyle = makeStyles({
     backgroundColor: "yellow",
   },
 });
-function CurrentChat({ innerref, messageList, submit }: CurrentChatProps) {
+function MessageList({ innerref, messageList, submit }: MessageListProps) {
   const classes = useStyle();
 
   return (
@@ -28,4 +28,4 @@ function CurrentChat({ innerref, messageList, submit }: CurrentChatProps) {
   );
 }
 
-export default CurrentChat;
+export default MessageList;

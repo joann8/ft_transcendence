@@ -1,26 +1,70 @@
-type chatRoom = {
+/**
+ *  BACK TYPE
+ */
+export enum status {
+  OFFLINE = "OFFLINE",
+  ONLINE = "ONLINE",
+  IN_GAME = "IN GAME",
+  BAN = "BAN",
+}
+
+export enum user_role {
+  OWNER = "owner",
+  ADMIN = "admin",
+  USER = "user",
+}
+type Message = {
+  id: number;
+  content: string;
+  channel: Channel;
+  author: User;
+};
+
+type User = {
+  id: number;
+  id_pseudo: string;
+  avatar: string;
+  email: string;
+  role: user_role;
+  elo: number;
+  status: status;
+  two_factor_enabled: boolean;
+  two_factor_secret: string;
+  refresh_token: string;
+  achievement1: boolean;
+  achievement2: boolean;
+  roles: userChannelRole[];
+};
+
+type Channel = {
   id: number;
   name: string;
-  users: string[];
-  messageList: {
-    user: string;
-    content: string;
-    hour: string;
-  }[];
+  messages: Message[];
+  roles: userChannelRole[];
 };
-type User = {
-  role: "string";
+export enum channelRole {
+  owner = "owner",
+  admin = "admin",
+  user = "user",
+  banned = "banned",
+  muted = "muted",
+}
+type userChannelRole = {
+  id: number;
+  user: User;
+  channel: Channel;
+  role: channelRole;
 };
-type Message = {
-  user: string;
-  content: string;
-  hour: string;
-};
+
+/**
+ *   PROPS TYPE
+ */
+
 type MessagesProps = {
   messageList: Message[];
   innerref: React.MutableRefObject<HTMLDivElement | null>;
 };
-type CurrentChatProps = {
+type MessageListProps = {
   messageList: Message[];
   innerref: React.MutableRefObject<HTMLDivElement | null>;
   submit: (message: Message) => void;
@@ -32,13 +76,13 @@ type MessageProps = {
 type MessagePostProps = {
   submit: (message: Message) => void;
 };
-type ChatRoomsProps = {
+type ChannelListProps = {
   currentIndex: number;
   changeRoom: (index: number) => void;
-  chatRooms: chatRoom[];
+  channelList: Channel[];
 };
-type ChatUsersProps = {
-  userList: User[];
+type RoleListProps = {
+  roleList: userChannelRole[];
 };
 type ThemeOptions = {
   palette: {
@@ -47,14 +91,17 @@ type ThemeOptions = {
     };
   };
 };
+
 export type {
   Message,
   MessagesProps,
   MessageProps,
   ThemeOptions,
   MessagePostProps,
-  CurrentChatProps,
-  ChatRoomsProps,
-  ChatUsersProps,
-  chatRoom,
+  MessageListProps,
+  ChannelListProps,
+  RoleListProps,
+  Channel,
+  User,
+  userChannelRole,
 };

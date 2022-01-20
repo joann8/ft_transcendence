@@ -52,14 +52,14 @@ function PostMessage({ submit }: MessagePostProps) {
           variant="contained"
           className={classes.submitButton}
           onClick={() => {
-            if (user && content) {
+            /*if (user && content) {
               const message: Message = {
                 user: user,
                 content: content,
                 hour: "9h00",
               };
               submit(message);
-            }
+            }*/
             return;
           }}
         >
