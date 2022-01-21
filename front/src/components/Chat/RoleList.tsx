@@ -1,19 +1,25 @@
-import { Button, Typography, Grid, Modal, Box, TextField } from "@mui/material";
+import {
+  Button,
+  Typography,
+  Grid,
+  Modal,
+  Box,
+  TextField,
+  Container,
+  MenuItem,
+  Menu,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { RoleListProps, ThemeOptions } from "./types";
+import { RoleListProps, ThemeOptions, User } from "./types";
 import * as React from "react";
 import AddUser from "./AddUser";
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import GroupIcon from "@mui/icons-material/Group";
+import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import BlockIcon from "@mui/icons-material/Block";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import Group from "@mui/icons-material/Group";
+import back from "./backConnection";
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
   RoleListContainer: () => ({
@@ -31,6 +37,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
     width: "100%",
     margin: "0",
     padding: "0",
+    color: "black",
   }),
   name: () => ({
     marginBottom: "5px",
@@ -41,25 +48,127 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
     margin: "0 auto",
     display: "block",
   }),
+  titleRoleContainer: () => ({
+    margin: "0",
+    width: "100%",
+    verticalAlign: "middle",
+    float: "left",
+    display: "inline-block",
+    borderBlockColor: theme.palette.primary.main,
+    borderTop: "3px solid",
+    borderBottom: "3px solid",
+  }),
+  titleRoleIcon: () => ({
+    float: "left",
+    verticalAlign: "middle",
+    display: "inline-block",
+  }),
 }));
 
 function RoleList({ roleList, fetchUsers, currentChannel }: RoleListProps) {
-  const [open, setOpen] = React.useState(false);
-  const [content, setContent] = React.useState<string>("");
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [currentUser, setCurrentUser] = React.useState<User>();
+  const open = Boolean(anchorEl);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  async function fetchCurrentUser() {
+    const result = await back.get("http://127.0.0.1:3001/user");
+    setCurrentUser(result.data);
+  }
+  React.useEffect(() => {
+    fetchCurrentUser();
+  }, []);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const element = event.currentTarget as HTMLInputElement;
+    const id = +element.getAttribute("data-index");
+    if (id === currentUser.id) return;
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const classes = useStyle();
-  function handleClick(event: React.MouseEvent) {}
   return (
     <Grid item xs={12} md={4} lg={3} className={classes.RoleListContainer}>
       {roleList.map((user, index) => {
-        return (
-          <Button key={index} onClick={handleClick} className={classes.elem}>
-            {user.user.id_pseudo}
-          </Button>
-        );
+        if (user.role === "owner")
+          return (
+            <Button
+              startIcon={<AdminPanelSettingsIcon />}
+              key={index}
+              data-index={user.user.id}
+              onClick={handleClick}
+              className={classes.elem}
+            >
+              {user.user.id_pseudo}
+            </Button>
+          );
+        if (user.role === "admin")
+          return (
+            <Button
+              startIcon={<SupervisedUserCircleIcon />}
+              key={index}
+              onClick={handleClick}
+              className={classes.elem}
+            >
+              {user.user.id_pseudo}
+            </Button>
+          );
+        if (user.role === "user")
+          return (
+            <Button
+              startIcon={<GroupIcon />}
+              key={index}
+              onClick={handleClick}
+              className={classes.elem}
+            >
+              {user.user.id_pseudo}
+            </Button>
+          );
+        if (user.role === "muted")
+          return (
+            <Button
+              startIcon={<VolumeOffIcon />}
+              key={index}
+              onClick={handleClick}
+              className={classes.elem}
+            >
+              {user.user.id_pseudo}
+            </Button>
+          );
+        if (user.role === "banned")
+          return (
+            <Button
+              startIcon={<BlockIcon />}
+              key={index}
+              onClick={handleClick}
+              className={classes.elem}
+            >
+              {user.user.id_pseudo}
+            </Button>
+          );
       })}
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        {currentUser?.role === "owner" && (
+          <MenuItem onClick={handleClose}>Set Admin</MenuItem>
+        )}
+        {(currentUser?.role === "owner" || currentUser?.role === "admin") && (
+          <MenuItem onClick={handleClose}>Mute</MenuItem>
+        )}
+        {(currentUser?.role === "owner" || currentUser?.role === "admin") && (
+          <MenuItem onClick={handleClose}>Bann</MenuItem>
+        )}
+        {<MenuItem onClick={handleClose}>Duel</MenuItem>}
+      </Menu>
       <AddUser
         fetchUsers={fetchUsers}
         currentChannel={currentChannel}

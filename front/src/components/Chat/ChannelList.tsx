@@ -63,9 +63,10 @@ function ChannelList({
   const classes = useStyle();
   function handleClick(event: React.MouseEvent) {
     const element = event.currentTarget as HTMLInputElement;
-    const id = element.getAttribute("data-index");
-    if (id) {
-      const channel = channelList.find((channel) => channel.id === +id);
+    const id = +element.getAttribute("data-index");
+    if (id && currentChannel.id !== id) {
+      console.log(id, currentChannel.id);
+      const channel = channelList.find((channel) => channel.id === id);
       changeChannel(channel);
     }
   }
@@ -87,7 +88,7 @@ function ChannelList({
           return (
             <Button
               key={index}
-              data-index={index}
+              data-index={room.id}
               onClick={handleClick}
               color="secondary"
               className={classes.elem}

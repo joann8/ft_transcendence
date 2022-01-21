@@ -88,7 +88,6 @@ type CreateChannelProps = {
 };
 type RoleListProps = {
   currentChannel: Channel;
-
   roleList: userChannelRole[];
   fetchUsers: () => Promise<void>;
 };
