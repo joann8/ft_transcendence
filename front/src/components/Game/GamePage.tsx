@@ -1,16 +1,16 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Image from '../Images/game.jpg'
 import { Fragment } from 'react';
-import { Box, Button, Modal, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Modal, Typography } from '@mui/material';
 import RuleSet from './RuleSet';
-import { Container } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import GamePong from './GamePong';
-import { useLocation } from 'react-router';
 import GameWatch from './GameWatch';
+import socket from './socket';
 
 const useStyle = makeStyles({
   gameWindow: {
@@ -40,47 +40,90 @@ export default function GamePage() {
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
-      width: '100%',
-      bgcolor: 'background.paper',
+      width: 'auto',
+      height: 'auto',
+      bgcolor: "#000000", //si je veux transparent rajouter 2 chiffres pour opacity a la dfun
       border: '2px solid #000',
       boxShadow: 24,
       p: 4,
+      display: 'inline',
+      
     }
     };
 
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const [openGame, setOpenGame] = React.useState(false);
+    const handleOpenGame = () => setOpenGame(true);
+    const handleCloseGame = () => {
+      console.log("hanCloseGame called");
+      setOpenAlert(true);
+    }
+
+    const [openWatch, setOpenWatch] = React.useState(false);
+    const handleOpenWatch = () => setOpenWatch(true);
+    const handleCloseWatch= () => {
+      console.log("hanCloseWatch called")
+      socket.emit('unwatch_game');
+      setOpenWatch(false);
+    }
+
 
     const classes = useStyle(); 
 
-    let object;
-    const location = useLocation();
-    console.log(location);
-    
-    if (location.pathname === "/game/pong")
-      object = <GamePong width={800} height={600} />;
-    else if (location.pathname === "/game/watch")
-      object = <GameWatch width={800} height={600} />;
 
-    return (       
+    const [openAlert, setOpenAlert] = React.useState(false);
+    
+    const handleCloseAlertStay = () => {
+      setOpenAlert(false);
+    }
+    
+    const handleCloseAlertLeave = () => {
+      socket.emit('my_disconnect');
+      setOpenGame(false);
+      setOpenAlert(false);
+    };
+
+    useEffect(() => {
+      window.addEventListener('beforeRemove', (e) => {
+        console.log("pressed arrow back")
+        e.preventDefault();
+        if (openGame === true)
+          handleCloseGame();
+        else if (openWatch === true)
+          handleCloseWatch();
+      });
+    });
+  
+  return (       
         <Fragment>
             <Paper style={styles.backgroundImage}>
              
              <Toolbar />
              <Grid container spacing={2}  alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
               <Grid item xs={12} style={{textAlign: "center"}}>
-              <Button onClick={handleOpen}>Open modal</Button>
-                  <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                  >
-                    <Box sx={styles.boxModal}>
-                    {object}
-                    </Box>
-                  </Modal>
+              <ButtonGroup variant="contained"  aria-label="outlined primary button group">
+                  <Button onClick={handleOpenGame} style={{fontSize: 35}}>Play Random</Button>
+                  <Button onClick={handleOpenWatch} style={{fontSize: 35}}>Watch a Game </Button>
+                  <Button style={{fontSize: 35}}>Find a friend</Button>
+              </ButtonGroup>
+              <Modal open={openGame} onBackdropClick={handleCloseGame} >
+                  <Box sx={styles.boxModal}>
+                    <GamePong width={800} height={600} socket={socket}/>;
+                    <Dialog open={openAlert} onClose={handleCloseAlertStay} >
+                      <DialogTitle id="alert-dialog-title">
+                        {"Leave current Pong Game?"}
+                      </DialogTitle>
+                      <DialogActions>
+                        <Button onClick={handleCloseAlertStay}>Disagree</Button>
+                        <Button onClick={handleCloseAlertLeave} autoFocus>Agree </Button>
+                      </DialogActions>
+                     </Dialog>;
+                  </Box>
+                </Modal>
+                <Modal open={openWatch} onBackdropClick={handleCloseWatch}>
+                  <Box sx={styles.boxModal}>
+                    <GameWatch width={800} height={600} socket={socket}/>;
+                  </Box>
+                </Modal>
                 </Grid>
                 <Grid item xs={12} >
                   <RuleSet />
@@ -90,23 +133,3 @@ export default function GamePage() {
           </Fragment>);
 }
 
-/*
-
-  
-                <Grid container spacing={2}  alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
-                    <Grid item xs={12} style={{textAlign: "center"}} >
-                        <Typography> PONG GAME</Typography>
-                    </Grid>
-                    <Grid item xs={12} >
-                      <Container className={classes.gameWindow} >
-                        <Typography> Game Window </Typography>
-                        {object}
-                        {/* GamePong width={800} height={600} />
-                      </Container>
-                    </Grid>
-                    <RuleSet />
-                </Grid>
-            </Paper>
-
-        </Fragment>
-   */

@@ -71,7 +71,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     // Fonctions de communications avec le front
     @SubscribeMessage('my_disconnect')
     async myDisconnect(client: Socket) : Promise <void> {
-        this.logger.log(`MY DISCONNECT A client disconnected : ${client.id}`);
+        this.logger.log(`[ MY DISCONNECT received ] A client disconnected : ${client.id}`);
         this.disconnectClient(client);     
     }
     
@@ -88,8 +88,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             this.logger.log(`start a match!`);
             this.matchInit()
         }
-        else
-        {
+        else {
             console.log("emit wait from server");
             client.emit('wait');
         }
@@ -136,37 +135,40 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
  
      @SubscribeMessage('watch_random')
      async handleWatchRandom(@ConnectedSocket() client): Promise<void> {
-         console.log("watch random received")
+         console.log("[ watch random received ]")
          console.log(`number of match on going : ${this.matches.length}`);
          if (this.matches.length > 0)
          {
              let index = Math.floor((Math.random() * (this.matches.length - 1)));
              this.matches[index].addSpectator(client);
+             console.log(`Spectactor ${client.id} is now watching match ${this.matches[index].getId()}`);
          }
          else
          {
-             console.log("no game")
- 
-             client.emit('no_current_match');
+            console.log("no game")
+            client.emit('no_current_match');
          }    
      }
  
      @SubscribeMessage('unwatch_game')
      async handleUnwatchGame(@ConnectedSocket() client : Socket): Promise<void> {
-         if (this.matches.length > 0)
+        console.log("[ unwatch game received ]")
+        if (this.matches.length > 0)
          {
-             let index = Math.floor((Math.random() * (this.matches.length - 1)));
-             this.matches[index].addSpectator(client);
-         }
-         else
-         {
-             client.emit('no_current_match');
-         }    
-     }
+            for (let match of this.matches)
+            {
+                if(match.isPartOfPublic(client) === true)
+                {
+                    console.log(`Spectactor ${client.id} removed from match ${match.getId()}`);
+                    match.removeSpectator(client);
+                }
+            }
+        }
+    }
      
      // Fonctions du Back pour calculer les nouvelles positions, le status du jeu, etc.
  
-     private matchInit() {
+    private matchInit() {
          let game = new Game(this.queue.pop(), this.queue.pop(), this.server, this.removeGame.bind(this));
          this.matches.unshift(game); // enregistrement du match
          this.logger.log(`new queue length after init :  ${this.queue.length}`);
@@ -200,6 +202,10 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             this.clients.delete(client);
             this.queue.splice(this.queue.indexOf(client));
         }
+        console.log("_______after disconnect__________")
+        console.log(this.queue);
+        console.log(this.matches);
+        console.log(this.clients);
      }
  };
  

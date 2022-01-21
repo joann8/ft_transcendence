@@ -71,6 +71,10 @@ export class Game {
         this._state = state;
     }
 
+    public getPublic() : Socket[] {
+        return this._public;
+    }
+
     // Other Functions 
 
     public hasWinner() : boolean {
@@ -201,6 +205,12 @@ export class Game {
     {
         while(this._public.length > 0)
             this.removeSpectator(this._public.pop());
+    }
+
+    public isPartOfPublic(client : Socket) : boolean
+    {
+        let index = this._public.indexOf(client);
+        return index > -1 ? true : false;
     }
 
 }
