@@ -2,33 +2,25 @@ import { BottomNavigation, Box, Button, Grid, Paper, TextField, Toolbar } from "
 import { flexbox } from "@mui/system";
 import Reac, { Fragment, useState } from "react";
 
-const layout = {
-    backgroundOriring: "center",
-    display: "flex",
+const editLayout = {
+    justifyContent: "center",
     alignItems: "center",
-    width: "60vw",
-    height: "80vh",
-
-    marginTop: "10%",
-    marginLeft: "10%",
-    marginRight: "10%",
+    marginTop: "20px",
     overflow: "auto"
 }
 
-export default function Edit() {
+export default function Edit(props: any) {
 
     const [state, setState] = useState({
-
-        pseudo: "Pseudo",
-        currentPass: "Current Password",
-        newPass: "New Password",
-        confirmPass: "Confirm Password"
+        pseudo: "",
+        email: "",
     }
     )
 
     function handleChange(evt: any) {
         setState({
-            ...state, [evt.target.name]: evt.target.value})
+            ...state, [evt.target.name]: evt.target.value
+        })
     }
 
     function handleClick() {
@@ -39,15 +31,15 @@ export default function Edit() {
         //POST --> Modifier user
         console.log(userNewInfo);
     }
-    
+
     return (
         <Fragment>
-            <Grid container spacing={4} style={layout}>
+            <Grid container columns={12} spacing={2} style={editLayout}>
                 <br />
-                <Grid item xs={12}>
+                <Grid item xs={6}>
 
                     <TextField
-
+                        fullWidth
                         id="outlined"
                         name="pseudo"
                         label="Pseudo"
@@ -55,45 +47,40 @@ export default function Edit() {
                         onChange={handleChange}
                     />
                 </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        id="outlined"
-                        name="currentPass"
-                        label="Current Password"
-                        defaultValue={state.currentPass}
-                        onChange={handleChange}
-
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-
-                        id="outlined"
-                        name="newPass"
-                        label="New Password"
-                        defaultValue={state.newPass}
-                        onChange={handleChange}
-
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-
-                        id="required"
-                       name="confirmPass"
-                        label="Confirm Password"
-                        defaultValue={state.confirmPass}
-                        onChange={handleChange}
-                    />
-                </Grid>
                 <Grid item xs={6}>
-                    <Button onClick={handleClick}> Accept </Button>
+                    <TextField
+                        fullWidth
+                        id="outlined"
+                        name="email"
+                        label="New Email"
+                        defaultValue={state.email}
+                        onChange={handleChange}
 
+                    />
                 </Grid>
-                <Grid item xs={6}>
-                    <Button> Cancel </Button>
+                <Grid item xs={12}>
+                    <BottomNavigation >
+                        <Button variant="contained" style={{
+                            backgroundColor: "#22c863",
+                            color: "#FFFFFF",
+                            width: "30%",
+                            marginLeft: "5%",
+                            marginTop: "10px",
+                            marginRight: "5%",
+                        }} onClick={handleClick}> Accept </Button>
+
+                        <Button variant="contained" style={{
+                            backgroundColor: "#c84322",
+                            marginLeft: "5%",
+                            marginTop: "10px",
+                            marginRight: "5%",
+                            color: "#FFFFFF",
+                            width: "30%"
+                        }} onClick={props.handleClose}> Cancel </Button >
+                    </BottomNavigation>
                 </Grid>
             </Grid>
 
-        </Fragment>);
+        </Fragment>
+    );
 }

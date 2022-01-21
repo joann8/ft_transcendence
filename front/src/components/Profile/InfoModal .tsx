@@ -6,8 +6,8 @@ import Modal from '@mui/material/Modal';
 import { AnyRecord } from 'dns';
 import { useEffect, useState } from 'react';
 import Edit from './Edit';
-import { Grid, TextField, BottomNavigation, IconButton, styled } from '@mui/material';
-import { PhotoCamera, SentimentSatisfiedOutlined } from '@mui/icons-material';
+import { Grid, TextField, BottomNavigation } from '@mui/material';
+import validator from 'validator'
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -15,7 +15,7 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: "85%",
-    height: "30%",
+    height: "40%",
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -26,12 +26,7 @@ const style = {
     p: 4,
 };
 
-
-const Input = styled('input')({
-    display: 'none',
-});
-
-export default function AvatarModal(props: any) {
+export default function InfoModal(props: any) {
 
     const editLayout = {
         justifyContent: "center",
@@ -40,27 +35,32 @@ export default function AvatarModal(props: any) {
         overflow: "auto"
     }
 
-    const [avatar, setAvatar] = useState(null)
+    const [state, setState] = useState({
+        pseudo: "",
+        email: "",
+    }
+    )
 
+    function handleChange(evt: any) {
+        setState({
+            ...state, [evt.target.name]: evt.target.value
+        })
+    }
 
-
-
+    function handleClick() {
+        if (!state.email && !state.pseudo) {
+            alert("Empty Fields : No change to submit")
+            return;
+        }
+        if (state.email) {
+            (validator.isEmail(state.email) ? alert(`Email is correct : ${state.email}`) : alert("Email Invalid"))
+        }
+        if (state.pseudo) {
+            ((validator.isAlpha(state.pseudo[0]) && validator.isAlphanumeric(state.pseudo)) ? console.log("Pseudo ok") : console.log("Pseudo must contain alpha numeric only and START with a letter"))
+            }
+    }
 
     const handleClose = () => props.setModal(false);
-
-
-    const handleUpload = () => {
-        if (avatar)
-            console.log("avatar: ", avatar)
-        else
-            console.log("You must upload an avatar")
-    }
-    //Recupere la file suite a l'ouverture auto de la fenetre d'upload
-   
-    const handleFileReception = event => {
-        setAvatar(event.target.files[0])
-    }
-
 
     return (
         <div>
@@ -72,31 +72,39 @@ export default function AvatarModal(props: any) {
             >
                 <Box sx={style}>
                     <Grid container columns={12} spacing={2} style={editLayout}>
-                        <Grid item xs={4}>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept="image/*" id="contained-button-file" multiple type="file" 
-                                onChange={handleFileReception} />
-                                <Button variant="contained" component="span" startIcon={<PhotoCamera />}>
-                                    Upload avatar
-                                </Button>
-                            </label>
-                        </Grid>
-                        <Grid item xs={4}>
+                        <br />
+                        <Grid item xs={6}>
 
+                            <TextField
+                                fullWidth
+                                id="outlined"
+                                name="pseudo"
+                                label="Pseudo"
+                                defaultValue={state.pseudo}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                fullWidth
+                                id="outlined"
+                                name="email"
+                                label="New Email"
+                                defaultValue={state.email}
+                                onChange={handleChange}
+
+                            />
                         </Grid>
                         <Grid item xs={12}>
                             <BottomNavigation >
                                 <Button variant="contained" style={{
                                     backgroundColor: "#22c863",
                                     color: "#FFFFFF",
-                                    minWidth: "30%",
+                                    width: "30%",
                                     marginLeft: "5%",
                                     marginTop: "10px",
                                     marginRight: "5%",
-                                    overflow: "auto"
-                                }} onClick={handleUpload}> Confirm Avatar</Button>
+                                }} onClick={handleClick}> Accept </Button>
 
                                 <Button variant="contained" style={{
                                     backgroundColor: "#c84322",

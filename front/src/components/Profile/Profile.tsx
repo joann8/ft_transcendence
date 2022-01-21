@@ -9,7 +9,7 @@ import Character from "../Images/Sung-Gi-Hoon.jpg"
 import { flexbox } from "@mui/system";
 import Badge from '@mui/material/Badge';
 import EditIcon from '@mui/icons-material/Edit';
-import { AdminPanelSettings, SettingsBackupRestoreOutlined, VideogameAsset, VideogameAssetSharp } from "@mui/icons-material";
+import { AdminPanelSettings, LoyaltyRounded, SettingsBackupRestoreOutlined, VideogameAsset, VideogameAssetSharp } from "@mui/icons-material";
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import VideogameAssetSharpIcon from '@mui/icons-material/VideogameAssetSharp';
 import PeopleIcon from '@mui/icons-material/People';
@@ -19,9 +19,7 @@ import MatchModal from "./MatchModal";
 import Leaderboard from "../Leaderboard";
 import Edit from "./Edit";
 import AvatarModal from "./AvatarModal";
-import InfoModal from "./LoadingModal ";
-import PasswordModal from "./PasswordModal ";
-import LoadingModal from "./LoadingModal ";
+import InfoModal from "./InfoModal ";
 import { api_req_init } from "../../ApiCalls/var";
 import useFromApi from "../../ApiCalls/useFromApi";
 
@@ -72,7 +70,7 @@ const backGround = {
     }
 };
 
-let user = {
+const defaultUser = {
     id: 0,
     id_pseudo: "Seong Gi-Hun",
     email: "Seaong@squid-game.io",
@@ -91,7 +89,7 @@ const deepGreen = "#249f9c"
 const lightGreen = "#037a76"
 
 
-const backEndUrl = "http://localhost:3001"
+const backEndUrl = "http://127.0.0.1:3001"
 
 export default function Profile() {
 
@@ -101,17 +99,17 @@ export default function Profile() {
     const [modalState, setModal] = useState({
         match: false,
         info: false,
-        password: false,
         avatar: false
     })
-    const [update, setUpdate] = useState(false)
+    const [update, setUpdate] = useState(0)
+    const [userData, setUserData] = useState(defaultUser)
 
 
     const navigate = useNavigate()
 
 
-    console.log("Cookie : ", document.cookie)
     const getUserData = async () => {
+
         fetch(`${backEndUrl}/user`, {
             method: "GET",
             credentials: "include",
@@ -119,7 +117,7 @@ export default function Profile() {
         })
             .then((res) => {
                 if (res.status === 401) {
-                   // console.log("redirection Login")
+                    // console.log("redirection Login")
                     navigate("/login");
                 }
                 else if (!res.ok) {
@@ -128,42 +126,39 @@ export default function Profile() {
                 return res.json();
             })
             .then((resData) => {
-                console.log("getUserData :", resData)
-                // setLoaded(true)
+                setUserData(resData)
             })
             .catch((err) => {
                 console.log("Error caught")
                 //Get User infos
             })
     }
-    getUserData()
 
 
     useEffect(() => {
+
         console.log("Profile re-renderer")
-        if (!isMount) {
-            //   getUserData()
-        }
-        if (update) {
-            console.log("An update was done")
-            setUpdate(false)
+        getUserData()
+    }, [update])
 
-        }
-    })
-
+/*
     //On mount and Dismount
     useEffect(() => {
 
-        //Get user infos on mount
+        //Get data infos on mount
         if (!isMount) {
             console.log("Profile Mount")
             setMount(true)
-            //Get user infos
+            getUserData(user)
+
+            //Get data infos
         }
         else {
             console.log("Profile Dismount")
         }
     }, [])
+    */
+    
 
 
 
@@ -180,7 +175,7 @@ export default function Profile() {
 
     return (
         <Fragment>
-            {loaded ?
+        
                 <Paper style={backGround.layout}>
 
                     <Grid container columns={13} spacing={3} style={backGround.profile}>
@@ -199,7 +194,7 @@ export default function Profile() {
                         </Grid>
 
                         <Grid container item xs={4} direction="column" style={backGround.firstRow}>
-                            <Grid item xs={6}>   <Avatar src={user.avatar} style={{
+                            <Grid item xs={6}>   <Avatar src={userData.avatar} style={{
                                 width: "120px",
                                 height: "120px",
                             }} /> <br /></Grid>
@@ -208,18 +203,18 @@ export default function Profile() {
                                 <Typography variant="subtitle1" style={{
                                     color: "#FFFFFF",
                                     opacity: 1
-                                }}> {user.id_pseudo}</Typography>
+                                }}> {userData.id_pseudo}</Typography>
                             </Grid>
                         </Grid>
                         <Grid container xs={5} direction="column" item style={backGround.firstRow}>
                             <Grid item xs={4}>
-                                <Typography> Rank: {user.elo} </Typography>
+                                <Typography> Rank: {userData.elo} </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Typography> Email: {user.email}</Typography>
+                                <Typography> Email: {userData.email}</Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Button variant="contained" onClick={() => setModal({ ...modalState, match: true })} > Match history </Button>
+                                <Button variant="contained" onClick={() => {setUpdate(update + 1)}/*setModal({ ...modalState, match: true })*/} > Match history </Button>
                                 {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} /> : null}
                             </Grid>
                         </Grid>
@@ -250,8 +245,6 @@ export default function Profile() {
 
                                         <MenuItem onClick={() => { setModal({ ...modalState, info: true }) }}>Infos</MenuItem>
                                         {modalState.info ? <InfoModal modalState={modalState.info} setModal={setModal} /> : null}
-                                        <MenuItem onClick={() => { setModal({ ...modalState, password: true }) }}>Password</MenuItem>
-                                        {modalState.password ? <PasswordModal modalState={modalState.password} setModal={setModal} /> : null}
                                         <MenuItem onClick={() => { setModal({ ...modalState, avatar: true }) }}>Avatar</MenuItem>
                                         {modalState.avatar ? <AvatarModal modalState={modalState.avatar} setModal={setModal} /> : null}
 
@@ -268,7 +261,6 @@ export default function Profile() {
 
                     </Grid>
                 </Paper >
-                : <LoadingModal loaded={loaded} setLoaded={setLoaded} />}
         </Fragment >
     );
 }
@@ -308,7 +300,7 @@ export default function Profile() {
    useEffect(() => {
         const fetchData = async () => {
             let status: number;
-            const result = await fetch(`${backEndUrl}/user/adconsta`)
+            const result = await fetch(`${backEndUrl}/data/adconsta`)
                 .then(function (response) {
                     status = response.status
                     response.json()
