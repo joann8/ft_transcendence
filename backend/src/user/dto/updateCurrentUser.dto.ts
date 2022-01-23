@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { isEmail, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class UpdateCurrentUserDto {
 	@IsOptional()
@@ -7,4 +7,7 @@ export class UpdateCurrentUserDto {
 
 	@IsOptional()
 	avatar: string;
+
+	@IsOptional()
+	email: string;
 }

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import Edit from './Edit';
 import { Grid, TextField, BottomNavigation } from '@mui/material';
 import validator from 'validator'
+import { useNavigate } from 'react-router';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -36,28 +37,61 @@ export default function InfoModal(props: any) {
     }
 
     const [state, setState] = useState({
-        pseudo: "",
+        id_pseudo: "",
         email: "",
     }
     )
+    const nav = useNavigate()
+
 
     function handleChange(evt: any) {
+        console.log(evt)
         setState({
             ...state, [evt.target.name]: evt.target.value
         })
     }
 
     function handleClick() {
-        if (!state.email && !state.pseudo) {
+
+        if (!state.email && !state.id_pseudo) {
             alert("Empty Fields : No change to submit")
             return;
         }
         if (state.email) {
-            (validator.isEmail(state.email) ? alert(`Email is correct : ${state.email}`) : alert("Email Invalid"))
+            if (!validator.isEmail(state.email))
+                return alert("Email Invalid")
         }
-        if (state.pseudo) {
-            ((validator.isAlpha(state.pseudo[0]) && validator.isAlphanumeric(state.pseudo)) ? console.log("Pseudo ok") : console.log("Pseudo must contain alpha numeric only and START with a letter"))
-            }
+        if (state.id_pseudo) {
+            if (!(validator.isAlpha(state.id_pseudo[0]) && validator.isAlphanumeric(state.id_pseudo)))
+                return (alert("Pseudo must contain alpha numeric only and START with a letter"))
+        }
+
+        fetch("http://127.0.0.1:3001/user", {
+            method: "PUT",
+            credentials: "include",
+            referrerPolicy: "same-origin",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(state),
+        })
+            .then(res => {
+                if (res.status === 401) {
+                    nav("/login")
+                }
+                else if (!res.ok) {
+                    throw new Error(res.statusText)
+                }
+                res.json()
+            })
+            .then(data => {
+                console.log(data)
+                props.setUpdate(props.update + 1)
+                props.setModal(false)
+            })
+            .catch(err => {
+                alert(err)
+            })
     }
 
     const handleClose = () => props.setModal(false);
@@ -78,9 +112,9 @@ export default function InfoModal(props: any) {
                             <TextField
                                 fullWidth
                                 id="outlined"
-                                name="pseudo"
+                                name="id_pseudo"
                                 label="Pseudo"
-                                defaultValue={state.pseudo}
+                                defaultValue={state.id_pseudo}
                                 onChange={handleChange}
                             />
                         </Grid>

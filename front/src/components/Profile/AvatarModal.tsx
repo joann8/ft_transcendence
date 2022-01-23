@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import Edit from './Edit';
 import { Grid, TextField, BottomNavigation, IconButton, styled } from '@mui/material';
 import { PhotoCamera, SentimentSatisfiedOutlined } from '@mui/icons-material';
+import { alterHsl } from 'tsparticles';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -48,16 +49,49 @@ export default function AvatarModal(props: any) {
 
     const handleClose = () => props.setModal(false);
 
+    const handleUpload = async () =>{
+        if (avatar) {
 
-    const handleUpload = () => {
-        if (avatar)
             console.log("avatar: ", avatar)
+            const formData = new FormData()
+            formData.append("avatar", avatar, avatar.name)
+            console.log("formData: ", formData.get("myAvatar"))
+
+
+            const response = await fetch("http://127.0.0.1:3001/user/upload", {
+                method: "POST",
+                credentials: "include",
+                referrerPolicy: "same-origin",
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok)
+                        throw new Error(res.statusText)
+                    console.log("Avatar send. Response : ")
+                    console.log(res)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+            /* const formData = new FormData()
+             formData.append(
+                 "myAvatar",
+                 validFile,
+                 validFile.name
+             )
+             console.log("validFile", validFile)
+             console.log("formData", formData)
+             */
+        }
         else
             console.log("You must upload an avatar")
     }
     //Recupere la file suite a l'ouverture auto de la fenetre d'upload
-   
+
     const handleFileReception = event => {
+        if (event.target.files[0].size > 50000000)
+            return alert("Error : Avatar file must be lower than 50Mb")
+        //   setAvatar(event.target.files[0])
         setAvatar(event.target.files[0])
     }
 
@@ -76,8 +110,8 @@ export default function AvatarModal(props: any) {
                         </Grid>
                         <Grid item xs={4}>
                             <label htmlFor="contained-button-file">
-                                <Input accept="image/*" id="contained-button-file" multiple type="file" 
-                                onChange={handleFileReception} />
+                                <Input accept="image/*" id="contained-button-file" type="file"
+                                    onChange={(event) => handleFileReception(event)} />
                                 <Button variant="contained" component="span" startIcon={<PhotoCamera />}>
                                     Upload avatar
                                 </Button>

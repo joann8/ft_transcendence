@@ -25,6 +25,9 @@ import useFromApi from "../../ApiCalls/useFromApi";
 
 
 
+const FRONT_AVATAR_URL = "./../../frontAvatars/"
+
+const FULL_PATH = "/home/calao/Documents/42/42cursus/ft_transcendence/front/src/frontAvatars/"
 const backGround = {
 
     layout: {
@@ -75,6 +78,7 @@ const defaultUser = {
     id_pseudo: "Seong Gi-Hun",
     email: "Seaong@squid-game.io",
     avatar: `${Character}`,
+    avatarFileName: "",
     role: "NONE",
     elo: 1000,
     status: "Online",
@@ -126,42 +130,31 @@ export default function Profile() {
                 return res.json();
             })
             .then((resData) => {
+                let avatarPath = resData.avatar
+                const avatarFileName = avatarPath.split("/").pop()
+
+                resData.avatar = require(`./../../frontAvatars/${avatarFileName}`)
+                // require("./../../frontAvatars/" + totoro)
                 setUserData(resData)
+
             })
             .catch((err) => {
-                console.log("Error caught")
+                console.log("Error caught: ", err)
                 //Get User infos
             })
     }
 
+    const tmp = "../Images/Sung-Gi-Hoon.jpg"
 
+
+    useEffect(() => {
+        console.log("Current userData:", userData)
+    })
     useEffect(() => {
 
         console.log("Profile re-renderer")
         getUserData()
     }, [update])
-
-/*
-    //On mount and Dismount
-    useEffect(() => {
-
-        //Get data infos on mount
-        if (!isMount) {
-            console.log("Profile Mount")
-            setMount(true)
-            getUserData(user)
-
-            //Get data infos
-        }
-        else {
-            console.log("Profile Dismount")
-        }
-    }, [])
-    */
-    
-
-
-
 
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -175,94 +168,95 @@ export default function Profile() {
 
     return (
         <Fragment>
-        
-                <Paper style={backGround.layout}>
 
-                    <Grid container columns={13} spacing={3} style={backGround.profile}>
+            <Paper style={backGround.layout}>
 
-                        <Grid container item direction="column" justifyContent="flex-start" style={{
-                            paddingLeft: "15px",
-                            paddingRight: "15px"
-                        }} >
-                            <Grid item xs={12} >
-                                <TextField fullWidth style={{
-                                    backgroundColor: "#FFFFFF",
-                                    opacity: 0.7,
-                                }} defaultValue={"Search for players"} color="secondary">
-                                </TextField>
-                            </Grid>
+                <Grid container columns={13} spacing={3} style={backGround.profile}>
+
+                    <Grid container item direction="column" justifyContent="flex-start" style={{
+                        paddingLeft: "15px",
+                        paddingRight: "15px"
+                    }} >
+                        <Grid item xs={12} >
+                            <TextField fullWidth style={{
+                                backgroundColor: "#FFFFFF",
+                                opacity: 0.7,
+                            }} defaultValue={"Search for players"} color="secondary">
+                            </TextField>
                         </Grid>
-
-                        <Grid container item xs={4} direction="column" style={backGround.firstRow}>
-                            <Grid item xs={6}>   <Avatar src={userData.avatar} style={{
-                                width: "120px",
-                                height: "120px",
-                            }} /> <br /></Grid>
-                            <Grid item>
-
-                                <Typography variant="subtitle1" style={{
-                                    color: "#FFFFFF",
-                                    opacity: 1
-                                }}> {userData.id_pseudo}</Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid container xs={5} direction="column" item style={backGround.firstRow}>
-                            <Grid item xs={4}>
-                                <Typography> Rank: {userData.elo} </Typography>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Typography> Email: {userData.email}</Typography>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Button variant="contained" onClick={() => {setUpdate(update + 1)}/*setModal({ ...modalState, match: true })*/} > Match history </Button>
-                                {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} /> : null}
-                            </Grid>
-                        </Grid>
-                        <Grid container item xs={3} direction="column" style={backGround.firstRow}>
-                            <Grid item xs={4}>
-                                <div>
-
-                                    <Button
-                                        id="basic-button"
-                                        variant="contained"
-                                        startIcon={<EditIcon />}
-                                        aria-controls={open ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open ? 'true' : undefined}
-                                        onClick={handleClick}
-                                    >
-                                        Edit
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorEl}
-                                        open={open}
-                                        onClose={handleClose}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                    >
-
-                                        <MenuItem onClick={() => { setModal({ ...modalState, info: true }) }}>Infos</MenuItem>
-                                        {modalState.info ? <InfoModal modalState={modalState.info} setModal={setModal} /> : null}
-                                        <MenuItem onClick={() => { setModal({ ...modalState, avatar: true }) }}>Avatar</MenuItem>
-                                        {modalState.avatar ? <AvatarModal modalState={modalState.avatar} setModal={setModal} /> : null}
-
-                                    </Menu>
-                                </div>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Button variant="contained" startIcon={<PeopleIcon />}> Friends </Button>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Button variant="contained" startIcon={<QrCodeIcon />}> Two factor </Button>
-                            </Grid>
-                        </Grid>
-
                     </Grid>
-                </Paper >
+
+                    <Grid container item xs={4} direction="column" style={backGround.firstRow}>
+                        <Grid item xs={6}>   <Avatar src={userData.avatar} style={{
+                            width: "120px",
+                            height: "120px",
+                        }} /> <br /></Grid>
+                        <Grid item>
+
+                            <Typography variant="subtitle1" style={{
+                                color: "#FFFFFF",
+                                opacity: 1
+                            }}> {userData.id_pseudo}</Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid container xs={5} direction="column" item style={backGround.firstRow}>
+                        <Grid item xs={4}>
+                            <Typography> Rank: {userData.elo} </Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography> Email: {userData.email}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Button variant="contained" onClick={() => { setUpdate(update + 1) }/*setModal({ ...modalState, match: true })*/} > Match history </Button>
+                            {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} /> : null}
+                        </Grid>
+                    </Grid>
+                    <Grid container item xs={3} direction="column" style={backGround.firstRow}>
+                        <Grid item xs={4}>
+                            <div>
+
+                                <Button
+                                    id="basic-button"
+                                    variant="contained"
+                                    startIcon={<EditIcon />}
+                                    aria-controls={open ? 'basic-menu' : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={open ? 'true' : undefined}
+                                    onClick={handleClick}
+                                >
+                                    Edit
+                                </Button>
+                                <Menu
+                                    id="basic-menu"
+                                    anchorEl={anchorEl}
+                                    open={open}
+                                    onClose={handleClose}
+                                    MenuListProps={{
+                                        'aria-labelledby': 'basic-button',
+                                    }}
+                                >
+
+                                    <MenuItem onClick={() => { setModal({ ...modalState, info: true }) }}>Infos</MenuItem>
+                                    {modalState.info ? <InfoModal modalState={modalState.info} setModal={setModal} setUpdate={setUpdate} update={update} /> : null}
+                                    <MenuItem onClick={() => { setModal({ ...modalState, avatar: true }) }}>Avatar</MenuItem>
+                                    {modalState.avatar ? <AvatarModal modalState={modalState.avatar} setModal={setModal} /> : null}
+
+                                </Menu>
+                            </div>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Button variant="contained" startIcon={<PeopleIcon />}> Friends </Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Button variant="contained" startIcon={<QrCodeIcon />}> Two factor </Button>
+                        </Grid>
+                    </Grid>
+
+                </Grid>
+            </Paper >
         </Fragment >
     );
+
 }
 
 /*
