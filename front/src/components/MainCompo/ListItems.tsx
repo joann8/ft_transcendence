@@ -17,6 +17,7 @@ import { Cookie } from "@mui/icons-material";
 import cookie from "react-cookie";
 import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
+import GroupsIcon from '@mui/icons-material/Groups';
 import { useNavigate } from "react-router";
 import { fetchFromApi } from "../../ApiCalls/fetchFromApi";
 
@@ -76,6 +77,13 @@ function MainListItems() {
           <ChatIcon />
         </ListItemIcon>
         <ListItemText primary="Chat" />
+      </ListItem>
+
+      <ListItem button onClick={() => {} }>
+        <ListItemIcon>
+          <GroupsIcon/>
+        </ListItemIcon>
+        <ListItemText primary="Friends" />
       </ListItem>
 
       <ListItem button onClick={() => handleLogout()}>
