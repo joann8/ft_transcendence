@@ -22,16 +22,21 @@ import AvatarModal from "./AvatarModal";
 import InfoModal from "./InfoModal ";
 import { api_req_init } from "../../ApiCalls/var";
 import useFromApi from "../../ApiCalls/useFromApi";
+import { AnyCnameRecord } from "node:dns";
+import path from "path/posix";
 
 
 
-const FRONT_AVATAR_URL = "./../../frontAvatars/"
+const deepPink = "#ed1b76"
+const lightPink = "#f44786"
+const deepGreen = "#249f9c"
+const lightGreen = "#037a76"
+const backEndUrl = "http://127.0.0.1:3001"
 
-const FULL_PATH = "/home/calao/Documents/42/42cursus/ft_transcendence/front/src/frontAvatars/"
+
+
 const backGround = {
-
     layout: {
-        //backgroundColor: "#555555",
         backgroundImage: `url(` + `${Pink}` + ')',
         backgroundOrigin: "bottom",
         backgroundPosition: 'center',
@@ -39,10 +44,9 @@ const backGround = {
         backgroundSize: 'cover',
         width: '100vw',
         height: '100vh',
-        display: "flex",
-     /*   justifyContent: "center",
-        alignItem: "center"
-    */},
+        display: "flex",},
+
+
     profile: {
         backgroundOrigin: "center",
         backgroundPosition: 'center',
@@ -73,27 +77,44 @@ const backGround = {
     }
 };
 
-const defaultUser = {
-    id: 0,
-    id_pseudo: "Seong Gi-Hun",
-    email: "Seaong@squid-game.io",
-    avatar: `${Character}`,
-    avatarFileName: "",
-    role: "NONE",
-    elo: 1000,
-    status: "Online",
-    two_factor: false,
-    achievement1: false,
-    achievement2: false
+interface Iuser {
+    id : number,
+    id_pseudo : string,
+    email : string,
+    avatar: string,
+    role: string,
+    elo: number,
+    status: string,
+    two_factor: boolean,
+    achievement1: boolean,
+    achievement2: boolean
 }
 
-const deepPink = "#ed1b76"
-const lightPink = "#f44786"
-const deepGreen = "#249f9c"
-const lightGreen = "#037a76"
+const defaultUser : Iuser = {
+    id : 0,
+    id_pseudo : "",
+    email : "",
+    avatar : "",
+    role : "",
+    elo : 0,
+    status : "",
+    two_factor : false,
+    achievement1 : false,
+    achievement2 : false,
+}
 
 
-const backEndUrl = "http://127.0.0.1:3001"
+function getAvatar(backEndAvatarPath : string){
+
+    const avatarFileName = backEndAvatarPath.split("/").pop()
+
+    const avatarObject = require("./../../frontAvatars/" + avatarFileName)
+    console.log("avatar name: ", avatarFileName)
+    console.log("avatar Object: ", avatarObject)
+
+    return avatarObject
+}
+
 
 export default function Profile() {
 
@@ -108,9 +129,8 @@ export default function Profile() {
     const [update, setUpdate] = useState(0)
     const [userData, setUserData] = useState(defaultUser)
 
-
     const navigate = useNavigate()
-
+    const open = Boolean(anchorEl);
 
     const getUserData = async () => {
 
@@ -121,7 +141,6 @@ export default function Profile() {
         })
             .then((res) => {
                 if (res.status === 401) {
-                    // console.log("redirection Login")
                     navigate("/login");
                 }
                 else if (!res.ok) {
@@ -130,41 +149,26 @@ export default function Profile() {
                 return res.json();
             })
             .then((resData) => {
-                let avatarPath = resData.avatar
-                const avatarFileName = avatarPath.split("/").pop()
-
-                resData.avatar = require(`./../../frontAvatars/${avatarFileName}`)
-                // require("./../../frontAvatars/" + totoro)
+                resData.avatar = getAvatar(resData.avatar)
                 setUserData(resData)
-
             })
             .catch((err) => {
                 console.log("Error caught: ", err)
-                //Get User infos
             })
     }
 
-    const tmp = "../Images/Sung-Gi-Hoon.jpg"
-
 
     useEffect(() => {
-        console.log("Current userData:", userData)
-    })
-    useEffect(() => {
-
         console.log("Profile re-renderer")
         getUserData()
     }, [update])
 
-    const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
     };
-
-
 
     return (
         <Fragment>
@@ -239,7 +243,7 @@ export default function Profile() {
                                     <MenuItem onClick={() => { setModal({ ...modalState, info: true }) }}>Infos</MenuItem>
                                     {modalState.info ? <InfoModal modalState={modalState.info} setModal={setModal} setUpdate={setUpdate} update={update} /> : null}
                                     <MenuItem onClick={() => { setModal({ ...modalState, avatar: true }) }}>Avatar</MenuItem>
-                                    {modalState.avatar ? <AvatarModal modalState={modalState.avatar} setModal={setModal} /> : null}
+                                    {modalState.avatar ? <AvatarModal setUpdate={setUpdate} update={update} modalState={modalState.avatar} setModal={setModal} /> : null}
 
                                 </Menu>
                             </div>
@@ -258,53 +262,3 @@ export default function Profile() {
     );
 
 }
-
-/*
-                            <Button variant="contained" startIcon={<EditIcon />} onClick={onEdit}> Edit </Button>
-
- <Box  style={{
-                    backgroundColor : "#ea3002",
-                    marginTop: "15%",
-                    marginRight: "5%",
-                    marginLeft: "5%",
-                    marginBottom: "5%"
-                }}>
-                    <Grid container >
-                        <Grid item xs={7}  style={{
-                            backgroundColor: deepGreen,
-                        }}>
-                            <Avatar />
-                            <Button variant="contained" startIcon={<EditIcon />}> Edit </Button>
-                            <Button variant="contained" startIcon={<AdminPanelSettings />}> Admin </Button>
-                            <Button variant="contained" startIcon={<QrCodeIcon />}> Enable two factor </Button>
-                        </Grid>
-                        <Grid item xs={2} style={{
-                            backgroundColor: "#000000"
-                        }}>
-
-                        </Grid>
-                    </Grid>
-                </Box>
-
-
-
-
-
-
-   useEffect(() => {
-        const fetchData = async () => {
-            let status: number;
-            const result = await fetch(`${backEndUrl}/data/adconsta`)
-                .then(function (response) {
-                    status = response.status
-                    response.json()
-                        .then(function (parsedJson) {
-                            setItems(parsedJson)
-                            setStatus(status)
-                            setReady(true)
-                        })
-                })
-        }
-        fetchData();
-    }, [])
-    */

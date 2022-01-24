@@ -43,12 +43,10 @@ export default function AvatarModal(props: any) {
 
     const [avatar, setAvatar] = useState(null)
 
-
-
-
-
     const handleClose = () => props.setModal(false);
 
+
+    //Confirm le changement d'avatar
     const handleUpload = async () =>{
         if (avatar) {
 
@@ -69,25 +67,18 @@ export default function AvatarModal(props: any) {
                         throw new Error(res.statusText)
                     console.log("Avatar send. Response : ")
                     console.log(res)
+                    props.setModal(false)
                 })
                 .catch(error => {
                     console.log(error)
                 })
-            /* const formData = new FormData()
-             formData.append(
-                 "myAvatar",
-                 validFile,
-                 validFile.name
-             )
-             console.log("validFile", validFile)
-             console.log("formData", formData)
-             */
         }
         else
             console.log("You must upload an avatar")
     }
-    //Recupere la file suite a l'ouverture auto de la fenetre d'upload
 
+
+    //Recupere la file suite a l'ouverture auto de la fenetre d'upload
     const handleFileReception = event => {
         if (event.target.files[0].size > 50000000)
             return alert("Error : Avatar file must be lower than 50Mb")
