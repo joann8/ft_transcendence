@@ -11,9 +11,10 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { Chat } from './chat/chat.entity';
 import { AdminModule } from './admin/admin.module';
-import { PongModule } from './game/pong.module';
-import { PongGateway } from './game/pong.gateway';
+import { PongModule } from './pong/pong.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { PongService } from './pong/pong.service';
+import { Pong } from './pong/entities/pong.entity';
 
 @Module({
 	imports: [
@@ -27,7 +28,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 			username: process.env.DATABASE_USERNAME,
 			password: process.env.DATABASE_PASSWORD,
 			database: process.env.DATABASE_NAME,
-			entities: [User, Chat],
+			entities: [User, Chat, Pong],
 			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
 			keepConnectionAlive: true,
@@ -47,6 +48,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 		AppService,
 		UserService,
 		ChatService,
+		PongService
 	],
 })
 export class AppModule {}

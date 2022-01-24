@@ -19,13 +19,16 @@ type GameSate = {
         },
         paddles: {
             ly: number,
-            ry: number
+            lh: number,
+            ry: number,
+            rh: number,
         },
         score: {
             p1: number,
             p2: number
         },
         state: number,
+        message : string,
         is_winner : boolean,
     }
 

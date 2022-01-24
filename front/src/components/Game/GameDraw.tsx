@@ -72,14 +72,12 @@ import { WAIT, PLAY, OVER, PAUSE } from "./GameConst";
             draw_background(ctx, color_background, width, height);
             draw_line(ctx,color_object, width, height);
             draw_ball(ctx, color_object, game.ball.x, game.ball.y, ball_radius);
-            draw_paddle(ctx, color_object, l_paddle_x, game.paddles.ly, paddle_w, paddle_h);
-            draw_paddle(ctx, color_object, r_paddle_x, game.paddles.ry, paddle_w, paddle_h);
+            draw_paddle(ctx, color_object, l_paddle_x, game.paddles.ly, paddle_w, game.paddles.lh);
+            draw_paddle(ctx, color_object, r_paddle_x, game.paddles.ry, paddle_w, game.paddles.rh);
             draw_text(ctx, game.score.p1.toString(), color_object, font_text, 3 * (width / 8), height / 12);
             draw_text(ctx, game.score.p2.toString(), color_object, font_text, 5 * (width / 8) - 50, height / 12)    
         }
         
-       
-
         export function draw_all(ctx : CanvasRenderingContext2D, game : GameSate,  color_background : string, width : number, height : number, color_object : string, font_text : string) {
             if (game.state === PLAY)
                 draw_game(ctx, game, color_background, width, height, color_object, font_text );     

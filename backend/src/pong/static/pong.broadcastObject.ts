@@ -9,8 +9,10 @@ export interface BroadcastObject {
     },
     paddles: {
         ly: number,
+        lh: number,
         //lyp : number,
         ry: number, 
+        rh : number
         //ryp: number, 
     },
     score: {
@@ -18,4 +20,5 @@ export interface BroadcastObject {
         p2: number
     },
     state: States,
+    message : string
 }

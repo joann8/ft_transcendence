@@ -5,6 +5,7 @@ import { Game } from "./pong.game";
 import { Paddle } from "./pong.paddle";
 
 export class Player {
+    private _userId : number;
     private _socketId : Socket;
     private _score : number;
     private _isWinner : boolean;
@@ -12,10 +13,12 @@ export class Player {
     private _paddle : Paddle; 
     private _interval: NodeJS.Timer;
 
-    
-    constructor(socketId : Socket, left : boolean) 
+    //constructor(socketId : Socket, left : boolean) 
+    constructor(dataSet : [Socket, number], left : boolean) 
     {
-        this._socketId = socketId;
+        //this._socketId = socketId;
+        this._userId = dataSet[1];
+        this._socketId = dataSet[0];
         this._score = 0;
         this._isWinner = false;
         this._left = left;
@@ -23,9 +26,15 @@ export class Player {
         this._interval = setInterval(
             () => this._paddle.update(), Const.FPS
         );
+        console.log(`FROM PLAYER player id : ${this._userId}`);
+
     }
   
     // Getters & Setters
+
+    public getUser() : number {
+        return this._userId;
+    }
 
     public getSocket() : Socket {
         return this._socketId;

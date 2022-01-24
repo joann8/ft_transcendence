@@ -13,8 +13,9 @@ export class Ball {
     private _radius : number;
     private _isScoring : boolean;
     private _scorer : number;
+    private _accelerate : boolean;
 
-    constructor()
+    constructor(accelerate : boolean)
     {
         this._x = Const.WIDTH / 2;
         //this._dx = 1;
@@ -26,6 +27,7 @@ export class Ball {
         this._radius = Const.BALL_RADIUS;
         this._isScoring = false; 
         this._scorer = 0;
+        this._accelerate = accelerate;
     }
 
     // Getters
@@ -36,6 +38,12 @@ export class Ball {
     }
     public getY() : number {
         return this._y;
+    }
+
+    public setAccelerate (accelerate : boolean) : void {
+        this._accelerate = accelerate;
+        if (accelerate === false)
+            this._speed = Const.BALL_SPEED;
     }
 
     // Other functions
@@ -50,6 +58,8 @@ export class Ball {
             {
                 toReturn = paddle.getX() + paddle.getWidth() + this._radius;
                 this._dx *= -1;
+                if (this._accelerate === true)
+                    this.accelerateBall();
             }
             else
             {
@@ -72,6 +82,8 @@ export class Ball {
             {
                 toReturn = paddle.getX() - this._radius;
                 this._dx *= -1;
+                if (this._accelerate === true)
+                    this.accelerateBall();
             }
             else
             {
@@ -112,6 +124,11 @@ export class Ball {
         }
         else if (this._isScoring === true)
             this._scorer === 2 ? game.pauseAndScore(game.getPlayer2()) : game.pauseAndScore(game.getPlayer1());
+    }
+
+    public accelerateBall() : void {
+        if (this._speed < Const.BALL_SPEEDMAX)
+            this._speed += 2;
     }
 
     public reset() : void {

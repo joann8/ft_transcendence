@@ -42,7 +42,7 @@ export default function GamePage() {
       transform: 'translate(-50%, -50%)',
       width: 'auto',
       height: 'auto',
-      bgcolor: "#000000", //si je veux transparent rajouter 2 chiffres pour opacity a la dfun
+      bgcolor: "#FFFFFF", //si je veux transparent rajouter 2 chiffres pour opacity a la dfun
       border: '2px solid #000',
       boxShadow: 24,
       p: 4,
@@ -107,7 +107,7 @@ export default function GamePage() {
               </ButtonGroup>
               <Modal open={openGame} onBackdropClick={handleCloseGame} >
                   <Box sx={styles.boxModal}>
-                    <GamePong width={800} height={600} socket={socket}/>;
+                    <GamePong width={800} height={600} socket={socket}/>
                     <Dialog open={openAlert} onClose={handleCloseAlertStay} >
                       <DialogTitle id="alert-dialog-title">
                         {"Leave current Pong Game?"}
@@ -116,12 +116,12 @@ export default function GamePage() {
                         <Button onClick={handleCloseAlertStay}>Disagree</Button>
                         <Button onClick={handleCloseAlertLeave} autoFocus>Agree </Button>
                       </DialogActions>
-                     </Dialog>;
+                     </Dialog>
                   </Box>
                 </Modal>
                 <Modal open={openWatch} onBackdropClick={handleCloseWatch}>
                   <Box sx={styles.boxModal}>
-                    <GameWatch width={800} height={600} socket={socket}/>;
+                    <GameWatch width={800} height={600} socket={socket}/>
                   </Box>
                 </Modal>
                 </Grid>

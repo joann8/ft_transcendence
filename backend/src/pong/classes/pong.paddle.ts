@@ -35,18 +35,15 @@ export class Paddle {
         return this._width;
     }
 
-
     public getHeight() : number {
         return this._height;
     }
 
-  
     public isLeft() : boolean {
         return this._left;
     }
 
-
-    
+  
     // Other functions
 
     public up() : void {
@@ -70,9 +67,7 @@ export class Paddle {
         this._y = Const.PADDLE_Y;
         this._y_tmp = Const.PADDLE_Y;
         this._speed = Const.PADDLE_SPEED;
-        
         //this._height = Const.PADDLE_H;
-        //this._height = Const.PADDLE_W;
     }
 
     public pause() : void
@@ -84,4 +79,13 @@ export class Paddle {
     {
         this._speed = Const.PADDLE_SPEED;
     }
+    
+    public enlargeOn() : void {
+        this._height *= 2;
+    }
+
+    public enlargeOff() : void {
+        this._height = Const.PADDLE_H;
+    }
+
 }
