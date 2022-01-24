@@ -17,7 +17,6 @@ import { Navigate, useNavigate } from "react-router";
 import { isReturnStatement } from "typescript";
 import MatchModal from "./MatchModal";
 import Leaderboard from "../Leaderboard";
-import Edit from "./Edit";
 import AvatarModal from "./AvatarModal";
 import InfoModal from "./InfoModal ";
 import { api_req_init } from "../../ApiCalls/var";
@@ -104,15 +103,11 @@ const defaultUser : Iuser = {
 }
 
 
-function getAvatar(backEndAvatarPath : string){
+ function getAvatarFileName(backEndAvatarPath : string){
 
     const avatarFileName = backEndAvatarPath.split("/").pop()
-
-    const avatarObject = require("./../../frontAvatars/" + avatarFileName)
     console.log("avatar name: ", avatarFileName)
-    console.log("avatar Object: ", avatarObject)
-
-    return avatarObject
+    return avatarFileName
 }
 
 
@@ -149,8 +144,13 @@ export default function Profile() {
                 return res.json();
             })
             .then((resData) => {
-                resData.avatar = getAvatar(resData.avatar)
+                resData.avatar = getAvatarFileName(resData.avatar)
+                return resData
+            })
+            .then((resData) => {
+                resData.avatar = require("./../../frontAvatars/" + resData.avatar)
                 setUserData(resData)
+                console.log(userData)
             })
             .catch((err) => {
                 console.log("Error caught: ", err)

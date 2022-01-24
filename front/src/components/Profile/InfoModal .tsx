@@ -5,8 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { AnyRecord } from 'dns';
 import { useEffect, useState } from 'react';
-import Edit from './Edit';
-import { Grid, TextField, BottomNavigation } from '@mui/material';
+import { Grid, TextField, BottomNavigation, alertTitleClasses } from '@mui/material';
 import validator from 'validator'
 import { useNavigate } from 'react-router';
 
@@ -45,7 +44,6 @@ export default function InfoModal(props: any) {
 
 
     function handleChange(evt: any) {
-        console.log(evt)
         setState({
             ...state, [evt.target.name]: evt.target.value
         })
@@ -65,6 +63,12 @@ export default function InfoModal(props: any) {
             if (!(validator.isAlpha(state.id_pseudo[0]) && validator.isAlphanumeric(state.id_pseudo)))
                 return (alert("Pseudo must contain alpha numeric only and START with a letter"))
         }
+        let update : any
+        update = {}
+        if (state.email)
+            update.email = state.email
+        if (state.id_pseudo)
+            update.id_pseudo = state.id_pseudo
 
         fetch("http://127.0.0.1:3001/user", {
             method: "PUT",
@@ -73,12 +77,13 @@ export default function InfoModal(props: any) {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(state),
+            body: JSON.stringify(update),
         })
             .then(res => {
                 if (res.status === 401) {
                     nav("/login")
                 }
+
                 else if (!res.ok) {
                     throw new Error(res.statusText)
                 }

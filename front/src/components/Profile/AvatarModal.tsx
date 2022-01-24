@@ -5,7 +5,6 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { AnyRecord } from 'dns';
 import { useEffect, useState } from 'react';
-import Edit from './Edit';
 import { Grid, TextField, BottomNavigation, IconButton, styled } from '@mui/material';
 import { PhotoCamera, SentimentSatisfiedOutlined } from '@mui/icons-material';
 import { alterHsl } from 'tsparticles';
@@ -47,7 +46,7 @@ export default function AvatarModal(props: any) {
 
 
     //Confirm le changement d'avatar
-    const handleUpload = async () =>{
+    const handleUpload = async () => {
         if (avatar) {
 
             console.log("avatar: ", avatar)
@@ -65,24 +64,27 @@ export default function AvatarModal(props: any) {
                 .then(res => {
                     if (!res.ok)
                         throw new Error(res.statusText)
-                    console.log("Avatar send. Response : ")
-                    console.log(res)
+                    console.log("Avatar send. Response : ", res )
                     props.setModal(false)
                 })
                 .catch(error => {
-                    console.log(error)
+                    alert(error)
                 })
         }
         else
-            console.log("You must upload an avatar")
+            alert("Error : You must upload an avatar")
     }
 
 
     //Recupere la file suite a l'ouverture auto de la fenetre d'upload
     const handleFileReception = event => {
-        if (event.target.files[0].size > 50000000)
-            return alert("Error : Avatar file must be lower than 50Mb")
-        //   setAvatar(event.target.files[0])
+        if (event.target.files[0].size > 15000000)
+            return alert("Error : Avatar file size >= 15 Mb")
+        const fileName = event.target.files[0].name
+        const extName = fileName.split(".").pop()
+        if (extName !== 'jpeg' && extName !== 'jpg' && extName !== 'png'
+            && extName !== 'gif')
+            return alert("jpeg | jpg | png | gif File only")
         setAvatar(event.target.files[0])
     }
 

@@ -10,7 +10,11 @@ import {
 	Post,
 	UseInterceptors,
 	UploadedFile,
+	Res,
 } from '@nestjs/common';
+
+import { Response } from 'express';
+
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fstat } from 'fs';
 import { diskStorage } from 'multer';
@@ -75,20 +79,30 @@ export class UserController {
 			else
 				console.log("old avatar deleted")
 		})
-
-
 		return file;
 	}
 
 	// UPDATE MY PROFILE (Look at UpdateCurrentUserDto for available options)
 	@Put()
 	async updateCurrentUser(
+		@Res() res : Response,
 		@Req() req,
 		@Body() updateCurrentUserDto: UpdateCurrentUserDto,
 	): Promise<User> {
-		console.log("req : ", req, "updateCurrentDto: ", updateCurrentUserDto)
-		await this.userService.update(req.user.id, updateCurrentUserDto);
-		return this.userService.findOne(req.user.id.toString());
+		console.log("updateCurrentDto: ", updateCurrentUserDto)
+		try {
+			await this.userService.update(req.user.id, updateCurrentUserDto);
+			res.statusMessage = "Succes User Updated"
+			res.status(200).send({success: "User successfully updated"})
+			return this.userService.findOne(req.user.id.toString());
+		}
+		catch(error)
+		{
+			//console.log("UpdateCurrentUser Error caught:" + '\n', error)
+			res.statusMessage = "Username or Email unavailable"
+			res.status(409).send({error: " Username or Email unavalaible"})
+		}
+
 	}
 	// DELETE MY PROFILE
 	@Delete()
