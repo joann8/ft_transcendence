@@ -95,7 +95,7 @@ export class ChannelController {
 
 	/**
 	 * ! KICK {targetPseudo} OF CHANNEL {ID}
-	 * *http://localhost:3001/channel/{id}/add/{targetPseudo}
+	 * *http://localhost:3001/channel/{id}/kick/{targetPseudo}
 	 * @param req Use the request param to get the current User
 	 * @param channel Current channel
 	 * @param targetUser User we are trying to kick to the channel
@@ -124,6 +124,7 @@ export class ChannelController {
 		@Param('id', ParseChannelPipe) channel: Channel,
 		@Param('targetPseudo', ParseUserPseudo) targetUser: User,
 	) {
+		console.log('here');
 		return this.channelService.muteOneUser(channel, targetUser, req.user);
 	}
 

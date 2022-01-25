@@ -78,6 +78,7 @@ type MessagePostProps = {
   submit: (content: string) => void;
 };
 type ChannelListProps = {
+  currentUser: User;
   currentChannel: Channel;
   changeChannel: React.Dispatch<React.SetStateAction<Channel>>;
   fetchChannelList: () => Promise<void>;
@@ -88,6 +89,7 @@ type CreateChannelProps = {
 };
 type RoleListProps = {
   currentChannel: Channel;
+  currentUser: User;
   roleList: userChannelRole[];
   fetchUsers: () => Promise<void>;
 };

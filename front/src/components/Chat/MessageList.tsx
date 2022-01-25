@@ -5,12 +5,7 @@ import Messages from "./Messages";
 import PostMessage from "./PostMessage";
 import { MessageListProps } from "./types";
 
-const useStyle = makeStyles({
-  formMessageContainer: {
-    height: "130px",
-    backgroundColor: "yellow",
-  },
-});
+const useStyle = makeStyles({});
 function MessageList({ innerref, messageList, submit }: MessageListProps) {
   const classes = useStyle();
 

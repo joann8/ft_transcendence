@@ -5,6 +5,7 @@ import {
   Container,
   Modal,
   TextField,
+  ButtonGroup,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
@@ -12,8 +13,8 @@ import * as React from "react";
 import back from "./backConnection";
 import CreateChannel from "./CreateChannel";
 import SearchRoom from "./SearchRoom";
-import { Channel, ChannelListProps, ThemeOptions } from "./types";
-
+import { User, ChannelListProps, ThemeOptions, Channel } from "./types";
+import ClearIcon from "@mui/icons-material/Clear";
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -31,7 +32,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
     margin: "0",
     padding: "0",
     width: "100%",
-    height: "600px",
+    height: "80vh",
     backgroundColor: "white",
     borderRadius: "10px",
     overflowY: "hidden",
@@ -57,45 +58,97 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
 function ChannelList({
   currentChannel,
   changeChannel,
+  currentUser,
   channelList,
   fetchChannelList,
 }: ChannelListProps) {
   const classes = useStyle();
+  async function fetchDeleteRoom(channel: Channel) {
+    const result = await back.delete(
+      `http://127.0.0.1:3001/channel/${channel.id}`
+    );
+    console.log("back delete completed");
+  }
   function handleClick(event: React.MouseEvent) {
     const element = event.currentTarget as HTMLInputElement;
     const id = +element.getAttribute("data-index");
     if (id && currentChannel.id !== id) {
-      console.log(id, currentChannel.id);
       const channel = channelList.find((channel) => channel.id === id);
       changeChannel(channel);
+    }
+  }
+  function handleDelete(event: React.MouseEvent) {
+    console.log("handle delete");
+
+    const element = event.currentTarget as HTMLInputElement;
+    const id = +element.getAttribute("data-index");
+    if (id) {
+      const channel = channelList.find((channel) => channel.id === id);
+      fetchDeleteRoom(channel).then(() => fetchChannelList());
     }
   }
   return (
     <Grid item xs={12} md={4} lg={3} className={classes.channelListContainer}>
       {channelList.map((room, index) => {
-        if (room.id !== currentChannel.id) {
+        const ownerRole = room.roles.find((role) => role.role === "owner");
+        const ownerUser = ownerRole.user;
+        if (ownerUser.id === currentUser.id) {
           return (
-            <Button
-              key={index}
-              data-index={room.id}
-              onClick={handleClick}
-              className={classes.elem}
-            >
-              {room.name}
-            </Button>
+            <ButtonGroup variant="text" key={index} className={classes.elem}>
+              {room.id !== currentChannel.id && (
+                <Button
+                  style={{ width: "80%", border: "none" }}
+                  data-index={room.id}
+                  onClick={handleClick}
+                >
+                  {" "}
+                  {room.name}
+                </Button>
+              )}
+              {room.id === currentChannel.id && (
+                <Button
+                  style={{ width: "80%", border: "none" }}
+                  color="secondary"
+                  data-index={room.id}
+                  onClick={handleClick}
+                >
+                  {" "}
+                  {room.name}
+                </Button>
+              )}
+              <Button
+                style={{ width: "20%", border: "none" }}
+                startIcon={<ClearIcon></ClearIcon>}
+                data-index={room.id}
+                onClick={handleDelete}
+              ></Button>
+            </ButtonGroup>
           );
         } else {
-          return (
-            <Button
-              key={index}
-              data-index={room.id}
-              onClick={handleClick}
-              color="secondary"
-              className={classes.elem}
-            >
-              {room.name}
-            </Button>
-          );
+          if (room.id !== currentChannel.id) {
+            return (
+              <Button
+                key={index}
+                data-index={room.id}
+                onClick={handleClick}
+                className={classes.elem}
+              >
+                {room.name}
+              </Button>
+            );
+          } else {
+            return (
+              <Button
+                key={index}
+                data-index={room.id}
+                onClick={handleClick}
+                color="secondary"
+                className={classes.elem}
+              >
+                {room.name}
+              </Button>
+            );
+          }
         }
       })}
       <CreateChannel fetchChannelList={fetchChannelList}></CreateChannel>

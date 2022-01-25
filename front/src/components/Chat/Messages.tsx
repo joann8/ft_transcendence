@@ -7,7 +7,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
     margin: "0",
     padding: "5px",
     width: "100%",
-    height: "500px",
+    height: "70vh",
     backgroundColor: "white",
     borderRadius: "10px",
     overflowY: "scroll",
@@ -45,9 +45,9 @@ function Message({ message }: MessageProps) {
     var theMinutesMessage = new Date(date).getTime() / (1000 * 60);
     return `${
       Math.ceil(theMinutesNow - theMinutesMessage - 60) < 60
-        ? `${Math.ceil(theMinutesNow - theMinutesMessage - 60)}`
+        ? `${Math.ceil(theMinutesNow - theMinutesMessage - 60)} min ago`
         : new Date(date).toLocaleDateString()
-    } min ago`;
+    }`;
   }
   const classes = useStyle();
   return (
@@ -64,7 +64,7 @@ function Message({ message }: MessageProps) {
       </Grid>
       {message.author.id_pseudo !== "Thib" ? (
         <Grid item xs={1} md={3} lg={1}>
-          <Avatar>{message.author.id_pseudo[0]}</Avatar>
+          <Avatar src={message.author.avatar}></Avatar>
         </Grid>
       ) : (
         <div></div>

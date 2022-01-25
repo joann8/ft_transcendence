@@ -4,7 +4,7 @@ import {
 	Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, In, Repository } from 'typeorm';
 import { Channel } from './entities/channel.entity';
 import { CreateChannelDto } from './dto/create-channel-dto';
 import { Message } from '../messages/entities/message.entity';
@@ -210,8 +210,12 @@ export class ChannelService {
 	 * @returns list of users's channels
 	 */
 	async findAllofMe(user: User) {
-		const list = user.roles.map((role) => role.channel);
-		return list;
+		const list = user.roles.map((role) => role.channel.id);
+		const listRelations = await this.channelRepository.find({
+			where: { id: In(list) },
+			relations: ['roles', 'roles.user'],
+		});
+		return listRelations;
 	}
 	/**
 	 * *GET ALL USERS OF A CHANNEL
@@ -252,6 +256,7 @@ export class ChannelService {
 			throw new BadRequestException('You are muted');
 		}
 	}
+
 	/**
 	 *
 	 *

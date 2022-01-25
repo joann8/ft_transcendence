@@ -7,6 +7,7 @@ import ChannelList from "./ChannelList";
 import { Message, Channel, userChannelRole, User } from "./types";
 import RoleList from "./RoleList";
 import back from "./backConnection";
+import CreateChannel from "./CreateChannel";
 
 function Chat() {
   /*
@@ -22,11 +23,13 @@ function Chat() {
   const [currentChannel, setCurrentChannel] = React.useState<Channel>();
   const [messageList, setMessageList] = React.useState<Message[]>([]);
   const [roleList, setRoleList] = React.useState<userChannelRole[]>([]);
+  const [currentUser, setCurrentUser] = React.useState<User>();
 
   /** BACK END CALLS */
 
   const fetchChannelList = async () => {
     const result = await back.get("http://127.0.0.1:3001/channel/me");
+    console.log("fetch channel list ok");
     setChannelList(result.data);
     setCurrentChannel(result.data[0]);
   };
@@ -35,16 +38,22 @@ function Chat() {
     const result = await back.get(
       `http://127.0.0.1:3001/channel/${currentChannel.id}/messages`
     );
-    console.log(result.data);
+    console.log("fetch messages ok");
 
     setMessageList(result.data);
   };
+
+  async function fetchCurrentUser() {
+    const result = await back.get("http://127.0.0.1:3001/user");
+    setCurrentUser(result.data);
+  }
 
   const fetchUsers = async () => {
     const result = await back.get(
       `http://127.0.0.1:3001/channel/${currentChannel.id}/users`
     );
-    console.log(result.data);
+    console.log("fetch users ok");
+
     setRoleList(result.data);
   };
 
@@ -55,7 +64,6 @@ function Chat() {
         content: content,
       }
     );
-    console.log(result.data);
   };
 
   /*
@@ -63,6 +71,7 @@ function Chat() {
    */
 
   React.useEffect(() => {
+    fetchCurrentUser();
     fetchChannelList();
   }, []);
 
@@ -109,6 +118,7 @@ function Chat() {
         <Container disableGutters maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
           <Grid container columnSpacing={1} rowSpacing={0}>
             <ChannelList
+              currentUser={currentUser}
               currentChannel={currentChannel}
               changeChannel={setCurrentChannel}
               channelList={channelList}
@@ -121,6 +131,7 @@ function Chat() {
             ></MessageList>
 
             <RoleList
+              currentUser={currentUser}
               roleList={roleList}
               fetchUsers={fetchUsers}
               currentChannel={currentChannel}
@@ -129,7 +140,8 @@ function Chat() {
         </Container>
       </Box>
     );
-  else return <></>;
+  else
+    return <CreateChannel fetchChannelList={fetchChannelList}></CreateChannel>;
 }
 
 export default Chat;
