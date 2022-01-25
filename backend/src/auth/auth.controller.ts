@@ -3,8 +3,7 @@ import {
 	Controller,
 	Get,
 	HttpCode,
-	Post,
-	Redirect,
+	Put,
 	Req,
 	Res,
 	UseGuards,
@@ -40,16 +39,17 @@ export class AuthController {
 		res.cookie('refresh_token', refresh_token);
 		if (created) {
 			front_url += '/'; // MODIFIER ROUTE POUR ACCEDER A LA MODIFICATION DES VARS USER LORS DE LA CREATION
-		} else if (user.two_fa_enabled) {
-			front_url += '/two_factors'; // MODIFIER ROUTE POUR ACCEDER A LA MODIFICATION DES VARS USER LORS DE LA CREATION
+		} else if (user.two_factor_enabled) {
+			console.log('OUI');
+			front_url += '/login/twofa';
 		}
 		res.redirect(front_url);
 	}
 	// LOGIN WITH 2FA
 	@Public()
-	@Post('2fa/authenticate')
 	@UseGuards(JwtAuthGuard)
-	@Redirect('/user')
+	@Put('2fa/authenticate')
+	@HttpCode(200)
 	async authenticateTwoFa(
 		@Req() req,
 		@Res({ passthrough: true }) res,
@@ -81,7 +81,7 @@ export class AuthController {
 		return this.authService.pipeQrCodeStream(res, otpauthUrl);
 	}
 	// ENABLE 2FA FOR CURRENT USER
-	@Post('2fa/turn-on')
+	@Put('2fa/turn-on')
 	@HttpCode(200)
 	async enableTwoFa(
 		@Req() req,
@@ -94,7 +94,7 @@ export class AuthController {
 		res.cookie('refresh_token', refresh_token);
 	}
 	// DISABLE 2FA FOR CURRENT USER - Access token still valid
-	@Post('2fa/turn-off')
+	@Put('2fa/turn-off')
 	@HttpCode(200)
 	async disableTwoFa(@Req() req, @Res({ passthrough: true }) res) {
 		await this.authService.turnOffTwoFaAuth(req.user);
