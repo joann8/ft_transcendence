@@ -12,17 +12,19 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Pong } from "./entities/pong.entity";
 import { Repository } from "typeorm";
 import { PongService } from "./pong.service";
+import { User } from "src/user/entities/user.entity";
 
 @WebSocketGateway( { namespace : "/game", cors: { origin:'*', },})
 
-export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {     
+export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {  
+    constructor( private pongService : PongService) {}
     /* Juste si besoin de la reference */
     @WebSocketServer()
     server: Server;
     
     private logger: Logger = new Logger("*** Pong Interface ***");
     private clients: Set<Socket> = new Set(); // liste des clients ID
-    private queue: Map<Socket, number> = new Map<Socket, number>(); // client dans la queue
+    private queue: Map<Socket, User> = new Map<Socket, User>(); // client dans la queue
     //private queue: Socket[] = [];
     private matches: Game[] = []; // liste des matches en cours
 
@@ -66,7 +68,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
     */
     @SubscribeMessage('join_queue')
-    async joinQueue(client: Socket, userID: number) : Promise <void> {
+    async joinQueue(client: Socket, userID: User) : Promise <void> {
         if (this.queue.has(client) === true)
             return;
         if (this.clients.has(client) === false)
@@ -197,7 +199,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     */
 
     private matchInit() {
-        let game = new Game(this.queue, this.server, this.removeGame.bind(this));
+        let game = new Game(this.queue, this.server, this.removeGame.bind(this), this.pongService);
         this.queue.clear();
         this.matches.unshift(game); // enregistrement du match
         //this.logger.log(`new queue length after init :  ${this.queue.length}`);

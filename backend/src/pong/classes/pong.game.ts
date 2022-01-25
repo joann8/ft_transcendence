@@ -10,8 +10,7 @@ import { PongService } from "../pong.service";
 import { Repository } from "typeorm";
 import { Pong } from "../entities/pong.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-
-
+import { User } from "src/user/entities/user.entity";
 
 export class Game {
     private _id : string;
@@ -25,10 +24,9 @@ export class Game {
     private _public : Socket[];
     private _interval : NodeJS.Timer;
     private _isEnded : boolean;
-    private readonly gameRepo =  new PongService(new Repository<Pong>());
-
-   // constructor(player1: Socket, player2 : Socket, server : Server, endFunction : Function)
-    constructor(queue: Map<Socket, number>, server : Server, endFunction : Function)
+    private _pongservice : PongService;
+    
+    constructor(queue: Map<Socket, User>, server : Server, endFunction : Function, pongService : PongService)
     {      
         this._id = uuidv4();
         this._room = this._id;
@@ -39,12 +37,13 @@ export class Game {
         this._player2 = new Player(it.next().value, false);
         this._player1.getSocket().join(this._room);
         this._player2.getSocket().join(this._room);
-        console.log(`Player 1 (user ${this._player1.getUser()} | socket ${this._player1.getSocket()}) and Player 2 (user ${this._player2.getUser()} | socket ${this._player2.getSocket()}) join the room`);
+        console.log(`Player 1 (user ${this._player1.getUser()} | socket ${this._player1.getSocket().id}) and Player 2 (user ${this._player2.getUser()} | socket ${this._player2.getSocket().id}) join the room`);
         this._ball = new Ball(false);
         this._state = States.PLAY;
         this._public = [];
         this._isEnded = false;
         this._interval = setInterval(() => this.play(), Const.FPS);
+        this._pongservice = pongService;
     }
 
     // Getters & Setters
@@ -84,14 +83,11 @@ export class Game {
     // Other Functions 
 
     public hasWinner() : boolean {
-        if (this._player1.IsWinner() || this._player2.IsWinner())
-        {
-          //  console.log("has winner return 'true'");
+        if (this._player1.IsWinner() || this._player2.IsWinner()){
             this._state = States.OVER;
             this._ball.pause();
             return true;
         }
-       // console.log("has winner return 'false'");
         return false;
     }
 
@@ -99,17 +95,13 @@ export class Game {
         return ( {
         ball: {
             x : this._ball.getX(),
-           // xp : number,
             y : this._ball.getY(),    
-            //yp : number,
         },
         paddles: {
             ly: this._player1.getPaddle().getY(),
             lh: this._player1.getPaddle().getHeight(),
-            //lyp : number,
             ry: this._player2.getPaddle().getY(),
             rh: this._player2.getPaddle().getHeight()
-            //ryp: number, 
         },
         score: {
             p1: this._player1.getScore(),
@@ -128,8 +120,7 @@ export class Game {
     public async play() : Promise<void> {
         this.getBall().updateBall(this);
         this.broadcastState("");
-        if (this.hasWinner() === true)
-        {
+        if (this.hasWinner() === true) {
             clearInterval(this._interval);
             this.stopMatch();   
         }
@@ -140,7 +131,7 @@ export class Game {
         clearInterval(this.getPlayer1().getInterval());
         clearInterval(this.getPlayer2().getInterval());
         player.setScore(player.getScore() + 1);
-        console.log(`Scores : Player 1 : ${this.getPlayer1().getScore()} | Player 2 : ${this.getPlayer2().getScore()} `)
+        //console.log(`Scores : Player 1 : ${this.getPlayer1().getScore()} | Player 2 : ${this.getPlayer2().getScore()} `)
         this.getBall().reset();
 
         setTimeout(function(){}, 5000);
@@ -159,64 +150,45 @@ export class Game {
 
     public disconnectPlayer(client : Socket) : void {
         clearInterval(this._interval);
-        if (client === this.getPlayer1().getSocket())
-        {
+        if (client === this.getPlayer1().getSocket()) {
             this.getPlayer1().setScore(0);
             this.getPlayer2().setScore(Const.MAX_SCORE);
         }
-        else 
-        {
+        else {
             this.getPlayer2().setScore(0);
             this.getPlayer1().setScore(Const.MAX_SCORE);
         }
         this.stopMatch();
     }
-/*
-    public sendFinalResult(winner :Player, looser : Player)
-    {
-        const currentState = this.buildDataToReturn();
-        console.log("Send final res...")
-        winner.getSocket().emit('updateState', {...currentState, is_winner : true});
-        looser.getSocket().emit('updateState', {...currentState, is_winner : false});
-    }
-*/
+
     public async stopMatch() : Promise<void>{
         this._state = States.OVER;
         this.broadcastState("Game Over")
-        console.log(`player1 id : ${this._player1.getUser()} | player2 id : ${this._player2.getUser()}`);
-        if (this._isEnded === false)
-        {
-        await this.saveMatch();
-        this.removeAllSpectators();
-        this.getPlayer1().disconnect(this._room);
-        console.log(`---> Player 1 (${this.getPlayer1().getSocket().id}) left the room`);
-        this.getPlayer2().disconnect(this._room);
-        console.log(`--> Player 2 (${this.getPlayer2().getSocket().id}) left the room`);
-        /*
-        if(this.getPlayer1().IsWinner() === true)
-            this.sendFinalResult( this.getPlayer1(), this.getPlayer2());
-        else
-            this.sendFinalResult( this.getPlayer2(), this.getPlayer1());
-            */
-        this._endFunction(this);
-        this._isEnded = true;
-        }
-    
-        
+        if (this._isEnded === false) {
+            this._isEnded = true;
+            //console.log(`player1 id : ${this._player1.getUser()} | player2 id : ${this._player2.getUser()}`);
+            await this.saveMatch();
+            this.removeAllSpectators();
+            this.getPlayer1().disconnect(this._room);
+            //console.log(`---> Player 1 (${this.getPlayer1().getSocket().id}) left the room`);
+            this.getPlayer2().disconnect(this._room);
+            //console.log(`--> Player 2 (${this.getPlayer2().getSocket().id}) left the room`);
+            this._endFunction(this);
+        }       
     }
 
     public async saveMatch() : Promise<void> {
         let winner = this._player1.getScore() === Const.MAX_SCORE? this._player1 : this._player2;
         let looser = this._player1.getScore() === Const.MAX_SCORE? this._player2 : this._player1;
-        console.log(`winner id : ${winner.getUser()} | looser id : ${looser.getUser()}`)
+        //console.log(`winner id : ${winner.getUser()} | looser id : ${looser.getUser()}`)
         let match = { 
             winner: winner.getUser(),
-            scoreWinner: winner.getScore(),
+            scoreWinner: `${winner.getScore()}`,
             looser: looser.getUser(),
-            scoreLooser: looser.getScore(),
-            date: Date.now()
+            scoreLooser: `${looser.getScore()}`,
         };
-        await this.gameRepo.createEntity(match);
+        console.log(match);
+        await this._pongservice.createEntity(match);
     }
 
     public addSpectator(client : Socket) : void

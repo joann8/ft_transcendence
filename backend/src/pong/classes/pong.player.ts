@@ -1,11 +1,12 @@
 import { Socket } from "socket.io";
+import { User } from "src/user/entities/user.entity";
 import { Const } from "../static/pong.constants"
 import { States } from "../static/pong.states";
 import { Game } from "./pong.game";
 import { Paddle } from "./pong.paddle";
 
 export class Player {
-    private _userId : number;
+    private _userId : User;
     private _socketId : Socket;
     private _score : number;
     private _isWinner : boolean;
@@ -14,7 +15,7 @@ export class Player {
     private _interval: NodeJS.Timer;
 
     //constructor(socketId : Socket, left : boolean) 
-    constructor(dataSet : [Socket, number], left : boolean) 
+    constructor(dataSet : [Socket, User], left : boolean) 
     {
         //this._socketId = socketId;
         this._userId = dataSet[1];
@@ -32,7 +33,7 @@ export class Player {
   
     // Getters & Setters
 
-    public getUser() : number {
+    public getUser() : User {
         return this._userId;
     }
 

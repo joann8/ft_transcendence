@@ -8,18 +8,14 @@ import { Pong } from './entities/pong.entity';
 export class PongService {
 	constructor(
 		@InjectRepository(Pong)
-		private pongRepository: Repository<Pong>,
+		private pongRepository: Repository<Pong>
 	) {}
 
-	async createEntity(match: CreateMatchDto) {
-		try {
-			console.log(match);
-			const newMatch = await this.pongRepository.create(match); // add match ID
-			await this.pongRepository.save(newMatch);
-			return newMatch;
-		} catch (error) {
-			throw error;
-		}
+	async createEntity(match: CreateMatchDto) : Promise<Pong> {
+		const newMatch = this.pongRepository.create(match);
+		await this.pongRepository.save(newMatch);
+		console.log(newMatch);
+		return newMatch;
 	}
 
 	async getMatches(): Promise<Pong[]> {
@@ -28,23 +24,23 @@ export class PongService {
 		});
 	}
 
-	async getMatchesUser(id: number): Promise<Pong[]> {
+	async getHistoryUser(id: string): Promise<Pong[]> {
 		return await this.pongRepository.find({ 
-			where :[{ winner : id}, { looser : id}],
+			where :[{ winner : { id_pseudo : id}}, { looser: { id_pseudo : id}}],
 			order: { date : "ASC" }
 		});
 	}
 
-	async getWinsUser(id: number): Promise<Pong[]> {
+	async getWinsUser(id: string): Promise<Pong[]> {
 		return await this.pongRepository.find( { 
-			where : { winner : id},
+			where : { winner: { id_pseudo : id}},
 			order: { date : "ASC" }
 		});
 	}
 
-	async getLostUser(id: number): Promise<Pong[]> {
+	async getLostUser(id: string): Promise<Pong[]> {
 		return await this.pongRepository.find( {
-			where : { looser : id},
+			where : { looser: { id_pseudo : id}},
 			order: { date : "ASC" }
 		});
 	}

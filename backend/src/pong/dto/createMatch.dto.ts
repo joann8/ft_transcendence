@@ -2,21 +2,19 @@ import {
 	IsDate,
 	IsPositive,
 } from 'class-validator';
+import { User } from 'src/user/entities/user.entity';
 
 export class CreateMatchDto {
-	@IsPositive()
-	winner : number;
+	//@IsPositive()
+	winner: User;
 
-	@IsPositive()
-	scoreWinner : number 
+	//@IsPositive()
+	scoreWinner: string;
 
-	@IsPositive()
-	looser: number;
+	//@IsPositive()
+	looser: User;
 
-	@IsPositive()
-	scoreLooser : number 
-
-	@IsDate()
-	date : number
+	//@IsPositive()
+	scoreLooser: string; 
 }
 

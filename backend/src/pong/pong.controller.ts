@@ -7,43 +7,33 @@ import {
 	Req,
 	Put,
 	Redirect,
+	ParseIntPipe,
 } from '@nestjs/common';
 import { CreateMatchDto } from './dto/createMatch.dto';
 import { Pong } from './entities/pong.entity';
 import { PongService } from './pong.service';
 
-@Controller()
+@Controller('game')
 export class PongController {
 	constructor(private readonly pongService: PongService) {}
 	// GET all matches
-	@Get('game/all')
+	@Get('all')
 	async getMatches() : Promise<Pong[]> {
 		return this.pongService.getMatches();
 	}
-
-	// get Matches for the current user
-	@Get('game/history')
-	async getHistory(@Req() req): Promise<Pong[]> {
-		return this.pongService.getMatchesUser(req.Id);
+	// get Matches for another user
+	@Get('history/:id')
+	async getHistory(@Param('id') id: string): Promise<Pong[]> {
+		return this.pongService.getHistoryUser(id);
+	}
+	
+	@Get('wins/:id')
+	async getWins(@Param('id') id: string): Promise<Pong[]> {
+		return this.pongService.getWinsUser(id);
 	}
 
-	@Get('game/history/:id')
-	async getHistoryOther(@Param() userId: number): Promise<Pong[]> {
-		return this.pongService.getMatchesUser(userId);
-	}
-
-	@Get('user/wins')
-	async getWins(@Req() req): Promise<Pong[]> {
-		return this.pongService.getWinsUser(req.Id);
-	}
-
-	@Get('user/lost')
-	async getLost(@Req() req): Promise<Pong[]> {
-		return this.pongService.getLostUser(req.Id);
-	}
-
-	@Put()
-	async createMatch(@Param() createMatch: CreateMatchDto) :  Promise<Pong> {
-		return this.pongService.createEntity(createMatch);
+	@Get('lost/:id')
+	async getLost(@Param('id') id: string): Promise<Pong[]> {
+		return this.pongService.getLostUser(id);
 	}
 }

@@ -1,23 +1,38 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Pong {
 	@PrimaryGeneratedColumn()
 	id_match: number;
-	
-	@ManyToOne((type) => User, (user) => user.id)
-	winner : number;
 
-	@Column()
-	scoreWinner : number 
+	@ManyToOne((type) => User)
+	winner: User;
+	/*
+	@ManyToOne((type) => User, (user) => user.id_pseudo)
+	winner_pseudo: string;
+	*/
+	/*
+	@ManyToOne((type) => User, (user) => user.id_pseudo)
+	winner_pseudo : number;
+	*/
+	@Column({type : 'real'})
+	scoreWinner : string 
 
-	@ManyToOne((type) => User, (user) => user.id)
-	looser: number;
+	@ManyToOne((type) => User)
+	looser: User;
 
-	@Column()
-	scoreLooser : number 
+	/*
+	@ManyToOne((type) => User, (user) => user.id_pseudo)
+	looser_pseudo: string;
+	*/
+	/*
+	@ManyToOne((type) => User, (user) => user.id_pseudo)
+	looser_pseudo : number;
+	*/
+	@Column({type : 'real'})
+	scoreLooser : string;
 
-	@Column()
-	date : number
+	@CreateDateColumn()
+	date : Date
 }

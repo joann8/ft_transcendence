@@ -11,6 +11,7 @@ import { width, height } from './GameConst';
 import { color_object, color_background, font_text } from './GameConst';
 import { WAIT, OVER, PAUSE, PLAY } from './GameConst';
 import { useNavigate } from 'react-router';
+import { stringify } from 'querystring';
 
 
 
@@ -19,7 +20,7 @@ export default function GamePong(props: PropsGame) {
     // Trouver le user
     const navigate = useNavigate();
     
-    const [userID, setUserID] = useState(null);
+    const [userID, setUserID] = useState({});
 
     useEffect(() => {
         const getUserId = async () => {
@@ -37,15 +38,16 @@ export default function GamePong(props: PropsGame) {
         })
         .then((resJson) => {
             console.log(`pseudo : ${resJson.id_pseudo} | id : ${resJson.id}`);
-            setUserID(parseInt(resJson.id))
+            //setUserID(parseInt(resJson.id))
+            setUserID(resJson);
         })
         .catch((err) => {
             console.log("Error caught: ", err);
         })
     };
         getUserId();
-        console.log(`UserID = ${userID}`);
     },[]);
+    //console.log(`UserID = ${userID}`);
 
     // Parler avec socket.io
     const socket = props.socket;
