@@ -11,12 +11,13 @@ import {
 	UseInterceptors,
 	UploadedFile,
 	Res,
+	StreamableFile,
 } from '@nestjs/common';
 
 import { Response } from 'express';
 
 import { FileInterceptor } from '@nestjs/platform-express';
-import { fstat } from 'fs';
+import { createReadStream, fstat } from 'fs';
 import { diskStorage } from 'multer';
 import { extname } from 'path/posix';
 import { UpdateCurrentUserDto } from './dto/updateCurrentUser.dto';
@@ -41,11 +42,11 @@ export class UserController {
 	async getUser(@Param() userId: string): Promise<User> {
 		return this.userService.findOne(userId);
 	}
-
-
-
-
-
+	@Get('/avatar/:avatarId')
+	async getAvatar(@Param('avatarId') avatarId : string, @Res() res: Response) :  Promise<any> {
+		console.log("ici")
+		res.sendFile(avatarId, {root : 'avatars'})
+	}
 
 	@Post('upload')
 	@UseInterceptors(FileInterceptor('avatar', {
@@ -66,14 +67,18 @@ export class UserController {
 		@UploadedFile() file: Express.Multer.File
 	) {
 		const filePath = `${process.env.PWD}/avatars/${file.filename}`
+	//	const filePath = `${file.`
+
 		console.log("File interceptor : ", file)
 
-		const oldAvatar = (req.user.avatar)
+		const oldAvatarPath = `${process.env.PWD}/avatars/${((req.user.avatar).split('/').pop())}`
+
+		console.log(oldAvatarPath)
 		await this.userService.update(req.user.id, {
-			avatar: filePath,
+			avatar: `${process.env.BACKEND_URL}/avatars/${file.filename}`,
 		})
 		const fs = require('fs')
-		fs.unlink(oldAvatar, function (err) {
+		fs.unlink(oldAvatarPath, function (err) {
 			if (err)
 				console.log("Error in avatart deletion: ", err)
 			else

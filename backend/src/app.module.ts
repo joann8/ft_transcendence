@@ -12,7 +12,8 @@ import { ConfigModule } from '@nestjs/config';
 import { Chat } from './chat/chat.entity';
 import { AdminModule } from './admin/admin.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path/posix';
 
 @Module({
 	imports: [
@@ -30,6 +31,10 @@ import { MulterModule } from '@nestjs/platform-express';
 			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
 			keepConnectionAlive: true,
+		}),
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '..', '/avatars/'),
+			serveRoot: "/avatars/"
 		}),
 		UserModule,
 		ChatModule,

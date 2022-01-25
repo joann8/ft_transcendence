@@ -65,6 +65,7 @@ export default function AvatarModal(props: any) {
                     if (!res.ok)
                         throw new Error(res.statusText)
                     console.log("Avatar send. Response : ", res )
+                 //   props.setUpdate(props.update + 1)
                     props.setModal(false)
                 })
                 .catch(error => {

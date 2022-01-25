@@ -8,7 +8,7 @@ export class UserService {
 	constructor(
 		@InjectRepository(User)
 		private usersRepository: Repository<User>,
-	) { }
+	) {}
 
 	async createEntity(user: User) {
 		try {
@@ -37,7 +37,6 @@ export class UserService {
 	}
 
 	async update(id: number, user: Partial<User>): Promise<UpdateResult> {
-		console.log(id, user)
 			const updatedUser = await this.usersRepository.update(id, user)
 			.catch(err => {
 				throw err
