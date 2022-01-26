@@ -8,28 +8,13 @@ export class Pong {
 
 	@ManyToOne((type) => User)
 	winner: User;
-	/*
-	@ManyToOne((type) => User, (user) => user.id_pseudo)
-	winner_pseudo: string;
-	*/
-	/*
-	@ManyToOne((type) => User, (user) => user.id_pseudo)
-	winner_pseudo : number;
-	*/
+	
 	@Column({type : 'real'})
 	scoreWinner : string 
 
 	@ManyToOne((type) => User)
 	looser: User;
 
-	/*
-	@ManyToOne((type) => User, (user) => user.id_pseudo)
-	looser_pseudo: string;
-	*/
-	/*
-	@ManyToOne((type) => User, (user) => user.id_pseudo)
-	looser_pseudo : number;
-	*/
 	@Column({type : 'real'})
 	scoreLooser : string;
 

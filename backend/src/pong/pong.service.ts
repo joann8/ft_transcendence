@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateMatchDto } from './dto/createMatch.dto';
 import { Pong } from './entities/pong.entity';
@@ -20,27 +21,31 @@ export class PongService {
 
 	async getMatches(): Promise<Pong[]> {
 		return await this.pongRepository.find({
-			order: { date : "ASC" } //DESC
+			order: { date : "ASC" }, //DESC
+			relations: ["winner", "looser"]
 		});
 	}
 
-	async getHistoryUser(id: string): Promise<Pong[]> {
+	async getHistoryUser(user: User): Promise<Pong[]> {
 		return await this.pongRepository.find({ 
-			where :[{ winner : { id_pseudo : id}}, { looser: { id_pseudo : id}}],
+			where :[{ winner : user}, { looser: user}],
+			relations : ["winner", "looser"],
 			order: { date : "ASC" }
 		});
 	}
 
-	async getWinsUser(id: string): Promise<Pong[]> {
+	async getWinsUser(user: User): Promise<Pong[]> {
 		return await this.pongRepository.find( { 
-			where : { winner: { id_pseudo : id}},
+			where : { winner: user},
+			relations : ["winner", "looser"],
 			order: { date : "ASC" }
 		});
 	}
 
-	async getLostUser(id: string): Promise<Pong[]> {
+	async getLostUser(user: User): Promise<Pong[]> {
 		return await this.pongRepository.find( {
-			where : { looser: { id_pseudo : id}},
+			where : { looser: user},
+			relations : ["winner", "looser"],
 			order: { date : "ASC" }
 		});
 	}
