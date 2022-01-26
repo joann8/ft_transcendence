@@ -78,6 +78,22 @@ export default function GamePong(props: PropsGame) {
         });
     });
 
+    useEffect(()=> {
+        socket.on("already_connected", (args : any) => {
+            console.log("Already connected received");
+            let c : HTMLCanvasElement = ref.current; //canvas
+            let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
+            //draw_wait(ctx2, color_background, width, height, color_object, font_text); //==> pas possible , error c = null
+            ctx.clearRect(0,0, width, height);
+            ctx.beginPath();
+            ctx.fillStyle= color_background;
+            ctx.fillRect(0,0, width, height);        
+            ctx.fillStyle = color_object;
+            ctx.font = font_text; 
+            ctx.fillText("You are already connected on another screen", 50, height / 2);
+        });
+    });
+
     useEffect (() => {
         window.addEventListener('keydown', (e) => {
             if (e.code ==='ArrowUp') {

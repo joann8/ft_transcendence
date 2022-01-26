@@ -39,4 +39,18 @@ export class UserService {
 	async update(id: number, user: Partial<User>): Promise<UpdateResult> {
 		return await this.usersRepository.update(id, user);
 	}
+
+	async winElo(winner : User): Promise<UpdateResult> {
+		const user = await this.usersRepository.findOne(winner.id)
+		user.elo += 100;
+		return await this.usersRepository.update(user.id, user);
+	}
+
+	async getLeaderboard() : Promise<User[]>
+	{
+		return await this.usersRepository.find( {
+			order: { elo : "DESC" }, 
+			take : 2 //a modifier, combien de données veut-on dans le tableau lead?
+		});
+	}
 }

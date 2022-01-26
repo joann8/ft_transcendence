@@ -1,9 +1,8 @@
 import { User } from 'src/user/entities/user.entity';
 
 export class CreateMatchDto {
-	winner: User;
-	scoreWinner: string;
-	looser: User;
-	scoreLooser: string; 
+	player1: User;
+	player2: User;
+	room: string;
 }
 

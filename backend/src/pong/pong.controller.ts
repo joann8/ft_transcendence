@@ -13,9 +13,14 @@ export class PongController {
 	constructor(private readonly pongService: PongService) {}
 	
 	//get all matches
-	@Get('all')
-	async getMatches() : Promise<Pong[]> {
-		return this.pongService.getMatches();
+	@Get('over')
+	async getMatchesOver() : Promise<Pong[]> {
+		return this.pongService.getMatchesOver();
+	}
+
+	@Get('ongoing')
+	async getMatchesOngoing() : Promise<Pong[]> {
+		return this.pongService.getMatchesOngoing();
 	}
 	// get all Matches for a user
 	@Get('history/:id')

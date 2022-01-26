@@ -26,6 +26,7 @@ export default function GameWatch(props: PropsGame) {
         });
     });
 
+
     useEffect(() => {
         socket.on("no_current_match", (updateState : any) => {
             console.log("No current game received");

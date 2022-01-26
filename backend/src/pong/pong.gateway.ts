@@ -9,15 +9,15 @@ import { v4 as uuidv4} from 'uuid';
 import { Game } from "./classes/pong.game";
 import { Const } from "./static/pong.constants";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Pong } from "./entities/pong.entity";
 import { Repository } from "typeorm";
 import { PongService } from "./pong.service";
 import { User } from "src/user/entities/user.entity";
+import { UserService } from "src/user/user.service";
 
 @WebSocketGateway( { namespace : "/game", cors: { origin:'*', },})
 
 export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {  
-    constructor( private pongService : PongService) {}
+    constructor( private userService : UserService, private pongService : PongService) {}
     /* Juste si besoin de la reference */
     @WebSocketServer()
     server: Server;
@@ -69,10 +69,23 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     */
     @SubscribeMessage('join_queue')
     async joinQueue(client: Socket, userID: User) : Promise <void> {
-        if (this.queue.has(client) === true)
+        if (this.queue.has(client) === true)    
             return;
         if (this.clients.has(client) === false)
+        {
+            console.log("check values")
+            let it = this.queue.values();
+            let it2 = this.queue.values();
+            for(let i = 0; i < this.queue.size; i++)
+            {
+                console.log(`it2 = ${it2.next().value.id}`)
+                if (it.next().value.id === userID.id) {
+                    client.emit('already_connected');
+                    return;
+                }
+            }
             this.clients.add(client);
+        }
         this.logger.log(`Client ${client.id} / userID ${userID} joins the queue`);
         this.queue.set(client, userID);
         this.logger.log(`queue length :  ${this.queue.size}`);
@@ -117,7 +130,17 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
              match.getPlayer1().getSocket() === client? match.getPlayer1().resumeGame(match):  match.getPlayer2().resumeGame(match);
          }
      }
- 
+  
+     @SubscribeMessage('watch_game')
+     async handleListGames(@ConnectedSocket() client, room : string): Promise<void> {
+         console.log("[ watch_game  received ]")
+         let match = this.matches.find(game => game.getRoom() === room);
+        if (match)
+            match.addSpectator(client);
+        else
+            client.emit('no_current_match');
+    }
+
      @SubscribeMessage('watch_random')
      async handleWatchRandom(@ConnectedSocket() client): Promise<void> {
          console.log("[ watch random received ]")
@@ -199,7 +222,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     */
 
     private matchInit() {
-        let game = new Game(this.queue, this.server, this.removeGame.bind(this), this.pongService);
+        let game = new Game(this.queue, this.server, this.removeGame.bind(this), this.pongService, this.userService);
         this.queue.clear();
         this.matches.unshift(game); // enregistrement du match
         //this.logger.log(`new queue length after init :  ${this.queue.length}`);

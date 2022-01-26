@@ -21,11 +21,13 @@ export class UserController {
 	async getCurrentUser(@Req() req): Promise<User> {
 		return req.user;
 	}
+
 	// SEARCH AN USER
 	@Get(':id_pseudo')
 	async getUser(@Param() userId: string): Promise<User> {
 		return this.userService.findOne(userId);
 	}
+
 	// UPDATE MY PROFILE (Look at UpdateCurrentUserDto for available options)
 	@Put()
 	async updateCurrentUser(
@@ -41,4 +43,11 @@ export class UserController {
 	async deleteCurrentUser(@Req() req): Promise<void> {
 		this.userService.remove(req.user.id);
 	}
+
+	//Get leaderBoard
+	@Get(':id/leaderboard')
+	async getLeaderboard(): Promise<User[]> {
+		return this.userService.getLeaderboard();
+	}
 }
+

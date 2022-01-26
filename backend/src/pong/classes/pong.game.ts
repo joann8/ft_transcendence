@@ -7,10 +7,8 @@ import { Const } from "../static/pong.constants";
 import { BroadcastObject } from "../static/pong.broadcastObject";
 import { Server } from "socket.io";
 import { PongService } from "../pong.service";
-import { Repository } from "typeorm";
-import { Pong } from "../entities/pong.entity";
-import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/user/entities/user.entity";
+import { UserService } from "src/user/user.service";
 
 export class Game {
     private _id : string;
@@ -24,9 +22,11 @@ export class Game {
     private _public : Socket[];
     private _interval : NodeJS.Timer;
     private _isEnded : boolean;
-    private _pongservice : PongService;
+    private _matchID : number;
+    private _pongService : PongService;
+    private _userService : UserService;
     
-    constructor(queue: Map<Socket, User>, server : Server, endFunction : Function, pongService : PongService)
+    constructor(queue: Map<Socket, User>, server : Server, endFunction : Function, pongService : PongService, userService: UserService)
     {      
         this._id = uuidv4();
         this._room = this._id;
@@ -37,13 +37,16 @@ export class Game {
         this._player2 = new Player(it.next().value, false);
         this._player1.getSocket().join(this._room);
         this._player2.getSocket().join(this._room);
-        console.log(`Player 1 (user ${this._player1.getUser()} | socket ${this._player1.getSocket().id}) and Player 2 (user ${this._player2.getUser()} | socket ${this._player2.getSocket().id}) join the room`);
+        console.log(`Player 1 (user ${this._player1.getUser().id_pseudo} | socket ${this._player1.getSocket().id}) and Player 2 (user ${this._player2.getUser().id_pseudo} | socket ${this._player2.getSocket().id}) join the room`);
         this._ball = new Ball(false);
         this._state = States.PLAY;
         this._public = [];
         this._isEnded = false;
         this._interval = setInterval(() => this.play(), Const.FPS);
-        this._pongservice = pongService;
+        this._pongService = pongService;
+        this._userService = userService;
+        this._matchID = -1;
+        this.createMatch();
     }
 
     // Getters & Setters
@@ -81,6 +84,16 @@ export class Game {
     }
 
     // Other Functions 
+
+    public async createMatch () : Promise<void> {
+        let match = {
+            player1 : this._player1.getUser(),
+            player2 : this._player2.getUser(),
+            room: this._room,
+        }
+        this._matchID = await this._pongService.createEntity(match);
+        console.log(`matchId : ${this._matchID}`)
+    }
 
     public hasWinner() : boolean {
         if (this._player1.IsWinner() || this._player2.IsWinner()){
@@ -179,16 +192,14 @@ export class Game {
 
     public async saveMatch() : Promise<void> {
         let winner = this._player1.getScore() === Const.MAX_SCORE? this._player1 : this._player2;
-        let looser = this._player1.getScore() === Const.MAX_SCORE? this._player2 : this._player1;
         //console.log(`winner id : ${winner.getUser()} | looser id : ${looser.getUser()}`)
-        let match = { 
-            winner: winner.getUser(),
-            scoreWinner: `${winner.getScore()}`,
-            looser: looser.getUser(),
-            scoreLooser: `${looser.getScore()}`,
-        };
-        console.log(match);
-        await this._pongservice.createEntity(match);
+        let update = {
+            scorePlayer1 : `${this._player1.getScore()}`,
+            scorePlayer2 : `${this._player2.getScore()}`,
+            status : `over`,
+        }
+        await this._userService.winElo(winner.getUser());
+        await this._pongService.updateEntity(this._matchID, update);
     }
 
     public addSpectator(client : Socket) : void

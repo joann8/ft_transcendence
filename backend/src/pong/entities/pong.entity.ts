@@ -1,3 +1,4 @@
+import { Socket } from 'socket.io';
 import { User } from 'src/user/entities/user.entity';
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -7,17 +8,23 @@ export class Pong {
 	id_match: number;
 
 	@ManyToOne((type) => User)
-	winner: User;
+	player1: User;
 	
-	@Column({type : 'real'})
-	scoreWinner : string 
+	@Column({default : "0", type : 'real'})
+	scorePlayer1 : string 
 
 	@ManyToOne((type) => User)
-	looser: User;
+	player2: User;
 
-	@Column({type : 'real'})
-	scoreLooser : string;
+	@Column({default : "0",type : 'real'})
+	scorePlayer2 : string;
 
 	@CreateDateColumn()
 	date : Date
+
+	@Column()
+	room: string;
+
+	@Column( { default : "ongoing"})
+	status : string;
 }
