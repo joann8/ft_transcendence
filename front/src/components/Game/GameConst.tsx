@@ -34,6 +34,10 @@ const gameStateInit : GameSate = {
         p1: 0,
         p2: 0
     },
+    players: {
+        p1: "",
+        p2: ""
+    },
     state: WAIT,
     message : "", 
     is_winner : false,

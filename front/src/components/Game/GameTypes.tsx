@@ -9,7 +9,8 @@ type PropsMenuButton = {
 type PropsGame = {
     width: number,
     height: number, 
-    socket: Socket<DefaultEventsMap, DefaultEventsMap>
+    socket: Socket<DefaultEventsMap, DefaultEventsMap>,
+    user : {},
 }
 
 type GameSate = {
@@ -26,6 +27,10 @@ type GameSate = {
         score: {
             p1: number,
             p2: number
+        },
+        players: {
+            p1: string,
+            p2: string
         },
         state: number,
         message : string,

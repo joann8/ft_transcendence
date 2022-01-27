@@ -9,16 +9,11 @@ import { draw_all, draw_background, draw_nogame } from './GameDraw';
 import { gameStateInit } from './GameConst';
 import { width, height } from './GameConst';
 import { color_object2, color_background, font_text } from './GameConst';
-import { WAIT, OVER, PAUSE, PLAY } from './GameConst';
-
-//import { socketContext } from '../../contexts/SocketContext';
-//import { useContext } from 'react';
 
 export default function GameWatch(props: PropsGame) {
     const socket = props.socket;
     const ref = useRef<HTMLCanvasElement>(null!);
     const [game, setGame] = useState(gameStateInit);
-    const [watching, setWatching] = useState(false);
     
     useEffect(() => {
         socket.on("updateState", (updateState : any) => {
@@ -26,12 +21,10 @@ export default function GameWatch(props: PropsGame) {
         });
     });
 
-
     useEffect(() => {
-        socket.on("no_current_match", (updateState : any) => {
-            console.log("No current game received");
-            setWatching(false);
-
+        socket.on("match_over", (updateState : any) => {
+            console.log("This match is over");
+            //setWatching(false);
             let c : HTMLCanvasElement = ref.current; //canvas
             let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
             ctx.clearRect(0,0, width, height);
@@ -40,7 +33,7 @@ export default function GameWatch(props: PropsGame) {
             ctx.fillRect(0,0, width, height);        
             ctx.fillStyle = color_object2;
             ctx.font = font_text; 
-            ctx.fillText("No current game on going", 100, height / 2);
+            ctx.fillText("This match is over", 100, height / 2);
         });
     });
          
@@ -50,6 +43,7 @@ export default function GameWatch(props: PropsGame) {
         draw_all(ctx, game, color_background, width, height, color_object2, font_text);
     }, [game]);
 
+    /*
     let button;
     if (watching === false)
         button = <Button variant="contained" onClick={()=> {
@@ -61,6 +55,7 @@ export default function GameWatch(props: PropsGame) {
             setWatching(false);
             socket.emit('unwatch_game')}
         } > Stop the streaming </Button>;
+    */
     return (
         <Fragment>
             <Grid container alignItems="center" justifyContent="center"  >
@@ -68,10 +63,12 @@ export default function GameWatch(props: PropsGame) {
                 <canvas width={width} height={height} ref={ref}> 
                 </canvas>
             </Grid>
+            {/*
             <br/>
             <Grid item xs={12} style={{textAlign: "center"}}>
                 {button}
             </Grid>
+            */}
             </Grid>
         </Fragment>
     );

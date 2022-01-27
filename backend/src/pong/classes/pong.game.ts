@@ -120,6 +120,10 @@ export class Game {
             p1: this._player1.getScore(),
             p2: this._player2.getScore()
         },
+        players: {
+            p1: this._player1.getUser().id_pseudo,
+            p2: this._player2.getUser().id_pseudo
+        },
         state: this._state,
         message : message,
         });
@@ -127,7 +131,8 @@ export class Game {
     
     public broadcastState(message : string) : void {
         const currentState = this.buildDataToReturn(message);
-        this._server.to(this._room).emit('updateState', currentState);
+       // this._server.to(this._room).emit('updateState', currentState);
+        this._server.in(this._room).emit('updateState', currentState);
     }
 
     public async play() : Promise<void> {
@@ -206,6 +211,7 @@ export class Game {
     {
         this._public.unshift(client);
         client.join(this._room);
+        this.broadcastState("");
     }
 
     public removeSpectator(client : Socket) : void

@@ -7,7 +7,7 @@ import { Fragment } from 'react';
 import { Button, CardActionArea, Typography } from '@mui/material';
 import Game from '../Game';
 import RuleSet from '../Game/RuleSet';
-import SplitButton from '../Game/SplitButton';
+import SplitButton from './SplitButton';
 
 export default function GameMenu() {
   const styles = {

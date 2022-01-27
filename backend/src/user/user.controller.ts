@@ -21,6 +21,11 @@ export class UserController {
 	async getCurrentUser(@Req() req): Promise<User> {
 		return req.user;
 	}
+	//Get leaderBoard
+	@Get('all/leaderboard')
+		async getLeaderboard(): Promise<User[]> {
+				return this.userService.getLeaderboard();
+	}
 
 	// SEARCH AN USER
 	@Get(':id_pseudo')
@@ -44,10 +49,7 @@ export class UserController {
 		this.userService.remove(req.user.id);
 	}
 
-	//Get leaderBoard
-	@Get(':id/leaderboard')
-	async getLeaderboard(): Promise<User[]> {
-		return this.userService.getLeaderboard();
-	}
+
+
 }
 

@@ -18,8 +18,9 @@ import { stringify } from 'querystring';
 export default function GamePong(props: PropsGame) {
     
     // Trouver le user
-    const navigate = useNavigate();
+ //   const navigate = useNavigate();
     
+    /*
     const [userID, setUserID] = useState({});
 
     useEffect(() => {
@@ -47,6 +48,13 @@ export default function GamePong(props: PropsGame) {
     };
         getUserId();
     },[]);
+    */
+
+    useEffect(() => {
+        console.log(props.user)      
+        socket.emit('join_queue', props.user);
+    }, []);
+
     //console.log(`UserID = ${userID}`);
 
     // Parler avec socket.io
@@ -54,7 +62,7 @@ export default function GamePong(props: PropsGame) {
     const ref = useRef<HTMLCanvasElement>(null!);
     const [game, setGame] = useState(gameStateInit);
 
-
+ 
     useEffect(() => {
         socket.on("updateState", (updateState : any) => {
             setGame(updateState);
@@ -97,7 +105,7 @@ export default function GamePong(props: PropsGame) {
     useEffect (() => {
         window.addEventListener('keydown', (e) => {
             if (e.code ==='ArrowUp') {
-                socket.emit ('up_paddle', 'down');
+                socket.emit('up_paddle', 'down');
             } else if (e.code ==='ArrowDown') {
                 socket.emit('down_paddle', 'down');
             }
@@ -121,14 +129,17 @@ export default function GamePong(props: PropsGame) {
     }, [game]);
 
     let button;
-    if (game.state === WAIT)
+   /* if (game.state === WAIT)
         button = <Button variant="contained" onClick={()=> socket.emit('join_queue', userID)} > Join Game </Button>
-    else if (game.state === PLAY)
+    else*/ if (game.state === PLAY)
         button = <Button variant="contained" onClick={()=> socket.emit('pause')} > Pause the Game </Button>
     else if (game.state === PAUSE)
         button = <Button variant="contained" onClick={()=> socket.emit('resume')} > Resume to Game </Button>
-    else if (game.state === OVER)
+    /* else if (game.state === OVER)
         button = <Button variant="contained" onClick={()=> socket.emit('join_queue', userID)} > Start a new Game </Button>
+        */
+    else
+        button = <br/>;
     
     //Additionnal features
     const [ballCheck, setBallCheck] = React.useState(false);

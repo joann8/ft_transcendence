@@ -13,18 +13,16 @@ import socket from './socket';
 import { useNavigate } from 'react-router';
 import GameList from './GameList';
 import gameStyles from './GameStyles';
+import { useState } from 'react';
 
 export default function GamePage() {
-  
-  
-    //const navigate = useNavigate();
+    
+    const navigate = useNavigate();
 
-    const [openGame, setOpenGame] = React.useState(false);
-    const handleOpenGame = async () => {
-      setOpenGame(true);
+    const [userID, setUserID] = useState({});
 
-      /*
-      const getUserStatus = async () => {
+    useEffect(() => {
+        const getUserId = async () => {
         fetch("http://127.0.0.1:3001/user", {
             method: "GET",
             credentials : "include",
@@ -38,32 +36,36 @@ export default function GamePage() {
             return (res.json());
         })
         .then((resJson) => {
-            if (resJson.status === "ONLINE")
-              setOpenGame(true);
-            else
-              alert("Busy busy")
+            console.log(`pseudo : ${resJson.id_pseudo} | id : ${resJson.id}`);
+            setUserID(resJson);
         })
         .catch((err) => {
             console.log("Error caught: ", err);
         })
-      };
-        getUserStatus();
-      };  
-    */}
+        };
+        getUserId();
+    },[]);
+    
+    const [openGame, setOpenGame] = React.useState(false);
+    const handleOpenGame = async () => {
+      socket.emit("check_game", userID);
+    }
+
+    useEffect(() => {
+        socket.on("allowed", (args : any) => {
+          setOpenGame(true);
+        });
+        socket.on("not_allowed_playing", (args : any) => {
+          alert("already playing");
+        });
+        socket.on("not_allowed_queue", (args : any) => {
+          alert("already in queue");
+        })
+    })
 
     const handleCloseGame = () => {
       console.log("hanCloseGame called");
       setOpenAlert(true);
-    }
-
-    const [openWatch, setOpenWatch] = React.useState(false);
-    const handleOpenWatch = () => {
-       setOpenWatch(true);
-    }
-    const handleCloseWatch= () => {
-      console.log("hanCloseWatch called")
-      socket.emit('unwatch_game');
-      setOpenWatch(false);
     }
 
    // const classes = useStyle(); 
@@ -87,8 +89,6 @@ export default function GamePage() {
         e.preventDefault();
         if (openGame === true)
           handleCloseGame();
-        else if (openWatch === true)
-          handleCloseWatch();
       });
     });
    
@@ -99,18 +99,12 @@ export default function GamePage() {
              <Toolbar />
              <Grid container spacing={2}  alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
               <Grid item xs={12} style={{textAlign: "center"}}>
-              <ButtonGroup variant="contained"  aria-label="outlined primary button group">
-                  <Button onClick={handleOpenGame} style={{fontSize: 35}}>Play Random</Button>
-                  <Button onClick={handleOpenWatch} style={{fontSize: 35}}>Watch a Game </Button>
-                  <Button style={{fontSize: 35}}>Find a friend</Button>
-              </ButtonGroup>
+               <Button variant="contained" onClick={handleOpenGame} style={{fontSize: 35}}>Play Random</Button>
               <Modal open={openGame} onBackdropClick={handleCloseGame} >
                   <Box sx={gameStyles.boxModal}>
-                    <GamePong width={800} height={600} socket={socket}/>
+                    <GamePong width={800} height={600} socket={socket} user={userID}/>
                     <Dialog open={openAlert} onClose={handleCloseAlertStay} >
-                      <DialogTitle id="alert-dialog-title">
-                        {"Leave current Pong Game?"}
-                      </DialogTitle>
+                      <DialogTitle> {"Leave current Pong Game?"} </DialogTitle>
                       <DialogActions>
                         <Button onClick={handleCloseAlertStay}>Disagree</Button>
                         <Button onClick={handleCloseAlertLeave} autoFocus>Agree</Button>
@@ -118,16 +112,20 @@ export default function GamePage() {
                      </Dialog>
                   </Box>
                 </Modal>
+                {/*
                 <Modal open={openWatch} onBackdropClick={handleCloseWatch}>
                   
                   <Box sx={gameStyles.boxModal}>
-                    <GameWatch width={800} height={600} socket={socket}/>
+                    <GameWatch width={800} height={600} socket={socket} user={userID}/>
                   </Box>
                 </Modal>
+                */}
                 </Grid>
-                <Grid item xs={12}>
-                  <GameList width={800} height={600} socket={socket}/>
+                <Grid item xs={2}/>
+                <Grid item xs={8}>
+                  <GameList width={800} height={600} socket={socket} user={userID}/>
                 </Grid>
+                <Grid item xs={2}/>
                 <Grid item xs={12} >
                   <RuleSet />
                 </Grid>

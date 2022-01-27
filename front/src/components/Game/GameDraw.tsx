@@ -47,6 +47,8 @@ import { WAIT, PLAY, OVER, PAUSE } from "./GameConst";
             draw_background(ctx, color_background, width, height);
             draw_text(ctx, game.score.p1.toString(), color_object, "80px gameFont", 3 * (width / 8), height / 2);
             draw_text(ctx, game.score.p2.toString(), color_object,  "80px gameFont", 5 * (width / 8) - 50, height / 2)  
+            draw_text(ctx, game.players.p1, color_object, "20px gameFont", 15, height / 12);
+            draw_text(ctx, game.players.p2, color_object, "20px gameFont", 7 * (width / 8), height / 12) 
         }
 
         export function draw_pause(ctx : CanvasRenderingContext2D, color_background : string, width : number, height : number, color_object : string, font_text : string)
@@ -75,7 +77,9 @@ import { WAIT, PLAY, OVER, PAUSE } from "./GameConst";
             draw_paddle(ctx, color_object, l_paddle_x, game.paddles.ly, paddle_w, game.paddles.lh);
             draw_paddle(ctx, color_object, r_paddle_x, game.paddles.ry, paddle_w, game.paddles.rh);
             draw_text(ctx, game.score.p1.toString(), color_object, font_text, 3 * (width / 8), height / 12);
-            draw_text(ctx, game.score.p2.toString(), color_object, font_text, 5 * (width / 8) - 50, height / 12)    
+            draw_text(ctx, game.score.p2.toString(), color_object, font_text, 5 * (width / 8) - 50, height / 12)
+            draw_text(ctx, game.players.p1, color_object, "20px gameFont", 15, height / 12);
+            draw_text(ctx, game.players.p2, color_object, "20px gameFont", 7 * (width / 8), height / 12)    
         }
         
         export function draw_all(ctx : CanvasRenderingContext2D, game : GameSate,  color_background : string, width : number, height : number, color_object : string, font_text : string) {

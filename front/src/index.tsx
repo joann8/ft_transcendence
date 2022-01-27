@@ -6,7 +6,7 @@ import Homepage from "./components/Homepage/Homepage";
 import NoPage from "./components/Errors/NoPage";
 //import GameMenu from "./components/NotUsedButKeptInCase/GameMenu";
 import GamePage from "./components/Game/GamePage";
-import Leaderboard from "./components/Leaderboard";
+import Leaderboard from "./components/Leaderboard/Leaderboard";
 import Chat from "./components/Chat/Chat";
 import Profile from "./components/Profile";
 import SideBars from "./components/MainCompo/SideBars";

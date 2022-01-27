@@ -20,8 +20,9 @@ export default function GameList(props : PropsGame) {
 
   let socket = props.socket;
 
+  const [update, setUpdate] = useState(false);
   const [games, setGames] = useState([]);
-
+  
   useEffect(() => {
       const getGames = async () => {
       fetch("http://127.0.0.1:3001/game/ongoing", {
@@ -45,32 +46,14 @@ export default function GameList(props : PropsGame) {
       })
       };
       getGames();
-  },[]);
+  }, [update]); // a voir ??? 
 
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
   
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-  }));
-
   const [openWatch, setOpenWatch] = React.useState(false);
   const handleOpenWatch = (room : string) => {
      setOpenWatch(true);
-     socket.emit('watch', room);
+     console.log(`here we are with room ${room}`)
+     socket.emit('watch_game', room);
   }
   const handleCloseWatch= () => {
     console.log("hanCloseWatch called")
@@ -78,44 +61,52 @@ export default function GameList(props : PropsGame) {
     setOpenWatch(false);
   }
 
+  const handleUpdate=() => {
+    if (update === false)
+      setUpdate(true);
+    else
+      setUpdate(false);
+  }
+
   return (
-    <Fragment>
-      
+    <Fragment> 
         <TableContainer component={Paper}>
           <Table >
             <TableHead>
               <TableRow>
-                <StyledTableCell align="left">Player 1</StyledTableCell>
-                <StyledTableCell></StyledTableCell>
-                <StyledTableCell align="left">Player2</StyledTableCell>
-                <StyledTableCell ></StyledTableCell>
-                <StyledTableCell ></StyledTableCell>
+                <TableCell align="center" colSpan={4}> LIVE GAMES </TableCell>
+                <TableCell align="right" colSpan={1}>
+                    <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update List Game </Button>
+                </TableCell>             
+              </TableRow>
+              <TableRow>
+                <TableCell align="center" colSpan={2}>player 1</TableCell>
+                <TableCell align="center" colSpan={2}>player 2</TableCell>
+                <TableCell colSpan={1}></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {games.map((game : any) => (
-                <StyledTableRow
+                <TableRow
                   key={game.id_match}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <StyledTableCell> <Avatar src={game.player1.avatar} /> </StyledTableCell>
-                  <StyledTableCell align="left"> {game.player1.id_pseudo} </StyledTableCell>
-                  <StyledTableCell> <Avatar src={game.player2.avatar} /> </StyledTableCell>
-                  <StyledTableCell align="left"> {game.player2.id_pseudo} </StyledTableCell>
-                  <StyledTableCell align="center">
+                  <TableCell align="right"> {game.player1.id_pseudo} </TableCell>
+                  <TableCell align="left"> <Avatar src={game.player1.avatar} /> </TableCell>
+                  <TableCell align="right"> {game.player2.id_pseudo} </TableCell>
+                  <TableCell align="left"> <Avatar src={game.player2.avatar} /> </TableCell>
+                  <TableCell align="center">
                     <Button variant="outlined" color="secondary" onClick={() => handleOpenWatch(game.room)}> Watch </Button>
-                  </StyledTableCell>            
-                </StyledTableRow>
+                  </TableCell>            
+                </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
-
-        <Modal open={openWatch} onBackdropClick={handleCloseWatch}>
-                      
-        <Box sx={gameStyles.boxModal}>
-          <GameWatch width={props.width} height={props.height} socket={socket}/>
-        </Box>
+        <Modal open={openWatch} onBackdropClick={handleCloseWatch}>               
+          <Box sx={gameStyles.boxModal}>
+            <GameWatch width={props.width} height={props.height} socket={socket} user={props.user}/>
+          </Box>
       </Modal>
     </Fragment>
   )

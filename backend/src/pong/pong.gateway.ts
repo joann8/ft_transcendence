@@ -47,46 +47,36 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         this.logger.log(`[ MY DISCONNECT received ] A client disconnected : ${client.id}`);
         this.disconnectClient(client);     
     }
-    /*
-    @SubscribeMessage('join_queue')
-    async joinQueue(client: Socket, userID: number) : Promise <void> {
-        if (this.queue.indexOf(client) > -1)
+
+    @SubscribeMessage('check_game')
+    async checkGame(client: Socket, userID: User) : Promise <void> {
+        let match = this.matches.find(game => game.getPlayer1().getUser().id === userID.id || game.getPlayer2().getUser().id === userID.id);
+        if (match)
+        {
+            client.emit('not_allowed_playing');
             return;
-        if (this.clients.has(client) === false)
-            this.clients.add(client);
-        this.logger.log(`Client ${client.id} / userID ${userID} joins the queue`);
-        this.queue.unshift(client);
-        this.logger.log(`queue length :  ${this.queue.length}`);
-        if (this.queue.length > 1) {
-            this.logger.log(`start a match!`);
-            this.matchInit()
         }
-        else {
-            console.log("emit wait from server");
-            client.emit('wait');
+        let it = this.queue.values();
+        let it2 = this.queue.values();
+        for(let i = 0; i < this.queue.size; i++)
+        {
+            console.log(`it2 = ${it2.next().value.id}`)
+            if (it.next().value.id === userID.id) {
+                client.emit('not_allowed_queue');
+                return;
+            }
         }
+        client.emit('allowed');
     }
-    */
+
     @SubscribeMessage('join_queue')
     async joinQueue(client: Socket, userID: User) : Promise <void> {
+        console.log(`user ID received : ${userID.id_pseudo}`)
         if (this.queue.has(client) === true)    
             return;
         if (this.clients.has(client) === false)
-        {
-            console.log("check values")
-            let it = this.queue.values();
-            let it2 = this.queue.values();
-            for(let i = 0; i < this.queue.size; i++)
-            {
-                console.log(`it2 = ${it2.next().value.id}`)
-                if (it.next().value.id === userID.id) {
-                    client.emit('already_connected');
-                    return;
-                }
-            }
-            this.clients.add(client);
-        }
-        this.logger.log(`Client ${client.id} / userID ${userID} joins the queue`);
+            this.clients.add(client);       
+        this.logger.log(`Client ${client.id} / userID ${userID.id_pseudo} joins the queue`);
         this.queue.set(client, userID);
         this.logger.log(`queue length :  ${this.queue.size}`);
         if (this.queue.size > 1) {
@@ -117,56 +107,36 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
      async handlePause(@ConnectedSocket() client): Promise<void> {
          let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
          if (match)
-         {
              match.getPlayer1().getSocket() === client? match.getPlayer1().pauseGame(match):  match.getPlayer2().pauseGame(match);
-         }
      }
  
      @SubscribeMessage('resume')
      async handleResume(@ConnectedSocket() client): Promise<void> {
          let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
-         if (match)
-         {
+         if (match) {
              match.getPlayer1().getSocket() === client? match.getPlayer1().resumeGame(match):  match.getPlayer2().resumeGame(match);
          }
      }
   
      @SubscribeMessage('watch_game')
-     async handleListGames(@ConnectedSocket() client, room : string): Promise<void> {
-         console.log("[ watch_game  received ]")
-         let match = this.matches.find(game => game.getRoom() === room);
-        if (match)
+     async handleListGames(client : Socket, room : string): Promise<void> {
+        console.log("[ watch_game  received ] : ", room)
+        let match = this.matches.find(game => game.getRoom() === room);
+        if (match) {
             match.addSpectator(client);
+            console.log(`Spectactor ${client.id} is now watching match ${match.getPlayer1().getUser().id_pseudo} VS ${match.getPlayer2().getUser().id_pseudo}`);
+        }
         else
-            client.emit('no_current_match');
+            client.emit('match_over');
     }
 
-     @SubscribeMessage('watch_random')
-     async handleWatchRandom(@ConnectedSocket() client): Promise<void> {
-         console.log("[ watch random received ]")
-         console.log(`number of match on going : ${this.matches.length}`);
-         if (this.matches.length > 0)
-         {
-             let index = Math.floor((Math.random() * (this.matches.length - 1)));
-             this.matches[index].addSpectator(client);
-             console.log(`Spectactor ${client.id} is now watching match ${this.matches[index].getId()}`);
-         }
-         else
-         {
-            console.log("no game")
-            client.emit('no_current_match');
-         }    
-     }
- 
+    
      @SubscribeMessage('unwatch_game')
      async handleUnwatchGame(@ConnectedSocket() client : Socket): Promise<void> {
         console.log("[ unwatch game received ]")
-        if (this.matches.length > 0)
-         {
-            for (let match of this.matches)
-            {
-                if(match.isPartOfPublic(client) === true)
-                {
+        if (this.matches.length > 0) {
+            for (let match of this.matches) {
+                if(match.isPartOfPublic(client) === true) {
                     console.log(`Spectactor ${client.id} removed from match ${match.getId()}`);
                     match.removeSpectator(client);
                 }
@@ -177,8 +147,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage('ball_on')
     async handleBallOn(@ConnectedSocket() client : Socket): Promise<void> {
         let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
-        if (match)
-        {
+        if (match) {
             match.getBall().setAccelerate(true);
             match.getPlayer1().getSocket() === client ? match.getPlayer2().getSocket().emit('ball_on_server') : match.getPlayer1().getSocket().emit('ball_on_server');
         }    
@@ -187,8 +156,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage('ball_off')
     async handleBallOff(@ConnectedSocket() client : Socket): Promise<void> {
         let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
-        if (match)
-        {
+        if (match) {
             match.getBall().setAccelerate(false);
             match.getPlayer1().getSocket() === client ? match.getPlayer2().getSocket().emit('ball_off_server') : match.getPlayer1().getSocket().emit('ball_off_server');
         }    
@@ -198,18 +166,14 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async handlePaddleOn(@ConnectedSocket() client : Socket): Promise<void> {
         let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
         if (match)
-        {
            match.getPlayer1().getSocket() === client ? match.getPlayer1().getPaddle().enlargeOn() : match.getPlayer2().getPaddle().enlargeOn();
-        }    
     }
 
     @SubscribeMessage('paddle_off')
     async handlePaddleOff(@ConnectedSocket() client : Socket): Promise<void> {
         let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
         if (match)
-        {
            match.getPlayer1().getSocket() === client ? match.getPlayer1().getPaddle().enlargeOff() : match.getPlayer2().getPaddle().enlargeOff();
-        }    
     }
 
      // Fonctions du Back pour calculer les nouvelles positions, le status du jeu, etc.
@@ -223,51 +187,29 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     private matchInit() {
         let game = new Game(this.queue, this.server, this.removeGame.bind(this), this.pongService, this.userService);
-        this.queue.clear();
+        // A verifier
+        this.queue.delete(game.getPlayer1().getSocket());
+        this.queue.delete(game.getPlayer2().getSocket());
         this.matches.unshift(game); // enregistrement du match
-        //this.logger.log(`new queue length after init :  ${this.queue.length}`);
- 
     }
-    /*
-    private matchInit() {
-        let game = new Game(this.queue.pop(), this.queue.pop(), this.server, this.removeGame.bind(this));
-        this.matches.unshift(game); // enregistrement du match
-        //this.logger.log(`new queue length after init :  ${this.queue.length}`);
- 
-     }
-     */
+    
      private removeGame(game : Game) : void {
-         let match = this.matches.find(item => item.getId() === game.getId());
-         if (match)
-         {
-            //console.log(`_____remove game ${game.getId()}`);
+        let match = this.matches.find(item => item.getId() === game.getId());
+         if (match) {
             this.clients.delete(match.getPlayer1().getSocket());      
             this.clients.delete(match.getPlayer2().getSocket());      
             this.matches.splice(this.matches.indexOf(match));
-         }
- 
-     }
+        }
+    }
 
-     private disconnectClient(client : Socket)
-     {
+    private disconnectClient(client : Socket) {
         let match = this.matches.find((game) => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket() === client );
         if (match)
-        {
             match.disconnectPlayer(client);
-            // this.clients.delete(match.getPlayer1().getSocket());      
-           // this.clients.delete(match.getPlayer2().getSocket());      
-           //  this.matches.splice(this.matches.indexOf(match));
-        }
-        else
-        {
+        else {
             this.clients.delete(client);
-           // this.queue.splice(this.queue.indexOf(client));
             this.queue.delete(client);
         }
-        //console.log("_______after disconnect__________")
-        //console.log(this.queue);
-        //console.log(this.matches);
-        //console.log(this.clients);
-     }
+    }
  };
  
