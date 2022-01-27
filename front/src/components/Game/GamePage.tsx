@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Image from '../Images/game.jpg'
 import { Fragment } from 'react';
 import { Box, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Modal, Typography } from '@mui/material';
 import RuleSet from './RuleSet';
@@ -13,46 +12,11 @@ import GameWatch from './GameWatch';
 import socket from './socket';
 import { useNavigate } from 'react-router';
 import GameList from './GameList';
-
-const useStyle = makeStyles({
-  gameWindow: {
-    width: "98%",
-    height: "70vh",
-    backgroundColor: "yellow",
-    textAlign: "center",
-    FormatAlignJustify: "center"
-  }
-});
+import gameStyles from './GameStyles';
 
 export default function GamePage() {
-  const styles = {
-    backgroundImage: {
-      backgroundImage: `url(`+ `${Image}` + ')',
-      backgroundPosition: 'left',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
-     // backgroundColor: 'grey',
-      width: '100%',
-      height: '100%',
-      overflow: 'auto',
-    },
-    boxModal: {
-      align: 'center',
-      position: 'absolute' as 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: 'auto',
-      height: 'auto',
-      bgcolor: "#FFFFFF", //si je veux transparent rajouter 2 chiffres pour opacity a la dfun
-      border: '2px solid #000',
-      boxShadow: 24,
-      p: 4,
-      display: 'inline',
-      
-    }
-    };
-
+  
+  
     //const navigate = useNavigate();
 
     const [openGame, setOpenGame] = React.useState(false);
@@ -102,7 +66,7 @@ export default function GamePage() {
       setOpenWatch(false);
     }
 
-    const classes = useStyle(); 
+   // const classes = useStyle(); 
 
     const [openAlert, setOpenAlert] = React.useState(false);
     
@@ -130,7 +94,7 @@ export default function GamePage() {
    
   return (       
         <Fragment>
-            <Paper style={styles.backgroundImage}>
+            <Paper style={gameStyles.backgroundImage}>
              
              <Toolbar />
              <Grid container spacing={2}  alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
@@ -141,7 +105,7 @@ export default function GamePage() {
                   <Button style={{fontSize: 35}}>Find a friend</Button>
               </ButtonGroup>
               <Modal open={openGame} onBackdropClick={handleCloseGame} >
-                  <Box sx={styles.boxModal}>
+                  <Box sx={gameStyles.boxModal}>
                     <GamePong width={800} height={600} socket={socket}/>
                     <Dialog open={openAlert} onClose={handleCloseAlertStay} >
                       <DialogTitle id="alert-dialog-title">
@@ -156,13 +120,13 @@ export default function GamePage() {
                 </Modal>
                 <Modal open={openWatch} onBackdropClick={handleCloseWatch}>
                   
-                  <Box sx={styles.boxModal}>
+                  <Box sx={gameStyles.boxModal}>
                     <GameWatch width={800} height={600} socket={socket}/>
                   </Box>
                 </Modal>
                 </Grid>
                 <Grid item xs={12}>
-                  <GameList />
+                  <GameList width={800} height={600} socket={socket}/>
                 </Grid>
                 <Grid item xs={12} >
                   <RuleSet />
