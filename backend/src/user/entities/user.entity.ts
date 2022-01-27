@@ -6,7 +6,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 export enum status {
 	OFFLINE = 'OFFLINE',
 	ONLINE = 'ONLINE',
-	IN_GAME = 'IN GAME',
+	IN_GAME = 'INGAME',
 	BAN = 'BAN',
 }
 

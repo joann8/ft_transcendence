@@ -12,6 +12,7 @@ import {
 	UploadedFile,
 	Res,
 	StreamableFile,
+	ConsoleLogger,
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -23,10 +24,7 @@ import { extname } from 'path/posix';
 import { UpdateCurrentUserDto } from './dto/updateCurrentUser.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
-
-
-//a stocker ailleurs
-
+import { Console } from 'console';
 
 @Controller('user')
 export class UserController {
@@ -39,13 +37,22 @@ export class UserController {
 	}
 	// SEARCH AN USER
 	@Get(':id_pseudo')
-	async getUser(@Param() userId: string): Promise<User> {
-		return this.userService.findOne(userId);
+	async getUser(@Param() user_pseudo: string): Promise<User> {
+		console.log("Search for : ", user_pseudo)
+		try {
+				
+			const res =  await this.userService.findOne(user_pseudo);
+			console.log("res : ", res)
+			return res
+		}
+		catch (err) {
+			console.log("Error search id pseudo", err)
+		}
 	}
+	//A Supprimer ? 
 	@Get('/avatar/:avatarId')
-	async getAvatar(@Param('avatarId') avatarId : string, @Res() res: Response) :  Promise<any> {
-		console.log("ici")
-		res.sendFile(avatarId, {root : 'avatars'})
+	async getAvatar(@Param('avatarId') avatarId: string, @Res() res: Response): Promise<any> {
+		res.sendFile(avatarId, { root: 'avatars' })
 	}
 
 	@Post('upload')
@@ -67,7 +74,7 @@ export class UserController {
 		@UploadedFile() file: Express.Multer.File
 	) {
 		const filePath = `${process.env.PWD}/avatars/${file.filename}`
-	//	const filePath = `${file.`
+		//	const filePath = `${file.`
 
 		console.log("File interceptor : ", file)
 
@@ -90,7 +97,7 @@ export class UserController {
 	// UPDATE MY PROFILE (Look at UpdateCurrentUserDto for available options)
 	@Put()
 	async updateCurrentUser(
-		@Res() res : Response,
+		@Res() res: Response,
 		@Req() req,
 		@Body() updateCurrentUserDto: UpdateCurrentUserDto,
 	): Promise<User> {
@@ -98,14 +105,13 @@ export class UserController {
 		try {
 			await this.userService.update(req.user.id, updateCurrentUserDto);
 			res.statusMessage = "Succes User Updated"
-			res.status(200).send({success: "User successfully updated"})
+			res.status(200).send({ success: "User successfully updated" })
 			return this.userService.findOne(req.user.id.toString());
 		}
-		catch(error)
-		{
+		catch (error) {
 			//console.log("UpdateCurrentUser Error caught:" + '\n', error)
 			res.statusMessage = "Username or Email unavailable"
-			res.status(409).send({error: " Username or Email unavalaible"})
+			res.status(409).send({ error: " Username or Email unavalaible" })
 		}
 
 	}

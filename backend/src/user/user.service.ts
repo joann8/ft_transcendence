@@ -28,8 +28,11 @@ export class UserService {
 		return await this.usersRepository.find();
 	}
 
-	async findOne(id: string): Promise<User> {
-		return await this.usersRepository.findOne(id);
+	async findOne(user_pseudo: string): Promise<User> {
+
+		// correction ? 
+		// 		return await this.usersRepository.findOne({id_pseudo : user_pseudo});
+		return await this.usersRepository.findOne(user_pseudo);
 	}
 
 	async remove(id: string): Promise<void> {

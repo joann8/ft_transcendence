@@ -14,6 +14,7 @@ import { AdminModule } from './admin/admin.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path/posix';
+import { RelationModule } from './relation/relation.module';
 
 @Module({
 	imports: [
@@ -40,6 +41,7 @@ import { join } from 'path/posix';
 		ChatModule,
 		AuthModule,
 		AdminModule,
+		RelationModule,
 	],
 	controllers: [AppController],
 	providers: [

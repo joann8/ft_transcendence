@@ -8,6 +8,7 @@ import MatchModal from "./MatchModal";
 import AvatarModal from "./AvatarModal";
 import InfoModal from "./InfoModal ";
 import profileStyle from './profileStyle'
+import OtherUser from './OtherUser'
 
 
 const backEndUrl = "http://127.0.0.1:3001"
@@ -49,8 +50,8 @@ function getAvatarFileName(backEndAvatarPath: string) {
 
 export default function Profile() {
 
-    const [isMount, setMount] = useState(false)
-    const [loaded, setLoaded] = useState(false)
+
+    const [otherUserData, setOtherUserData] = useState(null)
     const [searchInput, setSearchInput] = useState("")
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [modalState, setModal] = useState({
@@ -80,20 +81,37 @@ export default function Profile() {
                 return res.json();
             })
             .then((resData) => {
-                console.log("avatar path from backend : ", resData.avatar)
-               // resData.avatar = getAvatarFileName(resData.avatar)
-                return resData
-            })
-            .then((resData) => {
-             //   resData.avatar = `${backEndUrl}/avatars/${resData.avatar}`
-             //   resData.avatar = `http://127.0.0.1:3001/avatars/${resData.avatar}`
-
-              //  resData.avatar = require("" + resData.avatar)
-               // resData.avatar = require("./../../frontAvatars/" + resData.avatar)
-                console.log("Res Data :" , resData)
                 setUserData(resData)
+                console.log("UserData : ", resData)
             })
             .catch((err) => {
+                console.log("Error caught: ", err)
+            })
+    }
+
+
+    const getOtherUserData = async (id_pseudo: string) => {
+        fetch(`${backEndUrl}/user/${id_pseudo}`, {
+            method: "GET",
+            credentials: "include",
+            referrerPolicy: "same-origin"
+        })
+            .then((res) => {
+                if (res.status === 401) {
+                    navigate("/login");
+                }
+                else if (!res.ok) {
+                    throw new Error(res.statusText);
+                }
+                return res.json();
+            })
+            .then((resData) => {
+                alert(`User [${resData.id_pseudo}] was found`)
+                console.log("OtherUser found Data : ", resData)
+                setOtherUserData(resData)
+            })
+            .catch((err) => {
+                alert(`Error while searching for user : [${err}]`)
                 console.log("Error caught: ", err)
             })
     }
@@ -111,10 +129,15 @@ export default function Profile() {
         setAnchorEl(null);
     };
 
-    const handleSearchBarSubmit = (event) => {
+    const handleSearchBarSubmit = async (event) => {
         event.preventDefault()
-        console.log("searchbar")
-        alert(`search for [${searchInput}] profile`)
+        console.log("Logged in User search: ", searchInput )
+        if (searchInput === userData.id_pseudo)
+            navigate('/profile')
+        else
+            navigate(`/profile/${searchInput}`)
+       // await getOtherUserData(searchInput)
+       // alert(`search for [${searchInput}] profile`)
     }
 
     const handleSearchChange = (event) => {

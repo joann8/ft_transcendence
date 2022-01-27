@@ -11,6 +11,7 @@ import NoPage from "./components/Errors/NoPage";
 import GameMenu from "./components/Game/GameMenu";
 import GamePage from "./components/Game/GamePage";
 import Homepage from "./components/Homepage/Homepage";
+import OtherUser from "./components/Profile/OtherUser";
 
 function Root() {
   return (
@@ -25,7 +26,10 @@ function Root() {
             <Route path="game" element={<GamePage />} />
           </Route>
           <Route path="chat" element={<Chat />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="profile">
+            <Route index element={<Profile />} />
+            <Route path=":id_pseudo" element={<OtherUser/>} />
+          </Route>
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="*" element={<NoPage />} />
         </Route>
