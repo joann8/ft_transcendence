@@ -22,7 +22,7 @@ export class RelationService {
 
   //returns ALL the RELATIONSHIPS
   async findAll() {
-    return this.relationsRepository.find(undefined);
+    return this.relationsRepository.find({relations: ["userId1", "userId2"]});
   }
 
   async findOne(findRequest: FindRelationDto): Promise<Relation> {
@@ -35,8 +35,9 @@ export class RelationService {
       where: [
         { userId1: findRequest.userId1  }, {userId2 : findRequest.userId2},
         { userId1: findRequest.userId2  }, {userId2 : findRequest.userId1},
-      ]
-    })
+      ],
+      relations: ["userId1", "userId2"]
+    },)
   }
 
   async update(updateRelationRequest: Partial<Relation>): Promise<UpdateResult> {

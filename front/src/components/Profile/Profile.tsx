@@ -9,24 +9,13 @@ import AvatarModal from "./AvatarModal";
 import InfoModal from "./InfoModal ";
 import profileStyle from './profileStyle'
 import OtherUser from './OtherUser'
+import { IUser } from "./profileStyle";
 
 
 const backEndUrl = "http://127.0.0.1:3001"
 
-interface Iuser {
-    id: number,
-    id_pseudo: string,
-    email: string,
-    avatar: string,
-    role: string,
-    elo: number,
-    status: string,
-    two_factor: boolean,
-    achievement1: boolean,
-    achievement2: boolean
-}
 
-const defaultUser: Iuser = {
+const defaultUser: IUser = {
     id: 0,
     id_pseudo: "",
     email: "",

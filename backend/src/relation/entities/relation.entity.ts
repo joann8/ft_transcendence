@@ -3,7 +3,7 @@ import { User } from "src/user/entities/user.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 export enum relation {
-    SEND,
+    SEND = 1,
     RECEIVE,
     FRIEND,
     BLOCK ,
@@ -16,11 +16,9 @@ export class Relation {
     @PrimaryGeneratedColumn()
     id : number
 
-   // @Column()
     @ManyToOne(() => User, user => user.id)
-    userId1: number
+    userId1: number 
 
-   // @Column()
     @ManyToOne(type => User, user => user.id )
     userId2: number //type User ou type number ? 
 

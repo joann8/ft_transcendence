@@ -27,9 +27,9 @@ export class RelationController {
     id_pseudo1 : "id_pseudo",
     id_pseudo2: "id_pseudo"
   }*/
-  @Get()
+  @Get(':id_pseudo1/:id_pseudo2')
   @UsePipes(new ValidationPipe({ transform: true }))
-  async findOne(@Body(ParseUsersStringExist) getRelationRequest: GetRelationDto): Promise<Relation> {
+  async findOne(@Param(ParseUsersStringExist) getRelationRequest: GetRelationDto): Promise<Relation> {
     // null (les users sont inconnus) ou Objet Relation
     const findRelationRequest: FindRelationDto = {
       userId1: getRelationRequest.user1.id,
@@ -37,9 +37,10 @@ export class RelationController {
     }
     const ret = await this.relationService.findOne(findRelationRequest);
     if (!ret)
-      throw new HttpException("Relation : GetRelationStatus : No relation found", HttpStatus.NOT_FOUND)
-    else
+      throw new HttpException("Relation : GetRelationStatus : No relation found", HttpStatus.NO_CONTENT)
+    else {
       return ret
+    }
   }
 
   /*json body {

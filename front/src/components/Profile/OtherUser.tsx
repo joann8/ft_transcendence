@@ -1,4 +1,4 @@
-import { Toolbar, Grid, Paper, Avatar, Container, CssBaseline, Box, Typography, Card, autocompleteClasses, TextField, Button, IconButton, Menu, MenuItem, Modal, Divider } from "@mui/material";
+import { Toolbar, Grid, Paper, Avatar, Container, CssBaseline, Box, Typography, Card, autocompleteClasses, TextField, Button, IconButton, Menu, MenuItem, Modal, Divider, backdropClasses } from "@mui/material";
 import React, { Fragment, useCallback, useEffect, useReducer, useState } from "react";
 import Badge from '@mui/material/Badge';
 import EditIcon from '@mui/icons-material/Edit';
@@ -7,30 +7,42 @@ import MatchModal from "./MatchModal";
 import profileStyle from './profileStyle'
 import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import LoadingGif from '../Images/loadingGif.gif'
+import { IRelation, IUser } from "./profileStyle";
+import { updateExportDeclaration } from "typescript";
+import { LockOpenTwoTone, LockTwoTone, Pending, PersonAdd } from "@mui/icons-material";
+import { color, style } from "@mui/system";
 
 const backEndUrl = "http://127.0.0.1:3001"
-
 
 export default function OtherUser() {
 
     const navigate = useNavigate()
     const params = useParams()
- 
+
     const [loaded, setLoaded] = useState(false)
-    const [loggedInUser, setLoggedInUser] = useState(null)
+
+    const [loggedInUserData, setLoggedInUserData] = useState(null)
+    const [otherUserData, setOtherUserData] = useState(null)
+    const [relation, setRelation] = useState(null)
+    /*Relation code 
+     0 : Absence 
+     1 : Demande attente : envoyeur
+     2 : Demande attende : receveur
+     3 : Amis
+     4 : Blocage actif
+     5 : Blocage passif 
+     */
     const [searchInput, setSearchInput] = useState("")
     const [blocked, setBlocked] = useState(false)
     const [idPseudo, setIdPseudo] = useState(params.id_pseudo)
     const [modalState, setModal] = useState({
         match: false,
     })
+    const [update, setUpdate] = useState(0)
 
-    const [userData, setUserData] = useState(null)
-    const [friendStatus, setfriendStatus] = useState(0)
 
-  
     const getOtherUserData = async (id_pseudo: string) => {
-        fetch(`${backEndUrl}/user/${id_pseudo}`, {
+        const localOtherUserData = await fetch(`${backEndUrl}/user/${id_pseudo}`, {
             method: "GET",
             credentials: "include",
             referrerPolicy: "same-origin"
@@ -46,20 +58,19 @@ export default function OtherUser() {
             })
             .then((resData) => {
                 //  alert(`User [${resData.id_pseudo}] was found`)
-                console.log("OtherUser found Data : ", resData)
-                setUserData(resData)
-                setLoaded(true)
+                setOtherUserData(resData)
+                return resData
             })
             .catch((err) => {
-                setLoaded(true)
-                setUserData(null)
+                setOtherUserData(null)
                 alert(`Error while searching for user : [${err}]`)
-                console.log("Error caught: ", err)
             })
+        console.log("Other User Data loaded : ", localOtherUserData)
+        return localOtherUserData
     }
 
     const getUserData = async () => {
-        fetch(`${backEndUrl}/user`, {
+        const userData = await fetch(`${backEndUrl}/user`, {
             method: "GET",
             credentials: "include",
             referrerPolicy: "same-origin"
@@ -74,31 +85,85 @@ export default function OtherUser() {
                 return res.json();
             })
             .then((resData) => {
-                setLoggedInUser(resData)
-                console.log("UserData : ", resData)
+                console.log("LoggedInUser Data loaded READY for real: ", resData)
+                setLoggedInUserData(resData)
+                return resData;
             })
             .catch((err) => {
-                console.log("Error caught: ", err)
+                setLoggedInUserData(null)
+                alert(`Fetch : LoggedInUser : Error caught: ${err}`)
             })
+        console.log("LoggedInUser Data loaded : ", userData)
+        return userData
     }
 
-    useEffect (() => {
-        getUserData()
-    }, [])
+    const getRelation = async (myUserPseudo: string, otherUserPseudo: string) => {
+        const relationData = await fetch(`${backEndUrl}/relation/${myUserPseudo}/${otherUserPseudo}`,
+            {
+                credentials: "include",
+                referrerPolicy: "same-origin",
+                method: "GET",
+            }
+        ).then((res) => {
+            console.log("getRelation res:", res)
+            if (res.status === 401)
+                navigate("/login")
+            else if (!res.ok) {
+                throw new Error(res.statusText)
+            }
+            if (res.status === 204)
+                return (0)
+            else
+                return res.json()
+        })
+            .then((resData) => {
+                console.log("getRelation raw data : ", resData)
+                //ResData = Relation
+                //Cherche la bonne relation dans la bonne case
+                if (resData)
+                    resData = ((myUserPseudo === resData.userId1.id_pseudo) ? resData.relation1 : resData.relation2)
+                else
+                    resData = 0
+                //resData -  0 - Pas de relation
+                //resData [1 - 5] - relation existe 
+                setRelation(resData)
+                return resData;
+            })
+            .catch((err) => {
+                alert(`GetRelation : Error : ${err}`)
+            })
+        console.log("Relation loaded : ", relationData)
+        return (relationData)
+    }
 
+    const getAllInfo = async () => {
+        console.log("User Data Fetching")
+        const userData = await getUserData()
+        console.log("OtherUser Data Fetching")
+
+        const localOtherUserData = await getOtherUserData(idPseudo)
+        console.log("Relation Data Fetching")
+        if (!userData || !localOtherUserData)
+            return alert("UserData or OtherUserData Fetch has gone wrong")
+        const relationData = await getRelation(userData.id_pseudo, localOtherUserData.id_pseudo)
+        setLoaded(true)
+    }
+
+
+    //Optimiser les GET
     useEffect(() => {
         console.log("idPseudo: ", idPseudo)
-        getOtherUserData(idPseudo)
+        getAllInfo()
         console.log("Systematic Other Profile renderering")
-    }, [idPseudo])
+    }, [idPseudo, update])
+
 
     const handleSearchBarSubmit = (event) => {
         event.preventDefault()
         console.log("Other User search : ", searchInput)
-        if (searchInput === loggedInUser.id_pseudo)
+        if (searchInput === loggedInUserData.id_pseudo)
             navigate("/profile")
-        else
-        {
+        else {
             navigate(`/profile/${searchInput}`)
             setIdPseudo(searchInput)
         }
@@ -109,25 +174,106 @@ export default function OtherUser() {
         setSearchInput(event.target.value)
     }
 
-    const handleBlocking = () => {
-        const newBlockVal = !blocked
-        setBlocked(newBlockVal)
+    const removeRelation = async (myUserPseudo: string, otherUserPseudo: string) => {
+        const ret = await fetch(`${backEndUrl}/relation/remove`, {
+            credentials: "include",
+            referrerPolicy: "same-origin",
+            method: "DELETE",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify({
+                id_pseudo1: myUserPseudo,
+                id_pseudo2: otherUserPseudo
+            })
+        })
+            .then(res => {
+                if (res.status === 401)
+                    navigate('/login')
+                else if (!res.ok)
+                    throw new Error(res.statusText)
+                else
+                    return true
+            })
+            .catch((err) => {
+                alert(`removeRelation : Error : ${err}`)
+                return false
+            })
+        return ret
     }
 
-    function PlayButton({ active }) {
+    const updateRelation = async (myUserPseudo: string, otherUserPseudo: string, newRelation1: number, newRelation2: number) => {
+        const ret = await fetch(`${backEndUrl}/relation/update`, {
+            credentials: "include",
+            referrerPolicy: "same-origin",
+            method: "PUT",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify({
+                id_pseudo1: myUserPseudo,
+                id_pseudo2: otherUserPseudo,
+                relation1: newRelation1,
+                relation2: newRelation2
+            })
+        })
+            .then(res => {
+                if (res.status === 401)
+                    navigate('/login')
+                else if (!res.ok)
+                    throw new Error(res.statusText)
+                else
+                    return true
+            })
+            .catch((err) => {
+                alert(`updateRelation: ${err}`)
+                return false
+            })
+        return ret
+    }
+
+
+
+    const handleBlocking = async (status) => {
+        console.log("handleblocking : status : ", status)
+        //if relation === 4 === click - demande de DEblocage === restart relation
+        if (status === 4)
+            await removeRelation(loggedInUserData.id_pseudo, otherUserData.id_pseudo)
+        else
+            await updateRelation(loggedInUserData.id_pseudo, otherUserData.id_pseudo, 4, 5)
+        //if relation ==!4 - click ==== demande de blocage === update relation
+        setUpdate(update + 1)
+    }
+
+    function BlockButton({ status }) {
+        //4 bloque
         return (
-            <Button disabled={active} startIcon={<VideogameAssetIcon />} variant="contained" style={{
-                marginTop: "10px",
-            }}> Play </Button>
+            <Button
+                id="basic-button"
+                variant="contained"
+                startIcon={ status === 4 ? <LockOpenTwoTone/> : <LockTwoTone/>}
+                color={(status === 4) ? "secondary" : "error"}
+                onClick={() => { handleBlocking(status) }}
+                style={{
+                    marginBottom: "10px",
+                }}
+            >
+                {(status === 4) ? "Unblock" : "Block"}
+            </Button>
         )
     }
 
     function AddFriendButton({ status }) {
-        // 0 = Not Friend
-        // 1 = Waiting
-        // 2 = Friend 
+        // 0 = NOT FRIENDS
+        // 1 = SENT
+        // 2 = RECEIVED
+        // 3 = FRIEND
+        // 4 = BLOCK ACTIVE
         // if 2 --> Button devient Button menu pour unfriend
-        if (status == 2) {
+        if (status === 4)
+            return (<div />)
+
+        if (status === 3) {
             return (
                 <Button variant="contained">
                     Friend
@@ -135,25 +281,30 @@ export default function OtherUser() {
             )
         }
         else {
+
             return (
-                <Button disabled={status ? true : false} variant="contained">
-                    {status ? "Waiting" : "Add"}
+                <Button variant="contained" startIcon={ status === 0 ? <PersonAdd/> : <Pending/>}                >
+                    {status === 0 ? "Add" : "Waiting "}
                 </Button>
             )
         }
     }
 
-
-    if (!loaded || loggedInUser === null ) {
+    if (loaded === false) {
         return (<Fragment>
             <Toolbar />
-            <Box>
+            <Box sx={{
+                height: "70vh",
+                widht: "70vw"
+            }}>
                 <h1> Loading </h1>
             </Box>
         </Fragment>
         )
     }
-    if (loaded && userData === null) {
+    //Affichage :  USER DOES NOT EXIST
+    //Soit il existe pas soit il m'a bloque
+    if (relation === 5 || otherUserData === null) {
         return (
             <Fragment>
                 <Paper sx={profileStyle.layout}>
@@ -223,11 +374,11 @@ export default function OtherUser() {
                                 <Box sx={profileStyle.content_2}>
                                     <Badge
                                         overlap="circular"
-                                        badgeContent={userData.status}
+                                        badgeContent={otherUserData.status}
                                         color="secondary"
                                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                                     >
-                                        <Avatar src={userData.avatar} style={{
+                                        <Avatar src={otherUserData.avatar} style={{
                                             width: "125px",
                                             height: "125px",
                                             overflow: "hidden"
@@ -241,14 +392,14 @@ export default function OtherUser() {
                                         paddingBottom: "10px",
                                         paddingLeft: "5%",
                                         paddingRight: "5%"
-                                    }}> {userData.id_pseudo}</Typography>
+                                    }}> {otherUserData.id_pseudo}</Typography>
 
                                     <Typography sx={{
                                         paddingTop: "10px",
                                         paddingBottom: "10px",
                                         paddingLeft: "5%",
                                         paddingRight: "5%"
-                                    }}> {userData.elo} </Typography>
+                                    }}> {otherUserData.elo} </Typography>
 
                                     <Typography sx={{
                                         paddingTop: "10px",
@@ -256,27 +407,17 @@ export default function OtherUser() {
                                         paddingLeft: "5%",
                                         paddingRight: "5%",
                                     }}
-                                    >{userData.email}</Typography>
+                                    >{otherUserData.email}</Typography>
                                 </Box>
                                 <Divider orientation="vertical" sx={{
                                     height: "50%",
                                     backgroundColor: "rgba(191, 85, 236, 1)"
                                 }} />
+
                                 <Box sx={profileStyle.content_2}>
-                                    <Button
-                                        id="basic-button"
-                                        variant="contained"
-                                        startIcon={<EditIcon />}
-                                        color={blocked ? "error" : "secondary"}
-                                        onClick={handleBlocking}
-                                        style={{
-                                            marginBottom: "10px",
-                                        }}
-                                    >
-                                        {blocked ? "Unblock" : "Block"}
-                                    </Button>
-                                    {userData.status === "ONLINE" ? <PlayButton active={true} /> : <PlayButton active={false} />}
-                                    <AddFriendButton status={friendStatus} />
+                                    <AddFriendButton status={relation} />
+                                    <BlockButton status={relation} />
+
                                 </Box>
                             </Box>
 
@@ -332,11 +473,11 @@ export default function OtherUser() {
                         <Grid item xs={6}>
                             <Badge
                                 overlap="circular"
-                                badgeContent={userData.status}
+                                badgeContent={otherUserData.status}
                                 color="secondary"
                                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                             >
-                                <Avatar src={userData.avatar} style={{
+                                <Avatar src={otherUserData.avatar} style={{
                                     width: "120px",
                                     height: "120px",
                                 }} />
@@ -349,13 +490,13 @@ export default function OtherUser() {
                             <Typography variant="subtitle1" style={{
                                 color: "#FFFFFF",
                                 opacity: 1
-                            }}> {userData.id_pseudo}</Typography>
+                            }}> {otherUserData.id_pseudo}</Typography>
                         </Grid>
                         <Grid item xs={4}>
-                            <Typography> Rank: {userData.elo} </Typography>
+                            <Typography> Rank: {otherUserData.elo} </Typography>
                         </Grid>
                         <Grid item xs={4}>
-                            <Typography> Email: {userData.email}</Typography>
+                            <Typography> Email: {otherUserData.email}</Typography>
                         </Grid>
 
                     </Grid>

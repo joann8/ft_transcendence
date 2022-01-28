@@ -25,7 +25,6 @@ export class ParseUsersClassExist implements PipeTransform {
             relation1: body.relation1,
             relation2: body.relation2,
         }
-
         return returnBody
     }
 }

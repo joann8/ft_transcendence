@@ -41,7 +41,7 @@ export class UserController {
 	@Get(':id_pseudo')
 	async getUser(@Param() user_pseudo: string): Promise<User> {
 			const res =  await this.userService.findOne(user_pseudo);
-			console.log(`getUser [${user_pseudo}] ==> res :`, res)
+		//	console.log(`getUser [${user_pseudo}] ==> res :`, res)
 			if (!res)
 				throw new  HttpException("User not found", HttpStatus.NOT_FOUND)
 			else
