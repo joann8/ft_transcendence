@@ -12,6 +12,5 @@ import { UserService } from 'src/user/user.service';
 	exports: [TypeOrmModule, RelationService, UserService],
   providers: [RelationService, UserService],
   controllers: [RelationController]
-
 })
 export class RelationModule {}

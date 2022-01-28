@@ -13,6 +13,8 @@ import {
 	Res,
 	StreamableFile,
 	ConsoleLogger,
+	HttpException,
+	HttpStatus,
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -38,16 +40,12 @@ export class UserController {
 	// SEARCH AN USER
 	@Get(':id_pseudo')
 	async getUser(@Param() user_pseudo: string): Promise<User> {
-		console.log("Search for : ", user_pseudo)
-		try {
-				
 			const res =  await this.userService.findOne(user_pseudo);
-			console.log("res : ", res)
-			return res
-		}
-		catch (err) {
-			console.log("Error search id pseudo", err)
-		}
+			console.log(`getUser [${user_pseudo}] ==> res :`, res)
+			if (!res)
+				throw new  HttpException("User not found", HttpStatus.NOT_FOUND)
+			else
+				return res
 	}
 	//A Supprimer ? 
 	@Get('/avatar/:avatarId')

@@ -2,9 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Repository, UpdateResult } from 'typeorm';
-import { FindRelationDto } from './dto/findRelation.dto';
+import { FindRelationDto } from './dto/findRelationdto';
 import { RelationDto } from './dto/relation.dto';
-import { UpdateRelationDto } from './dto/updateRelation.dto';
 import { Relation } from './entities/relation.entity';
 
 @Injectable()
@@ -26,19 +25,21 @@ export class RelationService {
     return this.relationsRepository.find(undefined);
   }
 
-  async findOne(findRelationRequest: FindRelationDto): Promise<Relation> {
-    const user1: User = findRelationRequest.user1
-    const user2: User = findRelationRequest.user2
+  async findOne(findRequest: FindRelationDto): Promise<Relation> {
+  /*  const id_pseudo1: string = findRelationRequest.id_pseudo1
+    const id_pseudo2: string = findRelationRequest.id_pseudo2
+    console.log("dto before findOne: ", findRelationRequest)
+    */
+   //Appeler find ?
     return await this.relationsRepository.findOne({
       where: [
-        { user1, user2 },
-        { user2, user1 }
+        { userId1: findRequest.userId1  }, {userId2 : findRequest.userId2},
+        { userId1: findRequest.userId2  }, {userId2 : findRequest.userId1},
       ]
     })
   }
 
   async update(updateRelationRequest: Partial<Relation>): Promise<UpdateResult> {
-
 
     return await this.relationsRepository.update(
       updateRelationRequest.id, 

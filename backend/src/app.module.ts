@@ -15,6 +15,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path/posix';
 import { RelationModule } from './relation/relation.module';
+import { Relation } from './relation/entities/relation.entity';
+import { RelationService } from './relation/relation.service';
 
 @Module({
 	imports: [
@@ -28,7 +30,7 @@ import { RelationModule } from './relation/relation.module';
 			username: process.env.DATABASE_USERNAME,
 			password: process.env.DATABASE_PASSWORD,
 			database: process.env.DATABASE_NAME,
-			entities: [User, Chat],
+			entities: [User, Chat, Relation],
 			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
 			keepConnectionAlive: true,
@@ -52,6 +54,7 @@ import { RelationModule } from './relation/relation.module';
 		AppService,
 		UserService,
 		ChatService,
+		RelationService,
 	],
 })
 export class AppModule {}
