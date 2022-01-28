@@ -49,6 +49,7 @@ function Message({ message }: MessageProps) {
         : new Date(date).toLocaleDateString()
     }`;
   }
+
   const classes = useStyle();
   return (
     <Grid

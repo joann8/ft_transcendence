@@ -4,24 +4,31 @@ import Toolbar from "@mui/material/Toolbar";
 import * as React from "react";
 import MessageList from "./MessageList";
 import ChannelList from "./ChannelList";
-import { Message, Channel, userChannelRole, User } from "./types";
+import {
+  Message,
+  Channel,
+  userChannelRole,
+  User,
+  ServerToClientEvents,
+  ClientToServerEvents,
+} from "./types";
 import RoleList from "./RoleList";
 import back from "./backConnection";
 import CreateChannel from "./CreateChannel";
+import { io, Socket } from "socket.io-client";
 
 function Chat() {
   /*
    *   REFS
    */
 
-  const myRef = React.useRef<null | HTMLDivElement>(null);
-
   /*
    *   STATES
    */
+  const [socket, setSocket] =
+    React.useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
   const [channelList, setChannelList] = React.useState<Channel[]>([]);
   const [currentChannel, setCurrentChannel] = React.useState<Channel>();
-  const [messageList, setMessageList] = React.useState<Message[]>([]);
   const [roleList, setRoleList] = React.useState<userChannelRole[]>([]);
   const [currentUser, setCurrentUser] = React.useState<User>();
 
@@ -32,15 +39,6 @@ function Chat() {
     console.log("fetch channel list ok");
     setChannelList(result.data);
     setCurrentChannel(result.data[0]);
-  };
-
-  const fetchMessages = async () => {
-    const result = await back.get(
-      `http://127.0.0.1:3001/channel/${currentChannel.id}/messages`
-    );
-    console.log("fetch messages ok");
-
-    setMessageList(result.data);
   };
 
   async function fetchCurrentUser() {
@@ -57,14 +55,14 @@ function Chat() {
     setRoleList(result.data);
   };
 
-  const fetchPostMessage = async (content: string) => {
+  /* const fetchPostMessage = async (content: string) => {
     const result = await back.post(
       `http://127.0.0.1:3001/channel/${currentChannel.id}/messages`,
       {
         content: content,
       }
     );
-  };
+  };*/
 
   /*
    *   HOOKS
@@ -76,27 +74,25 @@ function Chat() {
   }, []);
 
   React.useEffect(() => {
+    console.log("here");
+    const newSocket = io(`http://127.0.0.1:3001/channel`);
+    setSocket(newSocket);
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [setSocket]);
+
+  /*React.useEffect(() => {
     if (currentChannel) {
       fetchMessages();
       fetchUsers();
     }
-  }, [currentChannel]);
-
-  React.useEffect(() => {
-    if (myRef && myRef.current) {
-      myRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
-  }, [messageList]);
+  }, [currentChannel]);*/
 
   /*
    *   FUNCTIONS
    */
 
-  function postMessage(content: string) {
-    if (currentChannel) {
-      fetchPostMessage(content);
-    }
-  }
   /*
    *   RENDER
    */
@@ -124,11 +120,15 @@ function Chat() {
               channelList={channelList}
               fetchChannelList={fetchChannelList}
             ></ChannelList>
-            <MessageList
-              innerref={myRef}
-              messageList={messageList}
-              submit={postMessage}
-            ></MessageList>
+            {socket ? (
+              <MessageList
+                socket={socket}
+                currentChannel={currentChannel}
+                currentUser={currentUser}
+              ></MessageList>
+            ) : (
+              <div>Not Connected</div>
+            )}
 
             <RoleList
               currentUser={currentUser}

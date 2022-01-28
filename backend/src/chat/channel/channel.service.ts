@@ -252,9 +252,9 @@ export class ChannelService {
 			(elem) => elem.channel.id === channel.id,
 		);
 		/** IF USER IS MUTED */
-		if (userRole.role === 'muted') {
+		/*if (userRole.role === 'muted') {
 			throw new BadRequestException('You are muted');
-		}
+		}*/
 	}
 
 	/**

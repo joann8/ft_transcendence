@@ -74,6 +74,7 @@ function ChannelList({
     const id = +element.getAttribute("data-index");
     if (id && currentChannel.id !== id) {
       const channel = channelList.find((channel) => channel.id === id);
+      console.log("change channel");
       changeChannel(channel);
     }
   }

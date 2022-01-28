@@ -1,3 +1,5 @@
+import { Socket } from "socket.io-client";
+
 /**
  *  BACK TYPE
  */
@@ -66,9 +68,9 @@ type MessagesProps = {
   innerref: React.MutableRefObject<HTMLDivElement | null>;
 };
 type MessageListProps = {
-  messageList: Message[];
-  innerref: React.MutableRefObject<HTMLDivElement | null>;
-  submit: (content: string) => void;
+  socket: Socket<ServerToClientEvents, ClientToServerEvents>;
+  currentChannel: Channel;
+  currentUser: User;
 };
 type MessageProps = {
   key: number;
@@ -106,6 +108,13 @@ type ThemeOptions = {
   };
 };
 
+interface ServerToClientEvents {
+  message: (channel: Channel, message: Message) => void;
+}
+interface ClientToServerEvents {
+  message: (user: User, channel: Channel, content: string) => void;
+}
+
 export type {
   Message,
   MessagesProps,
@@ -120,4 +129,6 @@ export type {
   userChannelRole,
   CreateChannelProps,
   AddUserProps,
+  ServerToClientEvents,
+  ClientToServerEvents,
 };
