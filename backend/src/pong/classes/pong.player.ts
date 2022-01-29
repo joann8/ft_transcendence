@@ -27,8 +27,7 @@ export class Player {
         this._interval = setInterval(
             () => this._paddle.update(), Const.FPS
         );
-        console.log(`FROM PLAYER player id : ${this._userId}`);
-
+        //console.log(`FROM PLAYER player id : ${this._userId}`);
     }
   
     // Getters & Setters
@@ -46,11 +45,10 @@ export class Player {
     }
 
     public setScore(newScore : number) {
-        if (newScore >= Const.MAX_SCORE)
-        {
+        if (newScore >= Const.MAX_SCORE) {
             this._score = Const.MAX_SCORE;
             this._isWinner = true;
-            console.log(`SerScore ******* HOURA, we have a winner!  ==> Player ${this._socketId.id} on the ${this._left? 'left' : 'right'} won!`);
+            // console.log(`SerScore ******* HOURA, we have a winner!  ==> Player ${this._socketId.id} on the ${this._left? 'left' : 'right'} won!`);
         }
         else
             this._score = newScore;
@@ -60,8 +58,7 @@ export class Player {
         return this._interval;
     }
 
-    public setInterval(interval : NodeJS.Timer)
-    {
+    public setInterval(interval : NodeJS.Timer) {
         this._interval = interval;
     }
     
@@ -90,6 +87,7 @@ export class Player {
         this.getSocket().leave(room);
     }
 
+    /*
     public pauseGame(game : Game)
     {
         game.setState(States.PAUSE);
@@ -103,4 +101,5 @@ export class Player {
         game.getBall().resume();
         
     }
+    */
 }

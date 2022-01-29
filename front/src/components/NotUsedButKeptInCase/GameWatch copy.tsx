@@ -86,7 +86,7 @@ export default function GameWatch(props: PropsGame) {
     useEffect(() => {
         let c : HTMLCanvasElement = ref.current; //canvas
         let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
-
+/*
         function draw_end()
         {
             draw_background(ctx, color_background, width, height);
@@ -116,17 +116,17 @@ export default function GameWatch(props: PropsGame) {
             draw_text(ctx, game.score.p1.toString(), color_object, font_text, 3 * (width / 8), height / 12);
             draw_text(ctx, game.score.p2.toString(), color_object, font_text, 5 * (width / 8) - 50, height / 12)    
         }
-        
+        */
         function draw_all() {
             console.log(`draw all : gameSate = ${game.state}`);
-            if (game.state === PLAY)
+           /* if (game.state === PLAY)
                 draw_game();     
             else if (game.state === OVER)
                 draw_end();
             else if (game.state === PAUSE)
                 draw_pause();
             else if (game.state === WAIT)
-                draw_welcome();
+                draw_welcome();*/
         }
         draw_all();
     }, [game]);

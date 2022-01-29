@@ -10,21 +10,16 @@ export class Ball {
     private _y: number;
     private _dy : number;
     private _speed : number;
-    private _radius : number;
     private _isScoring : boolean;
     private _scorer : number;
     private _accelerate : boolean;
 
-    constructor(accelerate : boolean)
-    {
+    constructor(accelerate : boolean) {
         this._x = Const.WIDTH / 2;
-        //this._dx = 1;
         this._dx = Math.random() > 0.5? 1 : -1;
         this._y = Const.HEIGHT / 2;
-        //this._dy = 1;
         this._dy = Math.random() > 0.5? 1 : -1;
-        this._speed = Const.BALL_SPEED; // 0 for beginning? 'pause'
-        this._radius = Const.BALL_RADIUS;
+        this._speed = Const.BALL_SPEED; 
         this._isScoring = false; 
         this._scorer = 0;
         this._accelerate = accelerate;
@@ -34,8 +29,8 @@ export class Ball {
 
     public getX() : number {
         return this._x;
-    
     }
+
     public getY() : number {
         return this._y;
     }
@@ -51,21 +46,19 @@ export class Ball {
     public hitPaddleLeft( paddle: Paddle , newX : number) : number
     {
         let toReturn = newX;
-        if (newX - this._radius <= paddle.getX() + paddle.getWidth())
+        if (newX - Const.BALL_RADIUS <= paddle.getX() + Const.PADDLE_W)
         {
             if ((this._y >= paddle.getY())
-                && (this._y <= paddle.getY() + paddle.getHeight()))
-            {
-                toReturn = paddle.getX() + paddle.getWidth() + this._radius;
+                && (this._y <= paddle.getY() + paddle.getHeight())) {
+                toReturn = paddle.getX() + Const.PADDLE_W + Const.BALL_RADIUS;
                 this._dx *= -1;
                 if (this._accelerate === true)
                     this.accelerateBall();
             }
-            else
-            {
+            else {
                 this._isScoring = true;  
                 this._scorer = 2; 
-                this.pause();
+                //this.pause();
             }
         }    
         return toReturn;
@@ -74,13 +67,13 @@ export class Ball {
     public hitPaddleRight( paddle: Paddle , newX : number) : number
     {
         let toReturn = newX;
-        if (newX + this._radius >= paddle.getX())
+        if (newX + Const.BALL_RADIUS >= paddle.getX())
         {
 
             if ((this._y >= paddle.getY())
                 && (this._y <= paddle.getY() + paddle.getHeight()))
             {
-                toReturn = paddle.getX() - this._radius;
+                toReturn = paddle.getX() - Const.BALL_RADIUS;
                 this._dx *= -1;
                 if (this._accelerate === true)
                     this.accelerateBall();
@@ -89,7 +82,7 @@ export class Ball {
             {
                 this._isScoring = true; 
                 this._scorer = 1; 
-                this.pause();
+                //this.pause();
             } 
         }    
         return toReturn;
@@ -107,9 +100,8 @@ export class Ball {
 
     public moveY() : void {
         let newY = this._y + (this._speed * this._dy);
-        if (newY + this._radius > Const.HEIGHT || newY < this._radius)
-        {
-            newY < this._radius ? this._y = this._radius : this._y = Const.HEIGHT - this._radius;
+        if (newY + Const.BALL_RADIUS > Const.HEIGHT || newY < Const.BALL_RADIUS) {
+            newY < Const.BALL_RADIUS ? this._y = Const.BALL_RADIUS : this._y = Const.HEIGHT - Const.BALL_RADIUS;
             this._dy *= -1;
         }
         else
@@ -117,8 +109,7 @@ export class Ball {
     }
 
     public async updateBall(game: Game) : Promise<void> {
-        if (this._isScoring === false)
-        {
+        if (this._isScoring === false) {
             this.moveX(game);
             this.moveY();
         }
@@ -141,6 +132,7 @@ export class Ball {
         this._scorer = 0; 
     }
 
+    /*
     public pause() : void {
         this._speed = 0;
     }
@@ -148,4 +140,5 @@ export class Ball {
     public resume() : void {
         this._speed = Const.BALL_SPEED; 
     }
+    */
 }

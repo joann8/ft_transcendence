@@ -4,8 +4,7 @@ import "./index.css";
 import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 import Homepage from "./components/Homepage/Homepage";
 import NoPage from "./components/Errors/NoPage";
-//import GameMenu from "./components/NotUsedButKeptInCase/GameMenu";
-import GamePage from "./components/Game/GamePage";
+import Game from "./components/Game/Game";
 import Leaderboard from "./components/Leaderboard/Leaderboard";
 import Chat from "./components/Chat/Chat";
 import Profile from "./components/Profile";
@@ -22,7 +21,7 @@ function Root() {
         <Route path="/" element={<SideBars />}>
           <Route index element={<Homepage />} />
           <Route path="game">
-            <Route index element={<GamePage />} />
+            <Route index element={<Game />} />
            {/*} <Route path="pong" element={<GamePage />} />
             <Route path="watch" element={<GamePage />} />*/}
           </Route>

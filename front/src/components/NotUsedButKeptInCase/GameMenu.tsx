@@ -1,11 +1,8 @@
 import * as React from 'react';
-import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Image from '../Images/heads.jpg'
 import { Fragment } from 'react';
-import { Button, CardActionArea, Typography } from '@mui/material';
-import Game from '../Game';
 import RuleSet from '../Game/RuleSet';
 import SplitButton from './SplitButton';
 

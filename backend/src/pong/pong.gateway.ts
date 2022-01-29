@@ -1,15 +1,9 @@
 import { ConnectedSocket, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from "@nestjs/websockets";
-import { MessageBody } from "@nestjs/websockets";
 import { Socket } from "socket.io";
 import { Server } from "socket.io";
 import { OnGatewayConnection } from "@nestjs/websockets";
 import { Logger } from "@nestjs/common";
-import { StatsBase } from "fs";
-import { v4 as uuidv4} from 'uuid';
 import { Game } from "./classes/pong.game";
-import { Const } from "./static/pong.constants";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 import { PongService } from "./pong.service";
 import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
@@ -25,8 +19,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     private logger: Logger = new Logger("*** Pong Interface ***");
     private clients: Set<Socket> = new Set(); // liste des clients ID
     private queue: Map<Socket, User> = new Map<Socket, User>(); // client dans la queue
-    //private queue: Socket[] = [];
     private matches: Game[] = []; // liste des matches en cours
+    private challenges: Map<User, User> = new Map<User, User>(); // liste des defis
 
     afterInit(server: Server) {
         this.logger.log("Initialized!");
@@ -51,8 +45,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage('check_game')
     async checkGame(client: Socket, userID: User) : Promise <void> {
         let match = this.matches.find(game => game.getPlayer1().getUser().id === userID.id || game.getPlayer2().getUser().id === userID.id);
-        if (match)
-        {
+        if (match) {
             client.emit('not_allowed_playing');
             return;
         }
@@ -88,7 +81,23 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             client.emit('wait');
         }
     }
-    
+    /* Besoin validation dans chat pour arriver a la page avec direct les deux clients et socket */
+    /*
+    @SubscribeMessage('defy')
+    async defy(client: Socket, userID: User, friend : User) : Promise <void> {
+        //check game fait d'abord --> ni dans un match, ni dans la queue
+        if (this.challenges.has(userID)) {
+            client.emit('already_defying');
+            return;
+        }
+        this.logger.log(`userID ${userID.id_pseudo} defy ${friend.id_pseudo}`);
+        this.challenges.set(userID, friend);
+        else {
+            console.log("emit wait DEFY from server");
+            client.emit('wait');
+        }
+    }
+    */ 
     @SubscribeMessage('down_paddle')
     async handleDownPaddle(@ConnectedSocket() client : Socket, direction : string): Promise<void> {
         let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
@@ -102,7 +111,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         if (match)
             match.getPlayer1().getSocket() === client? match.getPlayer1().getPaddle().up():  match.getPlayer2().getPaddle().up();  
      }
-    
+    /*
      @SubscribeMessage('pause')
      async handlePause(@ConnectedSocket() client): Promise<void> {
          let match = this.matches.find(game => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket()=== client);
@@ -117,27 +126,27 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
              match.getPlayer1().getSocket() === client? match.getPlayer1().resumeGame(match):  match.getPlayer2().resumeGame(match);
          }
      }
-  
-     @SubscribeMessage('watch_game')
-     async handleListGames(client : Socket, room : string): Promise<void> {
-        console.log("[ watch_game  received ] : ", room)
+     */
+
+    @SubscribeMessage('watch_game')
+    async handleListGames(client : Socket, room : string): Promise<void> {
+        //console.log("[ watch_game  received ] : ", room)
         let match = this.matches.find(game => game.getRoom() === room);
         if (match) {
             match.addSpectator(client);
-            console.log(`Spectactor ${client.id} is now watching match ${match.getPlayer1().getUser().id_pseudo} VS ${match.getPlayer2().getUser().id_pseudo}`);
+            //console.log(`Spectactor ${client.id} is now watching match ${match.getPlayer1().getUser().id_pseudo} VS ${match.getPlayer2().getUser().id_pseudo}`);
         }
         else
             client.emit('match_over');
     }
-
     
-     @SubscribeMessage('unwatch_game')
-     async handleUnwatchGame(@ConnectedSocket() client : Socket): Promise<void> {
-        console.log("[ unwatch game received ]")
+    @SubscribeMessage('unwatch_game')
+    async handleUnwatchGame(@ConnectedSocket() client : Socket): Promise<void> {
+        //console.log("[ unwatch game received ]")
         if (this.matches.length > 0) {
             for (let match of this.matches) {
                 if(match.isPartOfPublic(client) === true) {
-                    console.log(`Spectactor ${client.id} removed from match ${match.getId()}`);
+                    //console.log(`Spectactor ${client.id} removed from match ${match.getId()}`);
                     match.removeSpectator(client);
                 }
             }
@@ -194,7 +203,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
     
      private removeGame(game : Game) : void {
-        let match = this.matches.find(item => item.getId() === game.getId());
+        let match = this.matches.find(item => item.getRoom() === game.getRoom());
          if (match) {
             this.clients.delete(match.getPlayer1().getSocket());      
             this.clients.delete(match.getPlayer2().getSocket());      

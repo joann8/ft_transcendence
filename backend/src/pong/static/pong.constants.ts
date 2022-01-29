@@ -13,10 +13,10 @@ export class Const {
 
     //BALL
     static readonly BALL_RADIUS : number = 10;
-    static readonly BALL_SPEED : number = 5; 
+    static readonly BALL_SPEED : number = 2; 
     static readonly BALL_SPEEDMAX : number = 15; 
   
     //GAME CONFIG
     static readonly MAX_SCORE : number = 3; // put back to 10
-    static readonly FPS : number = 1000 / 30; // frame per second --> vitesse de broadcast
+    static readonly FPS : number = 100; // frame per second --> vitesse de broadcast
 }

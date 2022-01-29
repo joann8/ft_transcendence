@@ -1,3 +1,4 @@
+
 import * as React from 'react';
 import { useEffect } from 'react';
 import Toolbar from '@mui/material/Toolbar';
@@ -5,19 +6,38 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { Fragment } from 'react';
 import { Box, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Modal, Typography } from '@mui/material';
-import RuleSet from './RuleSet';
+import RuleSet from '../Game/RuleSet';
 import { makeStyles } from '@mui/styles';
-import GamePong from './GamePong';
-import GameWatch from './GameWatch';
+import GamePong from '../Game/GamePong';
+import GameWatch from '../Game/GameWatch';
 import socket from './socket';
 import { useNavigate } from 'react-router';
-import GameList from './GameList';
-import gameStyles from './GameStyles';
+import GameList from '../Game/GameList';
+import gameStyles from '../Game/GameStyles';
 import { useState } from 'react';
+import { io } from "socket.io-client";
+
+
 
 export default function GamePage() {
     
     const navigate = useNavigate();
+
+    const [socket, setSocket] = useState(null);
+
+    useEffect(() => {
+      const connect = async () => {
+      const newSocket = io("http://127.0.0.1:3001/game", {
+	reconnectionDelayMax : 2000,
+});
+      setSocket(newSocket);
+    }
+    connect();
+    /*  return () => {
+        newSocket.disconnect();
+      };*/
+
+    }, []);
 
     const [userID, setUserID] = useState({});
 

@@ -11,7 +11,7 @@ import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
 
 export class Game {
-    private _id : string;
+    //private _id : string;
     private _room : string;
     private _server : Server;
     private _endFunction : Function;
@@ -28,8 +28,8 @@ export class Game {
     
     constructor(queue: Map<Socket, User>, server : Server, endFunction : Function, pongService : PongService, userService: UserService)
     {      
-        this._id = uuidv4();
-        this._room = this._id;
+        //this._id = ;
+        this._room = uuidv4();
         this._server = server;
         this._endFunction = endFunction;
         let it = queue.entries();
@@ -51,10 +51,11 @@ export class Game {
 
     // Getters & Setters
 
+    /*
     public getId() : string {
         return this._id; 
     }
-
+    */
     public getRoom() : string {
         return this._room; 
     }
@@ -92,13 +93,13 @@ export class Game {
             room: this._room,
         }
         this._matchID = await this._pongService.createEntity(match);
-        console.log(`matchId : ${this._matchID}`)
+        //console.log(`matchId : ${this._matchID}`)
     }
 
     public hasWinner() : boolean {
         if (this._player1.IsWinner() || this._player2.IsWinner()){
             this._state = States.OVER;
-            this._ball.pause();
+            //this._ball.pause();
             return true;
         }
         return false;
@@ -129,7 +130,7 @@ export class Game {
         });
     }
     
-    public broadcastState(message : string) : void {
+    public async broadcastState(message : string) : Promise<void> {
         const currentState = this.buildDataToReturn(message);
        // this._server.to(this._room).emit('updateState', currentState);
         this._server.in(this._room).emit('updateState', currentState);
@@ -151,10 +152,8 @@ export class Game {
         player.setScore(player.getScore() + 1);
         //console.log(`Scores : Player 1 : ${this.getPlayer1().getScore()} | Player 2 : ${this.getPlayer2().getScore()} `)
         this.getBall().reset();
-
-        setTimeout(function(){}, 5000);
-        if (this.hasWinner() === false)
-        {
+        setTimeout(function(){}, 5000); // vriament utile?
+        if (this.hasWinner() === false) {
             this._state = States.PLAY;
             this.getPlayer1().getPaddle().reset();
             this.getPlayer2().getPaddle().reset();
@@ -166,7 +165,7 @@ export class Game {
             this.stopMatch();
     }
 
-    public disconnectPlayer(client : Socket) : void {
+    public async disconnectPlayer(client : Socket) : Promise<void> {
         clearInterval(this._interval);
         if (client === this.getPlayer1().getSocket()) {
             this.getPlayer1().setScore(0);
@@ -176,10 +175,10 @@ export class Game {
             this.getPlayer2().setScore(0);
             this.getPlayer1().setScore(Const.MAX_SCORE);
         }
-        this.stopMatch();
+        await this.stopMatch();
     }
 
-    public async stopMatch() : Promise<void>{
+    public async stopMatch() : Promise<void> {
         this._state = States.OVER;
         this.broadcastState("Game Over")
         if (this._isEnded === false) {
@@ -207,27 +206,23 @@ export class Game {
         await this._pongService.updateEntity(this._matchID, update);
     }
 
-    public addSpectator(client : Socket) : void
-    {
+    public addSpectator(client : Socket) : void {
         this._public.unshift(client);
         client.join(this._room);
         this.broadcastState("");
     }
 
-    public removeSpectator(client : Socket) : void
-    {
+    public removeSpectator(client : Socket) : void {
         client.leave(this._room);
         this._public.splice(this._public.indexOf(client));
     }
 
-    public removeAllSpectators() : void
-    {
+    public removeAllSpectators() : void {
         while(this._public.length > 0)
             this.removeSpectator(this._public.pop());
     }
 
-    public isPartOfPublic(client : Socket) : boolean
-    {
+    public isPartOfPublic(client : Socket) : boolean {
         let index = this._public.indexOf(client);
         return index > -1 ? true : false;
     }

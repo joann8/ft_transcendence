@@ -7,7 +7,7 @@ export class Paddle {
     private _left : boolean;
     private _speed : number;
     private _height : number;
-    private _width : number;
+//    private _width : number;
 
     constructor(left: boolean)
     {
@@ -17,24 +17,23 @@ export class Paddle {
         this._y_tmp = Const.PADDLE_Y;
         this._speed = Const.PADDLE_SPEED;
         this._height = Const.PADDLE_H;
-        this._width = Const.PADDLE_W;
+      //  this._width = Const.PADDLE_W;
     }
 
     // Getters
 
     public getX() : number {
         return this._x;
-    
     }
 
     public getY() : number {
         return this._y;
     }
-
+/*
     public getWidth() : number {
         return this._width;
     }
-
+*/
     public getHeight() : number {
         return this._height;
     }

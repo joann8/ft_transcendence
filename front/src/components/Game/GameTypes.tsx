@@ -5,6 +5,10 @@ type PropsMenuButton = {
     options : string[];
     buttonNb : number;
 }
+type PropsInit = {
+    socket: Socket<DefaultEventsMap, DefaultEventsMap>,
+    user : {},
+}
 
 type PropsGame = {
     width: number,
@@ -57,4 +61,4 @@ type GameParams = {
     OVER : number,
     }
 
-export type {PropsMenuButton, PropsGame, GameSate, GameParams};
+export type {PropsMenuButton, PropsInit, PropsGame, GameSate, GameParams};

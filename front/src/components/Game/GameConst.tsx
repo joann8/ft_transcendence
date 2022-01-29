@@ -1,5 +1,6 @@
 import { GameSate } from "./GameTypes";
 
+
 const width : number = 800;
 const height : number = 600;
 const paddle_h : number = height / 6;
@@ -38,7 +39,7 @@ const gameStateInit : GameSate = {
         p1: "",
         p2: ""
     },
-    state: WAIT,
+    state: PLAY,
     message : "", 
     is_winner : false,
 
