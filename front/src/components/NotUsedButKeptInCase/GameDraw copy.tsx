@@ -1,6 +1,6 @@
 import { GameSate } from "../Game/GameTypes";
 import { ball_radius, l_paddle_x,r_paddle_x, paddle_w, paddle_h } from "../Game/GameConst";
-import { WAIT, PLAY, OVER, PAUSE } from "../Game/GameConst";
+import { WAIT, PLAY, OVER } from "../Game/GameConst";
             
     export function draw_background(ctx : CanvasRenderingContext2D, color : string, width : number, height : number)
     {
@@ -79,8 +79,8 @@ import { WAIT, PLAY, OVER, PAUSE } from "../Game/GameConst";
             draw_game(ctx, game, color_background, width, height, color_object, font_text );     
         else if (game.state === OVER)
             draw_end(ctx, game, color_background, width, height, color_object, font_text);
-        else if (game.state === PAUSE)
-            draw_pause(ctx, color_background, width, height, color_object, font_text);
+        //else if (game.state === PAUSE)
+        //    draw_pause(ctx, color_background, width, height, color_object, font_text);
         else if (game.state === WAIT)
             draw_welcome(ctx, color_background, width, height, color_object, font_text);
     }

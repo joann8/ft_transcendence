@@ -6,7 +6,7 @@ import { Grid } from '@mui/material';
 import { draw_all} from './GameDraw';
 import { gameStateInit } from './GameConst';
 import { width, height } from './GameConst';
-import { color_object2, color_background, font_text } from './GameConst';
+import { color_object3, color_background, font_text } from './GameConst';
 
 export default function GameWatch(props: PropsGame) {
     const socket = props.socket;
@@ -20,24 +20,9 @@ export default function GameWatch(props: PropsGame) {
     });
 
     useEffect(() => {
-        socket.on("match_over", (updateState : any) => {
-            console.log("This match is over");
-            let c : HTMLCanvasElement = ref.current; //canvas
-            let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
-            ctx.clearRect(0,0, width, height);
-            ctx.beginPath();
-            ctx.fillStyle= color_background;
-            ctx.fillRect(0,0, width, height);        
-            ctx.fillStyle = color_object2;
-            ctx.font = font_text; 
-            ctx.fillText("This match is over", 100, height / 2);
-        });
-    });
-         
-    useEffect(() => {
         let c : HTMLCanvasElement = ref.current; //canvas
         let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
-        draw_all(false, ctx, game, color_object2);
+        draw_all(false, ctx, game, color_object3);
     }, [game]);
 
     return (

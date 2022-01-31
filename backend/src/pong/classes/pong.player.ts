@@ -14,12 +14,10 @@ export class Player {
     private _paddle : Paddle; 
     private _interval: NodeJS.Timer;
 
-    //constructor(socketId : Socket, left : boolean) 
     constructor(dataSet : [Socket, User], left : boolean) 
     {
-        //this._socketId = socketId;
-        this._userId = dataSet[1];
         this._socketId = dataSet[0];
+        this._userId = dataSet[1];
         this._score = 0;
         this._isWinner = false;
         this._left = left;
@@ -27,11 +25,8 @@ export class Player {
         this._interval = setInterval(
             () => this._paddle.update(), Const.FPS
         );
-        //console.log(`FROM PLAYER player id : ${this._userId}`);
     }
-  
-    // Getters & Setters
-
+    
     public getUser() : User {
         return this._userId;
     }
@@ -48,7 +43,6 @@ export class Player {
         if (newScore >= Const.MAX_SCORE) {
             this._score = Const.MAX_SCORE;
             this._isWinner = true;
-            // console.log(`SerScore ******* HOURA, we have a winner!  ==> Player ${this._socketId.id} on the ${this._left? 'left' : 'right'} won!`);
         }
         else
             this._score = newScore;
@@ -62,15 +56,9 @@ export class Player {
         this._interval = interval;
     }
     
-    public IsWinner() : boolean {
+    public isWinner() : boolean {
         return this._isWinner;
     }
-
-    /*
-    public setIsWinner(result : boolean) {
-        this._isWinner = result; 
-    }
-    */
 
     public isLeft() : boolean {
         return this._left;
@@ -80,26 +68,8 @@ export class Player {
         return this._paddle;
     }
 
-    //Other Functions
-
     public disconnect(room : string) : void {
         clearInterval(this._interval);
         this.getSocket().leave(room);
     }
-
-    /*
-    public pauseGame(game : Game)
-    {
-        game.setState(States.PAUSE);
-        game.getBall().pause();
-
-    }
-
-    public resumeGame(game : Game)
-    {
-        game.setState(States.PLAY);
-        game.getBall().resume();
-        
-    }
-    */
 }

@@ -1,8 +1,6 @@
 import { Const } from "../static/pong.constants"
 import { Game } from "./pong.game";
 import { Paddle } from "./pong.paddle";
-import { v4 as uuidv4} from 'uuid';
-
 
 export class Ball {
     private _x: number;
@@ -43,8 +41,7 @@ export class Ball {
 
     // Other functions
 
-    public hitPaddleLeft( paddle: Paddle , newX : number) : number
-    {
+    public hitPaddleLeft( paddle: Paddle , newX : number) : number {
         let toReturn = newX;
         if (newX - Const.BALL_RADIUS <= paddle.getX() + Const.PADDLE_W)
         {
@@ -58,14 +55,12 @@ export class Ball {
             else {
                 this._isScoring = true;  
                 this._scorer = 2; 
-                //this.pause();
             }
         }    
         return toReturn;
     }
 
-    public hitPaddleRight( paddle: Paddle , newX : number) : number
-    {
+    public hitPaddleRight( paddle: Paddle , newX : number) : number {
         let toReturn = newX;
         if (newX + Const.BALL_RADIUS >= paddle.getX())
         {
@@ -78,11 +73,9 @@ export class Ball {
                 if (this._accelerate === true)
                     this.accelerateBall();
             }
-            else
-            {
+            else {
                 this._isScoring = true; 
                 this._scorer = 1; 
-                //this.pause();
             } 
         }    
         return toReturn;
@@ -108,7 +101,7 @@ export class Ball {
             this._y = newY;
     }
 
-    public async updateBall(game: Game) : Promise<void> {
+    public  updateBall(game: Game) : void {
         if (this._isScoring === false) {
             this.moveX(game);
             this.moveY();
@@ -119,7 +112,7 @@ export class Ball {
 
     public accelerateBall() : void {
         if (this._speed < Const.BALL_SPEEDMAX)
-            this._speed += 2;
+            this._speed += Const.BALL_ACCELERATE;
     }
 
     public reset() : void {
@@ -131,14 +124,4 @@ export class Ball {
         this._isScoring = false; 
         this._scorer = 0; 
     }
-
-    /*
-    public pause() : void {
-        this._speed = 0;
-    }
-
-    public resume() : void {
-        this._speed = Const.BALL_SPEED; 
-    }
-    */
 }

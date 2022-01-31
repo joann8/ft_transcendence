@@ -1,33 +1,16 @@
 import { GameSate } from "./GameTypes";
-import { width, height, ball_radius, l_paddle_x,r_paddle_x, paddle_w} from "./GameConst";
-import { color_background,font_text,  } from "./GameConst";
-import { PLAY, OVER } from "./GameConst";
-import back from '../Images/dark.jpg'
+import { width, height, ball_radius, l_paddle_x,r_paddle_x, paddle_w, color_object2, color_object3} from "./GameConst";
+import { color_background, color_background2, font_text} from "./GameConst";
+import { WAIT, PLAY, OVER } from "./GameConst";
 
 
-
-    export function draw_background(ctx : CanvasRenderingContext2D) {
-        console.log("---> draw background")
-                ctx.clearRect(0,0, width, height);
-        ctx.beginPath();
-        ctx.fillStyle= color_background;
-        ctx.fillRect(0,0, width, height);
-    }
-
-    /*
-    export function draw_image(ctx : CanvasRenderingContext2D) {
-        const backgroundImage = new Image();
-        backgroundImage.src = `url(${back})`;
-        backgroundImage.onload = function() {
-            ctx.drawImage(backgroundImage, 0, 0, width, height);
-        }
-        console.log("---> draw image");
+    export function draw_background(ctx : CanvasRenderingContext2D, backColor : string) {
         ctx.clearRect(0,0, width, height);
         ctx.beginPath();
-        ctx.drawImage(backgroundImage, 0, 0, width, height);
-        //ctx.fillRect(0,0, width, height);
+        ctx.fillStyle= backColor;
+        ctx.fillRect(0,0, width, height);
     }
-    */  
+     
     export function draw_line(ctx :  CanvasRenderingContext2D, color : string) {
         ctx.setLineDash([10, 15]);
         ctx.strokeStyle = color;
@@ -56,51 +39,81 @@ import back from '../Images/dark.jpg'
         ctx.fillText(text, x, y);
     }
 
-    export function draw_end(image : boolean, ctx : CanvasRenderingContext2D, game : GameSate, color : string) {
-    //  image ? draw_background(ctx) : draw_image(ctx) ;
-        draw_background(ctx);
-        draw_text(ctx, game.score.p1.toString(), color, "80px gameFont", 3 * (width / 8), height / 2);
-        draw_text(ctx, game.score.p2.toString(), color,  "80px gameFont", 5 * (width / 8) - 50, height / 2)  
-        draw_text(ctx, game.players.p1, color, "20px gameFont", 15, height / 12);
-        draw_text(ctx, game.players.p2, color, "20px gameFont", 7 * (width / 8), height / 12) 
+    export function draw_end(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate, colorObject : string) {
+        let back : string, object : string;
+        if (color) {
+            back = color_background2;
+            object = color_object2;
+        }
+        else {
+            back = color_background;
+            object = colorObject;
+        }       
+        draw_background(ctx, back); 
+        draw_text(ctx, game.score.p1.toString(), object, "80px gameFont", 3 * (width / 8), height / 2);
+        draw_text(ctx, game.score.p2.toString(), object,  "80px gameFont", 5 * (width / 8) - 50, height / 2)  
+        draw_text(ctx, game.players.p1, object, "20px gameFont", 15, height / 12);
+        draw_text(ctx, game.players.p2, object, "20px gameFont", 7 * (width / 8), height / 12) 
     }
 
-    export function draw_pause(ctx : CanvasRenderingContext2D, color : string) {
-        draw_background(ctx);
-        draw_text(ctx, "PAUSE", color, font_text, width / 2 - 100, height / 2);
+    export function draw_wait(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate, colorObject : string) {
+        let back : string, object : string;
+        if (color) {
+            back = color_background2;
+            object = color_object2;
+        }
+        else {
+            back = color_background;
+            object = colorObject;
+        }           
+        draw_background(ctx, back); 
+        ctx.fillStyle = object;
+        ctx.font = font_text; 
+        ctx.fillText("Waiting for another player", 75, height / 2);
     }
 
-    export function draw_welcome(ctx : CanvasRenderingContext2D, color : string) {
-        draw_background(ctx);
-        draw_text(ctx, "Welcome to Pong Game!", color, font_text, 100, height / 2);
+    export function draw_already(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate, colorObject : string) {
+        let back : string, object : string;
+        if (color) {
+            back = color_background2;
+            object = color_object2;
+        }
+        else {
+            back = color_background;
+            object = colorObject;
+        }           
+        draw_background(ctx, back); 
+        ctx.fillStyle = object;
+        ctx.font = font_text; 
+        ctx.fillText("Waiting for another player", 75, height / 2);
     }
 
-    export function draw_nogame(ctx : CanvasRenderingContext2D, color : string) {
-        draw_background(ctx);
-        draw_text(ctx, "No current game on going!", color, font_text, 100, height / 2);
-    }
-
-    export function draw_game(image : boolean, ctx : CanvasRenderingContext2D, game : GameSate, color : string) {
-        //image ? draw_background(ctx) : draw_image(ctx) ;
-        draw_background(ctx);
-        draw_line(ctx,color);
-        draw_ball(ctx, color, game.ball.x, game.ball.y);
-        draw_paddle(ctx, color, l_paddle_x, game.paddles.ly, game.paddles.lh);
-        draw_paddle(ctx, color, r_paddle_x, game.paddles.ry, game.paddles.rh);
-        draw_text(ctx, game.score.p1.toString(), color, font_text, 3 * (width / 8), height / 12);
-        draw_text(ctx, game.score.p2.toString(), color, font_text, 5 * (width / 8) - 50, height / 12)
-        draw_text(ctx, game.players.p1, color, "20px gameFont", 15, height / 12);
-        draw_text(ctx, game.players.p2, color, "20px gameFont", 7 * (width / 8), height / 12)    
+    export function draw_game(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate, colorObject : string) {
+        let back : string, object : string;
+        if (color) {
+            back = color_background2;
+            object = color_object2;
+        }
+        else {
+            back = color_background;
+            object = colorObject;
+        }       
+        draw_background(ctx, back); 
+        draw_line(ctx, object);
+        draw_ball(ctx, object, game.ball.x, game.ball.y);
+        draw_paddle(ctx, object, l_paddle_x, game.paddles.ly, game.paddles.lh);
+        draw_paddle(ctx, object, r_paddle_x, game.paddles.ry, game.paddles.rh);
+        draw_text(ctx, game.score.p1.toString(), object, font_text, 3 * (width / 8), height / 12);
+        draw_text(ctx, game.score.p2.toString(), object, font_text, 5 * (width / 8) - 50, height / 12)
+        draw_text(ctx, game.players.p1, object, "20px gameFont", 15, height / 12);
+        draw_text(ctx, game.players.p2, object, "20px gameFont", 7 * (width / 8), height / 12)    
     }
     
-    export function draw_all(image : boolean, ctx : CanvasRenderingContext2D, game : GameSate,  color : string) {
+    export function draw_all(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate,  colorObject : string) {
         if (game.state === PLAY)
-            draw_game(image, ctx, game, color);     
+            draw_game(color, ctx, game, colorObject);     
         else if (game.state === OVER)
-            draw_end(image, ctx, game, color);
+            draw_end(color, ctx, game, colorObject);
+        else if (game.state === WAIT && colorObject !== color_object3)
+            draw_wait(color, ctx, game, colorObject);
     }
-
-
-
-
-    

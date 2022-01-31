@@ -20,5 +20,4 @@ export interface BroadcastObject {
         p2: string
     },
     state: States,
-    message : string
 }

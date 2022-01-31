@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 import { States } from "../static/pong.states";
 import { Ball } from "./pong.ball";
 import { Player } from "./pong.player";
-import { v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4} from "uuid";
 import { Const } from "../static/pong.constants";
 import { BroadcastObject } from "../static/pong.broadcastObject";
 import { Server } from "socket.io";
@@ -11,7 +11,6 @@ import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
 
 export class Game {
-    //private _id : string;
     private _room : string;
     private _server : Server;
     private _endFunction : Function;
@@ -28,7 +27,6 @@ export class Game {
     
     constructor(queue: Map<Socket, User>, server : Server, endFunction : Function, pongService : PongService, userService: UserService)
     {      
-        //this._id = ;
         this._room = uuidv4();
         this._server = server;
         this._endFunction = endFunction;
@@ -37,7 +35,6 @@ export class Game {
         this._player2 = new Player(it.next().value, false);
         this._player1.getSocket().join(this._room);
         this._player2.getSocket().join(this._room);
-        console.log(`Player 1 (user ${this._player1.getUser().id_pseudo} | socket ${this._player1.getSocket().id}) and Player 2 (user ${this._player2.getUser().id_pseudo} | socket ${this._player2.getSocket().id}) join the room`);
         this._ball = new Ball(false);
         this._state = States.PLAY;
         this._public = [];
@@ -51,11 +48,6 @@ export class Game {
 
     // Getters & Setters
 
-    /*
-    public getId() : string {
-        return this._id; 
-    }
-    */
     public getRoom() : string {
         return this._room; 
     }
@@ -72,18 +64,6 @@ export class Game {
         return this._ball;
     }
 
-    public getState() : States {
-        return this._state;
-    }
-
-    public setState(state : States) {
-        this._state = state;
-    }
-
-    public getPublic() : Socket[] {
-        return this._public;
-    }
-
     // Other Functions 
 
     public async createMatch () : Promise<void> {
@@ -93,19 +73,15 @@ export class Game {
             room: this._room,
         }
         this._matchID = await this._pongService.createEntity(match);
-        //console.log(`matchId : ${this._matchID}`)
     }
 
     public hasWinner() : boolean {
-        if (this._player1.IsWinner() || this._player2.IsWinner()){
-            this._state = States.OVER;
-            //this._ball.pause();
+        if (this._player1.isWinner() || this._player2.isWinner())
             return true;
-        }
         return false;
     }
 
-    public buildDataToReturn(message : string) : BroadcastObject {
+    public buildDataToReturn() : BroadcastObject {
         return ( {
         ball: {
             x : this._ball.getX(),
@@ -126,35 +102,30 @@ export class Game {
             p2: this._player2.getUser().id_pseudo
         },
         state: this._state,
-        message : message,
         });
     }
     
-    public async broadcastState(message : string) : Promise<void> {
-        const currentState = this.buildDataToReturn(message);
-       // this._server.to(this._room).emit('updateState', currentState);
-        this._server.in(this._room).emit('updateState', currentState);
+    public broadcastState() : void {
+        const currentState = this.buildDataToReturn();
+        this._server.to(this._room).emit('updateState', currentState);
     }
 
-    public async play() : Promise<void> {
+    public play() : void {
         this.getBall().updateBall(this);
-        this.broadcastState("");
+        this.broadcastState();
         if (this.hasWinner() === true) {
             clearInterval(this._interval);
             this.stopMatch();   
         }
     }
 
-    public async pauseAndScore(player : Player) : Promise<void> {
+    public pauseAndScore(player : Player) : void {
         clearInterval(this._interval);
         clearInterval(this.getPlayer1().getInterval());
         clearInterval(this.getPlayer2().getInterval());
         player.setScore(player.getScore() + 1);
-        //console.log(`Scores : Player 1 : ${this.getPlayer1().getScore()} | Player 2 : ${this.getPlayer2().getScore()} `)
         this.getBall().reset();
-        setTimeout(function(){}, 5000); // vriament utile?
         if (this.hasWinner() === false) {
-            this._state = States.PLAY;
             this.getPlayer1().getPaddle().reset();
             this.getPlayer2().getPaddle().reset();
             this._interval = setInterval(() => this.play(), Const.FPS);
@@ -180,23 +151,19 @@ export class Game {
 
     public async stopMatch() : Promise<void> {
         this._state = States.OVER;
-        this.broadcastState("Game Over")
+        this.broadcastState()
         if (this._isEnded === false) {
             this._isEnded = true;
-            //console.log(`player1 id : ${this._player1.getUser()} | player2 id : ${this._player2.getUser()}`);
             await this.saveMatch();
             this.removeAllSpectators();
             this.getPlayer1().disconnect(this._room);
-            //console.log(`---> Player 1 (${this.getPlayer1().getSocket().id}) left the room`);
             this.getPlayer2().disconnect(this._room);
-            //console.log(`--> Player 2 (${this.getPlayer2().getSocket().id}) left the room`);
             this._endFunction(this);
         }       
     }
 
     public async saveMatch() : Promise<void> {
         let winner = this._player1.getScore() === Const.MAX_SCORE? this._player1 : this._player2;
-        //console.log(`winner id : ${winner.getUser()} | looser id : ${looser.getUser()}`)
         let update = {
             scorePlayer1 : `${this._player1.getScore()}`,
             scorePlayer2 : `${this._player2.getScore()}`,
@@ -209,7 +176,7 @@ export class Game {
     public addSpectator(client : Socket) : void {
         this._public.unshift(client);
         client.join(this._room);
-        this.broadcastState("");
+        this.broadcastState();
     }
 
     public removeSpectator(client : Socket) : void {
@@ -226,5 +193,4 @@ export class Game {
         let index = this._public.indexOf(client);
         return index > -1 ? true : false;
     }
-
 }

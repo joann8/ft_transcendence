@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useNavigate } from 'react-router';
 import { useState, useEffect } from 'react';
-import { Avatar, Box, Button, Modal, styled } from '@mui/material';
+import { Alert, Avatar, Box, Button, Modal, styled } from '@mui/material';
 import { Fragment } from 'react';
 import { Socket } from 'socket.io-client';
 import GameWatch from './GameWatch';
@@ -48,17 +48,30 @@ export default function GameList(props : PropsGame) {
       getGames();
   }, [update]); // a voir ??? 
 
-  
   const [openWatch, setOpenWatch] = React.useState(false);
+  
   const handleOpenWatch = (room : string) => {
-     setOpenWatch(true);
-     console.log(`here we are with room ${room}`)
-     socket.emit('watch_game', room);
-  }
+    socket.emit("check_match", room);
+  };
+  
+  useEffect(() => {
+      socket.on("allowed_watch", (room: string) => {
+        setOpenWatch(true);
+        socket.emit('watch_game', room);
+      });
+      socket.on("not_allowed_watch", (args : any) => {
+        console.log("match over received")
+        alert("This match is over"); // a faire en plus jolie?
+        handleUpdate();
+      });
+     
+  }, []);
+
   const handleCloseWatch= () => {
     console.log("hanCloseWatch called")
     socket.emit('unwatch_game');
     setOpenWatch(false);
+    handleUpdate();
   }
 
   const handleUpdate=() => {

@@ -65,5 +65,11 @@ export class PongService {
 			order: { date : "ASC" }
 		});
 	}
+	
+	/*
+	async deleteOne(id: number): Promise<void> {
+			await this.pongRepository.delete(id);
+	}
+	*/
 
 }

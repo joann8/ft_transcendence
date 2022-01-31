@@ -30,14 +30,12 @@ export default function GameMenu(props : PropsInit) {
         socket.on("not_allowed_queue", (args : any) => {
           alert("already in queue"); // a faire en plus jolie?
         })
-    })
+    }, [])
 
     const handleCloseGame = () => {
-      //console.log("hanCloseGame called");
       setOpenAlert(true);
     }
 
-    // Quitter la fenetre de jeu
     const [openAlert, setOpenAlert] = useState(false);
     
     const handleCloseAlertStay = () => {
@@ -49,17 +47,7 @@ export default function GameMenu(props : PropsInit) {
       setOpenGame(false);
       setOpenAlert(false);
     };
-
-    // Is it useful? a voir la gestion 
-    useEffect(() => {
-      window.addEventListener('beforeRemove', (e) => {
-        console.log("pressed arrow back")
-        e.preventDefault();
-        if (openGame === true)
-          handleCloseGame();
-      });
-    });
-   
+  
   return (       
         <Fragment>
           <Paper style={gameStyles.backgroundImage}>

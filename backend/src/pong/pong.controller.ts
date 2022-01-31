@@ -1,5 +1,6 @@
 import {
 	Controller,
+	Delete,
 	Get,
 	Param,
 } from '@nestjs/common';
@@ -39,4 +40,11 @@ export class PongController {
 	async getLost(@Param('id', ParsePseudoPipe) user: User): Promise<Pong[]> {
 		return this.pongService.getLostUser(user);
 	}
+
+	/*
+	@Delete('ongoing/:id')
+	async deleteOne(@Param('id') id: number): Promise<void> {
+		return this.pongService.deleteOne(id);
+	}
+	*/
 }
