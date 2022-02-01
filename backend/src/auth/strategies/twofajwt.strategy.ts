@@ -42,7 +42,7 @@ export class TwoFaJwtStrategy extends PassportStrategy(
 			);
 		}
 		if (!user.two_factor_enabled || payload.isTwoFa) {
-			return user;
+			return await this.authService.set_online(user);
 		}
 		throw new UnauthorizedException('Please authenticate with 2FA');
 	}

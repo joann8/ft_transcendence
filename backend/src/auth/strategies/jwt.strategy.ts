@@ -38,6 +38,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 				'You are ban from this website, get out of my sight',
 			);
 		}
-		return user;
+		return await this.authService.set_online(user);
 	}
 }

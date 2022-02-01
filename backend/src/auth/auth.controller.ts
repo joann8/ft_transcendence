@@ -40,7 +40,6 @@ export class AuthController {
 		if (created) {
 			front_url += '/'; // MODIFIER ROUTE POUR ACCEDER A LA MODIFICATION DES VARS USER LORS DE LA CREATION
 		} else if (user.two_factor_enabled) {
-			console.log('OUI');
 			front_url += '/login/twofa';
 		}
 		res.redirect(front_url);
