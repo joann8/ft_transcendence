@@ -13,12 +13,16 @@ export class RelationDto {
     id_pseudo2: string
 
     @IsOptional()
-    @IsNumber()
     userId1: number;
 
     @IsOptional()
-    @IsNumber()
     userId2: number;
+
+    @IsOptional()
+    userId1bis : number;
+
+    @IsOptional()
+    userId2bis : number;
 
     @IsEnum(relation)
     relation1: relation;

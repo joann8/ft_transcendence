@@ -1,25 +1,25 @@
 import React from "react";
 import backGround from './../Images/complex_logos.jpg'
 
-export interface IRelation  {
-    userId1 : number,
-    userId2 : number,
-    relation1 : number,
+export interface IRelation {
+    userId1: number,
+    userId2: number,
+    relation1: number,
     relation2: number
 }
 
 export interface IUser {
-        id: number,
-        id_pseudo: string,
-        email: string,
-        avatar: string,
-        role: string,
-        elo: number,
-        status: string,
-        two_factor: boolean,
-        achievement1: boolean,
-        achievement2: boolean
-    }
+    id: number,
+    id_pseudo: string,
+    email: string,
+    avatar: string,
+    role: string,
+    elo: number,
+    status: string,
+    two_factor: boolean,
+    achievement1: boolean,
+    achievement2: boolean
+}
 
 
 const profileStyle = {
@@ -110,6 +110,12 @@ const profileStyle = {
         alignItems: "flex-start",
         minWidth: "70%",
         minHeight: "20%"
+    },
+    textBox: {
+        paddingTop: "10px",
+        paddingBottom: "10px",
+        paddingLeft: "5%",
+        paddingRight: "5%",
     },
     content_1: {
         position: "relative",

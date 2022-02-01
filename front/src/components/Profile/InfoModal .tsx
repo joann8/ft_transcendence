@@ -15,14 +15,10 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: "85%",
-    height: "40%",
+    height: "70%",
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
-    overflow: "auto",
-    justifyContent: "center",
-    alignItems: "center",
-    display: "flex",
     p: 4,
 };
 
@@ -38,8 +34,8 @@ export default function InfoModal(props: any) {
     const [state, setState] = useState({
         id_pseudo: "",
         email: "",
-    }
-    )
+    })
+    const [modal, setModal] = useState(true)
     const nav = useNavigate()
 
 
@@ -63,7 +59,7 @@ export default function InfoModal(props: any) {
             if (!(validator.isAlpha(state.id_pseudo[0]) && validator.isAlphanumeric(state.id_pseudo)))
                 return (alert("Pseudo must contain alpha numeric only and START with a letter"))
         }
-        let update : any
+        let update: any
         update = {}
         if (state.email)
             update.email = state.email
@@ -99,12 +95,14 @@ export default function InfoModal(props: any) {
             })
     }
 
-    const handleClose = () => props.setModal(false);
+       //             {/*open={props.modalState}*/}
+
+    const handleClose = () => setModal(false)//props.setModal(false);
 
     return (
         <div>
             <Modal
-                open={props.modalState}
+                open={modal}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -112,7 +110,7 @@ export default function InfoModal(props: any) {
                 <Box sx={style}>
                     <Grid container columns={12} spacing={2} style={editLayout}>
                         <br />
-                        <Grid item xs={6}>
+                        <Grid item xs={6}component="form">
 
                             <TextField
                                 fullWidth
@@ -123,7 +121,7 @@ export default function InfoModal(props: any) {
                                 onChange={handleChange}
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={6} component="form">
                             <TextField
                                 fullWidth
                                 id="outlined"

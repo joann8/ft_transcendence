@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Res, HttpException, HttpStatus, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Res, HttpException, HttpStatus, UsePipes, ValidationPipe, ConsoleLogger, Req } from '@nestjs/common';
 import { RelationService } from './relation.service';
 import { RelationDto } from './dto/relation.dto';
 import { Relation, relation } from './entities/relation.entity';
@@ -8,6 +8,9 @@ import { ParseUsersClassExist } from './pipeParseUsersClassExist';
 import { ParseUsersStringExist } from './pipeParseUsersStringExist';
 import { ParameterStatusMessage } from 'pg-protocol/dist/messages';
 import { GetRelationDto } from './dto/getRelationDto.dto';
+import { getRepository } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { isNotEmpty } from 'class-validator';
 
 @Controller('relation')
 export class RelationController {
@@ -43,6 +46,26 @@ export class RelationController {
     }
   }
 
+  @Get('request')
+  async findFriendRequest(@Req() req) /*<Promise<User[]>>*/ {
+    console.log("Req.user : ", req.user)
+    let requestArray = await this.relationService.findAllMyFriendRequest(req.user.id)
+    console.log(requestArray)
+    if (requestArray.length) {
+      let tmpArray = [] // Array de : User
+      for (const item of requestArray){
+        console.log("loop")
+        let tmpUserId = (item.relation1 === 1 ? item.userId1bis : item.userId2bis)
+        let tmpUser = await getRepository(User).findOne(tmpUserId)
+        tmpArray.push(tmpUser)
+      }
+      console.log("Tmp Array:", tmpArray)
+      requestArray = tmpArray
+    }
+    return requestArray
+  }
+
+
   /*json body {
     //user to update
     id_pseudo1: ""
@@ -67,23 +90,30 @@ export class RelationController {
 
     //Find relation if exist with [NEEDLE]
     const relationStatus = await this.relationService.findOne(findRelationRequest)
+    console.log("Relation in DB : ", relationStatus)
 
     //If relation does not exist create it with the REQUEST parameters
     if (!relationStatus) {
+      console.log("Creating relation : ", relationRequest)
       const newRelation = await this.relationService.create(relationRequest)
-      throw new HttpException(`Relation : Update : New relation created : ${newRelation}`, HttpStatus.OK)
+      console.log("New realtion : ", newRelation)
+      return newRelation
     }
     else {
       //If exist UPDATE it with the REQUEST parameters
       let updateRelationRequest = new UpdateRelationDto()
       //Update les stauts au bon endroit 
-      updateRelationRequest.relation1 = (relationRequest.userId1 === relationStatus.userId1 ? relationRequest.relation1 : relationRequest.relation2)
-      updateRelationRequest.relation2 = (relationRequest.userId2 === relationStatus.userId2 ? relationRequest.relation2 : relationRequest.relation1)
+
+      updateRelationRequest.relation1 = (relationRequest.userId1 === relationStatus.userId1bis ? relationRequest.relation1 : relationRequest.relation2)
+      updateRelationRequest.relation2 = (relationRequest.userId2 === relationStatus.userId2bis ? relationRequest.relation2 : relationRequest.relation1)
       updateRelationRequest.id = relationStatus.id
+
+      console.log("Update Request : ", relationRequest)
+      console.log("Updating DTO as : ", updateRelationRequest)
 
       await this.relationService.update(updateRelationRequest);
       const upDatedRelation = await this.relationService.findOne(findRelationRequest)
-      throw new HttpException(`Relation:  Update : update sucess : ${upDatedRelation}`, HttpStatus.OK)
+      return upDatedRelation
     }
   }
 
@@ -95,21 +125,15 @@ export class RelationController {
     //try catch ? si remove ou findOne fail
     const relationToRemove = await this.relationService.findOne({ userId1: getRelationRequest.user1.id, userId2: getRelationRequest.user2.id })
     if (!relationToRemove)
-      throw new HttpException("Relation : DeleteByPseudo : Not existing relationship", HttpStatus.NOT_FOUND)
-    await this.relationService.remove(relationToRemove.id);
-    throw new HttpException("Relation : DeleteByPseudo : sucess", HttpStatus.OK)
+      throw new HttpException("Relation : DeleteByPseudo : Not existing relationship", HttpStatus.OK)
+    return await this.relationService.remove(relationToRemove.id);
   }
   //Si on est deja friends ou block
   @Delete('remove/:id')
   @UsePipes(new ValidationPipe({ transform: true }))
   async removeId(@Param('id') id: number) {
     //try catch ? si remove ou findOne fail
-    try {
-      await this.relationService.remove(id);
-      throw new HttpException("Relation : DeleteById : sucessful", HttpStatus.OK)
-    }
-    catch (err) {
-      throw new HttpException(`Relation : DeleteByID : Error Delete :${err}`, HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    const ret = await this.relationService.remove(id);
+    return (ret)
   }
 }

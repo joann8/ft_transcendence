@@ -19,8 +19,14 @@ export class Relation {
     @ManyToOne(() => User, user => user.id)
     userId1: number 
 
-    @ManyToOne(type => User, user => user.id )
+    @ManyToOne((number) => User, user => user.id )
     userId2: number //type User ou type number ? 
+
+    @Column({nullable : true})
+    userId1bis : number
+
+    @Column({nullable: true})
+    userId2bis : number
 
     @Column()
     relation1: relation

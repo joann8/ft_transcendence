@@ -22,6 +22,8 @@ export class ParseUsersClassExist implements PipeTransform {
             id_pseudo2: tmpUser2.id_pseudo,
             userId1: tmpUser1.id,
             userId2: tmpUser2.id,
+            userId1bis : tmpUser1.id,
+            userId2bis: tmpUser2.id,
             relation1: body.relation1,
             relation2: body.relation2,
         }

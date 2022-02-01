@@ -47,6 +47,7 @@ export class UserController {
 			else
 				return res
 	}
+	
 	//A Supprimer ? 
 	@Get('/avatar/:avatarId')
 	async getAvatar(@Param('avatarId') avatarId: string, @Res() res: Response): Promise<any> {
@@ -83,6 +84,8 @@ export class UserController {
 			avatar: `${process.env.BACKEND_URL}/avatars/${file.filename}`,
 		})
 		const fs = require('fs')
+
+		//Suppression de l'ancien avatat
 		fs.unlink(oldAvatarPath, function (err) {
 			if (err)
 				console.log("Error in avatart deletion: ", err)

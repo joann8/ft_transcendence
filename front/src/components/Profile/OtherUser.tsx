@@ -1,37 +1,31 @@
-import { Toolbar, Grid, Paper, Avatar, Container, CssBaseline, Box, Typography, Card, autocompleteClasses, TextField, Button, IconButton, Menu, MenuItem, Modal, Divider, backdropClasses } from "@mui/material";
+import { Toolbar, Grid, Paper, Avatar, Container, CssBaseline, Box, Typography, Card, autocompleteClasses, TextField, Button, IconButton, Menu, MenuItem, Modal, Divider, backdropClasses, CircularProgress } from "@mui/material";
 import React, { Fragment, useCallback, useEffect, useReducer, useState } from "react";
 import Badge from '@mui/material/Badge';
-import EditIcon from '@mui/icons-material/Edit';
+import DoneIcon from '@mui/icons-material/Done';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Navigate, useNavigate, useParams } from "react-router";
 import MatchModal from "./MatchModal";
 import profileStyle from './profileStyle'
 import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import LoadingGif from '../Images/loadingGif.gif'
 import { IRelation, IUser } from "./profileStyle";
-import { updateExportDeclaration } from "typescript";
-import { LockOpenTwoTone, LockTwoTone, Pending, PersonAdd } from "@mui/icons-material";
+import { LockOpenTwoTone, LockTwoTone, Pending, PersonAdd, PersonRemove, QuestionMark } from "@mui/icons-material";
 import { color, style } from "@mui/system";
+import LoadingModal from "./LoadingModal ";
 
 const backEndUrl = "http://127.0.0.1:3001"
 
 export default function OtherUser() {
 
-    const navigate = useNavigate()
+    //Needs to be called on every render
     const params = useParams()
+    const navigate = useNavigate()
 
     const [loaded, setLoaded] = useState(false)
 
     const [loggedInUserData, setLoggedInUserData] = useState(null)
     const [otherUserData, setOtherUserData] = useState(null)
     const [relation, setRelation] = useState(null)
-    /*Relation code 
-     0 : Absence 
-     1 : Demande attente : envoyeur
-     2 : Demande attende : receveur
-     3 : Amis
-     4 : Blocage actif
-     5 : Blocage passif 
-     */
     const [searchInput, setSearchInput] = useState("")
     const [blocked, setBlocked] = useState(false)
     const [idPseudo, setIdPseudo] = useState(params.id_pseudo)
@@ -39,8 +33,11 @@ export default function OtherUser() {
         match: false,
     })
     const [update, setUpdate] = useState(0)
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
 
 
+    //Function de fecthing
     const getOtherUserData = async (id_pseudo: string) => {
         const localOtherUserData = await fetch(`${backEndUrl}/user/${id_pseudo}`, {
             method: "GET",
@@ -63,7 +60,7 @@ export default function OtherUser() {
             })
             .catch((err) => {
                 setOtherUserData(null)
-                alert(`Error while searching for user : [${err}]`)
+                //alert(`Error while searching for user : [${err}]`)
             })
         console.log("Other User Data loaded : ", localOtherUserData)
         return localOtherUserData
@@ -85,13 +82,12 @@ export default function OtherUser() {
                 return res.json();
             })
             .then((resData) => {
-                console.log("LoggedInUser Data loaded READY for real: ", resData)
                 setLoggedInUserData(resData)
                 return resData;
             })
             .catch((err) => {
                 setLoggedInUserData(null)
-                alert(`Fetch : LoggedInUser : Error caught: ${err}`)
+                // alert(`Fetch : LoggedInUser : Error caught: ${err}`)
             })
         console.log("LoggedInUser Data loaded : ", userData)
         return userData
@@ -124,8 +120,6 @@ export default function OtherUser() {
                     resData = ((myUserPseudo === resData.userId1.id_pseudo) ? resData.relation1 : resData.relation2)
                 else
                     resData = 0
-                //resData -  0 - Pas de relation
-                //resData [1 - 5] - relation existe 
                 setRelation(resData)
                 return resData;
             })
@@ -142,36 +136,12 @@ export default function OtherUser() {
         console.log("OtherUser Data Fetching")
 
         const localOtherUserData = await getOtherUserData(idPseudo)
-        console.log("Relation Data Fetching")
-        if (!userData || !localOtherUserData)
-            return alert("UserData or OtherUserData Fetch has gone wrong")
-        const relationData = await getRelation(userData.id_pseudo, localOtherUserData.id_pseudo)
         setLoaded(true)
-    }
+        if (!userData || !localOtherUserData)
+            return;
 
-
-    //Optimiser les GET
-    useEffect(() => {
-        console.log("idPseudo: ", idPseudo)
-        getAllInfo()
-        console.log("Systematic Other Profile renderering")
-    }, [idPseudo, update])
-
-
-    const handleSearchBarSubmit = (event) => {
-        event.preventDefault()
-        console.log("Other User search : ", searchInput)
-        if (searchInput === loggedInUserData.id_pseudo)
-            navigate("/profile")
-        else {
-            navigate(`/profile/${searchInput}`)
-            setIdPseudo(searchInput)
-        }
-        //navigate(`/profile/${searchInput}`)
-    }
-
-    const handleSearchChange = (event) => {
-        setSearchInput(event.target.value)
+        console.log("Relation Data Fetching")
+        const relationData = await getRelation(userData.id_pseudo, localOtherUserData.id_pseudo)
     }
 
     const removeRelation = async (myUserPseudo: string, otherUserPseudo: string) => {
@@ -232,7 +202,29 @@ export default function OtherUser() {
         return ret
     }
 
+    //Optimiser les GET
+    useEffect(() => {
+        console.log("UseEffect : idPseudo: ", idPseudo)
+        getAllInfo()
+        //   setSearchInput("")
+        console.log("Systematic Other Profile renderering")
+    }, [idPseudo, update])
 
+
+    const handleSearchBarSubmit = (event) => {
+        event.preventDefault()
+        console.log("OtherUser barSearch : ", searchInput)
+        if (searchInput === loggedInUserData.id_pseudo)
+            navigate("/profile")
+        else {
+            navigate(`/profile/${searchInput}`)
+            setIdPseudo(searchInput)
+        }
+    }
+
+    const handleSearchChange = (event) => {
+        setSearchInput(event.target.value)
+    }
 
     const handleBlocking = async (status) => {
         console.log("handleblocking : status : ", status)
@@ -245,17 +237,27 @@ export default function OtherUser() {
         setUpdate(update + 1)
     }
 
+    const handleAddFriend = async (status: number) => {
+        //Add request
+        if (status === 0)
+            await updateRelation(loggedInUserData.id_pseudo, otherUserData.id_pseudo, 1, 2)
+        //Accept request
+        else
+            await updateRelation(loggedInUserData.id_pseudo, otherUserData.id_pseudo, 3, 3)
+        setUpdate(update + 1)
+    }
+
     function BlockButton({ status }) {
         //4 bloque
         return (
             <Button
                 id="basic-button"
                 variant="contained"
-                startIcon={ status === 4 ? <LockOpenTwoTone/> : <LockTwoTone/>}
+                startIcon={status === 4 ? <LockOpenTwoTone /> : <LockTwoTone />}
                 color={(status === 4) ? "secondary" : "error"}
                 onClick={() => { handleBlocking(status) }}
-                style={{
-                    marginBottom: "10px",
+                sx={{
+                    marginTop: "10px",
                 }}
             >
                 {(status === 4) ? "Unblock" : "Block"}
@@ -265,41 +267,76 @@ export default function OtherUser() {
 
     function AddFriendButton({ status }) {
         // 0 = NOT FRIENDS
-        // 1 = SENT
+        // 1 = SENT / Waiting
         // 2 = RECEIVED
         // 3 = FRIEND
         // 4 = BLOCK ACTIVE
         // if 2 --> Button devient Button menu pour unfriend
         if (status === 4)
             return (<div />)
-
         if (status === 3) {
             return (
-                <Button variant="contained">
-                    Friend
-                </Button>
+                <Fragment>
+                    <Button
+                        variant="contained"
+                        startIcon={<DoneIcon />}
+                        style={{marginBottom:"10px"}}
+                    >
+                        Friend
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="warning"
+                        startIcon={<PersonRemove />}
+                        onClick={() => handleBlocking(4)}>
+                        Remove
+                    </Button>
+                </Fragment>
             )
         }
         else {
-
+            let addButton: string;
+            if (status === 2)
+                addButton = "Accept"
+            else
+                addButton = (status === 0 ? "Add" : "Waiting")
             return (
-                <Button variant="contained" startIcon={ status === 0 ? <PersonAdd/> : <Pending/>}                >
-                    {status === 0 ? "Add" : "Waiting "}
+                <Button variant="contained"
+                    disabled={status === 1 ? true : false}
+                    style={{
+                        backgroundColor: "rgba(255,255,255, 1)",
+                        color: "rgba(0,0,0,1)"
+                    }}
+                    startIcon={(status === 2) ? <QuestionMark /> : (status === 0 ? <PersonAdd /> : <Pending />)}
+                    onClick={() => { handleAddFriend(status) }}>
+                    {addButton}
                 </Button>
             )
         }
     }
 
+
+    const test = true;
+
+    //Render du Composant
     if (loaded === false) {
-        return (<Fragment>
-            <Toolbar />
-            <Box sx={{
-                height: "70vh",
-                widht: "70vw"
-            }}>
-                <h1> Loading </h1>
-            </Box>
-        </Fragment>
+        return (
+            <Fragment>
+                <Toolbar />
+                <Box style={{
+                    position: "relative",
+                    marginTop: "15%",
+                    display: "flex",
+                    width: "85%",
+                    height: "70%",
+                    justifyContent: "center",
+                    alignContent: "center"
+                }}>
+                    <img src={LoadingGif} alt="Loading the page" style={{
+                        borderRadius: "50%"
+                    }} />
+                </Box>
+            </Fragment>
         )
     }
     //Affichage :  USER DOES NOT EXIST
@@ -329,12 +366,7 @@ export default function OtherUser() {
                             <Box sx={profileStyle.profileBlock}>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
                                 <Box sx={profileStyle.content_1}>
-                                    <Typography sx={{
-                                        paddingTop: "10px",
-                                        paddingBottom: "10px",
-                                        paddingLeft: "5%",
-                                        paddingRight: "5%"
-                                    }}> No player found with name {idPseudo} </Typography>
+                                    <Typography style={profileStyle.textBox}> Sorry, there is no player with pseudo : [{idPseudo}] </Typography>
                                 </Box>
                                 <Divider orientation="vertical" sx={{
                                     height: "50%",
@@ -387,27 +419,9 @@ export default function OtherUser() {
                                 </Box>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
                                 <Box sx={profileStyle.content_1}>
-                                    <Typography sx={{
-                                        paddingTop: "10px",
-                                        paddingBottom: "10px",
-                                        paddingLeft: "5%",
-                                        paddingRight: "5%"
-                                    }}> {otherUserData.id_pseudo}</Typography>
-
-                                    <Typography sx={{
-                                        paddingTop: "10px",
-                                        paddingBottom: "10px",
-                                        paddingLeft: "5%",
-                                        paddingRight: "5%"
-                                    }}> {otherUserData.elo} </Typography>
-
-                                    <Typography sx={{
-                                        paddingTop: "10px",
-                                        paddingBottom: "10px",
-                                        paddingLeft: "5%",
-                                        paddingRight: "5%",
-                                    }}
-                                    >{otherUserData.email}</Typography>
+                                    <Typography style={profileStyle.textBox}> {otherUserData.id_pseudo}</Typography>
+                                    <Typography style={profileStyle.textBox}> {otherUserData.elo} </Typography>
+                                    <Typography style={profileStyle.textBox}>{otherUserData.email}</Typography>
                                 </Box>
                                 <Divider orientation="vertical" sx={{
                                     height: "50%",
@@ -433,114 +447,3 @@ export default function OtherUser() {
     }
 
 }
-
-
-/* Solution numero 1 avec des grilles
-
-                    <Grid container spacing={5} style={container}>
-                        <Grid item xs={12} style={item}>
-                            <Card style={content}>Test</Card>
-                        </Grid>
-                        <Grid item xs={12} style={item}>
-                            <Box style={content}>Test</Box>
-
-                        </Grid>
-                        <Grid item xs={12} style={item}>
-                            <Card style={content}>Test</Card>
-
-                        </Grid>
-                                            </Grid>
-*/
-
-
-/*
-
-                <Grid container columns={13} spacing={3} style={backGround.profile}>
-
-                    <Grid container item direction="column" justifyContent="flex-start" style={{
-                        paddingLeft: "15px",
-                        paddingRight: "15px"
-                    }} >
-                        <Grid item xs={12} >
-                            <TextField fullWidth style={{
-                                backgroundColor: "#FFFFFF",
-                                opacity: 0.7,
-                            }} defaultValue={"Search for players"} color="secondary">
-                            </TextField>
-                        </Grid>
-                    </Grid>
-                    <Grid container item xs={4} direction="column" style={backGround.firstRow}>
-                        <Grid item xs={6}>
-                            <Badge
-                                overlap="circular"
-                                badgeContent={otherUserData.status}
-                                color="secondary"
-                                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                            >
-                                <Avatar src={otherUserData.avatar} style={{
-                                    width: "120px",
-                                    height: "120px",
-                                }} />
-                            </Badge>
-                        </Grid>
-
-                    </Grid>
-                    <Grid container xs={5} direction="column" item style={backGround.firstRow}>
-                        <Grid item>
-                            <Typography variant="subtitle1" style={{
-                                color: "#FFFFFF",
-                                opacity: 1
-                            }}> {otherUserData.id_pseudo}</Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography> Rank: {otherUserData.elo} </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Typography> Email: {otherUserData.email}</Typography>
-                        </Grid>
-
-                    </Grid>
-                    <Grid container item xs={3} direction="column" style={backGround.firstRow}>
-                        <Grid item xs={4}>
-                            <div>
-
-                                <Button
-                                    id="basic-button"
-                                    variant="contained"
-                                    startIcon={<EditIcon />}
-                                    aria-controls={open ? 'basic-menu' : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={open ? 'true' : undefined}
-                                    onClick={handleClick}
-                                >
-                                    Edit
-                                </Button>
-                                <Menu
-                                    id="basic-menu"
-                                    anchorEl={anchorEl}
-                                    open={open}
-                                    onClose={handleClose}
-                                    MenuListProps={{
-                                        'aria-labelledby': 'basic-button',
-                                    }}
-                                >
-
-                                    <MenuItem onClick={() => { setModal({ ...modalState, info: true }) }}>Infos</MenuItem>
-                                    {modalState.info ? <InfoModal modalState={modalState.info} setModal={setModal} setUpdate={setUpdate} update={update} /> : null}
-                                    <MenuItem onClick={() => { setModal({ ...modalState, avatar: true }) }}>Avatar</MenuItem>
-                                    {modalState.avatar ? <AvatarModal setUpdate={setUpdate} update={update} modalState={modalState.avatar} setModal={setModal} /> : null}
-
-                                </Menu>
-                            </div>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Button variant="contained" startIcon={<QrCodeIcon />}> Two factor </Button>
-                        </Grid>
-                    </Grid>
-
-                </Grid>
-                <Box>
-                    <Button variant="contained" onClick={() => { setUpdate(update + 1) }setModal({ ...modalState, match: true })} > Match history </Button>
-                    {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} /> : null}
-                </Box>
-                */

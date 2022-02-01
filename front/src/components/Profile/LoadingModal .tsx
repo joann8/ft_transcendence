@@ -21,21 +21,21 @@ const style = {
 };
 
 export default function LoadingModal(props: any) {
-    /*  const [modal, setModal] = React.useState(props.modalState);
-      useEffect(() => {
+    const [modal, setModal] = React.useState(true);
+    /*  useEffect(() => {
           props.setModal(modal);
       }, [props.modalState])
       */
+      
 
 
-    const handleClose = () => props.setLoaded(false);
+    const handleClose = () => setModal(false);
 
-    const handleLoading = () => props.setLoaded(true);
 
     return (
         <div>
             <Modal
-                open={!props.loaded}
+                open={modal}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -45,9 +45,7 @@ export default function LoadingModal(props: any) {
                         <Typography id="modal-modal-title" variant="h6" component="h2">
                             This is the Loading MODAL
                         </Typography>
-                        <Button variant="contained" onClick={handleLoading}> Loading FINISHED </Button>
-
-                        
+                        <Button variant="contained" onClick={handleClose}> Loading FINISHED </Button>                        
                         <img src={LoadingGif} alt="Loading the page"/>
                         <br/>
 
