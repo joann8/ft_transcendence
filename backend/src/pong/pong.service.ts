@@ -5,21 +5,72 @@ import { Repository } from 'typeorm';
 import { CreateMatchDto } from './dto/createMatch.dto';
 import { UpdateMatchDto } from './dto/updateMatch.dto';
 import { Pong } from './entities/pong.entity';
+import { Challenge } from './entities/challenge.entity';
 import { Const } from './static/pong.constants';
+import { CreateChallengeDto } from './dto/createChallenge.dto';
+import { UpdateChallengeDto } from './dto/updateChallenge.dto';
 
 @Injectable()
 export class PongService {
 	constructor(
 		@InjectRepository(Pong)
 		private pongRepository: Repository<Pong>,
+		@InjectRepository(Challenge)
+		private challengeRepository: Repository<Challenge>,
 	) {}
 
-	async createEntity(match: CreateMatchDto) : Promise<number> {
+	// CHALLENGES
+	async createChallenge(challenge: CreateChallengeDto) : Promise<number> {
+		const newMatch = await this.challengeRepository.save(this.challengeRepository.create(challenge));
+		return newMatch.id_challenge;
+	}
+
+	async updateChallenge(id : number, challenge: UpdateChallengeDto) {
+		return await this.challengeRepository.update(id, challenge);
+	}
+
+	async deleteChallenge(id : number) {
+		return await this.challengeRepository.delete(id);
+	}
+
+	async getChallengesOnWait(user: User): Promise<Challenge[]> {
+		return await this.challengeRepository.find({ 
+			where :[{ player1 : user, status : "pending"}],
+			relations : ["player1", "player2"],
+			order: { date : "ASC" },
+		});
+	}
+
+	async getChallengesToAnswer(user: User): Promise<Challenge[]> {
+		return await this.challengeRepository.find({ 
+			where :[{ player2 : user, status : "pending"}],
+			relations : ["player1", "player2"],
+			order: { date : "ASC" },
+		});
+	}
+
+	async getChallengesPending(user: User): Promise<Challenge[]> {
+		return await this.challengeRepository.find({ 
+			where :[{ player1 : user}, { player2: user}],
+			relations : ["player1", "player2"],
+			order: { date : "ASC" },
+		});
+	}
+
+	async getChallenge(challenger: User, challengee : User): Promise<Challenge> {
+		return await this.challengeRepository.findOne({ 
+			where :[{ player1 : challenger, player2: challengee}, { player1: challengee, player2: challenger}],
+			relations : ["player1", "player2"],
+		});
+	}
+
+	// MATCHES 
+	async createMatch(match: CreateMatchDto) : Promise<number> {
 		const newMatch = await this.pongRepository.save(this.pongRepository.create(match));
 		return newMatch.id_match;
 	}
 
-	async updateEntity(id : number, match: UpdateMatchDto) {
+	async updateMatch(id : number, match: UpdateMatchDto) {
 		return await this.pongRepository.update(id, match);
 	}
 

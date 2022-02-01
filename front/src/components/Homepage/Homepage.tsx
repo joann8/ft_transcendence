@@ -1,7 +1,7 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import Image from "../Images/black.jpg";
+import Image from "../Images/doll.jpg";
 import { Fragment, useState } from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router";

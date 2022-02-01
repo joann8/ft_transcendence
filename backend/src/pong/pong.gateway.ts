@@ -72,30 +72,43 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         //this.logger.log(`queue length :  ${this.queue.size}`);
         if (this.queue.size > 1) {
             //this.logger.log(`start a match!`);
-            this.matchInit()
+            this.matchInit(this.queue)
         }
     }
 
     // Fonctions pour jouer DUEL
 
     /* Besoin validation dans chat pour arriver a la page avec direct les deux clients et socket */
-    /*
-    @SubscribeMessage('defy')
-    async defy(client: Socket, userID: User, friend : User) : Promise <void> {
-        //check game fait d'abord --> ni dans un match, ni dans la queue
-        if (this.challenges.has(userID)) {
-            client.emit('already_defying');
-            return;
+    //check_game
+   
+    @SubscribeMessage('create_challenge')
+    async createChallenge(client: Socket, challenger: User, challengee : User) : Promise <void> {
+        let challenge = {
+            challenger : challenger,
+            challenger_socket : client,
+            challengee : challengee,
+            status: "pending",
         }
-        this.logger.log(`userID ${userID.id_pseudo} defy ${friend.id_pseudo}`);
-        this.challenges.set(userID, friend);
-        else {
-            console.log("emit wait DEFY from server");
-            client.emit('wait');
+        await this.pongService.createChallenge(challenge);
+    }
+
+    @SubscribeMessage('answer_challenge')
+    async answerChallenge(client: Socket, challengee: User, challenger : User, answer : string) : Promise <void> {
+        const challenge = await this.pongService.getChallenge(challenger, challengee);
+        if (challenge) {
+            if (answer === "accepted")
+            {
+                challenge.challenger_socket.emit("challenge_accepted", challenge.id_challenge);
+                let binome : Map<Socket, User> = new Map<Socket, User>(); // client dans la queue
+                binome.set(challenge.challenger_socket, challenge.challenger);
+                binome.set(client, challenge.challengee);
+                this.matchInit(binome);                
+            }
+            else
+                challenge.challenger_socket.emit("challenge_refused", challenge.id_challenge);
+            await this.pongService.deleteChallenge(challenge.id_challenge);
         }
     }
-    */ 
-
     
     // MOUVEMENTS RAQUETTES
 
@@ -180,15 +193,15 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     // Fonctions du Back pour calculer les nouvelles positions, le status du jeu, etc.
  
-    private matchInit() {
-        let game = new Game(this.queue, this.server, this.removeGame.bind(this), this.pongService, this.userService);
+    private matchInit(source : Map<Socket, User>) {
+        let game = new Game(source, this.server, this.removeGame.bind(this), this.pongService, this.userService);
         // A verifier
         this.queue.delete(game.getPlayer1().getSocket());
         this.queue.delete(game.getPlayer2().getSocket());
         this.matches.unshift(game); // enregistrement du match
     }
-    
-     private removeGame(game : Game) : void {
+
+    private removeGame(game : Game) : void {
         let match = this.matches.find(item => item.getRoom() === game.getRoom());
          if (match) {
             //this.clients.delete(match.getPlayer1().getSocket());      

@@ -5,14 +5,33 @@ import {
 	Param,
 } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
+import { Challenge } from './entities/challenge.entity';
 import { Pong } from './entities/pong.entity';
 import { ParsePseudoPipe } from './pipe/parse-pseudo-pipe';
 import { PongService } from './pong.service';
 
 @Controller('game')
 export class PongController {
-	constructor(private readonly pongService: PongService) {}
+	constructor(
+		private readonly pongService: PongService
+	) {}
 	
+	//get all challenges
+	@Get('challenge/pending/:id') //Pending
+	async getChallengesPending(@Param('id', ParsePseudoPipe) user: User) : Promise<Challenge[]> {
+		return this.pongService.getChallengesPending(user);
+	}
+
+	@Get('challenge/onwait/:id') //Pending
+	async getChallengesOnWait(@Param('id', ParsePseudoPipe) user: User) : Promise<Challenge[]> {
+		return this.pongService.getChallengesOnWait(user);
+	}
+
+	@Get('challenge/toanswer/:id') //Pending
+	async getChallengesToAnswer(@Param('id', ParsePseudoPipe) user: User) : Promise<Challenge[]> {
+		return this.pongService.getChallengesToAnswer(user);
+	}
+
 	//get all matches
 	@Get('over')
 	async getMatchesOver() : Promise<Pong[]> {

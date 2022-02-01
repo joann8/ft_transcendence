@@ -1,4 +1,3 @@
-import { Socket } from 'socket.io';
 import { User } from 'src/user/entities/user.entity';
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -11,7 +10,7 @@ export class Pong {
 	player1: User;
 	
 	@Column({default : "0", type : 'real'})
-	scorePlayer1 : string 
+	scorePlayer1 : string;
 
 	@ManyToOne((type) => User)
 	player2: User;
@@ -20,7 +19,7 @@ export class Pong {
 	scorePlayer2 : string;
 
 	@CreateDateColumn()
-	date : Date
+	date : Date;
 
 	@Column()
 	room: string;

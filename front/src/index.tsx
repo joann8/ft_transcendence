@@ -20,11 +20,7 @@ function Root() {
         <Route path="/login" element={<Login twofa={false} />} />
         <Route path="/" element={<SideBars />}>
           <Route index element={<Homepage />} />
-          <Route path="game">
-            <Route index element={<Game />} />
-           {/*} <Route path="pong" element={<GamePage />} />
-            <Route path="watch" element={<GamePage />} />*/}
-          </Route>
+          <Route path="game" element={<Game />} />
           <Route path="chat" element={<Chat />} />
           <Route path="profile" element={<Profile />} />
           <Route path="leaderboard" element={<Leaderboard />} />

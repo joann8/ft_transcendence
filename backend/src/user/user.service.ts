@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -28,6 +28,10 @@ export class UserService {
 		return await this.usersRepository.find();
 	}
 
+	async findMe(@Req() req): Promise<User> {
+		return await this.usersRepository.findOne(req.user);
+	}
+
 	async findOne(id: string): Promise<User> {
 		return await this.usersRepository.findOne(id);
 	}
@@ -52,7 +56,6 @@ export class UserService {
 			order: { elo : "DESC" }, 
 			take : 2 //a modifier, combien de données veut-on dans le tableau lead?
 		});
-		console.log(leaders)
 		return leaders;
 	}
 }

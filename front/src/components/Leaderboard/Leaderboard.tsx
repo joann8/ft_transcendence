@@ -4,13 +4,13 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { Fragment } from 'react';
 import LeaderTable from './LeaderTable';
-import gameStyles from '../Game/GameStyles';
+import leaderStyles from './LeaderStyles';
 
 export default function Leaderboard() {   
    
   return (       
         <Fragment>
-            <Paper style={gameStyles.backgroundImage}>
+            <Paper style={leaderStyles.backgroundImage}>
              <Toolbar />
              <Grid container spacing={2}  alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
                 <Grid item xs={2}/>

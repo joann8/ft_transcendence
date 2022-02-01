@@ -72,7 +72,7 @@ export class Game {
             player2 : this._player2.getUser(),
             room: this._room,
         }
-        this._matchID = await this._pongService.createEntity(match);
+        this._matchID = await this._pongService.createMatch(match);
     }
 
     public hasWinner() : boolean {
@@ -170,7 +170,7 @@ export class Game {
             status : `over`,
         }
         await this._userService.winElo(winner.getUser());
-        await this._pongService.updateEntity(this._matchID, update);
+        await this._pongService.updateMatch(this._matchID, update);
     }
 
     public addSpectator(client : Socket) : void {
