@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsOptional } from 'class-validator';
+import { status } from '../entities/user.entity';
 
 export class UpdateCurrentUserDto {
 	@IsOptional()
@@ -7,4 +8,7 @@ export class UpdateCurrentUserDto {
 
 	@IsOptional()
 	avatar: string;
+
+	@IsOptional()
+	status: status;
 }

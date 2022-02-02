@@ -13,6 +13,7 @@ import MainListItems from "./ListItems";
 import { Avatar, Box, CssBaseline } from "@mui/material";
 import { Outlet } from "react-router";
 import useFromApi from "../../ApiCalls/useFromApi";
+import { api_req_init, api_url } from "../../ApiCalls/var";
 
 /* Notification clochette
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -78,6 +79,23 @@ export default function SideBar(props: any) {
   };
 
   const [open, setOpen] = React.useState(true);
+  useFromApi("/refresh");
+  const { error, isPending, data: user } = useFromApi("/user");
+
+  React.useEffect(() => {
+    if (user) {
+      window.addEventListener("beforeunload", (e) => {
+        e.preventDefault();
+        fetch(api_url + "/user", {
+          method: "PUT",
+          credentials: "include",
+          referrerPolicy: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "OFFLINE" }),
+        });
+      });
+    }
+  }, [user]);
 
   const toggleDrawer = () => {
     setOpen(!open);
