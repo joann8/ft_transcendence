@@ -4,14 +4,8 @@ import { User, user_role } from "src/user/entities/user.entity";
 
 export class GetRelationDto {
     @IsString()
-    id_pseudo1: string;
-
-    @IsString()
-    id_pseudo2: string;
+    id_pseudo: string;
 
     @IsOptional()
-    user1: User
-
-    @IsOptional()
-    user2: User
+    otherUser: User
 }

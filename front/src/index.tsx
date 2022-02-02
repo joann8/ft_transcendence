@@ -12,6 +12,7 @@ import GameMenu from "./components/Game/GameMenu";
 import GamePage from "./components/Game/GamePage";
 import Homepage from "./components/Homepage/Homepage";
 import OtherUser from "./components/Profile/OtherUser";
+import Friend from "./components/Friend/Friend";
 
 function Root() {
   return (
@@ -21,6 +22,7 @@ function Root() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<SideBars />}>
           <Route index element={<Homepage />} />
+          <Route path="friend" element={<Friend />} />
           <Route path="game">
             <Route index element={<GameMenu />} />
             <Route path="game" element={<GamePage />} />
@@ -28,7 +30,7 @@ function Root() {
           <Route path="chat" element={<Chat />} />
           <Route path="profile">
             <Route index element={<Profile />} />
-            <Route path=":id_pseudo" element={<OtherUser/>} />
+            <Route path=":id_pseudo" element={<OtherUser />} />
           </Route>
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="*" element={<NoPage />} />

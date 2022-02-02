@@ -2,16 +2,12 @@ import { Toolbar, Grid, Paper, Avatar, Container, CssBaseline, Box, Typography, 
 import React, { Fragment, useCallback, useEffect, useReducer, useState } from "react";
 import Badge from '@mui/material/Badge';
 import DoneIcon from '@mui/icons-material/Done';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Navigate, useNavigate, useParams } from "react-router";
 import MatchModal from "./MatchModal";
 import profileStyle from './profileStyle'
-import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import LoadingGif from '../Images/loadingGif.gif'
-import { IRelation, IUser } from "./profileStyle";
 import { LockOpenTwoTone, LockTwoTone, Pending, PersonAdd, PersonRemove, QuestionMark } from "@mui/icons-material";
-import { color, style } from "@mui/system";
-import LoadingModal from "./LoadingModal ";
+
 
 const backEndUrl = "http://127.0.0.1:3001"
 
@@ -37,9 +33,20 @@ export default function OtherUser() {
     const open = Boolean(anchorEl);
 
 
+    //Optimiser les GET
+    useEffect(() => {
+        console.log("UseEffect : idPseudo: ", idPseudo)
+        getAllInfo()
+        //   setSearchInput("")
+        console.log("Systematic Other Profile renderering")
+    }, [idPseudo, update])
+
+
+
+
     //Function de fecthing
     const getOtherUserData = async (id_pseudo: string) => {
-        const localOtherUserData = await fetch(`${backEndUrl}/user/${id_pseudo}`, {
+        const tmpOtherUserData = await fetch(`${backEndUrl}/user/${id_pseudo}`, {
             method: "GET",
             credentials: "include",
             referrerPolicy: "same-origin"
@@ -62,8 +69,8 @@ export default function OtherUser() {
                 setOtherUserData(null)
                 //alert(`Error while searching for user : [${err}]`)
             })
-        console.log("Other User Data loaded : ", localOtherUserData)
-        return localOtherUserData
+        console.log("Other User Data loaded : ", tmpOtherUserData)
+        return tmpOtherUserData
     }
 
     const getUserData = async () => {
@@ -93,8 +100,8 @@ export default function OtherUser() {
         return userData
     }
 
-    const getRelation = async (myUserPseudo: string, otherUserPseudo: string) => {
-        const relationData = await fetch(`${backEndUrl}/relation/${myUserPseudo}/${otherUserPseudo}`,
+    const getRelation = async (myPseudo : string ,otherUserPseudo: string) => {
+        const relationData = await fetch(`${backEndUrl}/relation/one/${otherUserPseudo}`,
             {
                 credentials: "include",
                 referrerPolicy: "same-origin",
@@ -117,7 +124,7 @@ export default function OtherUser() {
                 //ResData = Relation
                 //Cherche la bonne relation dans la bonne case
                 if (resData)
-                    resData = ((myUserPseudo === resData.userId1.id_pseudo) ? resData.relation1 : resData.relation2)
+                    resData = ((myPseudo === resData.userId1.id_pseudo) ? resData.relation1 : resData.relation2)
                 else
                     resData = 0
                 setRelation(resData)
@@ -132,19 +139,19 @@ export default function OtherUser() {
 
     const getAllInfo = async () => {
         console.log("User Data Fetching")
-        const userData = await getUserData()
+        const tmpUserData = await getUserData()
         console.log("OtherUser Data Fetching")
 
-        const localOtherUserData = await getOtherUserData(idPseudo)
+        const tmpOtherUserData = await getOtherUserData(idPseudo)
         setLoaded(true)
-        if (!userData || !localOtherUserData)
+        if (!tmpUserData || !tmpOtherUserData)
             return;
 
         console.log("Relation Data Fetching")
-        const relationData = await getRelation(userData.id_pseudo, localOtherUserData.id_pseudo)
+        const relationData = await getRelation(tmpUserData.id_pseudo, tmpOtherUserData.id_pseudo)
     }
 
-    const removeRelation = async (myUserPseudo: string, otherUserPseudo: string) => {
+    const removeRelation = async (otherUserPseudo: string) => {
         const ret = await fetch(`${backEndUrl}/relation/remove`, {
             credentials: "include",
             referrerPolicy: "same-origin",
@@ -153,8 +160,7 @@ export default function OtherUser() {
                 'Content-Type': "application/json"
             },
             body: JSON.stringify({
-                id_pseudo1: myUserPseudo,
-                id_pseudo2: otherUserPseudo
+                id_pseudo: otherUserPseudo
             })
         })
             .then(res => {
@@ -172,7 +178,7 @@ export default function OtherUser() {
         return ret
     }
 
-    const updateRelation = async (myUserPseudo: string, otherUserPseudo: string, newRelation1: number, newRelation2: number) => {
+    const updateRelation = async (otherUserPseudo: string, newRelation1: number, newRelation2: number) => {
         const ret = await fetch(`${backEndUrl}/relation/update`, {
             credentials: "include",
             referrerPolicy: "same-origin",
@@ -181,7 +187,6 @@ export default function OtherUser() {
                 'Content-Type': "application/json"
             },
             body: JSON.stringify({
-                id_pseudo1: myUserPseudo,
                 id_pseudo2: otherUserPseudo,
                 relation1: newRelation1,
                 relation2: newRelation2
@@ -201,14 +206,6 @@ export default function OtherUser() {
             })
         return ret
     }
-
-    //Optimiser les GET
-    useEffect(() => {
-        console.log("UseEffect : idPseudo: ", idPseudo)
-        getAllInfo()
-        //   setSearchInput("")
-        console.log("Systematic Other Profile renderering")
-    }, [idPseudo, update])
 
 
     const handleSearchBarSubmit = (event) => {
@@ -230,9 +227,9 @@ export default function OtherUser() {
         console.log("handleblocking : status : ", status)
         //if relation === 4 === click - demande de DEblocage === restart relation
         if (status === 4)
-            await removeRelation(loggedInUserData.id_pseudo, otherUserData.id_pseudo)
+            await removeRelation(otherUserData.id_pseudo)
         else
-            await updateRelation(loggedInUserData.id_pseudo, otherUserData.id_pseudo, 4, 5)
+            await updateRelation(otherUserData.id_pseudo, 4, 5)
         //if relation ==!4 - click ==== demande de blocage === update relation
         setUpdate(update + 1)
     }
@@ -240,10 +237,10 @@ export default function OtherUser() {
     const handleAddFriend = async (status: number) => {
         //Add request
         if (status === 0)
-            await updateRelation(loggedInUserData.id_pseudo, otherUserData.id_pseudo, 1, 2)
+            await updateRelation(otherUserData.id_pseudo, 1, 2)
         //Accept request
         else
-            await updateRelation(loggedInUserData.id_pseudo, otherUserData.id_pseudo, 3, 3)
+            await updateRelation(otherUserData.id_pseudo, 3, 3)
         setUpdate(update + 1)
     }
 
@@ -254,7 +251,7 @@ export default function OtherUser() {
                 id="basic-button"
                 variant="contained"
                 startIcon={status === 4 ? <LockOpenTwoTone /> : <LockTwoTone />}
-                color={(status === 4) ? "secondary" : "error"}
+                color="error"
                 onClick={() => { handleBlocking(status) }}
                 sx={{
                     marginTop: "10px",
@@ -280,7 +277,7 @@ export default function OtherUser() {
                     <Button
                         variant="contained"
                         startIcon={<DoneIcon />}
-                        style={{marginBottom:"10px"}}
+                        style={{ marginBottom: "10px" }}
                     >
                         Friend
                     </Button>
@@ -314,9 +311,6 @@ export default function OtherUser() {
             )
         }
     }
-
-
-    const test = true;
 
     //Render du Composant
     if (loaded === false) {
