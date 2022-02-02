@@ -3,6 +3,7 @@ import {
 	Delete,
 	Get,
 	Param,
+	Req,
 } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { Challenge } from './entities/challenge.entity';
@@ -17,19 +18,20 @@ export class PongController {
 	) {}
 	
 	//get all challenges
+
 	@Get('challenge/pending/:id') //Pending
-	async getChallengesPending(@Param('id', ParsePseudoPipe) user: User) : Promise<Challenge[]> {
+	async getChallengesPendingID(@Param('id', ParsePseudoPipe) user: User) : Promise<Challenge[]> {
 		return this.pongService.getChallengesPending(user);
 	}
 
-	@Get('challenge/onwait/:id') //Pending
-	async getChallengesOnWait(@Param('id', ParsePseudoPipe) user: User) : Promise<Challenge[]> {
-		return this.pongService.getChallengesOnWait(user);
+	@Get('challenge/onwait/') //Pending
+	async getChallengesOnWait(@Req() req) : Promise<Challenge[]> {
+		return this.pongService.getChallengesOnWait(req.user);
 	}
 
-	@Get('challenge/toanswer/:id') //Pending
-	async getChallengesToAnswer(@Param('id', ParsePseudoPipe) user: User) : Promise<Challenge[]> {
-		return this.pongService.getChallengesToAnswer(user);
+	@Get('challenge/toanswer/') //Pending
+	async getChallengesToAnswer(@Req() req) : Promise<Challenge[]> {
+		return this.pongService.getChallengesToAnswer(req.user);
 	}
 
 	//get all matches

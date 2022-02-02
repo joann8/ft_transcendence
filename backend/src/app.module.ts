@@ -20,6 +20,7 @@ import { join } from 'path/posix';
 import { RelationModule } from './relation/relation.module';
 import { Relation } from './relation/entities/relation.entity';
 import { RelationService } from './relation/relation.service';
+import { Challenge } from './pong/entities/challenge.entity';
 
 @Module({
 	imports: [
@@ -33,7 +34,7 @@ import { RelationService } from './relation/relation.service';
 			username: process.env.DATABASE_USERNAME,
 			password: process.env.DATABASE_PASSWORD,
 			database: process.env.DATABASE_NAME,
-			entities: [User, Chat, Pong, Relation],
+			entities: [User, Chat, Pong, Challenge, Relation],
 			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
 			keepConnectionAlive: true,

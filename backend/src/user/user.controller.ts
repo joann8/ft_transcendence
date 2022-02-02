@@ -53,8 +53,6 @@ export class UserController {
 			else
 				return res
 	}
-<<<<<<< HEAD
-=======
 	
 	//A Supprimer ? 
 	@Get('/avatar/:avatarId')
@@ -102,7 +100,6 @@ export class UserController {
 		})
 		return file;
 	}
->>>>>>> origin/adrien
 
 	// UPDATE MY PROFILE (Look at UpdateCurrentUserDto for available options)
 	@Put()

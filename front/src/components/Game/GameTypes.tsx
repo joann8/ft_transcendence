@@ -1,5 +1,6 @@
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { Socket } from "socket.io-client";
+import { IUser } from "../Profile/profileStyle"
 
 type PropsMenuButton = {
     options : string[];
@@ -7,14 +8,21 @@ type PropsMenuButton = {
 }
 type PropsInit = {
     socket: Socket<DefaultEventsMap, DefaultEventsMap>,
-    user : {},
+    user : IUser,
+}
+
+type PropsChallenge = {
+    socket: Socket<DefaultEventsMap, DefaultEventsMap>,
+    user : IUser,
+    challengee: IUser,
 }
 
 type PropsGame = {
     width: number,
     height: number, 
     socket: Socket<DefaultEventsMap, DefaultEventsMap>,
-    user : {},
+    user : IUser,
+    mode: string,
 }
 
 type GameSate = {
@@ -39,4 +47,4 @@ type GameSate = {
     state: number,
 }
 
-export type {PropsMenuButton, PropsInit, PropsGame, GameSate};
+export type {PropsMenuButton, PropsInit, PropsChallenge, PropsGame, GameSate};

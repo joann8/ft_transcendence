@@ -11,10 +11,10 @@ export default function GamePong(props: PropsGame) {
     
     const socket = props.socket;
     const ref = useRef<HTMLCanvasElement>(null!);
-
     
     useEffect(() => {
-        socket.emit('join_queue', props.user);
+        if (props.mode === "random")
+            socket.emit('join_queue', props.user);
     }, []);
     
     const [game, setGame] = useState(gameStateInit);
@@ -28,12 +28,13 @@ export default function GamePong(props: PropsGame) {
     useEffect (() => {
         window.addEventListener('keydown', (e) => {
             if (e.code ==='ArrowUp') {
-                socket.emit('up_paddle', 'down');
+                socket.emit('up_paddle');
             } else if (e.code ==='ArrowDown') {
-                socket.emit('down_paddle', 'down');
+                socket.emit('down_paddle');
             }
-        }
-    );
+        })
+    }, []);
+    /*
         window.addEventListener('keyup', (e) => {
             if (e.code ==='ArrowUp') {
                 socket.emit ('up_paddle', 'up');
@@ -41,7 +42,7 @@ export default function GamePong(props: PropsGame) {
                 socket.emit('down_paddle', 'up');
             }
         });
-    }, []);
+    }, []);*/
           
     //Additionnal features
     const [ballCheck, setBallCheck] = useState(false); // initial state (not activated)

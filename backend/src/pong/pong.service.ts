@@ -35,32 +35,39 @@ export class PongService {
 
 	async getChallengesOnWait(user: User): Promise<Challenge[]> {
 		return await this.challengeRepository.find({ 
-			where :[{ player1 : user, status : "pending"}],
-			relations : ["player1", "player2"],
+			where :[{ challenger : user, status : "pending"}],
+			relations : ["challenger", "challengee"],
 			order: { date : "ASC" },
 		});
 	}
 
 	async getChallengesToAnswer(user: User): Promise<Challenge[]> {
 		return await this.challengeRepository.find({ 
-			where :[{ player2 : user, status : "pending"}],
-			relations : ["player1", "player2"],
+			where :[{ challengee : user, status : "pending"}],
+			relations : ["challenger", "challengee"],
 			order: { date : "ASC" },
 		});
 	}
 
 	async getChallengesPending(user: User): Promise<Challenge[]> {
 		return await this.challengeRepository.find({ 
-			where :[{ player1 : user}, { player2: user}],
-			relations : ["player1", "player2"],
+			where :[{ challenger : user}, { challengee: user}],
+			relations : ["challenger", "challengee"],
 			order: { date : "ASC" },
 		});
 	}
-
+	/*
 	async getChallenge(challenger: User, challengee : User): Promise<Challenge> {
 		return await this.challengeRepository.findOne({ 
 			where :[{ player1 : challenger, player2: challengee}, { player1: challengee, player2: challenger}],
 			relations : ["player1", "player2"],
+		});
+	}
+	*/
+	async getChallenge(id_challenge : number): Promise<Challenge> {
+		return await this.challengeRepository.findOne({ 
+			where :[ {id_challenge : id_challenge}],
+			relations : ["challenger", "challengee"],
 		});
 	}
 

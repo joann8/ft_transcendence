@@ -15,6 +15,7 @@ export class AppController {
 		return this.appService.getHello();
 	}
 
+	/*
 	@Sse('sse')
 	//sse(): Observable<MessageEvent> {
 	sse(): Observable<Promise<User>> {
@@ -29,6 +30,7 @@ export class AppController {
 		return interval(1000).pipe(
 			//map((_) => (this.userService.findMe(Req) as Promise<User>)),
 			map((_) => ({data: {hello: 'world'}} as MessageEvent)),
-		);*/
+		);
 	}
+	*/
 }

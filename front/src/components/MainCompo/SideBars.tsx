@@ -71,13 +71,13 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function SideBar(props: any) {
-
+/*
   const eventSource = new EventSource('http://127.0.0.1:3001/sse');
   eventSource.onmessage = ({data}) => {
     console.log('New message', JSON.parse(data));
     console.log('New message', data);
   };
-
+*/
   const [open, setOpen] = React.useState(true);
   useFromApi("/refresh");
   const { error, isPending, data: user } = useFromApi("/user");

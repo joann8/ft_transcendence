@@ -12,6 +12,7 @@ import { IRelation, IUser } from "./profileStyle";
 import { LockOpenTwoTone, LockTwoTone, Pending, PersonAdd, PersonRemove, QuestionMark } from "@mui/icons-material";
 import { color, style } from "@mui/system";
 import LoadingModal from "./LoadingModal ";
+import { io } from "socket.io-client";
 
 const backEndUrl = "http://127.0.0.1:3001"
 
@@ -315,8 +316,21 @@ export default function OtherUser() {
         }
     }
 
-
     const test = true;
+
+    // AJOUT JOANN TEST DEFY
+   
+     const onClickDefy = (challenger : IUser, challengee : IUser) => {
+            console.log(`${challenger.id_pseudo} is defying ${challengee.id_pseudo}`);
+            console.log(`challenger status : ${challenger.status}`);
+            if (challenger.status === "ONLINE")
+                navigate(`/game/${challengee.id_pseudo}`);
+            else
+                alert("Your are already in a game");
+    }
+    // FIN AJOUT JOANN
+  
+
 
     //Render du Composant
     if (loaded === false) {
@@ -416,6 +430,9 @@ export default function OtherUser() {
                                             overflow: "hidden"
                                         }} />
                                     </Badge>
+                                    {/* START ____ Ajout Joann pour tester defi */}
+                                    <Button variant="contained" onClick={() => onClickDefy(loggedInUserData, otherUserData)}> DEFY </Button>
+                                    {/* END ___Ajout Joann pour tester defi */}
                                 </Box>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
                                 <Box sx={profileStyle.content_1}>

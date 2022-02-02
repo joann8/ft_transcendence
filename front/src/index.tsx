@@ -21,7 +21,10 @@ function Root() {
         <Route path="/login" element={<Login twofa={false} />} />
         <Route path="/" element={<SideBars />}>
           <Route index element={<Homepage />} />
-          <Route path="game" element={<Game />} />
+          <Route path="game" >
+            <Route index element={<Game />} />
+            <Route path=":id_pseudo" element={<Game />} />
+          </Route>
           <Route path="chat" element={<Chat />} />
           <Route path="profile">
             <Route index element={<Profile />} />

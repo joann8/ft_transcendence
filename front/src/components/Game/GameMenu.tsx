@@ -7,9 +7,10 @@ import { Fragment } from 'react';
 import { Box, Button, Dialog, DialogActions, DialogTitle, Modal } from '@mui/material';
 import RuleSet from './RuleSet';
 import GamePong from './GamePong';
-import GameList from './GameList';
+import GameList from './GameListWatch';
 import gameStyles from './GameStyles';
 import { PropsInit } from './GameTypes';
+import GameListChallenge from './GameListChallenge';
 
 export default function GameMenu(props : PropsInit) {
     
@@ -20,8 +21,20 @@ export default function GameMenu(props : PropsInit) {
     const handleOpenGame = async () => {
       socket.emit("check_game", userID);
     }
+    
+    const updateStatus = async (newStatus : string) => {
+      await fetch(`http://127.0.0.1:3001/user/pending`, {
+        method: "PUT",
+        credentials : "include",
+        referrerPolicy: "same-origin",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({status: `${newStatus}`}),
+      })
+    };
+
     useEffect(() => {
         socket.on("allowed", (args : any) => {
+          updateStatus("INGAME");
           setOpenGame(true);
         });
         socket.on("not_allowed_playing", (args : any) => {
@@ -44,20 +57,29 @@ export default function GameMenu(props : PropsInit) {
     
     const handleCloseAlertLeave = () => {
       socket.emit('my_disconnect'); // a revoir dans le back
+      updateStatus("ONLINE");
       setOpenGame(false);
       setOpenAlert(false);
-    };
-  
+    }
+
+    const [openChallenge, setOpenChallenge] = useState(false);
+    const handleCloseChallenges = () => {
+      setOpenChallenge(false);
+    }
+    const handleOpenChallenges = () => {
+      setOpenChallenge(true);
+    }
+    
   return (       
         <Fragment>
           <Paper style={gameStyles.backgroundImage}>
             <Toolbar />
               <Grid container spacing={2}  alignItems="center" justifyContent="center" style={{ height: "100vh"}}>
-                <Grid item xs={12} style={{textAlign: "center"}}>
+                <Grid item xs={6} style={{textAlign: "center"}}>
                   <Button variant="contained" onClick={handleOpenGame} style={{fontSize: 35}}>Play Random</Button>
                   <Modal open={openGame} onBackdropClick={handleCloseGame} >
                     <Box sx={gameStyles.boxModal}>
-                      <GamePong width={800} height={600} socket={socket} user={userID}/>
+                      <GamePong width={800} height={600} socket={socket} user={userID} mode={"random"}/>
                       <Dialog open={openAlert} onClose={handleCloseAlertStay} >
                         <DialogTitle> {"Leave current Pong Game?"} </DialogTitle>
                         <DialogActions>
@@ -68,9 +90,17 @@ export default function GameMenu(props : PropsInit) {
                     </Box>
                   </Modal>
                 </Grid>
+                <Grid item xs={6} style={{textAlign: "center"}}>
+                  <Button variant="contained" onClick={handleOpenChallenges} style={{fontSize: 35}}> Challenges </Button>
+                  <Modal open={openChallenge} onBackdropClick={handleCloseChallenges} >
+                    <Box sx={gameStyles.boxModal}>
+                      <GameListChallenge width={800} height={600} socket={socket} user={userID} mode={"challenge"}/>
+                    </Box>
+                  </Modal>
+                </Grid>
                 <Grid item xs={2}/>
                 <Grid item xs={8}>
-                  <GameList width={800} height={600} socket={socket} user={userID}/>
+                  <GameList width={800} height={600} socket={socket} user={userID} mode={"watch"}/>
                 </Grid>
                 <Grid item xs={2}/>
                 <Grid item xs={12}>

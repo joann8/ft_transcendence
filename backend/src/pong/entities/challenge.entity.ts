@@ -10,9 +10,6 @@ export class Challenge {
 	@ManyToOne((type) => User)
 	challenger: User;
 
-	@Column()
-	challenger_socket: Socket;
-
 	@ManyToOne((type) => User)
 	challengee: User;
 

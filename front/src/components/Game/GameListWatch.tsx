@@ -25,7 +25,7 @@ export default function GameList(props : PropsGame) {
   
   useEffect(() => {
       const getGames = async () => {
-      fetch("http://127.0.0.1:3001/game/ongoing", {
+      await fetch("http://127.0.0.1:3001/game/ongoing", {
           method: "GET",
           credentials : "include",
           referrerPolicy: "same-origin"
@@ -118,7 +118,7 @@ export default function GameList(props : PropsGame) {
         </TableContainer>
         <Modal open={openWatch} onBackdropClick={handleCloseWatch}>               
           <Box sx={gameStyles.boxModal}>
-            <GameWatch width={props.width} height={props.height} socket={socket} user={props.user}/>
+            <GameWatch width={props.width} height={props.height} socket={socket} user={props.user} mode={"watch"}/>
           </Box>
       </Modal>
     </Fragment>

@@ -13,6 +13,7 @@ import OtherUser from './OtherUser'
 import { IUser } from "./profileStyle";
 import FriendRequestModal from "./FriendRequestModal";
 import LoadingModal from "./LoadingModal ";
+import { io } from "socket.io-client";
 
 
 const backEndUrl = "http://127.0.0.1:3001"
@@ -118,6 +119,7 @@ export default function Profile() {
 
     const intraImg = "https://cdn.intra.42.fr/users/medium_adconsta.jpg"
 
+
     if (ready) {
         return (
             <Fragment>
@@ -155,6 +157,7 @@ export default function Profile() {
                                             overflow: "hidden"
                                         }} />
                                     </Badge>
+
                                 </Box>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
                                 <Box sx={profileStyle.content_1}>
