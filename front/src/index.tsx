@@ -11,6 +11,7 @@ import Chat from "./components/Chat/Chat";
 import Profile from "./components/Profile";
 import SideBars from "./components/MainCompo/SideBars";
 import Login from "./components/Login/Login";
+import Admin from "./components/Admin/Admin";
 
 function Root() {
   return (
@@ -26,6 +27,8 @@ function Root() {
             <Route path="game" element={<GamePage />} />
           </Route>
           <Route path="chat" element={<Chat />} />
+          <Route path="admin" element={<Admin role={"admin"} />} />
+          <Route path="owner" element={<Admin role={"owner"} />} />
           <Route path="profile" element={<Profile />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="*" element={<NoPage />} />

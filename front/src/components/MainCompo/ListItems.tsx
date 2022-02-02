@@ -8,6 +8,7 @@ import PlayIcon from "@mui/icons-material/PlayCircleOutlined";
 import ChatIcon from "@mui/icons-material/MarkChatUnreadOutlined";
 import ProfileIcon from "@mui/icons-material/AccountCircleOutlined";
 import LeaderIcon from "@mui/icons-material/EmojiEventsOutlined";
+import SupervisorIcon from "@mui/icons-material/SupervisorAccountOutlined";
 import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router";
@@ -19,7 +20,7 @@ import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 */
 
-function MainListItems() {
+function MainListItems(props: any) {
   let navigate = useNavigate();
 
   function handleLogout() {
@@ -49,6 +50,16 @@ function MainListItems() {
         </ListItemIcon>
         <ListItemText primary="Profile" />
       </ListItem>
+
+      {(props.role === "owner" || props.role === "admin") && (
+        <ListItem button onClick={() => navigate("/" + props.role)}>
+          <ListItemIcon>
+            <SupervisorIcon />
+          </ListItemIcon>
+          {props.role === "owner" && <ListItemText primary="Owner Pannel" />}
+          {props.role === "admin" && <ListItemText primary="Admin Pannel" />}
+        </ListItem>
+      )}
 
       <ListItem button onClick={() => navigate("/game")}>
         <ListItemIcon>

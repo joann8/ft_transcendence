@@ -10,6 +10,10 @@ import { UserService } from 'src/user/user.service';
 export class AdminService {
 	constructor(private userService: UserService) {}
 
+	async getAllUsers() {
+		return await this.userService.findAll();
+	}
+
 	async removeAdmin(user: User) {
 		if (user.role === user_role.OWNER) {
 			throw new ForbiddenException(

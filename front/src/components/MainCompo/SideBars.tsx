@@ -10,7 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MainListItems from "./ListItems";
-import { Avatar, Box, CssBaseline } from "@mui/material";
+import { Avatar, Box, CircularProgress, CssBaseline } from "@mui/material";
 import { Outlet } from "react-router";
 import useFromApi from "../../ApiCalls/useFromApi";
 import { api_req_init, api_url } from "../../ApiCalls/var";
@@ -127,18 +127,12 @@ export default function SideBar(props: any) {
               >
                 Welcome to Transcendence!
               </Typography>
-              {/* Notification clochette en haut a droite
-                            <IconButton color="inherit">
-                            <Badge badgeContent={4} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                            
-                            </IconButton>
-                            */}
+              {isPending && <CircularProgress />}
               {user && (
                 <Typography sx={{ margin: 1 }}>{user.id_pseudo}</Typography>
               )}
               <Divider orientation="vertical" sx={{ margin: 1 }} />
+              {isPending && <CircularProgress />}
               {user && <Avatar src={user.avatar}></Avatar>}
               <Divider orientation="vertical" sx={{ margin: 1 }} />
             </Toolbar>
@@ -158,8 +152,8 @@ export default function SideBar(props: any) {
               </IconButton>
             </Toolbar>
             <Divider />
-            {/*  <List>{mainListItems}</List>*/}
-            <MainListItems />
+            {isPending && <CircularProgress />}
+            {user && <MainListItems role={user.role} />}
             <Divider />
           </Drawer>
           <Outlet />

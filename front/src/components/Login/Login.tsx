@@ -26,7 +26,7 @@ const butonStyle = {
   margin: "auto",
 };
 
-export default function Login(props) {
+export default function Login(props: any) {
   const [open, setOpen] = useState(props.twofa);
   const [secret, setSecret] = useState("");
   const [titleError, setTitleError] = useState(false);
