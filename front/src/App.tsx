@@ -6,7 +6,9 @@ import { CssBaseline } from "@mui/material";
 import Box from "@mui/material/Box";
 import SideBar from "./components/MainCompo/SideBars";
 import Homepage from "./components/Homepage/Homepage";
-
+import NoPage from "./components/Errors/NoPage";
+import { Route, Routes, Link, BrowserRouter as Router } from "react-router-dom";
+import { Typography } from "@mui/material";
 
 function App(props: any) {
 
@@ -14,6 +16,14 @@ function App(props: any) {
     console.log("Profile click");
     setCanvas(iconId);
   };
+
+  const  test = () => {
+    fetch("http://localhost:3001")
+    .then(res => {
+      console.log(res)
+    })
+  }
+  test()
   
   const homePage = <Homepage handleCanvas={handleCanvas} />;
   const [canvas, setCanvas] = useState(homePage);
@@ -41,8 +51,6 @@ function App(props: any) {
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <SideBar handleCanvas={handleCanvas} />
-        {/*canvas*/}
-        {/*<Homepage />*/}
       </Box>
     </ThemeProvider>
   );

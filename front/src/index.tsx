@@ -7,9 +7,10 @@ import NoPage from "./components/Errors/NoPage";
 import Game from "./components/Game/Game";
 import Leaderboard from "./components/Leaderboard/Leaderboard";
 import Chat from "./components/Chat/Chat";
-import Profile from "./components/Profile";
+import Profile from "./components/Profile/Profile";
 import SideBars from "./components/MainCompo/SideBars";
 import Login from "./components/Login/Login";
+import OtherUser from "./components/Profile/OtherUser";
 
 function Root() {
   return (
@@ -22,7 +23,10 @@ function Root() {
           <Route index element={<Homepage />} />
           <Route path="game" element={<Game />} />
           <Route path="chat" element={<Chat />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="profile">
+            <Route index element={<Profile />} />
+            <Route path=":id_pseudo" element={<OtherUser/>} />
+          </Route>
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="*" element={<NoPage />} />
         </Route>
@@ -30,6 +34,7 @@ function Root() {
     </Router>
   );
 }
+
 export default Root;
 
 ReactDOM.render(

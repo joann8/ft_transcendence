@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Injectable, NotFoundException, Req } from '@nestjs/common';
+=======
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+>>>>>>> origin/adrien
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -28,12 +32,25 @@ export class UserService {
 		return await this.usersRepository.find();
 	}
 
+<<<<<<< HEAD
 	async findMe(@Req() req): Promise<User> {
 		return await this.usersRepository.findOne(req.user);
 	}
 
 	async findOne(id: string): Promise<User> {
 		return await this.usersRepository.findOne(id);
+=======
+	/*async findById(userId : number) : Promise<User> {
+		return await this.usersRepository.findOne(userId)
+	}
+	*/
+	
+	async findOne(user_pseudo: string): Promise<User> {
+
+		// correction ? 
+		// 		return await this.usersRepository.findOne({id_pseudo : user_pseudo});
+		return await this.usersRepository.findOne(user_pseudo);
+>>>>>>> origin/adrien
 	}
 
 	async remove(id: string): Promise<void> {
@@ -41,7 +58,11 @@ export class UserService {
 	}
 
 	async update(id: number, user: Partial<User>): Promise<UpdateResult> {
-		return await this.usersRepository.update(id, user);
+			const updatedUser = await this.usersRepository.update(id, user)
+			.catch(err => {
+				throw err
+			});
+			return updatedUser
 	}
 
 	async winElo(winner : User): Promise<UpdateResult> {

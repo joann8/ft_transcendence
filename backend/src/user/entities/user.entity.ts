@@ -2,12 +2,14 @@ import { Exclude } from 'class-transformer';
 import { Chat } from 'src/chat/chat.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
+
 export enum status {
 	OFFLINE = 'OFFLINE',
 	ONLINE = 'ONLINE',
-	IN_GAME = 'IN GAME',
+	IN_GAME = 'INGAME',
 	BAN = 'BAN',
 }
+
 
 export enum user_role {
 	OWNER = 'owner',
