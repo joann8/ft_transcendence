@@ -1,12 +1,14 @@
 import * as React from "react";
 import {
   DataGrid,
+  GridApi,
+  GridCellValue,
   GridColDef,
   GridRowParams,
   GridToolbar,
 } from "@mui/x-data-grid";
 import useFromApi from "../../ApiCalls/useFromApi";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 
 const columns: GridColDef[] = [
   {
@@ -46,19 +48,31 @@ const columns: GridColDef[] = [
     flex: 1,
     headerClassName: "grid-header-theme",
   },
-];
+  {
+    field: "action",
+    headerName: "Action",
+    sortable: false,
+    renderCell: (params) => {
+      const onClick = (e) => {
+        e.stopPropagation(); // don't select this row after clicking
 
-function _isRowSelectable(param: GridRowParams, user_rights: string): boolean {
-  if (param.row.role === "owner") {
-    return false;
-  } else if (user_rights === "owner") {
-    return true;
-  } else if (param.row.role === "admin") {
-    return false;
-  } else {
-    return true;
-  }
-}
+        const api: GridApi = params.api;
+        const thisRow: Record<string, GridCellValue> = {};
+
+        api
+          .getAllColumns()
+          .filter((c) => c.field !== "__check__" && !!c)
+          .forEach(
+            (c) => (thisRow[c.field] = params.getValue(params.id, c.field))
+          );
+
+        return alert(JSON.stringify(thisRow, null, 4));
+      };
+
+      return <Button onClick={onClick}>Click</Button>;
+    },
+  },
+];
 
 export default function UsersTable(props) {
   const { error, isPending, data: users } = useFromApi("/admin/users");
@@ -70,11 +84,7 @@ export default function UsersTable(props) {
         <DataGrid
           rows={users}
           columns={columns}
-          checkboxSelection
           autoHeight
-          isRowSelectable={(param: GridRowParams) =>
-            _isRowSelectable(param, props.role)
-          }
           components={{ Toolbar: GridToolbar }}
         />
       )}
