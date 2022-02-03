@@ -7,7 +7,11 @@ import {
 	Req,
 	Put,
 	Redirect,
+	Post,
+	UseGuards,
 } from '@nestjs/common';
+import { AdminGuard } from 'src/admin/guards/admin.guard';
+import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateCurrentUserDto } from './dto/updateCurrentUser.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
@@ -39,6 +43,14 @@ export class UserController {
 	@Delete()
 	@Redirect('/')
 	async deleteCurrentUser(@Req() req): Promise<void> {
-		this.userService.remove(req.user.id);
+		await this.userService.remove(req.user.id);
+	}
+
+	// CREATE AN USER
+	// FIXME: NOT IN PRODUCTION
+	@UseGuards(AdminGuard)
+	@Post()
+	async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+		return await this.userService.createEntity(createUserDto);
 	}
 }

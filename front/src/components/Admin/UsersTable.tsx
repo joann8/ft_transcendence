@@ -6,9 +6,14 @@ import {
   GridColDef,
   GridRowParams,
   GridToolbar,
+  GridValueSetterParams,
 } from "@mui/x-data-grid";
 import useFromApi from "../../ApiCalls/useFromApi";
 import { Box, Button, CircularProgress } from "@mui/material";
+import { api_url } from "../../ApiCalls/var";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import BanUserButton from "./BanUserButton";
+import PromoteUserButton from "./PromoteUserButton";
 
 const columns: GridColDef[] = [
   {
@@ -17,7 +22,7 @@ const columns: GridColDef[] = [
     type: "number",
     align: "center",
     headerAlign: "center",
-    minWidth: 130,
+    minWidth: 40,
     flex: 1,
     headerClassName: "grid-header-theme",
   },
@@ -26,7 +31,7 @@ const columns: GridColDef[] = [
     headerName: "Pseudo",
     align: "center",
     headerAlign: "center",
-    minWidth: 150,
+    minWidth: 100,
     flex: 1,
     headerClassName: "grid-header-theme",
   },
@@ -35,7 +40,16 @@ const columns: GridColDef[] = [
     headerName: "Email",
     align: "center",
     headerAlign: "center",
-    minWidth: 250,
+    minWidth: 220,
+    flex: 1,
+    headerClassName: "grid-header-theme",
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    align: "center",
+    headerAlign: "center",
+    minWidth: 40,
     flex: 1,
     headerClassName: "grid-header-theme",
   },
@@ -44,32 +58,35 @@ const columns: GridColDef[] = [
     headerName: "Role",
     align: "center",
     headerAlign: "center",
-    minWidth: 130,
+    minWidth: 30,
     flex: 1,
     headerClassName: "grid-header-theme",
   },
   {
-    field: "action",
-    headerName: "Action",
+    field: "banning",
+    headerName: "Ban/Unban",
+    headerAlign: "center",
+    align: "center",
     sortable: false,
+    filterable: false,
+    minWidth: 70,
+    flex: 1,
     renderCell: (params) => {
-      const onClick = (e) => {
-        e.stopPropagation(); // don't select this row after clicking
-
-        const api: GridApi = params.api;
-        const thisRow: Record<string, GridCellValue> = {};
-
-        api
-          .getAllColumns()
-          .filter((c) => c.field !== "__check__" && !!c)
-          .forEach(
-            (c) => (thisRow[c.field] = params.getValue(params.id, c.field))
-          );
-
-        return alert(JSON.stringify(thisRow, null, 4));
-      };
-
-      return <Button onClick={onClick}>Click</Button>;
+      return <BanUserButton params={params} />;
+    },
+  },
+  {
+    field: "promote",
+    headerName: "Admin/User",
+    headerAlign: "center",
+    align: "center",
+    sortable: false,
+    filterable: false,
+    minWidth: 70,
+    flex: 1,
+    renderCell: (params) => {
+      console.log(params);
+      return <PromoteUserButton params={params} />;
     },
   },
 ];
@@ -79,15 +96,17 @@ export default function UsersTable(props) {
 
   return (
     <Box sx={{ width: "100%", "& .grid-header-theme": { fontWeight: "bold" } }}>
-      {isPending && <CircularProgress />}
-      {users && (
-        <DataGrid
-          rows={users}
-          columns={columns}
-          autoHeight
-          components={{ Toolbar: GridToolbar }}
-        />
-      )}
+      <SnackbarProvider maxSnack={5}>
+        {isPending && <CircularProgress />}
+        {users && (
+          <DataGrid
+            rows={users}
+            columns={columns}
+            autoHeight
+            components={{ Toolbar: GridToolbar }}
+          />
+        )}
+      </SnackbarProvider>
     </Box>
   );
 }

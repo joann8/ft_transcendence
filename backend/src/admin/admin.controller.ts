@@ -43,4 +43,9 @@ export class AdminController {
 	async banUser(@Req() req, @Param() userId: string): Promise<void> {
 		await this.adminService.banUser(req.user, userId);
 	}
+	// UNBAN AN USER
+	@Put('unban/:id_pseudo')
+	async unbanUser(@Req() req, @Param() userId: string): Promise<void> {
+		await this.adminService.unbanUser(req.user, userId);
+	}
 }

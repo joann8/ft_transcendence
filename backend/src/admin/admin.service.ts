@@ -44,10 +44,24 @@ export class AdminService {
 		if (user.role === user_role.OWNER) {
 			throw new ForbiddenException("You can't ban the boss");
 		}
+		if (user.status === status.BAN) {
+			throw new ForbiddenException('This user is already ban');
+		}
 		if (admin.role === user_role.ADMIN && user.role === user_role.ADMIN) {
 			throw new ForbiddenException("You can't ban another admin");
 		}
 		await this.userService.update(user.id, { status: status.BAN });
+	}
+
+	async unbanUser(admin: User, id: string) {
+		const user = await this.userService.findOne(id);
+		if (!user) {
+			throw new NotFoundException('This user does not exist');
+		}
+		if (user.status !== status.BAN) {
+			throw new ForbiddenException('This user has not been banned');
+		}
+		await this.userService.update(user.id, { status: status.OFFLINE });
 	}
 
 	async setAdmin(id: string) {

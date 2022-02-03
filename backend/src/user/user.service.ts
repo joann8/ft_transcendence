@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -12,11 +12,11 @@ export class UserService {
 
 	async createEntity(user: User) {
 		try {
-			const newUser = await this.usersRepository.create(user);
+			const newUser = this.usersRepository.create(user);
 			await this.usersRepository.save(newUser);
 			return newUser;
 		} catch (error) {
-			throw error;
+			throw new BadRequestException(error.message);
 		}
 	}
 
