@@ -59,6 +59,7 @@ export default function GameListChallenge(props : PropsGame) {
 
   const [openChallenge, setOpenChallenge] = React.useState(false);
   
+  
   const startChallenge = (id_challenge : number) => {
     socket.emit("answer_challenge", { id_challenge : id_challenge, answer : "accepted"});
     updateStatus("IN GAME");

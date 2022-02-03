@@ -13,5 +13,6 @@ export class UpdateCurrentUserDto {
 	status: status;
 	
 	@IsEmail()
+	@IsOptional()
 	email: string;
 }

@@ -113,7 +113,9 @@ export class UserController {
 			await this.userService.update(req.user.id, updateCurrentUserDto);
 			res.statusMessage = "Succes User Updated"
 			res.status(200).send({ success: "User successfully updated" })
-			return this.userService.findOne(req.user.id.toString());
+			let user = await this.userService.findOne(req.user.id.toString());
+			console.log("USER : ", user)
+			return user;
 		}
 		catch (error) {
 			//console.log("UpdateCurrentUser Error caught:" + '\n', error)

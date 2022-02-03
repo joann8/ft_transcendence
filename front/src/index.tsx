@@ -22,8 +22,13 @@ function Root() {
         <Route path="/" element={<SideBars />}>
           <Route index element={<Homepage />} />
           <Route path="game" >
-            <Route index element={<Game />} />
-            <Route path=":id_pseudo" element={<Game />} />
+            <Route index element={<Game mode={"random"}/>} />
+            <Route path="challenge" >
+              <Route path=":id" element={<Game mode={"challenge"} />} /> 
+            </Route>
+            <Route path="watch" >
+              <Route path=":id" element={<Game  mode={"watch"}/> } /> 
+            </Route>
           </Route>
           <Route path="chat" element={<Chat />} />
           <Route path="profile">

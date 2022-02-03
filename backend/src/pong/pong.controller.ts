@@ -2,6 +2,8 @@ import {
 	Controller,
 	Delete,
 	Get,
+	HttpException,
+	HttpStatus,
 	Param,
 	Req,
 } from '@nestjs/common';
@@ -44,6 +46,16 @@ export class PongController {
 	async getMatchesOngoing() : Promise<Pong[]> {
 		return this.pongService.getMatchesOngoing();
 	}
+
+	@Get('ongoing/:id')
+	async getOneMatchOngoing(@Param('id', ParsePseudoPipe) user: User) : Promise<Pong> {
+		const ret = await this.pongService.getOneMatchOngoing(user);
+		if (!ret)
+			throw new HttpException("No match ongoing for this user", HttpStatus.NO_CONTENT)
+		else
+			return ret;
+	}
+
 	// get all Matches for a user
 	@Get('history/:id')
 	async getHistory(@Param('id', ParsePseudoPipe) user: User): Promise<Pong[]> {

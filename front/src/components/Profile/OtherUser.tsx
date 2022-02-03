@@ -324,10 +324,19 @@ export default function OtherUser() {
             console.log(`${challenger.id_pseudo} is defying ${challengee.id_pseudo}`);
             console.log(`challenger status : ${challenger.status}`);
             if (challenger.status === "ONLINE")
-                navigate(`/game/${challengee.id_pseudo}`);
+                navigate(`/game/challenge/${challengee.id_pseudo}`);
             else
                 alert("Your are already in a game");
     }
+
+    const onClickWatch = (watcher : IUser, watchee : IUser) => {
+        console.log(`${watcher.id_pseudo} is watching ${watchee.id_pseudo}`);
+        console.log(`watchee status : ${watchee.status}`);
+        //if (watchee.status === "INGAME")
+            navigate(`/game/watch/${watchee.id_pseudo}`);
+        //else
+        //   alert("You friend has no ongoing game");
+}
     // FIN AJOUT JOANN
   
 
@@ -432,6 +441,7 @@ export default function OtherUser() {
                                     </Badge>
                                     {/* START ____ Ajout Joann pour tester defi */}
                                     <Button variant="contained" onClick={() => onClickDefy(loggedInUserData, otherUserData)}> DEFY </Button>
+                                    <Button variant="contained" onClick={() => onClickWatch(loggedInUserData, otherUserData)}> Watch </Button>
                                     {/* END ___Ajout Joann pour tester defi */}
                                 </Box>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />

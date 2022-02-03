@@ -89,6 +89,17 @@ export class PongService {
 			relations: ["player1", "player2"],
 			where : { status: "ongoing"} ,
 	})}
+
+	async getOneMatchOngoing(user: User): Promise<Pong> {
+		console.log("looking for a game for ", user.id_pseudo)
+		let game =  await this.pongRepository.findOne({
+			where : [{ "player1" : { id_pseudo : user.id_pseudo} , status: "ongoing"} , { "player2" : { id_pseudo : user.id_pseudo}, status: "ongoing"}],
+			relations: ["player1", "player2"],
+	})
+	console.log("Game found : ")
+	console.log(game);
+	return game;
+}
 	
 	// Games overs
 

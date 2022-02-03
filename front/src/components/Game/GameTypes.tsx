@@ -25,6 +25,15 @@ type PropsGame = {
     mode: string,
 }
 
+type PropsWatch = {
+    width: number,
+    height: number, 
+    socket: Socket<DefaultEventsMap, DefaultEventsMap>,
+    user : IUser,
+    mode: string,
+    watchee : string
+}
+
 type GameSate = {
     ball: {
         x : number,
@@ -47,4 +56,4 @@ type GameSate = {
     state: number,
 }
 
-export type {PropsMenuButton, PropsInit, PropsChallenge, PropsGame, GameSate};
+export type {PropsMenuButton, PropsInit, PropsChallenge, PropsGame, PropsWatch, GameSate};

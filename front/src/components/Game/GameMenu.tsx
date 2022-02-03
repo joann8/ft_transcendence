@@ -28,7 +28,7 @@ export default function GameMenu(props : PropsInit) {
         credentials : "include",
         referrerPolicy: "same-origin",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({status: "IN GAME" }),
+        body: JSON.stringify({status: newStatus }),
       }).then((res) => {
         if (!res.ok)
             throw new Error(res.statusText);
@@ -40,9 +40,7 @@ export default function GameMenu(props : PropsInit) {
 
     useEffect(() => {
         socket.on("allowed", (args : any) => {
-          console.log("ici");
           updateStatus("IN GAME");
-          console.log("ici");
           setOpenGame(true);
         });
         socket.on("not_allowed_playing", (args : any) => {
@@ -65,6 +63,7 @@ export default function GameMenu(props : PropsInit) {
     
     const handleCloseAlertLeave = () => {
       socket.emit('my_disconnect'); // a revoir dans le back
+      console.log("---> from ingame to online")
       updateStatus("ONLINE");
       setOpenGame(false);
       setOpenAlert(false);
@@ -108,7 +107,7 @@ export default function GameMenu(props : PropsInit) {
                 </Grid>
                 <Grid item xs={2}/>
                 <Grid item xs={8}>
-                  <GameList width={800} height={600} socket={socket} user={userID} mode={"watch"}/>
+                  <GameList width={800} height={600} socket={socket} user={userID} mode={"watch"} watchee={""} />
                 </Grid>
                 <Grid item xs={2}/>
                 <Grid item xs={12}>
