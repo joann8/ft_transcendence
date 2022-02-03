@@ -13,13 +13,14 @@ import { useNavigate } from 'react-router';
 export default function GameChallenge(props : PropsChallenge) {
     
     const navigate = useNavigate();
+    const [start, setStart] = useState(false);
 
     let socket = props.socket;
     let userID = props.user;
     let challengee = props.challengee;
     
     const updateStatus = async (newStatus : string) => {
-      await fetch(`http://127.0.0.1:3001/user/`, {
+      await fetch(`http://127.0.0.1:3001/user`, {
         method: "PUT",
         credentials : "include",
         referrerPolicy: "same-origin",
@@ -29,15 +30,27 @@ export default function GameChallenge(props : PropsChallenge) {
     };
 
     useEffect(() => {
-      console.log("open defy");
+      console.log("___Create a challenge : ");
       console.log("challenger: ", userID.id_pseudo);
       console.log("challengee: ", challengee.id_pseudo);
-      updateStatus("INGAME");
-
+      updateStatus("IN GAME");
       socket.emit("create_challenge", {challenger : userID, challengee : challengee});
     }, []);
+
+    useEffect(() => {
+      socket.on('challenge_refused', (args : any) => {
+        alert("This challenge was refused");
+        handleCloseAlertLeave();
+      });
+    }, []);
+
+    useEffect(() => {
+      socket.on('challenge_accepted', (args : any) => {
+        setStart(true);
+      });
+    }, []);
         
-    const handleCloseGame = () => {
+    const handleCloseGame = () => {      
       setOpenAlert(true);
     }
 
@@ -48,8 +61,10 @@ export default function GameChallenge(props : PropsChallenge) {
     }
     
     const handleCloseAlertLeave = () => {
+      if (start === false)
+        socket.emit('cancel_challenge', {challenger : userID, challengee : challengee});
       socket.emit('my_disconnect'); // a revoir dans le back
-      updateStatus("ONLINE");
+      updateStatus("ON LINE");
       setOpenAlert(false);
       navigate(`/game`);
     }

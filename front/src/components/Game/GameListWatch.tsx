@@ -92,11 +92,13 @@ export default function GameList(props : PropsGame) {
                     <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update List Game </Button>
                 </TableCell>             
               </TableRow>
+             {/*
               <TableRow>
                 <TableCell align="center" colSpan={2}>player 1</TableCell>
                 <TableCell align="center" colSpan={2}>player 2</TableCell>
                 <TableCell colSpan={1}></TableCell>
               </TableRow>
+            */}
             </TableHead>
             <TableBody>
               {games.map((game : any) => (

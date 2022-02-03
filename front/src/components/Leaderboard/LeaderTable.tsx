@@ -60,10 +60,12 @@ export default function LeaderTable() {
                     <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update </Button>
                 </TableCell>             
               </TableRow>
+              {/*
               <TableRow>
                 <TableCell align="center" colSpan={2}> Player </TableCell>
                 <TableCell align="center" colSpan={1}> Elo </TableCell>
               </TableRow>
+              */}
             </TableHead>
             <TableBody>
               {leaders.map((user : any) => (

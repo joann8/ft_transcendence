@@ -23,18 +23,26 @@ export default function GameMenu(props : PropsInit) {
     }
     
     const updateStatus = async (newStatus : string) => {
-      await fetch(`http://127.0.0.1:3001/user/pending`, {
+      await fetch(`http://127.0.0.1:3001/user`, {
         method: "PUT",
         credentials : "include",
         referrerPolicy: "same-origin",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({status: `${newStatus}`}),
-      })
+        body: JSON.stringify({status: "IN GAME" }),
+      }).then((res) => {
+        if (!res.ok)
+            throw new Error(res.statusText);
+        return (res.json());
+    }).catch((err) => {
+        console.log("Error ici ", err);
+    })
     };
 
     useEffect(() => {
         socket.on("allowed", (args : any) => {
-          updateStatus("INGAME");
+          console.log("ici");
+          updateStatus("IN GAME");
+          console.log("ici");
           setOpenGame(true);
         });
         socket.on("not_allowed_playing", (args : any) => {

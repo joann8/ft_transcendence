@@ -20,7 +20,7 @@ export default function GameListChallenge(props : PropsGame) {
   let userId = props.user;
 
   const updateStatus = async (newStatus : string) => {
-    await fetch(`http://127.0.0.1:3001/user/`, {
+    await fetch(`http://127.0.0.1:3001/user`, {
       method: "PUT",
       credentials : "include",
       referrerPolicy: "same-origin",
@@ -60,13 +60,14 @@ export default function GameListChallenge(props : PropsGame) {
   const [openChallenge, setOpenChallenge] = React.useState(false);
   
   const startChallenge = (id_challenge : number) => {
-    socket.emit("answer_challenge", { id_challenge : id_challenge, answer : "accept"});
-    updateStatus("INGAME");
+    socket.emit("answer_challenge", { id_challenge : id_challenge, answer : "accepted"});
+    updateStatus("IN GAME");
     setOpenChallenge(true);
+    handleUpdate();
   };
   
   const refuseChallenge = (id_challenge : number)  => {
-    socket.emit("answer_challenge", {id_challenge : id_challenge, answer : "refuse"});
+    socket.emit("answer_challenge", {id_challenge : id_challenge, answer : "refused"});
     handleUpdate();
   }
 
@@ -93,6 +94,15 @@ export default function GameListChallenge(props : PropsGame) {
     setOpenChallenge(false);
     setOpenAlert(false);
   }
+
+  useEffect(() => {
+    socket.on('no_such_challenge', (args : any) => {
+      socket.emit('my_disconnect'); // a revoir dans le back
+      updateStatus("ONLINE");
+      setOpenChallenge(false);
+      alert("Challenger cancelled the challenge");
+    });
+  }, [])
    
 
   return (
@@ -106,11 +116,13 @@ export default function GameListChallenge(props : PropsGame) {
                     <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update Challenges </Button>
                 </TableCell>             
               </TableRow>
+              {/*}
               <TableRow>
                 <TableCell align="center" colSpan={2}>Challenger </TableCell>
                 <TableCell align="center" colSpan={2}>player 2</TableCell>
                 <TableCell colSpan={1}></TableCell>
               </TableRow>
+            */}
             </TableHead>
             <TableBody>
               {challenges.map((challenge : any) => (

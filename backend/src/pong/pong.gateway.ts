@@ -90,44 +90,62 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
    
     @SubscribeMessage('create_challenge')
     async createChallenge(client: Socket, info : {challenger: User, challengee : User}) : Promise <void> {
-        console.log("challenges:", this.challenges)
         console.log("___enter create challenge")
+        console.log("BEFORE challenges:", this.challenges)
         let challenge1 = {
             challenger : info.challenger,
             challengee : info.challengee,
             status: "pending",
         }
-        console.log("challenge 1 : ", challenge1)
+        console.log("challenge to register : ", challenge1)
         let id_challenge = await this.pongService.createChallenge(challenge1);
         let challenge2 = new Challenge(id_challenge, info.challenger, client, info.challengee);
         this.challenges.unshift(challenge2); // enregistrement du challenge
+        console.log("AFTER challenges:", this.challenges)
     }
 
     @SubscribeMessage('answer_challenge')
     async answerChallenge(client: Socket, info : { id_challenge : number, answer : string}) : Promise <void> {
         console.log("___enter answer challenge")
-        console.log("answer : ", info.answer)
         let challenge =  this.challenges.find(challenge => challenge.getId() === info.id_challenge);
         if (challenge) {
-            //const challenge_data = await this.pongService.getChallenge(challenger, challengee);
             const challenge_data = await this.pongService.getChallenge(info.id_challenge);
-            if (info.answer === "accept")
+            if (info.answer === "accepted")
             {
-                console.log("challenge accepted!")
+                console.log("----> challenge foudn and accepted!")
                 challenge.getChallengerSocket().emit("challenge_accepted", challenge.getId());
-                let binome : Map<Socket, User> = new Map<Socket, User>(); // client dans la queue
+                let binome : Map<Socket, User> = new Map<Socket, User>(); 
                 binome.set(challenge.getChallengerSocket(), challenge.getChallenger());
                 binome.set(client, challenge.getChallengee());
                 this.matchInit(binome);                
             }
             else
             {
-                console.log("challenge refused!")
+                console.log("----> challenge found and refused!")
                 challenge.getChallengerSocket().emit("challenge_refused", challenge.getId());
             }
             await this.pongService.deleteChallenge(info.id_challenge);
             this.challenges.splice(this.challenges.indexOf(challenge));
         }
+        else
+            client.emit('no_such_challenge');
+    }
+
+    @SubscribeMessage('cancel_challenge')
+    async cancelChallenge(client: Socket, info : {challenger: User, challengee : User}) : Promise <void> {
+        console.log("___enter cancel challenge")
+        console.log("BEFORE challenges:", this.challenges)
+        let challenge =  this.challenges.find(challenge => (challenge.getChallenger().id === info.challenger.id && challenge.getChallengee().id === info.challengee.id));
+        if (challenge)  
+        {   
+            console.log("----> delete challene id ", challenge.getId())
+            await this.pongService.deleteChallenge(challenge.getId());
+            this.challenges.splice(this.challenges.indexOf(challenge));
+            console.log("AFTER challenges:", this.challenges)
+        }
+        else
+            console.log("---> no challenge found")
+
     }
     
     // MOUVEMENTS RAQUETTES
