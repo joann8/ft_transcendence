@@ -5,7 +5,6 @@ import { ThemeProvider } from "@mui/material";
 import { CssBaseline } from "@mui/material";
 import Box from "@mui/material/Box";
 import SideBar from "./components/MainCompo/SideBars";
-import MyContent from "./components/MyContent/MyContent";
 import Homepage from "./components/Homepage/Homepage";
 import NoPage from "./components/Errors/NoPage";
 import { Route, Routes, Link, BrowserRouter as Router } from "react-router-dom";

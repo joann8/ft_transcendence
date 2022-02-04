@@ -40,6 +40,11 @@ export class UserController {
 	async getCurrentUser(@Req() req): Promise<User> {
 		return req.user;
 	}
+	//Get leaderBoard
+	@Get('all/leaderboard')
+		async getLeaderboard(): Promise<User[]> {
+				return this.userService.getLeaderboard();
+	}
 
 	// SEARCH AN USER
 	@Get(':id_pseudo')
@@ -87,6 +92,7 @@ export class UserController {
 	}
 
 	// UPDATE MY PROFILE (Look at UpdateCurrentUserDto for available options)
+	//Verfier utilite du ValidationPipe 
 	@Put()
 	@UsePipes(new ValidationPipe({ transform: true }))
 	async updateCurrentUser(
@@ -104,5 +110,8 @@ export class UserController {
 	async deleteCurrentUser(@Req() req): Promise<void> {
 		this.userService.remove(req.user.id);
 	}
+
+
+
 }
 

@@ -50,6 +50,6 @@ export class RefreshJwtStrategy extends PassportStrategy(
 		if (!match) {
 			throw new UnauthorizedException('Invalid Refresh token');
 		}
-		return user;
+		return await this.authService.set_online(user);
 	}
 }

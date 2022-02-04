@@ -80,6 +80,13 @@ export const Context = createContext(null)
 
 
 export default function SideBar(props: any) {
+  /*
+    const eventSource = new EventSource('http://127.0.0.1:3001/sse');
+    eventSource.onmessage = ({data}) => {
+      console.log('New message', JSON.parse(data));
+      console.log('New message', data);
+    };
+  */
   const [open, setOpen] = React.useState(true);
   const [avatarModal, setAvatarModal] = React.useState(false)
   const [pseudoModal, setPseudoModal] = React.useState(false)
@@ -114,10 +121,27 @@ export default function SideBar(props: any) {
         console.log("Error caught: ", err)
       })
   }
-  
+
   useEffect(() => {
     getUserData()
+    //Ajouter getRefreshToken()
   }, [update])
+
+
+  React.useEffect(() => {
+    window.addEventListener("beforeunload", (e) => {
+      e.preventDefault();
+      if (user) {
+        fetch(api_url + "/user", {
+          method: "PUT",
+          credentials: "include",
+          referrerPolicy: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "OFFLINE" }),
+        });
+      }
+    })
+  }, []);
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -126,7 +150,7 @@ export default function SideBar(props: any) {
   const handleEditClose = () => {
     setAnchorEl(null)
   }
-  
+
   const handleEditOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   }
@@ -176,6 +200,7 @@ export default function SideBar(props: any) {
                             </Badge>
                             
                             </IconButton>
+                
                             */}
                 {user && (
                   <Typography sx={{ margin: 1 }}>{user.id_pseudo}</Typography>
@@ -233,4 +258,4 @@ export default function SideBar(props: any) {
       </Fragment>
     );
   }
-}
+  }

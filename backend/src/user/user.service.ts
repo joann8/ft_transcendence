@@ -1,4 +1,4 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -42,5 +42,20 @@ export class UserService {
 
 	async update(id: number, user: Partial<User>): Promise<UpdateResult> {
 			return await this.usersRepository.update(id, user)
+	}
+
+	async winElo(winner : User): Promise<UpdateResult> {
+		const user = await this.usersRepository.findOne(winner.id)
+		user.elo += 100;
+		return await this.usersRepository.update(user.id, user);
+	}
+
+	async getLeaderboard() : Promise<User[]>
+	{
+		const leaders = await this.usersRepository.find( {
+			order: { elo : "DESC" }, 
+			take : 2 //a modifier, combien de données veut-on dans le tableau lead?
+		});
+		return leaders;
 	}
 }

@@ -4,10 +4,9 @@ import Badge from '@mui/material/Badge';
 import DoneIcon from '@mui/icons-material/Done';
 import { Navigate, useNavigate, useParams } from "react-router";
 import MatchModal from "./MatchModal";
-import profileStyle from './profileStyle'
+import profileStyle, { IUser } from './profileStyle'
 import LoadingGif from '../Images/loadingGif.gif'
 import { LockOpenTwoTone, LockTwoTone, Pending, PersonAdd, PersonRemove, QuestionMark } from "@mui/icons-material";
-
 
 const backEndUrl = "http://127.0.0.1:3001"
 
@@ -312,6 +311,31 @@ export default function OtherUser() {
         }
     }
 
+    const test = true;
+
+    // AJOUT JOANN TEST DEFY
+   
+     const onClickDefy = (challenger : IUser, challengee : IUser) => {
+            console.log(`${challenger.id_pseudo} is defying ${challengee.id_pseudo}`);
+            console.log(`challenger status : ${challenger.status}`);
+            if (challenger.status === "ONLINE")
+                navigate(`/game/challenge/${challengee.id_pseudo}`);
+            else
+                alert("Your are already in a game");
+    }
+
+    const onClickWatch = (watcher : IUser, watchee : IUser) => {
+        console.log(`${watcher.id_pseudo} is watching ${watchee.id_pseudo}`);
+        console.log(`watchee status : ${watchee.status}`);
+        //if (watchee.status === "INGAME")
+            navigate(`/game/watch/${watchee.id_pseudo}`);
+        //else
+        //   alert("You friend has no ongoing game");
+}
+    // FIN AJOUT JOANN
+  
+
+
     //Render du Composant
     if (loaded === false) {
         return (
@@ -410,6 +434,10 @@ export default function OtherUser() {
                                             overflow: "hidden"
                                         }} />
                                     </Badge>
+                                    {/* START ____ Ajout Joann pour tester defi */}
+                                    <Button variant="contained" onClick={() => onClickDefy(loggedInUserData, otherUserData)}> DEFY </Button>
+                                    <Button variant="contained" onClick={() => onClickWatch(loggedInUserData, otherUserData)}> Watch </Button>
+                                    {/* END ___Ajout Joann pour tester defi */}
                                 </Box>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
                                 <Box sx={profileStyle.content_1}>

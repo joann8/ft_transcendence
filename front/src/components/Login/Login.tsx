@@ -50,7 +50,6 @@ export default function Login(props) {
     }).then((res) => {
       setIsPending(false);
       if (!res.ok) {
-        console.log(res);
         setTitleError(true);
         res.json().then((data) => {
           setHelperError(data.message);
