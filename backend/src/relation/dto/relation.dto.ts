@@ -6,6 +6,7 @@ import { Type } from "class-transformer";
 
 export class RelationDto {
 
+    @IsOptional()
     @IsString()
     id_pseudo1: string
 

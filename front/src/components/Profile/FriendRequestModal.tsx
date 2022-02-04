@@ -3,11 +3,11 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { AnyRecord, resolveSoa } from 'dns';
 import { Fragment, useEffect, useState } from 'react';
 import { Avatar, Card, CardContent, CardMedia, Divider, Grid } from '@mui/material';
 import Alone from "../Images/alone.jpg"
 import { useNavigate } from 'react-router-dom';
+import { IUser } from './profileStyle';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -35,31 +35,13 @@ const request = {
 }
 
 
-const user = {
-    id: 0,
-    id_pseudo: "",
-    email: "",
-    avatar: "",
-    role: "",
-    elo: 0,
-    status: "",
-    two_factor: false,
-    achievement1: false,
-    achievement2: false,
-}
 
 export default function FriendRequestModal(props: any) {
-    /*  const [modal, setModal] = React.useState(props.modalState);
-      useEffect(() => {
-          props.setModal(modal);
-      }, [props.modalState])
-      */
+
     const navigate = useNavigate()
-    const [localUpdate, setLocalUpdate] = useState(0)
     const [requestArray, setRequestArray] = useState(null)
 
 
-    console.log("friendModal props: ", props)
     const getFriendRequest = async () => {
         await fetch(`http://127.0.0.1:3001/relation/request`, {
             method: "GET",
@@ -70,22 +52,21 @@ export default function FriendRequestModal(props: any) {
                 if (res.status === 401)
                     navigate("/login")
                 else if (!res.ok)
+                {
+                    console.log("res : ", res)            
                     throw new Error(res.statusText)
+                }
                 return res.json()
             })
             .then(res => {
-                if (!res.length)
-                    setRequestArray(null)
-                else
-                    setRequestArray(res)
+                setRequestArray(res)
             })
             .catch(err => {
-
                 alert(`FriendRequest : Error Fetching Data: ${err.statusText}`)
             })
     }
 
-    const updateRelation = async (myUserPseudo: string, otherUserPseudo: string, newRelation1: number, newRelation2: number) => {
+    const updateRelation = async (otherUserPseudo: string, newRelation1: number, newRelation2: number) => {
         const ret = await fetch(`http://127.0.0.1:3001/relation/update`, {
             credentials: "include",
             referrerPolicy: "same-origin",
@@ -94,9 +75,8 @@ export default function FriendRequestModal(props: any) {
                 'Content-Type': "application/json"
             },
             body: JSON.stringify({
-                id_pseudo1: myUserPseudo,
-                id_pseudo2: otherUserPseudo,
                 relation1: newRelation1,
+                id_pseudo2: otherUserPseudo,
                 relation2: newRelation2
             })
         })
@@ -115,7 +95,7 @@ export default function FriendRequestModal(props: any) {
         return ret
     }
 
-    const removeRelation = async (myUserPseudo: string, otherUserPseudo: string) => {
+    const removeRelation = async (otherUserPseudo: string) => {
         const ret = await fetch(`http://127.0.0.1:3001/relation/remove`, {
             credentials: "include",
             referrerPolicy: "same-origin",
@@ -124,8 +104,7 @@ export default function FriendRequestModal(props: any) {
                 'Content-Type': "application/json"
             },
             body: JSON.stringify({
-                id_pseudo1: myUserPseudo,
-                id_pseudo2: otherUserPseudo
+                id_pseudo: otherUserPseudo
             })
         })
             .then(res => {
@@ -143,28 +122,29 @@ export default function FriendRequestModal(props: any) {
         return ret
     }
 
-
     useEffect(() => {
         console.log("RequestingFriend List")
         getFriendRequest()
-    }, [localUpdate])
+    }, [])
 
-    const handleAccept =  async (friendPseudo : string) => {
-        //ret = Update friendship request
-        //Dans le back update et renvoie la liste courante des request
-        await updateRelation(props.user.id_pseudo, friendPseudo, 3, 3)
-        setLocalUpdate(localUpdate + 1)
-        //setFriendRequest(ret)
+    const handleAccept = async (friend: IUser) => {
+        await updateRelation(friend.id_pseudo, 3, 3)
+        const newArray = requestArray.filter(function (item) {
+            return item !== friend;
+        })
+        setRequestArray(newArray)
     }
 
-    const handleRefuse = async (friendPseudo : string) => {
+    const handleRefuse = async (friend: IUser) => {
         //Mm chose mais avec un status different 
-        await removeRelation(props.user.id_pseudo, friendPseudo)
-        setLocalUpdate(localUpdate + 1)
+        await removeRelation(friend.id_pseudo)
+        const newArray = requestArray.filter(function (item) {
+            return item !== friend;
+        })
+        setRequestArray(newArray)
     }
 
     const handleClose = () => props.setModal(false);
-
 
 
     return (
@@ -175,7 +155,7 @@ export default function FriendRequestModal(props: any) {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                {requestArray ?
+                {(requestArray && requestArray.length) ?
                     <Box sx={style}>
 
                         <Grid container sx={request}>
@@ -185,7 +165,7 @@ export default function FriendRequestModal(props: any) {
                                 backgroundColor: "rgba(0, 0, 0, 0.4)",
 
                             }}>
-                                {requestArray.map((user) =>
+                                {requestArray.map((user: IUser) =>
                                     <Fragment key={user.id}>
                                         < Grid item xs={3}>
                                             <Avatar sx={{
@@ -199,15 +179,15 @@ export default function FriendRequestModal(props: any) {
                                             <Button
                                                 variant="contained"
                                                 color="success"
-                                                onClick={() => handleAccept(user.id_pseudo)}>Accept </Button>
+                                                onClick={() => handleAccept(user)}>Accept </Button>
                                         </Grid>
                                         <Grid item xs={3}>
                                             <Button
                                                 variant="contained"
                                                 color="warning"
-                                                onClick={() => handleRefuse(user.id_pseudo)}>Refuse </Button>
+                                                onClick={() => handleRefuse(user)}>Refuse </Button>
                                         </Grid >
-                                        <Divider variant="middle"/>
+                                        <Divider variant="middle" />
                                     </Fragment>
                                 )}
                             </Grid>

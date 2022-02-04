@@ -72,7 +72,7 @@ function MainListItems() {
         <ListItemText primary="Chat" />
       </ListItem>
 
-      <ListItem button onClick={() => {} }>
+      <ListItem button onClick={() => navigate("/friend") }>
         <ListItemIcon>
           <GroupsIcon/>
         </ListItemIcon>

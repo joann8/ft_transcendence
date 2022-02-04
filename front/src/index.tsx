@@ -11,6 +11,7 @@ import Profile from "./components/Profile/Profile";
 import SideBars from "./components/MainCompo/SideBars";
 import Login from "./components/Login/Login";
 import OtherUser from "./components/Profile/OtherUser";
+import Friend from "./components/Friend/Friend";
 
 function Root() {
   return (
@@ -30,10 +31,11 @@ function Root() {
               <Route path=":id" element={<Game  mode={"watch"}/> } /> 
             </Route>
           </Route>
+          <Route path="friend" element={<Friend />} />
           <Route path="chat" element={<Chat />} />
           <Route path="profile">
             <Route index element={<Profile />} />
-            <Route path=":id_pseudo" element={<OtherUser/>} />
+            <Route path=":id_pseudo" element={<OtherUser />} />
           </Route>
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="*" element={<NoPage />} />
