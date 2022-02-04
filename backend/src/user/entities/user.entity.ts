@@ -8,6 +8,7 @@ export enum status {
 	ONLINE = 'ONLINE',
 	IN_GAME = 'IN GAME',
 	BAN = 'BAN',
+	IN_QUEUE = 'IN QUEUE'
 }
 
 
