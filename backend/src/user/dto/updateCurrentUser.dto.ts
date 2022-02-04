@@ -1,18 +1,17 @@
+import { isEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { status } from '../entities/user.entity';
-import { IsEmail, isEmail, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class UpdateCurrentUserDto {
 	@IsOptional()
 	@IsNotEmpty()
+	@IsString()
 	id_pseudo: string;
 
 	@IsOptional()
+	@IsString()
 	avatar: string;
 
 	@IsOptional()
+	@IsEnum(status)
 	status: status;
-	
-	@IsEmail()
-	@IsOptional()
-	email: string;
 }

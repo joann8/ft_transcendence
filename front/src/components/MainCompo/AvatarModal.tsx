@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { AnyRecord } from 'dns';
 import { useEffect, useState } from 'react';
-import { Grid, TextField, BottomNavigation, IconButton, styled } from '@mui/material';
+import { Grid, TextField, BottomNavigation, IconButton, styled, Avatar } from '@mui/material';
 import { PhotoCamera, SentimentSatisfiedOutlined } from '@mui/icons-material';
 import { alterHsl } from 'tsparticles';
 
@@ -20,9 +20,9 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     overflow: "auto",
+    display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    display: "flex",
     p: 4,
 };
 
@@ -31,14 +31,16 @@ const Input = styled('input')({
     display: 'none',
 });
 
+const editLayout = {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "20px",
+    overflow: "auto"
+}
+
 export default function AvatarModal(props: any) {
 
-    const editLayout = {
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: "20px",
-        overflow: "auto"
-    }
+
 
     const [avatar, setAvatar] = useState(null)
 
@@ -64,8 +66,8 @@ export default function AvatarModal(props: any) {
                 .then(res => {
                     if (!res.ok)
                         throw new Error(res.statusText)
-                    console.log("Avatar send. Response : ", res )
-                    props.setUpdate(props.update + 1)
+                    console.log("Avatar send. Response : ", res)
+                    props.setUpdate(!props.update)
                     props.setModal(false)
                 })
                 .catch(error => {
@@ -87,8 +89,11 @@ export default function AvatarModal(props: any) {
             && extName !== 'gif')
             return alert("jpeg | jpg | png | gif File only")
         setAvatar(event.target.files[0])
-    }
+        console.log("Uploaded Avatar : ", event.target.files[0])
+        console.log("Url Avatar Object : ", URL.createObjectURL(event.target.files[0]))
 
+
+    }
 
     return (
         <div>
@@ -100,32 +105,49 @@ export default function AvatarModal(props: any) {
             >
                 <Box sx={style}>
                     <Grid container columns={12} spacing={2} style={editLayout}>
-                        <Grid item xs={4}>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept="image/*" id="contained-button-file" type="file"
-                                    onChange={(event) => handleFileReception(event)} />
-                                <Button variant="contained" component="span" startIcon={<PhotoCamera />}>
-                                    Upload avatar
-                                </Button>
-                            </label>
-                        </Grid>
-                        <Grid item xs={4}>
 
+                        <Grid item xs={4} >
+                            <Avatar src={ avatar ? URL.createObjectURL(avatar) : "" } style={{
+                                width: "125px",
+                                height: "125px",
+                                border:"3px solid purple"
+                            }} /> 
                         </Grid>
-                        <Grid item xs={12}>
-                            <BottomNavigation >
+                        <Grid container item xs={12} style={{justifyContent:"space-around"}}>
+                            <Grid item xs={6} >
                                 <Button variant="contained" style={{
                                     backgroundColor: "#22c863",
                                     color: "#FFFFFF",
                                     minWidth: "30%",
                                     marginLeft: "5%",
                                     marginTop: "10px",
-                                    marginRight: "5%",
                                     overflow: "auto"
-                                }} onClick={handleUpload}> Confirm Avatar</Button>
+                                }} onClick={handleUpload}> Confirm Avatar
+                                </Button>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <label htmlFor="contained-button-file">
+                                    <Input accept="image/*" id="contained-button-file" type="file"
+                                        onChange={(event) => handleFileReception(event)} />
+                                    <Button variant="contained" component="span" startIcon={<PhotoCamera />} style={{
+                                        minWidth: "30%",
+                                        marginTop: "10px",
+                                        marginRight: "5%",
+                                        overflow: "auto"
+                                    }} >
+                                        Upload Picture
+                                    </Button>
+                                </label>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Modal>
+        </div>
+    );
+}
 
+/*
                                 <Button variant="contained" style={{
                                     backgroundColor: "#c84322",
                                     marginLeft: "5%",
@@ -134,11 +156,4 @@ export default function AvatarModal(props: any) {
                                     color: "#FFFFFF",
                                     width: "30%"
                                 }} onClick={handleClose}> Cancel </Button >
-                            </BottomNavigation>
-                        </Grid>
-                    </Grid>
-                </Box>
-            </Modal>
-        </div>
-    );
-}
+                                */

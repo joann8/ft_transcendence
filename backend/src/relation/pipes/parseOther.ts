@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, PipeTransform, Req } from "@nestjs/common";
 import { User } from "src/user/entities/user.entity";
 import { getRepository, Repository } from "typeorm";
-import { GetRelationDto } from "./dto/getRelationDto.dto";
+import { GetRelationDto } from "../dto/getRelationDto.dto";
 
 @Injectable()
 export class ParseOther implements PipeTransform {

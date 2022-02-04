@@ -15,6 +15,8 @@ import {
 	ConsoleLogger,
 	HttpException,
 	HttpStatus,
+	ValidationPipe,
+	UsePipes,
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -27,6 +29,7 @@ import { UpdateCurrentUserDto } from './dto/updateCurrentUser.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { Console } from 'console';
+import { ParseUpdateCurrentDto } from './pipes/parseUpdateCurrentDto';
 
 @Controller('user')
 export class UserController {
@@ -46,20 +49,15 @@ export class UserController {
 	// SEARCH AN USER
 	@Get(':id_pseudo')
 	async getUser(@Param() user_pseudo: string): Promise<User> {
-			const res =  await this.userService.findOne(user_pseudo);
+		const res = await this.userService.findOne(user_pseudo);
 		//	console.log(`getUser [${user_pseudo}] ==> res :`, res)
-			if (!res)
-				throw new  HttpException("User not found", HttpStatus.NOT_FOUND)
-			else
-				return res
-	}
-	
-	//A Supprimer ? 
-	@Get('/avatar/:avatarId')
-	async getAvatar(@Param('avatarId') avatarId: string, @Res() res: Response): Promise<any> {
-		res.sendFile(avatarId, { root: 'avatars' })
+		if (!res)
+			throw new HttpException("User not found", HttpStatus.NOT_FOUND)
+		else
+			return res
 	}
 
+	//UPLOAD NEW AVATAR
 	@Post('upload')
 	@UseInterceptors(FileInterceptor('avatar', {
 		storage: diskStorage({
@@ -78,20 +76,12 @@ export class UserController {
 		@Req() req,
 		@UploadedFile() file: Express.Multer.File
 	) {
-		const filePath = `${process.env.PWD}/avatars/${file.filename}`
-		//	const filePath = `${file.`
-
-		console.log("File interceptor : ", file)
-
 		const oldAvatarPath = `${process.env.PWD}/avatars/${((req.user.avatar).split('/').pop())}`
-
-		console.log(oldAvatarPath)
 		await this.userService.update(req.user.id, {
 			avatar: `${process.env.BACKEND_URL}/avatars/${file.filename}`,
 		})
 		const fs = require('fs')
-
-		//Suppression de l'ancien avatat
+		//Suppression de l'ancien avatar
 		fs.unlink(oldAvatarPath, function (err) {
 			if (err)
 				console.log("Error in avatart deletion: ", err)
@@ -102,28 +92,18 @@ export class UserController {
 	}
 
 	// UPDATE MY PROFILE (Look at UpdateCurrentUserDto for available options)
+	//Verfier utilite du ValidationPipe 
 	@Put()
+	@UsePipes(new ValidationPipe({ transform: true }))
 	async updateCurrentUser(
-		@Res() res: Response,
 		@Req() req,
-		@Body() updateCurrentUserDto: UpdateCurrentUserDto,
+		@Body(ParseUpdateCurrentDto) updateCurrentUserDto: UpdateCurrentUserDto,
 	): Promise<User> {
 		console.log("updateCurrentDto: ", updateCurrentUserDto)
-		try {
-			await this.userService.update(req.user.id, updateCurrentUserDto);
-			res.statusMessage = "Succes User Updated"
-			res.status(200).send({ success: "User successfully updated" })
-			let user = await this.userService.findOne(req.user.id.toString());
-			console.log("USER : ", user)
-			return user;
-		}
-		catch (error) {
-			//console.log("UpdateCurrentUser Error caught:" + '\n', error)
-			res.statusMessage = "Username or Email unavailable"
-			res.status(409).send({ error: " Username or Email unavalaible" })
-		}
-
+		await this.userService.update(req.user.id, updateCurrentUserDto);
+		return this.userService.findOne(req.user.id.toString());
 	}
+
 	// DELETE MY PROFILE
 	@Delete()
 	@Redirect('/')

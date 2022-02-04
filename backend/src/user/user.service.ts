@@ -28,10 +28,6 @@ export class UserService {
 		return await this.usersRepository.find();
 	}
 
-	/*async findById(userId : number) : Promise<User> {
-		return await this.usersRepository.findOne(userId)
-	}
-	*/
 	
 	async findOne(user_pseudo: string): Promise<User> {
 
@@ -45,11 +41,7 @@ export class UserService {
 	}
 
 	async update(id: number, user: Partial<User>): Promise<UpdateResult> {
-			const updatedUser = await this.usersRepository.update(id, user)
-			.catch(err => {
-				throw err
-			});
-			return updatedUser
+			return await this.usersRepository.update(id, user)
 	}
 
 	async winElo(winner : User): Promise<UpdateResult> {
