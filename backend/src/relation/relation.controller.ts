@@ -7,8 +7,8 @@ import { FindRelationDto } from './dto/findRelationdto';
 import { GetRelationDto } from './dto/getRelationDto.dto';
 import { getRepository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
-import { ParseOther } from './pipeParseOther';
-import { ParseUpdate } from './pipeParseUpdate';
+import { ParseOther } from './pipes/parseOther';
+import { ParseUpdate } from './pipes/parseUpdate';
 
 @Controller('relation')
 export class RelationController {

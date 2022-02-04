@@ -22,49 +22,46 @@ const style = {
     p: 4,
 };
 
+const editLayout = {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "20px",
+    overflow: "auto"
+}
+
 export default function InfoModal(props: any) {
 
-    const editLayout = {
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: "20px",
-        overflow: "auto"
-    }
 
-    const [state, setState] = useState({
-        id_pseudo: "",
-        email: "",
-    })
-    const [modal, setModal] = useState(true)
+
+    const [pseudo, setPseudo] = useState("")
+   // const [modal, setModal] = useState(true)
     const nav = useNavigate()
 
 
     function handleChange(evt: any) {
-        setState({
-            ...state, [evt.target.name]: evt.target.value
-        })
+        setPseudo(evt.target.value)
     }
 
-    function handleClick() {
+    function handleSubmit(evt: any)
+    {
+        evt.preventDefault()
+        handleAccept()
+    }
 
-        if (!state.email && !state.id_pseudo) {
+    function handleAccept() {
+
+        if (!pseudo) {
             alert("Empty Fields : No change to submit")
             return;
         }
-        if (state.email) {
-            if (!validator.isEmail(state.email))
-                return alert("Email Invalid")
-        }
-        if (state.id_pseudo) {
-            if (!(validator.isAlpha(state.id_pseudo[0]) && validator.isAlphanumeric(state.id_pseudo)))
+        if (pseudo) {
+            if (!(validator.isAlpha(pseudo[0]) && validator.isAlphanumeric(pseudo)))
                 return (alert("Pseudo must contain alpha numeric only and START with a letter"))
         }
-        let update: any
-        update = {}
-        if (state.email)
-            update.email = state.email
-        if (state.id_pseudo)
-            update.id_pseudo = state.id_pseudo
+
+       const update = {
+           id_pseudo : pseudo
+       }
 
         fetch("http://127.0.0.1:3001/user", {
             method: "PUT",
@@ -79,15 +76,17 @@ export default function InfoModal(props: any) {
                 if (res.status === 401) {
                     nav("/login")
                 }
-
                 else if (!res.ok) {
-                    throw new Error(res.statusText)
+                    if(res.status === 409 )
+                        throw new Error("Pseudo not available")
+                    else
+                        throw new Error(res.statusText)
                 }
                 res.json()
             })
             .then(data => {
                 console.log(data)
-                props.setUpdate(props.update + 1)
+                props.setUpdate(!props.update)
                 props.setModal(false)
             })
             .catch(err => {
@@ -95,14 +94,12 @@ export default function InfoModal(props: any) {
             })
     }
 
-       //             {/*open={props.modalState}*/}
-
-    const handleClose = () => setModal(false)//props.setModal(false);
+    const handleClose = () => props.setModal(false)
 
     return (
         <div>
             <Modal
-                open={modal}
+                open={props.modalState}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -110,26 +107,14 @@ export default function InfoModal(props: any) {
                 <Box sx={style}>
                     <Grid container columns={12} spacing={2} style={editLayout}>
                         <br />
-                        <Grid item xs={6}component="form">
-
+                        <Grid item xs={6} component="form" onSubmit={handleSubmit}>
                             <TextField
                                 fullWidth
                                 id="outlined"
                                 name="id_pseudo"
                                 label="Pseudo"
-                                defaultValue={state.id_pseudo}
+                                defaultValue={pseudo}
                                 onChange={handleChange}
-                            />
-                        </Grid>
-                        <Grid item xs={6} component="form">
-                            <TextField
-                                fullWidth
-                                id="outlined"
-                                name="email"
-                                label="New Email"
-                                defaultValue={state.email}
-                                onChange={handleChange}
-
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -141,7 +126,7 @@ export default function InfoModal(props: any) {
                                     marginLeft: "5%",
                                     marginTop: "10px",
                                     marginRight: "5%",
-                                }} onClick={handleClick}> Accept </Button>
+                                }} onClick={handleAccept}> Accept </Button>
 
                                 <Button variant="contained" style={{
                                     backgroundColor: "#c84322",
