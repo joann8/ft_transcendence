@@ -34,19 +34,8 @@ export default function InfoModal(props: any) {
 
 
     const [pseudo, setPseudo] = useState("")
-   // const [modal, setModal] = useState(true)
     const nav = useNavigate()
 
-
-    function handleChange(evt: any) {
-        setPseudo(evt.target.value)
-    }
-
-    function handleSubmit(evt: any)
-    {
-        evt.preventDefault()
-        handleAccept()
-    }
 
     function handleAccept() {
 
@@ -59,9 +48,9 @@ export default function InfoModal(props: any) {
                 return (alert("Pseudo must contain alpha numeric only and START with a letter"))
         }
 
-       const update = {
-           id_pseudo : pseudo
-       }
+        const update = {
+            id_pseudo: pseudo
+        }
 
         fetch("http://127.0.0.1:3001/user", {
             method: "PUT",
@@ -77,7 +66,7 @@ export default function InfoModal(props: any) {
                     nav("/login")
                 }
                 else if (!res.ok) {
-                    if(res.status === 409 )
+                    if (res.status === 409)
                         throw new Error("Pseudo not available")
                     else
                         throw new Error(res.statusText)
@@ -94,51 +83,78 @@ export default function InfoModal(props: any) {
             })
     }
 
+
+
+    function handleChange(evt: any) {
+        console.log("Change evt: ", evt)
+        setPseudo(evt.target.value)
+    }
+
+    function handleSubmit(evt: any) {
+        evt.preventDefault()
+        handleAccept()
+    }
+
     const handleClose = () => props.setModal(false)
+
+    function handleKeyPress(evt: any){
+        console.log("Key press : ", evt)
+
+        if (evt.key === "a")
+        {
+            handleChange(evt)
+        }
+    }
 
     return (
         <div>
             <Modal
                 open={props.modalState}
                 onClose={handleClose}
+                onKeyDown={handleKeyPress}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
+                    <Box component="form" onSubmit={handleSubmit}>
+                        <TextField
+                            fullWidth
+                            id="outlined"
+                            name="id_pseudo"
+                            label="Pseudo"
+                            defaultValue={pseudo}
+                            onChange={handleChange}
+                        />
+                    </Box>
                     <Grid container columns={12} spacing={2} style={editLayout}>
                         <br />
-                        <Grid item xs={6} component="form" onSubmit={handleSubmit}>
-                            <TextField
-                                fullWidth
-                                id="outlined"
-                                name="id_pseudo"
-                                label="Pseudo"
-                                defaultValue={pseudo}
-                                onChange={handleChange}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <BottomNavigation >
-                                <Button variant="contained" style={{
-                                    backgroundColor: "#22c863",
-                                    color: "#FFFFFF",
-                                    width: "30%",
-                                    marginLeft: "5%",
-                                    marginTop: "10px",
-                                    marginRight: "5%",
-                                }} onClick={handleAccept}> Accept </Button>
+                        <Grid item xs={6}>
 
-                                <Button variant="contained" style={{
-                                    backgroundColor: "#c84322",
-                                    marginLeft: "5%",
-                                    marginTop: "10px",
-                                    marginRight: "5%",
-                                    color: "#FFFFFF",
-                                    width: "30%"
-                                }} onClick={handleClose}> Cancel </Button >
-                            </BottomNavigation>
                         </Grid>
+
+
+                        <Grid item xs={12}>
+                            <Button variant="contained" style={{
+                                backgroundColor: "#22c863",
+                                color: "#FFFFFF",
+                                width: "30%",
+                                marginLeft: "5%",
+                                marginTop: "10px",
+                                marginRight: "5%",
+                            }} onClick={handleAccept}> Accept </Button>
+
+                            <Button variant="contained" style={{
+                                backgroundColor: "#c84322",
+                                marginLeft: "5%",
+                                marginTop: "10px",
+                                marginRight: "5%",
+                                color: "#FFFFFF",
+                                width: "30%"
+                            }} onClick={handleClose}> Cancel </Button >
+                        </Grid>
+
                     </Grid>
+
                 </Box>
             </Modal>
         </div>
