@@ -44,59 +44,32 @@ export default function Profile() {
     })
     const [update, setUpdate] = useState(0)
     //   const [userData, setUserData] = useState(defaultUser)
-    const [userData, setUserData] = useState<IUser>(context)
-
+    const [userData, setUserData] = useState<IUser>(context.user)
 
     const navigate = useNavigate()
-    /*
-        const getUserData = async () => {
-            await fetch(`${backEndUrl}/user`, {
-                method: "GET",
-                credentials: "include",
-                referrerPolicy: "same-origin"
-            })
-                .then((res) => {
-                    if (res.status === 401) {
-                        navigate("/login");
-                    }
-                    else if (!res.ok) {
-                        throw new Error(res.statusText);
-                    }
-                    return res.json();
-                })
-                .then((resData) => {
-                    setUserData(resData)
-                    setReady(true)
-                    //console.log("UserData : ", resData)
-                })
-                .catch((err) => {
-                    console.log("Error caught: ", err)
-                })
-        }
-        */
+
 
     useEffect(() => {
-        //   console.log("Context : ", value)
-        //  console.log("Test: ", test)
+        console.log("Search bar : ", searchInput)
     })
 
     useEffect(() => {
         //    getUserData()
-        setUserData(context)
+        setUserData(context.user)
         console.log("Profile update ...")
-    }, [context]/*[value, update]*/)
+    }, [context.user]/*[value, update]*/)
 
     const handleSearchBarSubmit = async (event) => {
         event.preventDefault()
-        console.log("Profile User barSearch: ", searchInput)
-        if (searchInput === userData.id_pseudo)
-            navigate('/profile')
-        else
-            navigate(`/profile/${searchInput}`)
+        navigate(`/profile/${searchInput}`)
     }
 
-    const handleSearchChange = (event) => {
+    const handleSearchChange = (event: any) => {
         setSearchInput(event.target.value)
+    }
+
+    const handleAuth = () => {
+        context.setUpdate(!context.update)
     }
 
     return (
@@ -108,6 +81,9 @@ export default function Profile() {
                         <Box component="form" sx={profileStyle.searchBar} onSubmit={handleSearchBarSubmit}
                         >
                             <TextField fullWidth
+                                label="Search for players"
+                                defaultValue={searchInput}
+                                onChange={handleSearchChange}
                                 sx={{ input: { color: "purple" } }}
                                 style={{
                                     backgroundColor: "rgba(255, 255, 255, 0.8)",
@@ -115,9 +91,6 @@ export default function Profile() {
                                     border: '1px purple',
                                     borderRadius: "10px"
                                 }}
-                                label="Search for players"
-                                defaultValue={searchInput}
-                                onChange={handleSearchChange}
                             />
                         </Box>
 
@@ -154,10 +127,15 @@ export default function Profile() {
                                 </Button>
                                 {modalState.friend ? <FriendRequestModal user={userData} modalState={modalState.friend} setModal={setModal} update={update} setUpdate={setUpdate} /> : null}
 
-
-                                <Button variant="contained" startIcon={userData.two_factor ? <LockTwoTone /> : <LockOpenTwoTone />} style={{
-                                    marginTop: "10px",
-                                }}>Auth {userData.two_factor ? "ON" : "OFF"}</Button>
+                                <Button
+                                    variant="contained"
+                                    onClick={handleAuth}
+                                    startIcon={userData.two_factor ? <LockTwoTone /> : <LockOpenTwoTone />}
+                                    style={{
+                                        marginTop: "10px",
+                                    }}>
+                                    Auth {userData.two_factor ? "ON" : "OFF"}
+                                </Button>
                             </Box>
                         </Box>
 
@@ -171,3 +149,32 @@ export default function Profile() {
         </Fragment >
     );
 }
+
+
+
+/*
+       const getUserData = async () => {
+           await fetch(`${backEndUrl}/user`, {
+               method: "GET",
+               credentials: "include",
+               referrerPolicy: "same-origin"
+           })
+               .then((res) => {
+                   if (res.status === 401) {
+                       navigate("/login");
+                   }
+                   else if (!res.ok) {
+                       throw new Error(res.statusText);
+                   }
+                   return res.json();
+               })
+               .then((resData) => {
+                   setUserData(resData)
+                   setReady(true)
+                   //console.log("UserData : ", resData)
+               })
+               .catch((err) => {
+                   console.log("Error caught: ", err)
+               })
+       }
+       */

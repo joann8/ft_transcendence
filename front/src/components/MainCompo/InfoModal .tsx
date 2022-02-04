@@ -28,17 +28,7 @@ const editLayout = {
 
 export default function InfoModal(props: any) {
   const [pseudo, setPseudo] = React.useState("");
-  // const [modal, setModal] = useState(true)
   const nav = useNavigate();
-
-  function handleChange(evt: any) {
-    setPseudo(evt.target.value);
-  }
-
-  function handleSubmit(evt: any) {
-    evt.preventDefault();
-    handleAccept();
-  }
 
   function handleAccept() {
     if (!pseudo) {
@@ -84,63 +74,82 @@ export default function InfoModal(props: any) {
       });
   }
 
+  function handleChange(evt: any) {
+    console.log("Change evt: ", evt);
+    setPseudo(evt.target.value);
+  }
+
+  function handleSubmit(evt: any) {
+    evt.preventDefault();
+    handleAccept();
+  }
+
   const handleClose = () => props.setModal(false);
+
+  function handleKeyPress(evt: any) {
+    console.log("Key press : ", evt);
+
+    if (evt.key === "a") {
+      handleChange(evt);
+    }
+  }
 
   return (
     <div>
       <Modal
         open={props.modalState}
         onClose={handleClose}
+        onKeyDown={handleKeyPress}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+          <Box component="form" onSubmit={handleSubmit}>
+            <TextField
+              fullWidth
+              id="outlined"
+              name="id_pseudo"
+              label="Pseudo"
+              defaultValue={pseudo}
+              onChange={handleChange}
+            />
+          </Box>
           <Grid container columns={12} spacing={2} style={editLayout}>
             <br />
-            <Grid item xs={6} component="form" onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                id="outlined"
-                name="id_pseudo"
-                label="Pseudo"
-                defaultValue={pseudo}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <BottomNavigation>
-                <Button
-                  variant="contained"
-                  style={{
-                    backgroundColor: "#22c863",
-                    color: "#FFFFFF",
-                    width: "30%",
-                    marginLeft: "5%",
-                    marginTop: "10px",
-                    marginRight: "5%",
-                  }}
-                  onClick={handleAccept}
-                >
-                  {" "}
-                  Accept{" "}
-                </Button>
+            <Grid item xs={6}></Grid>
 
-                <Button
-                  variant="contained"
-                  style={{
-                    backgroundColor: "#c84322",
-                    marginLeft: "5%",
-                    marginTop: "10px",
-                    marginRight: "5%",
-                    color: "#FFFFFF",
-                    width: "30%",
-                  }}
-                  onClick={handleClose}
-                >
-                  {" "}
-                  Cancel{" "}
-                </Button>
-              </BottomNavigation>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                style={{
+                  backgroundColor: "#22c863",
+                  color: "#FFFFFF",
+                  width: "30%",
+                  marginLeft: "5%",
+                  marginTop: "10px",
+                  marginRight: "5%",
+                }}
+                onClick={handleAccept}
+              >
+                {" "}
+                Accept{" "}
+              </Button>
+
+              <Button
+                variant="contained"
+                style={{
+                  backgroundColor: "#c84322",
+                  marginLeft: "5%",
+                  marginTop: "10px",
+                  marginRight: "5%",
+                  color: "#FFFFFF",
+                  width: "30%",
+                }}
+                onClick={handleClose}
+              >
+                {" "}
+                Cancel{" "}
+              </Button>
             </Grid>
           </Grid>
         </Box>
