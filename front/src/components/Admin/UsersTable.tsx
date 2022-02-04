@@ -90,7 +90,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-export default function UsersTable(props) {
+export default function UsersTable() {
   const { error, isPending, data: users } = useFromApi("/admin/users");
 
   return (

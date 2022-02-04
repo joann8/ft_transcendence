@@ -1,19 +1,31 @@
 import { Button } from "@mui/material";
 import { api_url } from "../../ApiCalls/var";
 import { useSnackbar } from "notistack";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Fragment } from "react";
+import { Context } from "../MainCompo/SideBars";
+import { IUser } from "../Profile/profileStyle";
 
-function isSetAdminButtonDisabled(user: any): boolean {
-  if (user.role === "owner" || user.role === "admin") {
+function isSetAdminButtonDisabled(
+  row_user: IUser,
+  current_user: IUser
+): boolean {
+  if (row_user.role === "owner" || row_user.role === "admin") {
+    return true;
+  } else if (row_user.role === "admin" && current_user.role === "admin") {
     return true;
   } else {
     return false;
   }
 }
 
-function isRemoveAdminButtonDisabled(user: any): boolean {
-  if (user.role === "owner" || user.role !== "admin") {
+function isRemoveAdminButtonDisabled(
+  row_user: IUser,
+  current_user: IUser
+): boolean {
+  if (row_user.role === "owner" || row_user.role !== "admin") {
+    return true;
+  } else if (row_user.role === "admin" && current_user.role === "admin") {
     return true;
   } else {
     return false;
@@ -21,12 +33,13 @@ function isRemoveAdminButtonDisabled(user: any): boolean {
 }
 
 export default function PromoteUserButton(props) {
+  const user = useContext(Context).user;
   const { enqueueSnackbar } = useSnackbar();
   const [disableSetAdminButton, setDisableSetAdminButton] = useState(
-    isSetAdminButtonDisabled(props.params.row)
+    isSetAdminButtonDisabled(props.params.row, user)
   );
   const [disableRemoveAdminButton, setDisableRemoveAdminButton] = useState(
-    isRemoveAdminButtonDisabled(props.params.row)
+    isRemoveAdminButtonDisabled(props.params.row, user)
   );
   const [isAdmin, setIsAdmin] = useState(
     props.params.row.role === "owner" || props.params.row.role === "admin"

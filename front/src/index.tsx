@@ -10,9 +10,10 @@ import Chat from "./components/Chat/Chat";
 import Profile from "./components/Profile/Profile";
 import SideBars from "./components/MainCompo/SideBars";
 import Login from "./components/Login/Login";
-import Admin from "./components/Admin/Admin";
+import Admin from "./components/Admin/Dashboard";
 import OtherUser from "./components/Profile/OtherUser";
 import Friend from "./components/Friend/Friend";
+import Dashboard from "./components/Admin/Dashboard";
 
 function Root() {
   return (
@@ -23,19 +24,18 @@ function Root() {
         <Route path="/login" element={<Login twofa={false} />} />
         <Route path="/" element={<SideBars />}>
           <Route index element={<Homepage />} />
-          <Route path="game" >
-            <Route index element={<Game mode={"random"}/>} />
-            <Route path="challenge" >
-              <Route path=":id" element={<Game mode={"challenge"} />} /> 
+          <Route path="game">
+            <Route index element={<Game mode={"random"} />} />
+            <Route path="challenge">
+              <Route path=":id" element={<Game mode={"challenge"} />} />
             </Route>
-            <Route path="watch" >
-              <Route path=":id" element={<Game  mode={"watch"}/> } /> 
+            <Route path="watch">
+              <Route path=":id" element={<Game mode={"watch"} />} />
             </Route>
           </Route>
           <Route path="friend" element={<Friend />} />
           <Route path="chat" element={<Chat />} />
-          <Route path="admin" element={<Admin role={"admin"} />} />
-          <Route path="owner" element={<Admin role={"owner"} />} />
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="profile" element={<Profile />} />
           <Route path="profile">
             <Route index element={<Profile />} />
@@ -53,9 +53,9 @@ export default Root;
 
 ReactDOM.render(
   <React.StrictMode>
-  {/*  <socketContext.Provider value={socket}>*/}
+    {/*  <socketContext.Provider value={socket}>*/}
     <Root />
-  {/*</socketContext.Provider>*/}
+    {/*</socketContext.Provider>*/}
   </React.StrictMode>,
   document.getElementById("root")
 );

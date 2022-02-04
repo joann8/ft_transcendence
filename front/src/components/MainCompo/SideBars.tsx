@@ -80,14 +80,13 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
-interface IContext  {
-  user : IUser,
-  update : boolean,
-  setUpdate : any
+interface IContext {
+  user: IUser;
+  update: boolean;
+  setUpdate: any;
 }
 
-export const Context = createContext<IContext>(null)
-
+export const Context = createContext<IContext>(null);
 
 export default function SideBar(props: any) {
   /*
@@ -271,20 +270,24 @@ export default function SideBar(props: any) {
                 </IconButton>
               </Toolbar>
               <Divider />
-              <Context.Provider value={{
-                user : user,
-                update: update,
-                setUpdate: setUpdate
-              }}>
-                {user && <MainListItems role={user.role} />}
+              <Context.Provider
+                value={{
+                  user: user,
+                  update: update,
+                  setUpdate: setUpdate,
+                }}
+              >
+                {user && <MainListItems />}
               </Context.Provider>
               <Divider />
             </Drawer>
-            <Context.Provider value={{
-                user : user,
+            <Context.Provider
+              value={{
+                user: user,
                 update: update,
-                setUpdate: setUpdate
-              }}>
+                setUpdate: setUpdate,
+              }}
+            >
               <Outlet />
             </Context.Provider>
           </Box>

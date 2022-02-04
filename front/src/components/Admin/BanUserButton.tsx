@@ -5,17 +5,28 @@ import { useState } from "react";
 import { useContext } from "react";
 import { Fragment } from "react";
 import { Context } from "../MainCompo/SideBars";
+import { IUser } from "../Profile/profileStyle";
 
-function isBannableButtonDisabled(user: any): boolean {
-  if (user.role === "owner" || user.status === "BAN") {
+function isBannableButtonDisabled(
+  row_user: IUser,
+  current_user: IUser
+): boolean {
+  if (row_user.role === "owner" || row_user.status === "BAN") {
+    return true;
+  } else if (row_user.role === "admin" && current_user.role === "admin") {
     return true;
   } else {
     return false;
   }
 }
 
-function isUnbannableButtonDisabled(user: any): boolean {
-  if (user.role === "owner" || user.status !== "BAN") {
+function isUnbannableButtonDisabled(
+  row_user: IUser,
+  current_user: IUser
+): boolean {
+  if (row_user.role === "owner" || row_user.status !== "BAN") {
+    return true;
+  } else if (row_user.role === "admin" && current_user.role === "admin") {
     return true;
   } else {
     return false;
@@ -23,13 +34,13 @@ function isUnbannableButtonDisabled(user: any): boolean {
 }
 
 export default function BanUserButton(props) {
-  const user = useContext(Context);
+  const user = useContext(Context).user;
   const { enqueueSnackbar } = useSnackbar();
   const [disableBan, setDisableBan] = useState(
-    isBannableButtonDisabled(props.params.row)
+    isBannableButtonDisabled(props.params.row, user)
   );
   const [disableUnban, setDisableUnban] = useState(
-    isUnbannableButtonDisabled(props.params.row)
+    isUnbannableButtonDisabled(props.params.row, user)
   );
   const [isBan, setIsBan] = useState(props.params.row.status === "BAN");
 

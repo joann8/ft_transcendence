@@ -5,6 +5,8 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import UsersTable from "./UsersTable";
 import { Toolbar } from "@mui/material";
+import { Context } from "../MainCompo/SideBars";
+import Forbidden from "../Errors/Forbidden";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -39,12 +41,15 @@ function a11yProps(index: number) {
   };
 }
 
-export default function Admin(props) {
+export default function Dashboard() {
   const [value, setValue] = React.useState(0);
-
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  const user = React.useContext(Context).user;
+  if (user.role !== "admin" && user.role !== "owner") {
+    return <Forbidden />;
+  }
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -61,7 +66,7 @@ export default function Admin(props) {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <UsersTable role={props.role} />
+        <UsersTable />
       </TabPanel>
       <TabPanel value={value} index={1}></TabPanel>
     </Box>
