@@ -2,7 +2,9 @@ import { Button } from "@mui/material";
 import { api_url } from "../../ApiCalls/var";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
+import { useContext } from "react";
 import { Fragment } from "react";
+import { Context } from "../MainCompo/SideBars";
 
 function isBannableButtonDisabled(user: any): boolean {
   if (user.role === "owner" || user.status === "BAN") {
@@ -21,6 +23,7 @@ function isUnbannableButtonDisabled(user: any): boolean {
 }
 
 export default function BanUserButton(props) {
+  const user = useContext(Context);
   const { enqueueSnackbar } = useSnackbar();
   const [disableBan, setDisableBan] = useState(
     isBannableButtonDisabled(props.params.row)

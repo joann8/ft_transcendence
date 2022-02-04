@@ -28,8 +28,10 @@ export class UserService {
 		return await this.usersRepository.find();
 	}
 
-	async findOne(id: string): Promise<User> {
-		return await this.usersRepository.findOne(id);
+	async findOne(user_pseudo: string): Promise<User> {
+		// correction ?
+		// 		return await this.usersRepository.findOne({id_pseudo : user_pseudo});
+		return await this.usersRepository.findOne(user_pseudo);
 	}
 
 	async remove(id: string): Promise<void> {
@@ -38,5 +40,19 @@ export class UserService {
 
 	async update(id: number, user: Partial<User>): Promise<UpdateResult> {
 		return await this.usersRepository.update(id, user);
+	}
+
+	async winElo(winner: User): Promise<UpdateResult> {
+		const user = await this.usersRepository.findOne(winner.id);
+		user.elo += 100;
+		return await this.usersRepository.update(user.id, user);
+	}
+
+	async getLeaderboard(): Promise<User[]> {
+		const leaders = await this.usersRepository.find({
+			order: { elo: 'DESC' },
+			take: 2, //a modifier, combien de données veut-on dans le tableau lead?
+		});
+		return leaders;
 	}
 }

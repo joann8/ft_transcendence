@@ -11,6 +11,7 @@ import LeaderIcon from "@mui/icons-material/EmojiEventsOutlined";
 import SupervisorIcon from "@mui/icons-material/SupervisorAccountOutlined";
 import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
+import GroupsIcon from '@mui/icons-material/Groups';
 import { useNavigate } from "react-router";
 import { fetchFromApi } from "../../ApiCalls/fetchFromApi";
 
@@ -80,6 +81,13 @@ function MainListItems(props: any) {
           <ChatIcon />
         </ListItemIcon>
         <ListItemText primary="Chat" />
+      </ListItem>
+
+      <ListItem button onClick={() => navigate("/friend") }>
+        <ListItemIcon>
+          <GroupsIcon/>
+        </ListItemIcon>
+        <ListItemText primary="Friends" />
       </ListItem>
 
       <ListItem button onClick={() => handleLogout()}>

@@ -1,58 +1,105 @@
 import * as React from 'react';
 import { Fragment } from 'react';
 import { PropsGame } from './GameTypes';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { FormControlLabel, Switch } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import { draw_all } from './GameDraw';
+import { gameStateInit, color_object, width, height} from './GameConst';
 
-export default function GamePong(props : PropsGame) {
+export default function GamePong(props: PropsGame) {
+    
+    const socket = props.socket;
+    const ref = useRef<HTMLCanvasElement>(null!);
+    
+    useEffect(() => {
+        if (props.mode === "random")
+            socket.emit('join_queue', props.user);
+    }, []);
+    
+    const [game, setGame] = useState(gameStateInit);
 
-    // All constants
-    //const ref = useRef();
-    const width : number = props.width;
-    const height : number = props.height;
-    const paddle_h : number = height / 6;
-    const paddle_w : number = 10;
-    const ball_radius : number = 9;
-    const l_paddle_x: number = 0; //2?
-    const r_paddle_x: number = width - paddle_w; //- left_paddle_x; // pas sure
-    const paddle_init_y : number= (height / 2) - (paddle_h /2)
-    const enum Status {
-        Wait, 
-        Play, 
-        Over, 
+    useEffect(() => {
+        socket.on("updateState", (updateState : any) => {
+            setGame(updateState);
+        });
+    }, []);
+    
+    useEffect (() => {
+        window.addEventListener('keydown', (e) => {
+            if (e.code ==='ArrowUp') {
+                socket.emit('up_paddle');
+            } else if (e.code ==='ArrowDown') {
+                socket.emit('down_paddle');
+            }
+        })
+    }, []);
+    /*
+        window.addEventListener('keyup', (e) => {
+            if (e.code ==='ArrowUp') {
+                socket.emit ('up_paddle', 'up');
+            } else if (e.code ==='ArrowDown'){
+                socket.emit('down_paddle', 'up');
+            }
+        });
+    }, []);*/
+          
+    //Additionnal features
+    const [ballCheck, setBallCheck] = useState(false); // initial state (not activated)
+    const [paddleCheck, setPaddleCheck] = useState(false); // initial state (not activated)
+    const [colorMode, setColorMode] = useState(false); // initial state (not activated)
+
+    // false when click for first time // true second time (inverse)
+    const handleChangeBall = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setBallCheck(event.target.checked);
+        event.target.checked === true  ? socket.emit('ball_on') : socket.emit('ball_off');   
+    };
+    
+    // false when click for first time // true second time (inverse)
+    const handleChangePaddle = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPaddleCheck(event.target.checked);
+        event.target.checked === true  ? socket.emit('paddle_on') : socket.emit('paddle_off'); 
     };
 
-     const initGame = {
-        ball: {
-            x : width / 2,
-            y : height / 2            
-        },
-        paddles: {
-            ly: paddle_init_y,
-            ry: paddle_init_y
-        },
-        score: {
-            p1: 0,
-            p2: 0
-        },
-        state: Status.Wait,
-        has_winner : false
-    }
+    // false when click for first time // true second time (inverse)
+    const handleColorMode = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setColorMode(event.target.checked);
+    };
+
+    useEffect(()=> {
+        socket.on("ball_on_server", (args : any) => {
+            setBallCheck(true);                    
+        });
+
+        socket.on("ball_off_server", (args : any) => {
+            setBallCheck(false);                    
+        });
+    }, []);
+
+    useEffect(() => {
+        let c : HTMLCanvasElement = ref.current; //canvas
+        let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
+        draw_all(colorMode, ctx, game, color_object);
+    }, [game, colorMode]);
     
-    const [frame, setFrame] = useState(initGame);
-
-    //Draw functions
-    /*
-    useEffect(( => {
-        let c = ref.current; 
-
-    });
-
-
     return (
         <Fragment>
-
+            <Grid container alignItems="center" justifyContent="center"  >
+                <Grid item xs={12} style={{textAlign: "center"}}>
+                    <FormControlLabel control={<Switch color="success" checked={colorMode} onChange={handleColorMode}/>} label="Change Background" />
+                </Grid>
+                <Grid item xs={12} style={{textAlign: "center"}}>
+                    <canvas width={width} height={height} ref={ref}> 
+                    </canvas>
+                </Grid>
+                <br/>
+                <Grid item xs={12} style={{textAlign: "center"}}>
+                    <FormControlLabel control={<Switch color="success" checked={ballCheck} onChange={handleChangeBall}/>} label="Accelerate Ball" />
+                </Grid>
+                <Grid item xs={12} style={{textAlign: "center"}}>
+                    <FormControlLabel control={<Switch color="success" checked={paddleCheck} onChange={handleChangePaddle}/>} label="Larger Paddle" />
+                </Grid>
+            </Grid>
         </Fragment>
-
-    );*/
-};
+    );
+}

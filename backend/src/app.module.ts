@@ -11,7 +11,16 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { Chat } from './chat/chat.entity';
 import { AdminModule } from './admin/admin.module';
+import { PongModule } from './pong/pong.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { PongService } from './pong/pong.service';
+import { Pong } from './pong/entities/pong.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path/posix';
+import { RelationModule } from './relation/relation.module';
+import { Relation } from './relation/entities/relation.entity';
+import { RelationService } from './relation/relation.service';
+import { Challenge } from './pong/entities/challenge.entity';
 
 @Module({
 	imports: [
@@ -25,15 +34,21 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 			username: process.env.DATABASE_USERNAME,
 			password: process.env.DATABASE_PASSWORD,
 			database: process.env.DATABASE_NAME,
-			entities: [User, Chat],
+			entities: [User, Chat, Pong, Challenge, Relation],
 			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
 			keepConnectionAlive: true,
+		}),
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '..', '/avatars/'),
+			serveRoot: "/avatars/"
 		}),
 		UserModule,
 		ChatModule,
 		AuthModule,
 		AdminModule,
+		PongModule,
+		RelationModule,
 	],
 	controllers: [AppController],
 	providers: [
@@ -44,6 +59,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 		AppService,
 		UserService,
 		ChatService,
+		PongService,
+		RelationService,
 	],
 })
 export class AppModule {}

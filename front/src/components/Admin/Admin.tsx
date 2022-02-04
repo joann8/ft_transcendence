@@ -4,6 +4,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import UsersTable from "./UsersTable";
+import { Toolbar } from "@mui/material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -47,7 +48,8 @@ export default function Admin(props) {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider", mt: "70px" }}>
+      <Toolbar />
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
           value={value}
           onChange={handleChange}

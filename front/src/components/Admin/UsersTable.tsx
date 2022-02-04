@@ -85,7 +85,6 @@ const columns: GridColDef[] = [
     minWidth: 70,
     flex: 1,
     renderCell: (params) => {
-      console.log(params);
       return <PromoteUserButton params={params} />;
     },
   },
