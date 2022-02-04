@@ -12,16 +12,39 @@ import SideBars from "./components/MainCompo/SideBars";
 import Login from "./components/Login/Login";
 import OtherUser from "./components/Profile/OtherUser";
 import Friend from "./components/Friend/Friend";
+import { createTheme, ThemeProvider } from "@mui/material";
+
+//const mdTheme = createTheme();
+const mdTheme = createTheme({
+    palette: {
+      primary: {
+        main: '#000000'
+      },
+      secondary: {
+        main: '#e1e1e1' //call obj from color
+      }
+     }
+     /*
+     you can import font from google font to change the police ==> index.css
+     typography: {
+       fontFamily:'Quicksand',
+       fontWeightLight: 400,
+       fontWeightRegular: 500,
+       fontWeightMedium: 600,
+       fontWeightBold: 700,
+     }*/
+  });
 
 function Root() {
   return (
+    <ThemeProvider theme={mdTheme}>
     <Router>
       {/*<SideBars />*/}
       <Routes>
         <Route path="/login/twofa" element={<Login twofa={true} />} />
         <Route path="/login" element={<Login twofa={false} />} />
-        <Route path="/" element={<SideBars />}>
-          <Route index element={<Homepage />} />
+        <Route path="/" element={<SideBars theme={mdTheme}/>}>
+          <Route index element={<Homepage theme={mdTheme}/>} />
           <Route path="game" >
             <Route index element={<Game mode={"random"}/>} />
             <Route path="challenge" >
@@ -42,6 +65,7 @@ function Root() {
         </Route>
       </Routes>
     </Router>
+    </ThemeProvider>
   );
 }
 

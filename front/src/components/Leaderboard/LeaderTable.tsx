@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router';
 import { useState, useEffect } from 'react';
 import { Avatar, Button } from '@mui/material';
 
-
 export default function LeaderTable() {
 
   const navigate = useNavigate();
@@ -18,6 +17,7 @@ export default function LeaderTable() {
   const [update, setUpdate] = useState(false);
   const [leaders, setLeaders] = useState([]);
   
+  // BACK URL en var?
   useEffect(() => {
       const getLeaders = async () => {
       fetch("http://127.0.0.1:3001/user/all/leaderboard", {
@@ -60,12 +60,6 @@ export default function LeaderTable() {
                     <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update </Button>
                 </TableCell>             
               </TableRow>
-              {/*
-              <TableRow>
-                <TableCell align="center" colSpan={2}> Player </TableCell>
-                <TableCell align="center" colSpan={1}> Elo </TableCell>
-              </TableRow>
-              */}
             </TableHead>
             <TableBody>
               {leaders.map((user : any) => (

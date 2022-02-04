@@ -19,6 +19,7 @@ export default function GameChallenge(props : PropsChallenge) {
     let userID = props.user;
     let challengee = props.challengee;
     
+    // CONTEXT  --> update
     const updateStatus = async (newStatus : string) => {
       await fetch(`http://127.0.0.1:3001/user`, {
         method: "PUT",
@@ -30,9 +31,6 @@ export default function GameChallenge(props : PropsChallenge) {
     };
 
     useEffect(() => {
-      console.log("___Create a challenge : ");
-      console.log("challenger: ", userID.id_pseudo);
-      console.log("challengee: ", challengee.id_pseudo);
       updateStatus("IN GAME");
       socket.emit("create_challenge", {challenger : userID, challengee : challengee});
     }, []);

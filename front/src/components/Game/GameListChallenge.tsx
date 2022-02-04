@@ -55,11 +55,10 @@ export default function GameListChallenge(props : PropsGame) {
       })
       };
       getChallenges();
-  }, [update]); // a voir ??? 
+  }, [update]); 
 
   const [openChallenge, setOpenChallenge] = React.useState(false);
-  
-  
+    
   const startChallenge = (id_challenge : number) => {
     socket.emit("answer_challenge", { id_challenge : id_challenge, answer : "accepted"});
     updateStatus("IN GAME");
@@ -103,6 +102,9 @@ export default function GameListChallenge(props : PropsGame) {
       setOpenChallenge(false);
       alert("Challenger cancelled the challenge");
     });
+    return () => {
+      socket.removeAllListeners("no_such_challenge");
+    }
   }, [])
    
 
@@ -117,13 +119,6 @@ export default function GameListChallenge(props : PropsGame) {
                     <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update Challenges </Button>
                 </TableCell>             
               </TableRow>
-              {/*}
-              <TableRow>
-                <TableCell align="center" colSpan={2}>Challenger </TableCell>
-                <TableCell align="center" colSpan={2}>player 2</TableCell>
-                <TableCell colSpan={1}></TableCell>
-              </TableRow>
-            */}
             </TableHead>
             <TableBody>
               {challenges.map((challenge : any) => (

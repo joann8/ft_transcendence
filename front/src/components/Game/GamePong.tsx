@@ -23,27 +23,25 @@ export default function GamePong(props: PropsGame) {
         socket.on("updateState", (updateState : any) => {
             setGame(updateState);
         });
+        return () => {
+            socket.removeAllListeners("updateState");
+        };
     }, []);
     
+
     useEffect (() => {
         window.addEventListener('keydown', (e) => {
-            if (e.code ==='ArrowUp') {
-                socket.emit('up_paddle');
-            } else if (e.code ==='ArrowDown') {
-                socket.emit('down_paddle');
+            if (ref)
+            {
+                if (e.code ==='ArrowUp') {
+                    socket.emit('up_paddle');
+                } else if (e.code ==='ArrowDown') {
+                    socket.emit('down_paddle');
+                }
             }
         })
     }, []);
-    /*
-        window.addEventListener('keyup', (e) => {
-            if (e.code ==='ArrowUp') {
-                socket.emit ('up_paddle', 'up');
-            } else if (e.code ==='ArrowDown'){
-                socket.emit('down_paddle', 'up');
-            }
-        });
-    }, []);*/
-          
+    
     //Additionnal features
     const [ballCheck, setBallCheck] = useState(false); // initial state (not activated)
     const [paddleCheck, setPaddleCheck] = useState(false); // initial state (not activated)
@@ -74,12 +72,20 @@ export default function GamePong(props: PropsGame) {
         socket.on("ball_off_server", (args : any) => {
             setBallCheck(false);                    
         });
+
+        return () => {
+            socket.removeAllListeners("ball_on_server");
+            socket.removeAllListeners("ball_off_server");
+        };
     }, []);
 
     useEffect(() => {
-        let c : HTMLCanvasElement = ref.current; //canvas
-        let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
-        draw_all(colorMode, ctx, game, color_object);
+        if (ref)
+        {
+            let c : HTMLCanvasElement = ref.current; //canvas
+            let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
+            draw_all(colorMode, ctx, game, color_object);
+        }
     }, [game, colorMode]);
     
     return (

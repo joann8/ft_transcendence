@@ -69,7 +69,7 @@ import { WAIT, PLAY, OVER } from "./GameConst";
         draw_background(ctx, back); 
         ctx.fillStyle = object;
         ctx.font = font_text; 
-        ctx.fillText("Waiting for Player", 125, height / 2);
+        ctx.fillText("Waiting for Player", 150, height / 2);
     }
 
     export function draw_already(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate, colorObject : string) {
@@ -85,7 +85,7 @@ import { WAIT, PLAY, OVER } from "./GameConst";
         draw_background(ctx, back); 
         ctx.fillStyle = object;
         ctx.font = font_text; 
-        ctx.fillText("Waiting for Player", 125, height / 2);
+        ctx.fillText("Waiting for Player", 150, height / 2);
     }
 
     export function draw_game(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate, colorObject : string) {

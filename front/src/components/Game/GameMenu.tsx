@@ -40,7 +40,7 @@ export default function GameMenu(props : PropsInit) {
 
     useEffect(() => {
         socket.on("allowed", (args : any) => {
-          updateStatus("IN GAME");
+          updateStatus("IN QUEUE");
           setOpenGame(true);
         });
         socket.on("not_allowed_playing", (args : any) => {
@@ -48,7 +48,12 @@ export default function GameMenu(props : PropsInit) {
         });
         socket.on("not_allowed_queue", (args : any) => {
           alert("already in queue"); // a faire en plus jolie?
-        })
+        });
+        return () => {
+          socket.removeAllListeners("allowed");
+          socket.removeAllListeners("not_allowed_playing");
+          socket.removeAllListeners("not_allowed_queue");
+        };
     }, [])
 
     const handleCloseGame = () => {
@@ -63,7 +68,6 @@ export default function GameMenu(props : PropsInit) {
     
     const handleCloseAlertLeave = () => {
       socket.emit('my_disconnect'); // a revoir dans le back
-      console.log("---> from ingame to online")
       updateStatus("ONLINE");
       setOpenGame(false);
       setOpenAlert(false);

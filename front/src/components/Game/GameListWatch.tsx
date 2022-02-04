@@ -103,15 +103,23 @@ export default function GameList(props : PropsWatch) {
         socket.emit('watch_game', room);
       });
       socket.on("not_allowed_watch", (args : any) => {
-        console.log("match over received")
-        alert("This match is over"); // a faire en plus jolie?
-        handleUpdate();
+        if (watchee === "") {
+          alert("This match is over"); // a faire en plus jolie?
+          handleUpdate();
+        }
+        else {
+          alert("This game is over");
+          navigate("/game")
+        }
+        return () => {
+          socket.removeAllListeners("allowed_watch");
+          socket.removeAllListeners("not_allowed_watch");
+        }
       });
      
   }, []);
 
   const handleCloseWatch= () => {
-    console.log("hanCloseWatch called")
     socket.emit('unwatch_game');
     setOpenWatch(false);
     if (watchee !== "")
@@ -129,11 +137,6 @@ export default function GameList(props : PropsWatch) {
  
   if (watchee !== "")
   {
-    if (oneGame === {})
-    {
-      alert("This game is over");
-            navigate("/game")
-    }
     if (oneGame !== null && oneGame !== {}) 
       handleOpenWatch(oneGame.room);
     return(

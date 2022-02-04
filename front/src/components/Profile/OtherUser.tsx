@@ -316,22 +316,30 @@ export default function OtherUser() {
     // AJOUT JOANN TEST DEFY
    
      const onClickDefy = (challenger : IUser, challengee : IUser) => {
-            console.log(`${challenger.id_pseudo} is defying ${challengee.id_pseudo}`);
-            console.log(`challenger status : ${challenger.status}`);
-            if (challenger.status === "ONLINE")
-                navigate(`/game/challenge/${challengee.id_pseudo}`);
-            else
-                alert("Your are already in a game");
+        //console.log(`${challenger.id_pseudo} is defying ${challengee.id_pseudo}`);
+        //console.log(`challenger status : ${challenger.status}`);
+        if (challenger.status === "IN GAME")
+            alert("Your are already in a game");
+        else if (challengee.status === "IN GAME") 
+            alert(`${challengee.id_pseudo} is busy playing`);
+        else if (challengee.status === "IN QUEUE")
+            alert(`${challengee.id_pseudo} is already waiting for another player`);
+        else if (challengee.status === "OFFLINE")
+            alert(`${challengee.id_pseudo} is not connected`);
+        else
+            navigate(`/game/challenge/${challengee.id_pseudo}`);
     }
 
     const onClickWatch = (watcher : IUser, watchee : IUser) => {
-        console.log(`${watcher.id_pseudo} is watching ${watchee.id_pseudo}`);
-        console.log(`watchee status : ${watchee.status}`);
-        //if (watchee.status === "INGAME")
-            navigate(`/game/watch/${watchee.id_pseudo}`);
-        //else
-        //   alert("You friend has no ongoing game");
-}
+        //console.log(`${watcher.id_pseudo} is watching ${watchee.id_pseudo}`);
+        //console.log(`watchee status : ${watchee.status}`);
+        if (watchee.status === "ONLINE" || watchee.status === "IN QUEUE")
+            alert(`${watchee.id_pseudo} is not in a game at the moment`);
+        else if (watchee.status === "OFFLINE")
+            alert(`${watchee.id_pseudo} is not connected`);
+        else
+            navigate(`/game/watch/${watchee.id_pseudo}`);       
+    }
     // FIN AJOUT JOANN
   
 
