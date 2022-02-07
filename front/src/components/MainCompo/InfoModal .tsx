@@ -36,7 +36,6 @@ export default function InfoModal(props: any) {
     const [pseudo, setPseudo] = useState("")
     const nav = useNavigate()
 
-
     function handleAccept() {
 
         if (!pseudo) {
@@ -107,7 +106,6 @@ export default function InfoModal(props: any) {
                     <Box component="form" onSubmit={handleSubmit}>
                         <TextField
                             fullWidth
-                            id="outlined"
                             name="id_pseudo"
                             label="Pseudo"
                             defaultValue={pseudo}
@@ -117,10 +115,7 @@ export default function InfoModal(props: any) {
                     <Grid container columns={12} spacing={2} style={editLayout}>
                         <br />
                         <Grid item xs={6}>
-
                         </Grid>
-
-
                         <Grid item xs={12}>
                             <Button variant="contained" style={{
                                 backgroundColor: "#22c863",

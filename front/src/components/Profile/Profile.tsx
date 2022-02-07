@@ -50,13 +50,12 @@ export default function Profile() {
 
 
     useEffect(() => {
-      //  console.log("Search bar : ", searchInput)
+        //  console.log("Search bar : ", searchInput)
     })
 
     useEffect(() => {
         //    getUserData()
         setUserData(context.user)
-        console.log("Profile update ...")
     }, [context.user]/*[value, update]*/)
 
     const handleSearchBarSubmit = async (event) => {
@@ -95,18 +94,11 @@ export default function Profile() {
 
                         <Box sx={profileStyle.profileBlock}>
                             <Box sx={profileStyle.content_2}>
-                                <Badge
-                                    overlap="circular"
-                                    badgeContent={userData.status}
-                                    color="secondary"
-                                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                                >
-                                    <Avatar src={userData.avatar} style={{
-                                        width: "125px",
-                                        height: "125px",
-                                        overflow: "hidden"
-                                    }} />
-                                </Badge>
+                                <Avatar src={userData.avatar} style={{
+                                    width: "125px",
+                                    height: "125px",
+                                    overflow: "hidden"
+                                }} />
                             </Box>
                             <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
                             <Box sx={profileStyle.content_1}>
@@ -140,7 +132,7 @@ export default function Profile() {
 
                         <Box sx={profileStyle.matchHistory}>
                             <Button variant="contained" onClick={() => { setModal({ ...modalState, match: true }) }} sx={{ width: "100%" }}> Match history </Button>
-                            {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} user={context.user}/> : null}
+                            {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} user={context.user} /> : null}
                         </Box>
                     </Box >
                 </Box>

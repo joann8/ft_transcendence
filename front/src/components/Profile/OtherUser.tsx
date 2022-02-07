@@ -31,7 +31,6 @@ export default function OtherUser() {
     const [update, setUpdate] = useState(false)
 
     useEffect(() => {
-        console.log("UseEffect : idPseudo: ", idPseudo)
         getAllInfo()
     }, [idPseudo, update, context.user])
 
@@ -78,7 +77,6 @@ export default function OtherUser() {
                 method: "GET",
             }
         ).then((res) => {
-            console.log("getRelation res:", res)
             if (res.status === 401)
                 navigate("/login")
             else if (!res.ok) {
@@ -90,7 +88,6 @@ export default function OtherUser() {
                 return res.json()
         })
             .then((resData) => {
-                console.log("getRelation raw data : ", resData)
                 //ResData = Relation
                 //Cherche la bonne relation dans la bonne case
                 if (resData)
