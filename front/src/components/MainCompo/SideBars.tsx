@@ -128,13 +128,31 @@ export default function SideBar(props: any) {
         // console.log("UserData : ", resData)
       })
       .catch((err) => {
-        console.log("Error caught: ", err);
+        console.error("Error caught: ", err);
+      });
+  };
+
+  const refreshTokens = async () => {
+    await fetch(`http://127.0.0.1:3001/refresh`, {
+      method: "GET",
+      credentials: "include",
+      referrerPolicy: "same-origin",
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          navigate("/login");
+        } else if (!res.ok) {
+          throw new Error(res.statusText);
+        }
+      })
+      .catch((err) => {
+        console.error("Error caught: ", err);
       });
   };
 
   useEffect(() => {
     getUserData();
-    //Ajouter getRefreshToken()
+    refreshTokens();
   }, [update]);
 
   React.useEffect(() => {

@@ -3,7 +3,6 @@ import { Button, Grid, Modal, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
 import LoginMask from "./LoginMask";
-import * as CSS from "csstype";
 import { useNavigate } from "react-router";
 
 const boxStyle = {
@@ -47,18 +46,23 @@ export default function Login(props: any) {
       referrerPolicy: "same-origin",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ secret: secret }),
-    }).then((res) => {
-      setIsPending(false);
-      if (!res.ok) {
-        setTitleError(true);
-        res.json().then((data) => {
-          setHelperError(data.message);
-        });
-      } else {
-        setOpen(false);
-        nav("/");
-      }
-    });
+    })
+      .then((res) => {
+        if (!res.ok) {
+          setTitleError(true);
+          res.json().then((data) => {
+            setHelperError(data.message);
+          });
+        } else {
+          setOpen(false);
+          nav("/");
+        }
+        setIsPending(false);
+      })
+      .catch((err) => {
+        setTitleError(err.message);
+        setIsPending(false);
+      });
   };
 
   return (

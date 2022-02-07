@@ -1,7 +1,7 @@
 import { Send } from "@mui/icons-material";
 import { Button, Grid, Modal, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { Fragment, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { api_url } from "../../ApiCalls/var";
 import { Context } from "./SideBars";
@@ -31,28 +31,91 @@ const subboxStyle = {
   padding: "1.5rem",
 };
 
-const butonStyle = {
+const butonEnableStyle = {
   padding: "0.5rem",
   display: "block",
   margin: "auto",
+  marginTop: "10%",
+};
+
+const butonDisableStyle = {
+  padding: "0.5rem",
+  display: "block",
+  margin: "auto",
+  marginTop: "5%",
 };
 
 export default function TwoFAModal(props: any) {
   const handleClose = () => props.setModal(false);
   const context = useContext(Context);
-  const [activate, setActivate] = useState(context.user.two_factor);
+  console.log(context);
+  const [activate, setActivate] = useState(context.user.two_factor_enabled);
   const [secret, setSecret] = useState("");
   const [titleError, setTitleError] = useState(false);
   const [helperError, setHelperError] = useState("");
   const [isPending, setIsPending] = useState(false);
   const nav = useNavigate();
 
-  const handleSubmit = async () => {};
+  const handleEnableSubmit = async () => {
+    setIsPending(true);
+    fetch("http://127.0.0.1:3001/2fa/turn-on", {
+      method: "PUT",
+      credentials: "include",
+      referrerPolicy: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ secret: secret }),
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          nav("/login");
+        } else if (!res.ok) {
+          setTitleError(true);
+          res.json().then((data) => {
+            setHelperError(data.message);
+          });
+        } else {
+          context.setUpdate(!context.update);
+          setActivate(true);
+        }
+        setIsPending(false);
+      })
+      .catch((err) => {
+        setTitleError(err.message);
+        setIsPending(false);
+      });
+  };
+
+  const handleDisableSubmit = async () => {
+    setIsPending(true);
+    fetch("http://127.0.0.1:3001/2fa/turn-off", {
+      method: "PUT",
+      credentials: "include",
+      referrerPolicy: "same-origin",
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          nav("/login");
+        } else if (!res.ok) {
+          setTitleError(true);
+          res.json().then((data) => {
+            setHelperError(data.message);
+          });
+        } else {
+          context.setUpdate(!context.update);
+          setActivate(false);
+        }
+        setIsPending(false);
+      })
+      .catch((err) => {
+        setTitleError(err.message);
+        setIsPending(false);
+      });
+  };
 
   return (
     <div>
-      <Modal open={props.modalState} onClose={handleClose}>
-        {!activate && (
+      {!activate && (
+        <Modal open={props.modalState} onClose={handleClose}>
           <Box sx={boxStyle} textAlign="center">
             <Grid container spacing={2}>
               <Grid item>
@@ -69,7 +132,7 @@ export default function TwoFAModal(props: any) {
                   <TextField
                     className="twofa-text-field"
                     onChange={(e) => setSecret(e.target.value)}
-                    label="Please enter your 2FA code"
+                    label="2FA Secret"
                     variant="outlined"
                     color="primary"
                     fullWidth
@@ -77,14 +140,14 @@ export default function TwoFAModal(props: any) {
                     error={titleError}
                     helperText={helperError}
                   />
-                  <div style={butonStyle}>
+                  <div style={butonEnableStyle}>
                     {!isPending && (
                       <Button
                         type="submit"
                         color="primary"
                         variant="contained"
                         endIcon={<Send />}
-                        onClick={handleSubmit}
+                        onClick={handleEnableSubmit}
                       >
                         Submit
                       </Button>
@@ -99,8 +162,35 @@ export default function TwoFAModal(props: any) {
               </Grid>
             </Grid>
           </Box>
-        )}
-      </Modal>
+        </Modal>
+      )}
+      {activate && (
+        <Modal open={props.modalState} onClose={handleClose}>
+          <Box sx={boxStyle} textAlign="center">
+            <Typography variant="h5" component="h3">
+              DISABLE 2FA
+            </Typography>
+            <div style={butonDisableStyle}>
+              {!isPending && (
+                <Button
+                  type="submit"
+                  color="error"
+                  variant="contained"
+                  endIcon={<Send />}
+                  onClick={handleDisableSubmit}
+                >
+                  Disable
+                </Button>
+              )}
+              {isPending && (
+                <Button disabled color="primary">
+                  Submiting...
+                </Button>
+              )}
+            </div>
+          </Box>
+        </Modal>
+      )}
     </div>
   );
 }
