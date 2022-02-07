@@ -25,7 +25,7 @@ import AvatarModal from "./AvatarModal";
 import InfoModal from "./InfoModal ";
 import { IUser } from "../Profile/profileStyle";
 import { api_url } from "../../ApiCalls/var";
-import SetUpInfoModal from "./SetUpInfoModal";
+import RegistrationModal from "./RegistrationModal";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 
 /* Notification clochette
@@ -101,7 +101,7 @@ export default function SideBar(props: any) {
   */
   const [open, setOpen] = React.useState(true);
   const [avatarModal, setAvatarModal] = React.useState(false);
-  const [setUpInfoModal, setSetUpInfoModal] = React.useState(false);
+  const [registrationModal, setRegistrationModal] = React.useState(false);
   const [pseudoModal, setPseudoModal] = React.useState(false);
   const [update, setUpdate] = React.useState(true);
   const [user, setUser] = React.useState<IUser>(null);
@@ -240,8 +240,8 @@ export default function SideBar(props: any) {
                         <InfoModal modalState={pseudoModal} setModal={setPseudoModal} />
                         <MenuItem onClick={() => setAvatarModal(true)}> Avatar </MenuItem>
                         <AvatarModal modalState={avatarModal} setModal={setAvatarModal} />
-                        <MenuItem onClick={() => setSetUpInfoModal(true)} > StartInfo </MenuItem>
-                        <SetUpInfoModal modalState={setUpInfoModal} setModal={setSetUpInfoModal} />
+                        <MenuItem onClick={() => setRegistrationModal(true)} > StartInfo </MenuItem>
+                        <RegistrationModal modalState={registrationModal} setModal={setRegistrationModal} />
                       </Menu>
                     </Context.Provider>
                   </Fragment>)}

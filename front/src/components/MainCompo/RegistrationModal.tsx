@@ -36,7 +36,7 @@ const editLayout = {
 }
 
 
-export default function SetUpInfoModal(props: any) {
+export default function RegistrationModal(props: any) {
 
     const context = useContext(Context)
 
