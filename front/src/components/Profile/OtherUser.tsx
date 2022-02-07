@@ -1,5 +1,5 @@
 import { Toolbar, Grid, Paper, Avatar, Container, CssBaseline, Box, Typography, Card, autocompleteClasses, TextField, Button, IconButton, Menu, MenuItem, Modal, Divider, backdropClasses, CircularProgress } from "@mui/material";
-import React, { Fragment, useCallback, useEffect, useReducer, useState } from "react";
+import React, { Fragment, useCallback, useContext, useEffect, useReducer, useState } from "react";
 import Badge from '@mui/material/Badge';
 import DoneIcon from '@mui/icons-material/Done';
 import { Navigate, useNavigate, useParams } from "react-router";
@@ -7,6 +7,7 @@ import MatchModal from "./MatchModal";
 import profileStyle, { IUser } from './profileStyle'
 import LoadingGif from '../Images/loadingGif.gif'
 import { LockOpenTwoTone, LockTwoTone, Pending, PersonAdd, PersonRemove, QuestionMark } from "@mui/icons-material";
+import { Context } from "../MainCompo/SideBars";
 
 const backEndUrl = "http://127.0.0.1:3001"
 
@@ -15,10 +16,11 @@ export default function OtherUser() {
     //Needs to be called on every render
     const params = useParams()
     const navigate = useNavigate()
+    const context = useContext(Context)
 
     const [loaded, setLoaded] = useState(false)
 
-    const [loggedInUserData, setLoggedInUserData] = useState(null)
+    const [user, setUser] = useState<IUser>(context.user)
     const [otherUserData, setOtherUserData] = useState(null)
     const [relation, setRelation] = useState(null)
     const [searchInput, setSearchInput] = useState("")
@@ -39,8 +41,6 @@ export default function OtherUser() {
         //   setSearchInput("")
         console.log("Systematic Other Profile renderering")
     }, [idPseudo, update])
-
-
 
 
     //Function de fecthing
@@ -88,11 +88,11 @@ export default function OtherUser() {
                 return res.json();
             })
             .then((resData) => {
-                setLoggedInUserData(resData)
+                setUser(resData)
                 return resData;
             })
             .catch((err) => {
-                setLoggedInUserData(null)
+                setUser(null)
                 // alert(`Fetch : LoggedInUser : Error caught: ${err}`)
             })
         console.log("LoggedInUser Data loaded : ", userData)
@@ -210,7 +210,7 @@ export default function OtherUser() {
     const handleSearchBarSubmit = (event) => {
         event.preventDefault()
         console.log("OtherUser barSearch : ", searchInput)
-        if (searchInput === loggedInUserData.id_pseudo)
+        if (searchInput === user.id_pseudo)
             navigate("/profile")
         else {
             navigate(`/profile/${searchInput}`)
@@ -443,8 +443,8 @@ export default function OtherUser() {
                                         }} />
                                     </Badge>
                                     {/* START ____ Ajout Joann pour tester defi */}
-                                    <Button variant="contained" onClick={() => onClickDefy(loggedInUserData, otherUserData)}> DEFY </Button>
-                                    <Button variant="contained" onClick={() => onClickWatch(loggedInUserData, otherUserData)}> Watch </Button>
+                                    <Button variant="contained" onClick={() => onClickDefy(user, otherUserData)}> DEFY </Button>
+                                    <Button variant="contained" onClick={() => onClickWatch(user, otherUserData)}> Watch </Button>
                                     {/* END ___Ajout Joann pour tester defi */}
                                 </Box>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />

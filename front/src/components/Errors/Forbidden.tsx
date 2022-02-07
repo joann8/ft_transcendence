@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import { Toolbar } from "@mui/material";
 import { Grid } from "@mui/material";
 
-function NoPageCompo() {
+function ForbiddenCompo() {
   const styles = {
     defaultStyle: {
       backgroundColor: "blue",
@@ -36,7 +36,7 @@ function NoPageCompo() {
           style={{ height: "100vh" }}
         >
           <Grid item>
-            <Typography variant="h2"> No Such Page </Typography>
+            <Typography variant="h2"> Forbidden </Typography>
           </Grid>
         </Grid>
       </Box>
@@ -44,6 +44,6 @@ function NoPageCompo() {
   );
 }
 
-export default function NoPage() {
-  return <NoPageCompo />;
+export default function Forbidden() {
+  return <ForbiddenCompo />;
 }

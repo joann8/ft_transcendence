@@ -8,11 +8,13 @@ import PlayIcon from "@mui/icons-material/PlayCircleOutlined";
 import ChatIcon from "@mui/icons-material/MarkChatUnreadOutlined";
 import ProfileIcon from "@mui/icons-material/AccountCircleOutlined";
 import LeaderIcon from "@mui/icons-material/EmojiEventsOutlined";
+import SupervisorIcon from "@mui/icons-material/SupervisorAccountOutlined";
 import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
-import GroupsIcon from '@mui/icons-material/Groups';
+import GroupsIcon from "@mui/icons-material/Groups";
 import { useNavigate } from "react-router";
 import { fetchFromApi } from "../../ApiCalls/fetchFromApi";
+import { Context } from "./SideBars";
 
 /* Pour une deuxieme liste
 import ListSubheader from '@mui/material/ListSubheader';
@@ -22,6 +24,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 
 function MainListItems() {
   let navigate = useNavigate();
+  const user = React.useContext(Context).user;
 
   function handleLogout() {
     fetchFromApi("/logout")
@@ -51,6 +54,15 @@ function MainListItems() {
         <ListItemText primary="Profile" />
       </ListItem>
 
+      {(user.role === "owner" || user.role === "admin") && (
+        <ListItem button onClick={() => navigate("/dashboard")}>
+          <ListItemIcon>
+            <SupervisorIcon />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItem>
+      )}
+
       <ListItem button onClick={() => navigate("/game")}>
         <ListItemIcon>
           <PlayIcon />
@@ -72,9 +84,9 @@ function MainListItems() {
         <ListItemText primary="Chat" />
       </ListItem>
 
-      <ListItem button onClick={() => navigate("/friend") }>
+      <ListItem button onClick={() => navigate("/friend")}>
         <ListItemIcon>
-          <GroupsIcon/>
+          <GroupsIcon />
         </ListItemIcon>
         <ListItemText primary="Friends" />
       </ListItem>

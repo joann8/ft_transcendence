@@ -10,9 +10,12 @@ import Chat from "./components/Chat/Chat";
 import Profile from "./components/Profile/Profile";
 import SideBars from "./components/MainCompo/SideBars";
 import Login from "./components/Login/Login";
+import Admin from "./components/Admin/Dashboard";
 import OtherUser from "./components/Profile/OtherUser";
 import Friend from "./components/Friend/Friend";
 import { createTheme, ThemeProvider } from "@mui/material";
+import Dashboard from "./components/Admin/Dashboard";
+
 
 //const mdTheme = createTheme();
 const mdTheme = createTheme({
@@ -50,12 +53,14 @@ function Root() {
             <Route path="challenge" >
               <Route path=":id" element={<Game mode={"challenge"} />} /> 
             </Route>
-            <Route path="watch" >
-              <Route path=":id" element={<Game  mode={"watch"}/> } /> 
+            <Route path="watch">
+              <Route path=":id" element={<Game mode={"watch"} />} />
             </Route>
           </Route>
           <Route path="friend" element={<Friend />} />
           <Route path="chat" element={<Chat />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="profile">
             <Route index element={<Profile />} />
             <Route path=":id_pseudo" element={<OtherUser />} />
@@ -73,9 +78,9 @@ export default Root;
 
 ReactDOM.render(
   <React.StrictMode>
-  {/*  <socketContext.Provider value={socket}>*/}
+    {/*  <socketContext.Provider value={socket}>*/}
     <Root />
-  {/*</socketContext.Provider>*/}
+    {/*</socketContext.Provider>*/}
   </React.StrictMode>,
   document.getElementById("root")
 );

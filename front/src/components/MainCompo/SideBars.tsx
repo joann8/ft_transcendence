@@ -10,15 +10,20 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MainListItems from "./ListItems";
-import { Avatar, Box, Button, CssBaseline, Menu, MenuItem } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  CssBaseline,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import { Outlet, useNavigate } from "react-router";
-import useFromApi from "../../ApiCalls/useFromApi";
-import EditIcon from '@mui/icons-material/Edit';
-
-import { api_req_init, api_url } from "../../ApiCalls/var";
+import EditIcon from "@mui/icons-material/Edit";
 import AvatarModal from "./AvatarModal";
 import InfoModal from "./InfoModal ";
 import { IUser } from "../Profile/profileStyle";
+import { api_url } from "../../ApiCalls/var";
 
 /* Notification clochette
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -75,9 +80,13 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
+interface IContext {
+  user: IUser;
+  update: boolean;
+  setUpdate: any;
+}
 
-export const Context = createContext(null)
-
+export const Context = createContext<IContext>(null);
 
 export default function SideBar(props: any) {
   /*
@@ -88,45 +97,43 @@ export default function SideBar(props: any) {
     };
   */
   const [open, setOpen] = React.useState(true);
-  const [avatarModal, setAvatarModal] = React.useState(false)
-  const [pseudoModal, setPseudoModal] = React.useState(false)
+  const [avatarModal, setAvatarModal] = React.useState(false);
+  const [pseudoModal, setPseudoModal] = React.useState(false);
   const [update, setUpdate] = React.useState(true);
-  const [user, setUser] = React.useState<IUser>(null)
+  const [user, setUser] = React.useState<IUser>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   // const { error, isPending, data: user } = useFromApi("/user");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const getUserData = async () => {
     await fetch(`http://127.0.0.1:3001/user`, {
       method: "GET",
       credentials: "include",
-      referrerPolicy: "same-origin"
+      referrerPolicy: "same-origin",
     })
       .then((res) => {
         if (res.status === 401) {
           navigate("/login");
-        }
-        else if (!res.ok) {
+        } else if (!res.ok) {
           throw new Error(res.statusText);
         }
         return res.json();
       })
       .then((resData) => {
-        setUser(resData)
+        setUser(resData);
         // console.log("UserData : ", resData)
       })
       .catch((err) => {
-        console.log("Error caught: ", err)
-      })
-  }
+        console.log("Error caught: ", err);
+      });
+  };
 
   useEffect(() => {
-    getUserData()
+    getUserData();
     //Ajouter getRefreshToken()
-  }, [update])
-
+  }, [update]);
 
   React.useEffect(() => {
     window.addEventListener("beforeunload", (e) => {
@@ -140,7 +147,7 @@ export default function SideBar(props: any) {
           body: JSON.stringify({ status: "OFFLINE" }),
         });
       }
-    })
+    });
   }, []);
 
   const toggleDrawer = () => {
@@ -148,19 +155,18 @@ export default function SideBar(props: any) {
   };
 
   const handleEditClose = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   const handleEditOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-  }
+  };
 
   const mdTheme = createTheme();
 
   if (!user) {
-    return (<Fragment />)
-  }
-  else {
+    return <Fragment />;
+  } else {
     return (
       <Fragment>
         <ThemeProvider theme={mdTheme}>
@@ -209,11 +215,13 @@ export default function SideBar(props: any) {
                 {user && <Avatar src={user.avatar}></Avatar>}
 
                 <Divider orientation="vertical" sx={{ margin: 1 }} />
-                {user &&
+                {user && (
                   <Fragment>
-                    <Button style={{ border: "1px solid white", color: "#FFFFFF" }}
+                    <Button
+                      style={{ border: "1px solid white", color: "#FFFFFF" }}
                       startIcon={<EditIcon />}
-                      onClick={handleEditOpen}>
+                      onClick={handleEditOpen}
+                    >
                       Edit
                     </Button>
                     <Menu
@@ -222,12 +230,29 @@ export default function SideBar(props: any) {
                       open={Boolean(anchorEl)}
                       onClose={handleEditClose}
                     >
-                      <MenuItem onClick={() => setPseudoModal(true)}> Pseudo </MenuItem>
-                      <InfoModal modalState={pseudoModal} setModal={setPseudoModal} update={update} setUpdate={setUpdate} />
-                      <MenuItem onClick={() => setAvatarModal(true)}> Avatar </MenuItem>
-                      <AvatarModal modalState={avatarModal} setModal={setAvatarModal} update={update} setUpdate={setUpdate} />
+                      <MenuItem onClick={() => setPseudoModal(true)}>
+                        {" "}
+                        Pseudo{" "}
+                      </MenuItem>
+                      <InfoModal
+                        modalState={pseudoModal}
+                        setModal={setPseudoModal}
+                        update={update}
+                        setUpdate={setUpdate}
+                      />
+                      <MenuItem onClick={() => setAvatarModal(true)}>
+                        {" "}
+                        Avatar{" "}
+                      </MenuItem>
+                      <AvatarModal
+                        modalState={avatarModal}
+                        setModal={setAvatarModal}
+                        update={update}
+                        setUpdate={setUpdate}
+                      />
                     </Menu>
-                  </Fragment>}
+                  </Fragment>
+                )}
               </Toolbar>
             </AppBar>
 
@@ -245,12 +270,24 @@ export default function SideBar(props: any) {
                 </IconButton>
               </Toolbar>
               <Divider />
-              <Context.Provider value={user}>
-                <MainListItems />
+              <Context.Provider
+                value={{
+                  user: user,
+                  update: update,
+                  setUpdate: setUpdate,
+                }}
+              >
+                {user && <MainListItems />}
               </Context.Provider>
               <Divider />
             </Drawer>
-            <Context.Provider value={user}>
+            <Context.Provider
+              value={{
+                user: user,
+                update: update,
+                setUpdate: setUpdate,
+              }}
+            >
               <Outlet />
             </Context.Provider>
           </Box>
@@ -258,4 +295,4 @@ export default function SideBar(props: any) {
       </Fragment>
     );
   }
-  }
+}

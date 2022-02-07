@@ -40,12 +40,18 @@ export default function GameChallenge(props : PropsChallenge) {
         alert("This challenge was refused");
         handleCloseAlertLeave();
       });
+      return () => {
+        socket.removeAllListeners("challenge_refused");
+    };
     }, []);
 
     useEffect(() => {
       socket.on('challenge_accepted', (args : any) => {
         setStart(true);
       });
+      return () => {
+        socket.removeAllListeners("challenge_accepted");
+      };
     }, []);
         
     const handleCloseGame = () => {      
