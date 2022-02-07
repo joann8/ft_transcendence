@@ -6,9 +6,6 @@ import { useNavigate } from "react-router";
 import { api_url } from "../../ApiCalls/var";
 import { Context } from "./SideBars";
 
-// TODO:
-//
-
 const boxStyle = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -48,7 +45,6 @@ const butonDisableStyle = {
 export default function TwoFAModal(props: any) {
   const handleClose = () => props.setModal(false);
   const context = useContext(Context);
-  console.log(context);
   const [activate, setActivate] = useState(context.user.two_factor_enabled);
   const [secret, setSecret] = useState("");
   const [titleError, setTitleError] = useState(false);
@@ -74,10 +70,10 @@ export default function TwoFAModal(props: any) {
             setHelperError(data.message);
           });
         } else {
-          context.setUpdate(!context.update);
           setActivate(true);
         }
         setIsPending(false);
+        context.setUpdate(!context.update);
       })
       .catch((err) => {
         setTitleError(err.message);
@@ -101,10 +97,10 @@ export default function TwoFAModal(props: any) {
             setHelperError(data.message);
           });
         } else {
-          context.setUpdate(!context.update);
           setActivate(false);
         }
         setIsPending(false);
+        context.setUpdate(!context.update);
       })
       .catch((err) => {
         setTitleError(err.message);
