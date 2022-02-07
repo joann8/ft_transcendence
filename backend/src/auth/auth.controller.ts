@@ -107,5 +107,6 @@ export class AuthController {
 			req.user,
 		);
 		res.cookie('access_token', access_token);
+		//res.cookie('refresh_token', req.cookies.refresh_token);
 	}
 }
