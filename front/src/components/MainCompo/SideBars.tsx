@@ -75,10 +75,10 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
-interface IContext  {
-  user : IUser,
-  update : boolean,
-  setUpdate : any
+interface IContext {
+  user: IUser,
+  update: boolean,
+  setUpdate: any
 }
 
 export const Context = createContext<IContext>(null)
@@ -216,22 +216,27 @@ export default function SideBar(props: any) {
                 <Divider orientation="vertical" sx={{ margin: 1 }} />
                 {user &&
                   <Fragment>
-                    <Button style={{ border: "1px solid white", color: "#FFFFFF" }}
+                    <Context.Provider value={{
+                      user: user,
+                      update: update,
+                      setUpdate: setUpdate
+                    }}>                    <Button style={{ border: "1px solid white", color: "#FFFFFF" }}
                       startIcon={<EditIcon />}
                       onClick={handleEditOpen}>
-                      Edit
-                    </Button>
-                    <Menu
-                      id="simple-menu"
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl)}
-                      onClose={handleEditClose}
-                    >
-                      <MenuItem onClick={() => setPseudoModal(true)}> Pseudo </MenuItem>
-                      <InfoModal modalState={pseudoModal} setModal={setPseudoModal} update={update} setUpdate={setUpdate} />
-                      <MenuItem onClick={() => setAvatarModal(true)}> Avatar </MenuItem>
-                      <AvatarModal modalState={avatarModal} setModal={setAvatarModal} update={update} setUpdate={setUpdate} />
-                    </Menu>
+                        Edit
+                      </Button>
+                      <Menu
+                        id="simple-menu"
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleEditClose}
+                      >
+                        <MenuItem onClick={() => setPseudoModal(true)}> Pseudo </MenuItem>
+                        <InfoModal modalState={pseudoModal} setModal={setPseudoModal}/>
+                        <MenuItem onClick={() => setAvatarModal(true)}> Avatar </MenuItem>
+                        <AvatarModal modalState={avatarModal} setModal={setAvatarModal}/>
+                      </Menu>
+                      </Context.Provider>
                   </Fragment>}
               </Toolbar>
             </AppBar>
@@ -251,7 +256,7 @@ export default function SideBar(props: any) {
               </Toolbar>
               <Divider />
               <Context.Provider value={{
-                user : user,
+                user: user,
                 update: update,
                 setUpdate: setUpdate
               }}>
@@ -260,10 +265,10 @@ export default function SideBar(props: any) {
               <Divider />
             </Drawer>
             <Context.Provider value={{
-                user : user,
-                update: update,
-                setUpdate: setUpdate
-              }}>
+              user: user,
+              update: update,
+              setUpdate: setUpdate
+            }}>
               <Outlet />
             </Context.Provider>
           </Box>
@@ -271,4 +276,4 @@ export default function SideBar(props: any) {
       </Fragment>
     );
   }
-  }
+}

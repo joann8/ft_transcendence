@@ -38,14 +38,14 @@ const profileStyle = {
         backgroundColor: "rgba(255,0,0, 0.0)",
         backgroundPosition: 'center',
         //  marginTop: "100px",
-        paddingTop: "15%",
+        //paddingTop: "15%",
         display: "flex",
         // marginRight: "12%",
         justifyContent: "center",
         alignItems: "center",
-        height: "85%",
+        height: "100%",
         width: "100%",
-        overflow: "auto"
+        overflow: "hidden"
     },
     container: {
         position: "relative",
