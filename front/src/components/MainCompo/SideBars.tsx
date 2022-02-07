@@ -138,7 +138,9 @@ export default function SideBar(props: any) {
   React.useEffect(() => {
     window.addEventListener("beforeunload", (e) => {
       e.preventDefault();
+      console.log("Hello from window listener!")// Appelé a chaque changement de page?
       if (user) {
+        console.log("--> user: ", user.id_pseudo)
         fetch(api_url + "/user", {
           method: "PUT",
           credentials: "include",
@@ -162,14 +164,14 @@ export default function SideBar(props: any) {
     setAnchorEl(event.currentTarget);
   };
 
-  const mdTheme = createTheme();
+  //const mdTheme = createTheme();
 
   if (!user) {
     return <Fragment />;
   } else {
     return (
       <Fragment>
-        <ThemeProvider theme={mdTheme}>
+        {/*<ThemeProvider theme={mdTheme}>*/}
           <Box sx={{ display: "flex" }}>
             <CssBaseline />
             <AppBar position="absolute" open={open}>
@@ -273,7 +275,7 @@ export default function SideBar(props: any) {
               <Outlet />
             </Context.Provider>
           </Box>
-        </ThemeProvider>
+       {/*} </ThemeProvider>*/}
       </Fragment>
     );
   }

@@ -17,6 +17,9 @@ export default function GameWatch(props: PropsGame) {
         socket.on("updateState", (updateState : any) => {
             setGame(updateState);
         });
+        return () => {
+            socket.removeAllListeners("updateState");
+        };
     });
 
     useEffect(() => {

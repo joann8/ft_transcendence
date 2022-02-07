@@ -29,35 +29,50 @@ export default function GameChallenge(props : PropsChallenge) {
         referrerPolicy: "same-origin",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({status: `${newStatus}`}),
+        }).then((res) => {
+        if (!res.ok)
+            throw new Error(res.statusText);
+        return (res.json());
+      }).catch((err) => {
+        console.log("Error caught: ", err);
       })
     };
 
     useEffect(() => {
-      updateStatus("IN QUEUE");
-      socket.emit("create_challenge", {challenger : userID, challengee : challengee});
-    }, []);
+      socket.emit("check_game", userID);
+    }
+    , []);
 
     useEffect(() => {
-      socket.on('challenge_refused', (args : any) => {
-        alert("This challenge was refused");
-        handleCloseAlertLeave();
-        updateStatus("ONLINE");
-      });
-      return () => {
-        socket.removeAllListeners("challenge_refused");
-    };
-    }, []);
-
-    useEffect(() => {
-      socket.on('challenge_accepted', (args : any) => {
-        updateStatus("IN GAME");
-        setStart(true);
-      });
-      return () => {
-        socket.removeAllListeners("challenge_accepted");
-      };
-    }, []);
-        
+        socket.on("allowed", (args : any) => {
+          updateStatus("IN QUEUE");
+          socket.emit("create_challenge", {challenger : userID, challengee : challengee});
+        });
+        socket.on("not_allowed_playing", (args : any) => {
+          alert('You are already playing'); // a faire en plus jolie?
+          navigate('/game');
+        });
+        socket.on("not_allowed_queue", (args : any) => {
+          alert("You are already in queue"); // a faire en plus jolie?
+          navigate('/game');
+        });
+        socket.on('challenge_accepted', (args : any) => {
+          updateStatus("IN GAME");
+          setStart(true);
+        });
+        socket.on('challenge_refused', (args : any) => {
+          alert("This challenge was refused");
+          handleCloseAlertLeave();
+        });
+        return () => {
+          socket.removeAllListeners("allowed");
+          socket.removeAllListeners("not_allowed_playing");
+          socket.removeAllListeners("not_allowed_queue");
+          socket.removeAllListeners("challenge_refused");
+          socket.removeAllListeners("challenge_accepted");
+        };
+    }, [])
+      
     const handleCloseGame = () => {      
       setOpenAlert(true);
     }

@@ -33,6 +33,7 @@ export default function Game(props : any) {
         };
     }, []);
 
+
     const [visitorId, setVisitorId] = useState<IUser>(null);
     const getVisitorId = async (pseudo : string) : Promise<IUser> => {
         const data : Promise<IUser> = await fetch(`http://127.0.0.1:3001/user/${pseudo}`, {
@@ -44,7 +45,12 @@ export default function Game(props : any) {
             console.log("return from database GAME:", res.status)
             if (res.status === 401)
                 navigate("/login");
-            else if (!res.ok)
+            else if (res.status === 404) {
+                alert(`${pseudo} not found`);
+                navigate('/game');
+                throw new Error(res.statusText);
+            }
+            else if (!res.ok && res.status !== 404) 
                 throw new Error(res.statusText);
             return (res.json());
         })
@@ -54,7 +60,7 @@ export default function Game(props : any) {
             return(resJson);
         })
         .catch((err) => {
-            console.log("Error caught: ", err);
+            //console.log("Error caught: ", err);
         })
         return data;
     };
@@ -64,7 +70,23 @@ export default function Game(props : any) {
             getVisitorId(params.id);
     },[]);
 
+    useEffect(() => { 
+        if (visitorId && userId)
+        { 
+            if (userId.id === visitorId.id) {
+                alert("You cannot challenge yourself");
+                navigate('/game');
+            }
+            else if (mode === "challenge" && visitorId.status !== "ONLINE")
+            {
+                alert(`The status of ${visitorId.id_pseudo} is ${visitorId.status}`);
+                navigate('/game');
+            }
+        }
+    }, [visitorId]);
+
     if (mode === "challenge") {
+       
         return (
         <Fragment>
             { socket && userId && visitorId? <GameChallenge socket={socket} user={userId} challengee={visitorId}/> : <div> Not ready to challenge </div> }

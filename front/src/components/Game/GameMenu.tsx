@@ -44,15 +44,19 @@ export default function GameMenu(props : PropsInit) {
           setOpenGame(true);
         });
         socket.on("not_allowed_playing", (args : any) => {
-          alert("already playing"); // a faire en plus jolie?
+          alert('You are already playing'); // a faire en plus jolie?
         });
         socket.on("not_allowed_queue", (args : any) => {
-          alert("already in queue"); // a faire en plus jolie?
+          alert("You are already in queue"); // a faire en plus jolie?
+        });
+        socket.on("start_game", (args : any) => {
+          updateStatus("IN GAME");
         });
         return () => {
           socket.removeAllListeners("allowed");
           socket.removeAllListeners("not_allowed_playing");
           socket.removeAllListeners("not_allowed_queue");
+          socket.removeAllListeners("start_game");
         };
     }, [])
 

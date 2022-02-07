@@ -158,7 +158,7 @@ export default function GameList(props : PropsWatch) {
                 <TableRow>
                   <TableCell align="center" colSpan={4}> LIVE GAMES </TableCell>
                   <TableCell align="right" colSpan={1}>
-                      <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update List Game </Button>
+                      <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update </Button>
                   </TableCell>             
                 </TableRow>
               </TableHead>

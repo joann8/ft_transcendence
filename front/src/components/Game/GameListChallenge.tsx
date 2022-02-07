@@ -28,6 +28,12 @@ export default function GameListChallenge(props : PropsGame) {
       referrerPolicy: "same-origin",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({status: `${newStatus}`}),
+      }).then((res) => {
+      if (!res.ok)
+        throw new Error(res.statusText);
+      return (res.json());
+    }).catch((err) => {
+      console.log("Error caught: ", err);
     })
   };
 
@@ -62,10 +68,11 @@ export default function GameListChallenge(props : PropsGame) {
   const [openChallenge, setOpenChallenge] = React.useState(false);
     
   const startChallenge = (id_challenge : number) => {
-    socket.emit("answer_challenge", { id_challenge : id_challenge, answer : "accepted"});
     updateStatus("IN GAME");
     setOpenChallenge(true);
     handleUpdate();
+    socket.emit("answer_challenge", { id_challenge : id_challenge, answer : "accepted"});
+
   };
   
   const refuseChallenge = (id_challenge : number)  => {
@@ -74,10 +81,7 @@ export default function GameListChallenge(props : PropsGame) {
   }
 
   const handleUpdate=() => {
-    if (update === false)
-      setUpdate(true);
-    else
-      setUpdate(false);
+      setUpdate(!update);
   }
   
   const handleCloseChallenge = () => {
@@ -109,8 +113,8 @@ export default function GameListChallenge(props : PropsGame) {
       socket.removeAllListeners("no_such_challenge");
     }
   }, [])
-   
-
+  
+  
   return (
     <Fragment> 
         <TableContainer component={Paper}>
@@ -119,7 +123,7 @@ export default function GameListChallenge(props : PropsGame) {
               <TableRow>
                 <TableCell align="center" colSpan={4}> CHALLENGES </TableCell>
                 <TableCell align="right" colSpan={1}>
-                    <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update Challenges </Button>
+                    <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update </Button>
                 </TableCell>             
               </TableRow>
             </TableHead>

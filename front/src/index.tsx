@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
+import { Route, Routes, BrowserRouter as Router, Navigate } from "react-router-dom";
 import Homepage from "./components/Homepage/Homepage";
 import NoPage from "./components/Errors/NoPage";
 import Game from "./components/Game/Game";
@@ -24,7 +24,7 @@ const mdTheme = createTheme({
         main: '#000000'
       },
       secondary: {
-        main: '#e1e1e1' //call obj from color
+        main: '#E8C0C0' //call obj from color
       }
      }
      /*
@@ -51,9 +51,11 @@ function Root() {
           <Route path="game" >
             <Route index element={<Game mode={"random"}/>} />
             <Route path="challenge" >
+              <Route index element={<Navigate to="/game"/>} />
               <Route path=":id" element={<Game mode={"challenge"} />} /> 
             </Route>
             <Route path="watch">
+              <Route index element={<Navigate to="/game"/>} />
               <Route path=":id" element={<Game mode={"watch"} />} />
             </Route>
           </Route>
