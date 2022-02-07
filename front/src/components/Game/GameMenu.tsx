@@ -28,13 +28,13 @@ export default function GameMenu(props : PropsInit) {
         credentials : "include",
         referrerPolicy: "same-origin",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({status: newStatus }),
+        body: JSON.stringify({status: `${newStatus}` }),
       }).then((res) => {
         if (!res.ok)
             throw new Error(res.statusText);
         return (res.json());
     }).catch((err) => {
-        console.log("Error ici ", err);
+        console.log("Error caught: ", err);
     })
     };
 
@@ -90,7 +90,7 @@ export default function GameMenu(props : PropsInit) {
                   <Button variant="contained" onClick={handleOpenGame} style={{fontSize: 35}}>Play Random</Button>
                   <Modal open={openGame} onBackdropClick={handleCloseGame} >
                     <Box sx={gameStyles.boxModal}>
-                      <GamePong width={800} height={600} socket={socket} user={userID} mode={"random"}/>
+                      <GamePong socket={socket} user={userID} mode={"random"}/>
                       <Dialog open={openAlert} onClose={handleCloseAlertStay} >
                         <DialogTitle> {"Leave current Pong Game?"} </DialogTitle>
                         <DialogActions>
@@ -105,13 +105,13 @@ export default function GameMenu(props : PropsInit) {
                   <Button variant="contained" onClick={handleOpenChallenges} style={{fontSize: 35}}> Challenges </Button>
                   <Modal open={openChallenge} onBackdropClick={handleCloseChallenges} >
                     <Box sx={gameStyles.boxModal}>
-                      <GameListChallenge width={800} height={600} socket={socket} user={userID} mode={"challenge"}/>
+                      <GameListChallenge socket={socket} user={userID} mode={"challenge"}/>
                     </Box>
                   </Modal>
                 </Grid>
                 <Grid item xs={2}/>
                 <Grid item xs={8}>
-                  <GameList width={800} height={600} socket={socket} user={userID} mode={"watch"} watchee={""} />
+                  <GameList socket={socket} user={userID} mode={"watch"} watchee={""} />
                 </Grid>
                 <Grid item xs={2}/>
                 <Grid item xs={12}>

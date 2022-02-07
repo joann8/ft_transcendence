@@ -6,18 +6,20 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useState, useEffect } from 'react';
-import { Alert, Avatar, Box, Button, ButtonGroup, Dialog, DialogActions, DialogTitle, Modal, styled } from '@mui/material';
+import { useState, useEffect, useContext } from 'react';
+import { Avatar, Box, Button, ButtonGroup, Dialog, DialogActions, DialogTitle, Modal } from '@mui/material';
 import { Fragment } from 'react';
 import { PropsGame } from './GameTypes';
 import gameStyles from './GameStyles';
 import GamePong from './GamePong';
+import { Context } from '../MainCompo/SideBars';
 
 
 export default function GameListChallenge(props : PropsGame) {
+  
+  let context = useContext(Context);
 
   let socket = props.socket;
-  let userId = props.user;
 
   const updateStatus = async (newStatus : string) => {
     await fetch(`http://127.0.0.1:3001/user`, {
@@ -93,6 +95,7 @@ export default function GameListChallenge(props : PropsGame) {
     updateStatus("ONLINE");
     setOpenChallenge(false);
     setOpenAlert(false);
+    setUpdate(!context.update);
   }
 
   useEffect(() => {
@@ -141,7 +144,7 @@ export default function GameListChallenge(props : PropsGame) {
         </TableContainer>
         <Modal open={openChallenge} onBackdropClick={handleCloseChallenge}>          
           <Box sx={gameStyles.boxModal}>
-            <GamePong width={props.width} height={props.height} socket={socket} user={props.user} mode={"challenge"}/>
+            <GamePong socket={socket} user={props.user} mode={"challenge"}/>
             <Dialog open={openAlert} onClose={handleCloseAlertStay} >
               <DialogTitle> {"Leave current Pong Game?"} </DialogTitle>
                 <DialogActions>

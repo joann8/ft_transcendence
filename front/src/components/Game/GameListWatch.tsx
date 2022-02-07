@@ -1,16 +1,15 @@
 import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Navigate, useNavigate } from 'react-router';
-import { useState, useEffect } from 'react';
-import { Alert, Avatar, Box, Button, Modal, styled } from '@mui/material';
+import { useNavigate } from 'react-router';
+import { useState, useEffect} from 'react';
+import { Avatar, Box, Button, Modal } from '@mui/material';
 import { Fragment } from 'react';
-import { Socket } from 'socket.io-client';
 import GameWatch from './GameWatch';
 import { PropsWatch } from './GameTypes';
 import gameStyles from './GameStyles';
@@ -143,7 +142,7 @@ export default function GameList(props : PropsWatch) {
         <Fragment>
             <Modal open={openWatch} onBackdropClick={handleCloseWatch}>               
                 <Box sx={gameStyles.boxModal}>
-                  <GameWatch width={props.width} height={props.height} socket={socket} user={props.user} mode={"watch"}/>
+                  <GameWatch socket={socket} user={props.user} mode={"watch"}/>
                 </Box>
             </Modal>
         </Fragment>
@@ -183,7 +182,7 @@ export default function GameList(props : PropsWatch) {
           </TableContainer>
           <Modal open={openWatch} onBackdropClick={handleCloseWatch}>               
             <Box sx={gameStyles.boxModal}>
-              <GameWatch width={props.width} height={props.height} socket={socket} user={props.user} mode={"watch"}/>
+              <GameWatch socket={socket} user={props.user} mode={"watch"}/>
             </Box>
         </Modal>
       </Fragment>

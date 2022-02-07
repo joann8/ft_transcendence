@@ -17,7 +17,8 @@ export default function Game(props : any) {
     let mode = props.mode;
 
     const navigate = useNavigate();
-    const userId = useContext(Context);
+    const context = useContext(Context);
+    const userId = context.user;
 
     const [socket, setSocket] = useState<Socket>();
 
@@ -28,39 +29,9 @@ export default function Game(props : any) {
         setSocket(newSocket);
         return () => {
             newSocket.disconnect();
+            context.setUpdate(!context.update); // a verifier
         };
     }, []);
-
-    /*
-    const [userId, setUserId] = useState<IUser>(null);
-    const getUserId = async () : Promise<IUser> => {
-        const data : Promise<IUser> = await fetch("http://127.0.0.1:3001/user", {
-            method: "GET",
-            credentials : "include",
-            referrerPolicy: "same-origin"
-        })
-        .then((res) => {
-            if (res.status === 401)
-                navigate("/login");
-            else if (!res.ok)
-                throw new Error(res.statusText);
-            return (res.json());
-        })
-        .then((resJson) => {
-            console.log(`CHALLENGER ___pseudo : ${resJson.id_pseudo} | id : ${resJson.id}`);
-            setUserId(resJson);
-            return(resJson);
-        })
-        .catch((err) => {
-            console.log("Error caught: ", err);
-        })
-        return data;
-    };
-
-    useEffect(() => {   
-        getUserId();
-    },[]);
-    */
 
     const [visitorId, setVisitorId] = useState<IUser>(null);
     const getVisitorId = async (pseudo : string) : Promise<IUser> => {
@@ -103,7 +74,7 @@ export default function Game(props : any) {
     else if (mode === "watch") {
         return (       
             <Fragment>
-                { socket && userId && visitorId? <GameList width={800} height={600} socket={socket} user={userId} mode={"watch"} watchee={visitorId.id_pseudo} /> : <div> Not ready to watch </div> }
+                { socket && userId && visitorId? <GameList socket={socket} user={userId} mode={"watch"} watchee={visitorId.id_pseudo} /> : <div> Not ready to watch </div> }
             </Fragment>
         )
     }

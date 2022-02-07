@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -7,19 +7,21 @@ import { Fragment } from 'react';
 import { Box, Button, Dialog, DialogActions, DialogTitle, Modal } from '@mui/material';
 import GamePong from './GamePong';
 import gameStyles from './GameStyles';
-import { PropsChallenge, PropsInit } from './GameTypes';
+import { PropsChallenge } from './GameTypes';
 import { useNavigate } from 'react-router';
+import { Context } from '../MainCompo/SideBars';
 
 export default function GameChallenge(props : PropsChallenge) {
     
     const navigate = useNavigate();
     const [start, setStart] = useState(false);
 
+    const context = useContext(Context);
+    const userID = context.user;
+
     let socket = props.socket;
-    let userID = props.user;
     let challengee = props.challengee;
-    
-    // CONTEXT  --> update
+
     const updateStatus = async (newStatus : string) => {
       await fetch(`http://127.0.0.1:3001/user`, {
         method: "PUT",
@@ -31,7 +33,7 @@ export default function GameChallenge(props : PropsChallenge) {
     };
 
     useEffect(() => {
-      updateStatus("IN GAME");
+      updateStatus("IN QUEUE");
       socket.emit("create_challenge", {challenger : userID, challengee : challengee});
     }, []);
 
@@ -39,6 +41,7 @@ export default function GameChallenge(props : PropsChallenge) {
       socket.on('challenge_refused', (args : any) => {
         alert("This challenge was refused");
         handleCloseAlertLeave();
+        updateStatus("ONLINE");
       });
       return () => {
         socket.removeAllListeners("challenge_refused");
@@ -47,6 +50,7 @@ export default function GameChallenge(props : PropsChallenge) {
 
     useEffect(() => {
       socket.on('challenge_accepted', (args : any) => {
+        updateStatus("IN GAME");
         setStart(true);
       });
       return () => {
@@ -68,8 +72,9 @@ export default function GameChallenge(props : PropsChallenge) {
       if (start === false)
         socket.emit('cancel_challenge', {challenger : userID, challengee : challengee});
       socket.emit('my_disconnect'); // a revoir dans le back
-      updateStatus("ON LINE");
+      updateStatus("ONLINE");
       setOpenAlert(false);
+      context.setUpdate(!context.update);
       navigate(`/game`);
     }
   
@@ -81,7 +86,7 @@ export default function GameChallenge(props : PropsChallenge) {
                 <Grid item xs={12} style={{textAlign: "center"}}>
                   <Modal open={true} onBackdropClick={handleCloseGame} >
                     <Box sx={gameStyles.boxModal}>
-                      <GamePong width={800} height={600} socket={socket} user={userID} mode={"challenge"}/>
+                      <GamePong socket={socket} user={userID} mode={"challenge"}/>
                       <Dialog open={openAlert} onClose={handleCloseAlertStay} >
                         <DialogTitle> {"Leave current Pong Game?"} </DialogTitle>
                         <DialogActions>

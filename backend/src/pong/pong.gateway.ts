@@ -10,7 +10,9 @@ import { INSTANCE_ID_SYMBOL } from "@nestjs/core/injector/instance-wrapper";
 import { status } from '../user/entities/user.entity';
 
 
-@WebSocketGateway( { namespace : "/game", cors: { origin:'*', },}) // CORS A REVOIR
+@WebSocketGateway( { namespace : "/game", cors: { origin: '*'}}) 
+//cors: { origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_BIS],
+//        credentials: true,},}) // CORS A REVOIR
 
 export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {  
     constructor( private userService : UserService, private pongService : PongService) {}
@@ -23,7 +25,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     private queue: Map<Socket, User> = new Map<Socket, User>(); // client dans la queue
     private matches: Game[] = []; // liste des matches en cours
     private challenges: Challenge[] = []; // liste des matches en cours
-   // private challenges: Map<User, User> = new Map<User, User>(); // liste des defis
 
     // Fonctions de base
 
@@ -78,7 +79,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             this.clients.add(client);       
         //this.logger.log(`Client ${client.id} / userID ${userID.id_pseudo} joins the queue`);
         this.queue.set(client, userID);
-        this.userService.update(userID.id, { status : status.IN_QUEUE});
+        //this.userService.update(userID.id, { status : status.IN_QUEUE});
         //this.logger.log(`queue length :  ${this.queue.size}`);
         if (this.queue.size > 1) {
             //this.logger.log(`start a match!`);
@@ -94,7 +95,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage('create_challenge')
     async createChallenge(client: Socket, info : {challenger: User, challengee : User}) : Promise <void> {
         console.log("___enter create challenge")
-        console.log("BEFORE challenges:", this.challenges)
+        //console.log("BEFORE challenges:", this.challenges)
         let challenge1 = {
             challenger : info.challenger,
             challengee : info.challengee,
@@ -104,8 +105,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         let id_challenge = await this.pongService.createChallenge(challenge1);
         let challenge2 = new Challenge(id_challenge, info.challenger, client, info.challengee);
         this.challenges.unshift(challenge2); // enregistrement du challenge
-        console.log("AFTER challenges:", this.challenges)
-        this.userService.update(info.challenger.id, { status : status.IN_QUEUE});
+        //console.log("AFTER challenges:", this.challenges)
+        //this.userService.update(info.challenger.id, { status : status.IN_QUEUE});
     }
 
     @SubscribeMessage('answer_challenge')
@@ -138,14 +139,14 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage('cancel_challenge')
     async cancelChallenge(client: Socket, info : {challenger: User, challengee : User}) : Promise <void> {
         console.log("___enter cancel challenge")
-        console.log("BEFORE challenges:", this.challenges)
+        //console.log("BEFORE challenges:", this.challenges)
         let challenge =  this.challenges.find(challenge => (challenge.getChallenger().id === info.challenger.id && challenge.getChallengee().id === info.challengee.id));
         if (challenge)  
         {   
             console.log("----> delete challene id ", challenge.getId())
             await this.pongService.deleteChallenge(challenge.getId());
             this.challenges.splice(this.challenges.indexOf(challenge));
-            console.log("AFTER challenges:", this.challenges)
+            //console.log("AFTER challenges:", this.challenges)
         }
         else
             console.log("---> no challenge found")
@@ -239,8 +240,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         console.log("Match!!!!!")
         let game = new Game(source, this.server, this.removeGame.bind(this), this.pongService, this.userService);
         // A verifier
-        this.userService.update(game.getPlayer1().getUser().id, { status : status.IN_GAME});
-        this.userService.update(game.getPlayer2().getUser().id, { status : status.IN_GAME});
+        //this.userService.update(game.getPlayer1().getUser().id, { status : status.IN_GAME});
+        //this.userService.update(game.getPlayer2().getUser().id, { status : status.IN_GAME});
         this.queue.delete(game.getPlayer1().getSocket());
         this.queue.delete(game.getPlayer2().getSocket());
         this.matches.unshift(game); // enregistrement du match

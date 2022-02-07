@@ -1,4 +1,4 @@
-import { GameSate } from "./GameTypes";
+import { GameState } from "./GameTypes";
 
 const width : number = 800;
 const height : number = 600;
@@ -18,7 +18,7 @@ const WAIT=0;
 const PLAY=1;
 const OVER=2;
 
-const gameStateInit : GameSate = {
+const gameStateInit : GameState = {
     ball: {
         x : width / 2,
         y : height / 2            
