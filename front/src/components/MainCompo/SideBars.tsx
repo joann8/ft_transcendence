@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createContext, Fragment, useEffect } from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import { styled, createTheme, ThemeProvider, useTheme } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -17,6 +17,7 @@ import {
   CssBaseline,
   Menu,
   MenuItem,
+  MobileStepper,
 } from "@mui/material";
 import { Outlet, useNavigate } from "react-router";
 import EditIcon from "@mui/icons-material/Edit";
@@ -24,6 +25,8 @@ import AvatarModal from "./AvatarModal";
 import InfoModal from "./InfoModal ";
 import { IUser } from "../Profile/profileStyle";
 import { api_url } from "../../ApiCalls/var";
+import SetUpInfoModal from "./SetUpInfoModal";
+import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 
 /* Notification clochette
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -98,6 +101,7 @@ export default function SideBar(props: any) {
   */
   const [open, setOpen] = React.useState(true);
   const [avatarModal, setAvatarModal] = React.useState(false);
+  const [setUpInfoModal, setSetUpInfoModal] = React.useState(false);
   const [pseudoModal, setPseudoModal] = React.useState(false);
   const [update, setUpdate] = React.useState(true);
   const [user, setUser] = React.useState<IUser>(null);
@@ -233,11 +237,13 @@ export default function SideBar(props: any) {
                         onClose={handleEditClose}
                       >
                         <MenuItem onClick={() => setPseudoModal(true)}> Pseudo </MenuItem>
-                        <InfoModal modalState={pseudoModal} setModal={setPseudoModal}/>
+                        <InfoModal modalState={pseudoModal} setModal={setPseudoModal} />
                         <MenuItem onClick={() => setAvatarModal(true)}> Avatar </MenuItem>
-                        <AvatarModal modalState={avatarModal} setModal={setAvatarModal}/>
+                        <AvatarModal modalState={avatarModal} setModal={setAvatarModal} />
+                        <MenuItem onClick={() => setSetUpInfoModal(true)} > StartInfo </MenuItem>
+                        <SetUpInfoModal modalState={setUpInfoModal} setModal={setSetUpInfoModal} />
                       </Menu>
-                      </Context.Provider>
+                    </Context.Provider>
                   </Fragment>)}
               </Toolbar>
             </AppBar>
@@ -274,7 +280,7 @@ export default function SideBar(props: any) {
             </Context.Provider>
           </Box>
         </ThemeProvider>
-      </Fragment>
+      </Fragment >
     );
   }
 }

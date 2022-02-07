@@ -21,7 +21,6 @@ export default function Friend() {
         <Fragment>
             <Paper style={layout}>
                 <Toolbar />
-
                 <Grid container spacing={2} alignItems="center" justifyContent="center" style={{
                     height: "100vh"
                 }}>
