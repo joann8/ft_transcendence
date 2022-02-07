@@ -24,6 +24,7 @@ import AvatarModal from "./AvatarModal";
 import InfoModal from "./InfoModal ";
 import { IUser } from "../Profile/profileStyle";
 import { api_url } from "../../ApiCalls/var";
+import TwoFAModal from "./TwoFAModal";
 
 /* Notification clochette
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -81,9 +82,9 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 interface IContext {
-  user: IUser,
-  update: boolean,
-  setUpdate: any
+  user: IUser;
+  update: boolean;
+  setUpdate: any;
 }
 
 export const Context = createContext<IContext>(null);
@@ -99,6 +100,7 @@ export default function SideBar(props: any) {
   const [open, setOpen] = React.useState(true);
   const [avatarModal, setAvatarModal] = React.useState(false);
   const [pseudoModal, setPseudoModal] = React.useState(false);
+  const [twofaModal, setTwofaModal] = React.useState(false);
   const [update, setUpdate] = React.useState(true);
   const [user, setUser] = React.useState<IUser>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -126,13 +128,31 @@ export default function SideBar(props: any) {
         // console.log("UserData : ", resData)
       })
       .catch((err) => {
-        console.log("Error caught: ", err);
+        console.error("Error caught: ", err);
+      });
+  };
+
+  const refreshTokens = async () => {
+    await fetch(`http://127.0.0.1:3001/refresh`, {
+      method: "GET",
+      credentials: "include",
+      referrerPolicy: "same-origin",
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          navigate("/login");
+        } else if (!res.ok) {
+          throw new Error(res.statusText);
+        }
+      })
+      .catch((err) => {
+        console.error("Error caught: ", err);
       });
   };
 
   useEffect(() => {
     getUserData();
-    //Ajouter getRefreshToken()
+    refreshTokens();
   }, [update]);
 
   React.useEffect(() => {
@@ -217,13 +237,19 @@ export default function SideBar(props: any) {
                 <Divider orientation="vertical" sx={{ margin: 1 }} />
                 {user && (
                   <Fragment>
-                    <Context.Provider value={{
-                      user: user,
-                      update: update,
-                      setUpdate: setUpdate
-                    }}>                    <Button style={{ border: "1px solid white", color: "#FFFFFF" }}
-                      startIcon={<EditIcon />}
-                      onClick={handleEditOpen}>
+                    <Context.Provider
+                      value={{
+                        user: user,
+                        update: update,
+                        setUpdate: setUpdate,
+                      }}
+                    >
+                      {" "}
+                      <Button
+                        style={{ border: "1px solid white", color: "#FFFFFF" }}
+                        startIcon={<EditIcon />}
+                        onClick={handleEditOpen}
+                      >
                         Edit
                       </Button>
                       <Menu
@@ -232,13 +258,31 @@ export default function SideBar(props: any) {
                         open={Boolean(anchorEl)}
                         onClose={handleEditClose}
                       >
-                        <MenuItem onClick={() => setPseudoModal(true)}> Pseudo </MenuItem>
-                        <InfoModal modalState={pseudoModal} setModal={setPseudoModal}/>
-                        <MenuItem onClick={() => setAvatarModal(true)}> Avatar </MenuItem>
-                        <AvatarModal modalState={avatarModal} setModal={setAvatarModal}/>
+                        <MenuItem onClick={() => setPseudoModal(true)}>
+                          Pseudo
+                        </MenuItem>
+                        <InfoModal
+                          modalState={pseudoModal}
+                          setModal={setPseudoModal}
+                        />
+                        <MenuItem onClick={() => setAvatarModal(true)}>
+                          Avatar
+                        </MenuItem>
+                        <AvatarModal
+                          modalState={avatarModal}
+                          setModal={setAvatarModal}
+                        />
+                        <MenuItem onClick={() => setTwofaModal(true)}>
+                          Two Factors
+                        </MenuItem>
+                        <TwoFAModal
+                          modalState={twofaModal}
+                          setModal={setTwofaModal}
+                        />
                       </Menu>
-                      </Context.Provider>
-                  </Fragment>)}
+                    </Context.Provider>
+                  </Fragment>
+                )}
               </Toolbar>
             </AppBar>
 
@@ -256,20 +300,24 @@ export default function SideBar(props: any) {
                 </IconButton>
               </Toolbar>
               <Divider />
-              <Context.Provider value={{
-                user: user,
-                update: update,
-                setUpdate: setUpdate
-              }}>
+              <Context.Provider
+                value={{
+                  user: user,
+                  update: update,
+                  setUpdate: setUpdate,
+                }}
+              >
                 <MainListItems />
               </Context.Provider>
               <Divider />
             </Drawer>
-            <Context.Provider value={{
-              user: user,
-              update: update,
-              setUpdate: setUpdate
-            }}>
+            <Context.Provider
+              value={{
+                user: user,
+                update: update,
+                setUpdate: setUpdate,
+              }}
+            >
               <Outlet />
             </Context.Provider>
           </Box>

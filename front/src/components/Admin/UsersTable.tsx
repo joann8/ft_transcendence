@@ -22,7 +22,7 @@ const columns: GridColDef[] = [
     type: "number",
     align: "center",
     headerAlign: "center",
-    minWidth: 40,
+    minWidth: 70,
     flex: 1,
     headerClassName: "grid-header-theme",
   },
@@ -49,7 +49,7 @@ const columns: GridColDef[] = [
     headerName: "Status",
     align: "center",
     headerAlign: "center",
-    minWidth: 40,
+    minWidth: 90,
     flex: 1,
     headerClassName: "grid-header-theme",
   },
@@ -58,7 +58,7 @@ const columns: GridColDef[] = [
     headerName: "Role",
     align: "center",
     headerAlign: "center",
-    minWidth: 30,
+    minWidth: 70,
     flex: 1,
     headerClassName: "grid-header-theme",
   },
@@ -69,7 +69,7 @@ const columns: GridColDef[] = [
     align: "center",
     sortable: false,
     filterable: false,
-    minWidth: 70,
+    minWidth: 105,
     flex: 1,
     renderCell: (params) => {
       return <BanUserButton params={params} />;
@@ -82,7 +82,7 @@ const columns: GridColDef[] = [
     align: "center",
     sortable: false,
     filterable: false,
-    minWidth: 70,
+    minWidth: 110,
     flex: 1,
     renderCell: (params) => {
       return <PromoteUserButton params={params} />;
