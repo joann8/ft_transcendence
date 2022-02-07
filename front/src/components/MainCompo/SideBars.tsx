@@ -238,7 +238,7 @@ export default function SideBar(props: any) {
                         <AvatarModal modalState={avatarModal} setModal={setAvatarModal}/>
                       </Menu>
                       </Context.Provider>
-                  </Fragment>}
+                  </Fragment>)}
               </Toolbar>
             </AppBar>
 

@@ -31,8 +31,6 @@ const editLayout = {
 };
 
 export default function InfoModal(props: any) {
-  const [pseudo, setPseudo] = React.useState("");
-  const nav = useNavigate();
 
     const context = useContext(Context)
     const [pseudo, setPseudo] = useState("")
