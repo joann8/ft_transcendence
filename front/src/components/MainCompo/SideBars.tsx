@@ -24,6 +24,7 @@ import AvatarModal from "./AvatarModal";
 import InfoModal from "./InfoModal ";
 import { IUser } from "../Profile/profileStyle";
 import { api_url } from "../../ApiCalls/var";
+import TwoFAModal from "./TwoFAModal";
 
 /* Notification clochette
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -99,6 +100,7 @@ export default function SideBar(props: any) {
   const [open, setOpen] = React.useState(true);
   const [avatarModal, setAvatarModal] = React.useState(false);
   const [pseudoModal, setPseudoModal] = React.useState(false);
+  const [twofaModal, setTwofaModal] = React.useState(false);
   const [update, setUpdate] = React.useState(true);
   const [user, setUser] = React.useState<IUser>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -217,40 +219,50 @@ export default function SideBar(props: any) {
                 <Divider orientation="vertical" sx={{ margin: 1 }} />
                 {user && (
                   <Fragment>
-                    <Button
-                      style={{ border: "1px solid white", color: "#FFFFFF" }}
-                      startIcon={<EditIcon />}
-                      onClick={handleEditOpen}
+                    <Context.Provider
+                      value={{
+                        user: user,
+                        update: update,
+                        setUpdate: setUpdate,
+                      }}
                     >
-                      Edit
-                    </Button>
-                    <Menu
-                      id="simple-menu"
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl)}
-                      onClose={handleEditClose}
-                    >
-                      <MenuItem onClick={() => setPseudoModal(true)}>
-                        {" "}
-                        Pseudo{" "}
-                      </MenuItem>
-                      <InfoModal
-                        modalState={pseudoModal}
-                        setModal={setPseudoModal}
-                        update={update}
-                        setUpdate={setUpdate}
-                      />
-                      <MenuItem onClick={() => setAvatarModal(true)}>
-                        {" "}
-                        Avatar{" "}
-                      </MenuItem>
-                      <AvatarModal
-                        modalState={avatarModal}
-                        setModal={setAvatarModal}
-                        update={update}
-                        setUpdate={setUpdate}
-                      />
-                    </Menu>
+                      {" "}
+                      <Button
+                        style={{ border: "1px solid white", color: "#FFFFFF" }}
+                        startIcon={<EditIcon />}
+                        onClick={handleEditOpen}
+                      >
+                        Edit
+                      </Button>
+                      <Menu
+                        id="simple-menu"
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleEditClose}
+                      >
+                        <MenuItem onClick={() => setPseudoModal(true)}>
+                          Pseudo
+                        </MenuItem>
+                        <InfoModal
+                          modalState={pseudoModal}
+                          setModal={setPseudoModal}
+                        />
+                        <MenuItem onClick={() => setAvatarModal(true)}>
+                          Avatar
+                        </MenuItem>
+                        <AvatarModal
+                          modalState={avatarModal}
+                          setModal={setAvatarModal}
+                        />
+                        <MenuItem onClick={() => setTwofaModal(true)}>
+                          Two Factors
+                        </MenuItem>
+                        <TwoFAModal
+                          modalState={twofaModal}
+                          setModal={setTwofaModal}
+                        />
+                      </Menu>
+                    </Context.Provider>
                   </Fragment>
                 )}
               </Toolbar>
@@ -277,7 +289,7 @@ export default function SideBar(props: any) {
                   setUpdate: setUpdate,
                 }}
               >
-                {user && <MainListItems />}
+                <MainListItems />
               </Context.Provider>
               <Divider />
             </Drawer>

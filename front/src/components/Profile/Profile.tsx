@@ -50,7 +50,7 @@ export default function Profile() {
 
 
     useEffect(() => {
-        console.log("Search bar : ", searchInput)
+      //  console.log("Search bar : ", searchInput)
     })
 
     useEffect(() => {
@@ -75,7 +75,6 @@ export default function Profile() {
     return (
         <Fragment>
             <Paper sx={profileStyle.layout}>
-                <Toolbar />
                 <Box sx={profileStyle.boxStyle}>
                     <Box sx={profileStyle.container}>
                         <Box component="form" sx={profileStyle.searchBar} onSubmit={handleSearchBarSubmit}
@@ -141,7 +140,7 @@ export default function Profile() {
 
                         <Box sx={profileStyle.matchHistory}>
                             <Button variant="contained" onClick={() => { setModal({ ...modalState, match: true }) }} sx={{ width: "100%" }}> Match history </Button>
-                            {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} /> : null}
+                            {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} user={context.user}/> : null}
                         </Box>
                     </Box >
                 </Box>

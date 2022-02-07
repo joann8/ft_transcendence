@@ -4,13 +4,10 @@ import { useNavigate } from "react-router";
 // TODO:
 //
 
-export default function InfoModal(props: any) {
+export default function TwoFAModal(props: any) {
   const handleClose = () => props.setModal(false);
   const nav = useNavigate();
 
-  return (
-    <div>
-      <Modal open={props.modalState} onClose={handleClose} />
-    </div>
-  );
+  //<Modal open={props.modalState} onClose={handleClose} />
+  return <div></div>;
 }

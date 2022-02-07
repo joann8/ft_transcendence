@@ -7,14 +7,16 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { IUser } from '../Profile/profileStyle'
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Avatar, Button, ButtonGroup, Typography } from '@mui/material';
+import { Context } from '../MainCompo/SideBars';
 
 const backEndUrl = "http//:127.0.0.1:3001"
 
 export default function FriendList() {
 
+    const context = useContext(Context)
 
     const navigate = useNavigate()
     const [friendArray, setFriendArray] = useState<IUser[]>([])
@@ -34,7 +36,7 @@ export default function FriendList() {
                     throw new Error(res.statusText)
                 return res.json()
             })
-            .then(resArray => {
+            .then(resArray => {    // FIN AJOUT JOANN
                 setFriendArray(resArray)
                 console.log("Friend Array : ", friendArray)
             })
@@ -106,17 +108,6 @@ export default function FriendList() {
     }, [])
 
 
-    const handleWatch = () => {
-        //Do Watching
-        console.log("Watch called")
-    }
-
-    const handleDefy = () => {
-        //Do Defy 
-        console.log("Defycalled")
-
-    }
-
     const handleRemove = async (friend: IUser) => {
         console.log("Remove called")
 
@@ -138,11 +129,41 @@ export default function FriendList() {
         //Set friendArray
 
     }
+    
+    // AJOUT JOANN TEST DEFY
+
+
+    const onClickDefy = (challenger : IUser, challengee : IUser) => {
+        //console.log(`${challenger.id_pseudo} is defying ${challengee.id_pseudo}`);
+        //console.log(`challenger status : ${challenger.status}`);
+        if (challenger.status === "IN GAME")
+            alert("Your are already in a game");
+        else if (challengee.status === "IN GAME") 
+            alert(`${challengee.id_pseudo} is busy playing`);
+        else if (challengee.status === "IN QUEUE")
+            alert(`${challengee.id_pseudo} is already waiting for another player`);
+        else if (challengee.status === "OFFLINE")
+            alert(`${challengee.id_pseudo} is not connected`);
+        else
+            navigate(`/game/challenge/${challengee.id_pseudo}`);
+    }
+
+    const onClickWatch = (watcher : IUser, watchee : IUser) => {
+        //console.log(`${watcher.id_pseudo} is watching ${watchee.id_pseudo}`);
+        //console.log(`watchee status : ${watchee.status}`);
+        if (watchee.status === "ONLINE" || watchee.status === "IN QUEUE")
+            alert(`${watchee.id_pseudo} is not in a game at the moment`);
+        else if (watchee.status === "OFFLINE")
+            alert(`${watchee.id_pseudo} is not connected`);
+        else
+            navigate(`/game/watch/${watchee.id_pseudo}`);       
+    }
+
 
     if (!ready) {
         return (
             <React.Fragment>
-                <Typography>Loading </Typography>
+                <Typography> Loading </Typography>
             </React.Fragment>
         )
     }
@@ -169,10 +190,10 @@ export default function FriendList() {
                                     </TableCell>
                                     <TableCell align="left">
                                         <ButtonGroup variant="contained">
-                                            {friend.status === "IN GAME" ? <Button color="info"  onClick={() => handleWatch()} >
+                                            {friend.status === "IN GAME" ? <Button color="info"  onClick={() => onClickWatch(context.user, friend)} >
                                                 Watch
                                             </Button> : null}
-                                            {friend.status === "ONLINE" ? <Button color="secondary" onClick={() => handleDefy()}>
+                                            {friend.status === "ONLINE" ? <Button color="secondary" onClick={() => onClickDefy(context.user, friend)}>
                                                 Defy
                                             </Button> : null}
                                             <Button color="warning"onClick={() => handleRemove(friend)}>

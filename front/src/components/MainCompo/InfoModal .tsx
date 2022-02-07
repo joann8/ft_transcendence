@@ -1,10 +1,19 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { Grid, TextField, BottomNavigation } from "@mui/material";
+import { AnyRecord } from "dns";
+import { useContext, useEffect, useState } from "react";
+import {
+  Grid,
+  TextField,
+  BottomNavigation,
+  alertTitleClasses,
+} from "@mui/material";
 import validator from "validator";
 import { useNavigate } from "react-router";
+import { Context } from "./SideBars";
 
 const style = {
   position: "absolute" as "absolute",
@@ -29,6 +38,7 @@ const editLayout = {
 export default function InfoModal(props: any) {
   const [pseudo, setPseudo] = React.useState("");
   const nav = useNavigate();
+  const context = useContext(Context);
 
   function handleAccept() {
     if (!pseudo) {
@@ -66,7 +76,7 @@ export default function InfoModal(props: any) {
       })
       .then((data) => {
         console.log(data);
-        props.setUpdate(!props.update);
+        context.setUpdate(!context.update);
         props.setModal(false);
       })
       .catch((err) => {
@@ -75,7 +85,6 @@ export default function InfoModal(props: any) {
   }
 
   function handleChange(evt: any) {
-    console.log("Change evt: ", evt);
     setPseudo(evt.target.value);
   }
 
@@ -86,20 +95,11 @@ export default function InfoModal(props: any) {
 
   const handleClose = () => props.setModal(false);
 
-  function handleKeyPress(evt: any) {
-    console.log("Key press : ", evt);
-
-    if (evt.key === "a") {
-      handleChange(evt);
-    }
-  }
-
   return (
     <div>
       <Modal
         open={props.modalState}
         onClose={handleClose}
-        onKeyDown={handleKeyPress}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
