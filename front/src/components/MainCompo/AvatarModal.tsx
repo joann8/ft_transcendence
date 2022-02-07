@@ -4,10 +4,11 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { AnyRecord } from 'dns';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Grid, TextField, BottomNavigation, IconButton, styled, Avatar } from '@mui/material';
 import { PhotoCamera, SentimentSatisfiedOutlined } from '@mui/icons-material';
 import { alterHsl } from 'tsparticles';
+import { Context } from './SideBars';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -44,6 +45,7 @@ export default function AvatarModal(props: any) {
 
     const [avatar, setAvatar] = useState(null)
 
+    const context = useContext(Context)
     const handleClose = () => props.setModal(false);
 
 
@@ -67,7 +69,7 @@ export default function AvatarModal(props: any) {
                     if (!res.ok)
                         throw new Error(res.statusText)
                     console.log("Avatar send. Response : ", res)
-                    props.setUpdate(!props.update)
+                    context.setUpdate(!context.update)
                     props.setModal(false)
                 })
                 .catch(error => {
@@ -91,8 +93,6 @@ export default function AvatarModal(props: any) {
         setAvatar(event.target.files[0])
         console.log("Uploaded Avatar : ", event.target.files[0])
         console.log("Url Avatar Object : ", URL.createObjectURL(event.target.files[0]))
-
-
     }
 
     return (
@@ -146,14 +146,3 @@ export default function AvatarModal(props: any) {
         </div>
     );
 }
-
-/*
-                                <Button variant="contained" style={{
-                                    backgroundColor: "#c84322",
-                                    marginLeft: "5%",
-                                    marginTop: "10px",
-                                    marginRight: "5%",
-                                    color: "#FFFFFF",
-                                    width: "30%"
-                                }} onClick={handleClose}> Cancel </Button >
-                                */
