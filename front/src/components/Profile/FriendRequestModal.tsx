@@ -35,7 +35,6 @@ const request = {
 }
 
 
-
 export default function FriendRequestModal(props: any) {
 
     const navigate = useNavigate()
@@ -123,7 +122,6 @@ export default function FriendRequestModal(props: any) {
     }
 
     useEffect(() => {
-        console.log("RequestingFriend List")
         getFriendRequest()
     }, [])
 

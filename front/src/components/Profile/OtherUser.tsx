@@ -1,13 +1,14 @@
-import { Toolbar, Grid, Paper, Avatar, Container, CssBaseline, Box, Typography, Card, autocompleteClasses, TextField, Button, IconButton, Menu, MenuItem, Modal, Divider, backdropClasses, CircularProgress } from "@mui/material";
-import React, { Fragment, useCallback, useContext, useEffect, useReducer, useState } from "react";
+import { Toolbar, Paper, Avatar, Box, Typography, TextField, Button, Divider, Chip } from "@mui/material";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import Badge from '@mui/material/Badge';
 import DoneIcon from '@mui/icons-material/Done';
-import { Navigate, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import MatchModal from "./MatchModal";
-import profileStyle, { IUser } from './profileStyle'
-import LoadingGif from '../Images/loadingGif.gif'
+import profileStyle from './profileStyle'
 import { LockOpenTwoTone, LockTwoTone, Pending, PersonAdd, PersonRemove, QuestionMark } from "@mui/icons-material";
 import { Context } from "../MainCompo/SideBars";
+import PetsIcon from '@mui/icons-material/Pets';
+import FaceIcon from '@mui/icons-material/Face';
 
 const backEndUrl = "http://127.0.0.1:3001"
 
@@ -18,32 +19,28 @@ export default function OtherUser() {
     const navigate = useNavigate()
     const context = useContext(Context)
 
-    const [loaded, setLoaded] = useState(false)
 
-    const [user, setUser] = useState<IUser>(context.user)
+    const [loaded, setLoaded] = useState(false)
     const [otherUserData, setOtherUserData] = useState(null)
     const [relation, setRelation] = useState(null)
     const [searchInput, setSearchInput] = useState("")
-    const [blocked, setBlocked] = useState(false)
     const [idPseudo, setIdPseudo] = useState(params.id_pseudo)
     const [modalState, setModal] = useState({
         match: false,
     })
-    const [update, setUpdate] = useState(0)
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
+    const [update, setUpdate] = useState(false)
 
-
-    //Optimiser les GET
     useEffect(() => {
-        console.log("UseEffect : idPseudo: ", idPseudo)
         getAllInfo()
-        //   setSearchInput("")
-        console.log("Systematic Other Profile renderering")
-    }, [idPseudo, update])
+    }, [idPseudo, update, context.user])
 
+    const getAllInfo = async () => {
+        const tmpOtherUserData = await getOtherUserData(idPseudo)
+        if (!tmpOtherUserData)
+            return;
+        await getRelation(context.user.id_pseudo, tmpOtherUserData.id_pseudo)
+    }
 
-    //Function de fecthing
     const getOtherUserData = async (id_pseudo: string) => {
         const tmpOtherUserData = await fetch(`${backEndUrl}/user/${id_pseudo}`, {
             method: "GET",
@@ -68,38 +65,11 @@ export default function OtherUser() {
                 setOtherUserData(null)
                 //alert(`Error while searching for user : [${err}]`)
             })
-        console.log("Other User Data loaded : ", tmpOtherUserData)
+        setLoaded(true)
         return tmpOtherUserData
     }
 
-    const getUserData = async () => {
-        const userData = await fetch(`${backEndUrl}/user`, {
-            method: "GET",
-            credentials: "include",
-            referrerPolicy: "same-origin"
-        })
-            .then((res) => {
-                if (res.status === 401) {
-                    navigate("/login");
-                }
-                else if (!res.ok) {
-                    throw new Error(res.statusText);
-                }
-                return res.json();
-            })
-            .then((resData) => {
-                setUser(resData)
-                return resData;
-            })
-            .catch((err) => {
-                setUser(null)
-                // alert(`Fetch : LoggedInUser : Error caught: ${err}`)
-            })
-        console.log("LoggedInUser Data loaded : ", userData)
-        return userData
-    }
-
-    const getRelation = async (myPseudo : string ,otherUserPseudo: string) => {
+    const getRelation = async (myPseudo: string, otherUserPseudo: string) => {
         const relationData = await fetch(`${backEndUrl}/relation/one/${otherUserPseudo}`,
             {
                 credentials: "include",
@@ -107,7 +77,6 @@ export default function OtherUser() {
                 method: "GET",
             }
         ).then((res) => {
-            console.log("getRelation res:", res)
             if (res.status === 401)
                 navigate("/login")
             else if (!res.ok) {
@@ -119,7 +88,6 @@ export default function OtherUser() {
                 return res.json()
         })
             .then((resData) => {
-                console.log("getRelation raw data : ", resData)
                 //ResData = Relation
                 //Cherche la bonne relation dans la bonne case
                 if (resData)
@@ -132,23 +100,9 @@ export default function OtherUser() {
             .catch((err) => {
                 alert(`GetRelation : Error : ${err}`)
             })
-        console.log("Relation loaded : ", relationData)
         return (relationData)
     }
 
-    const getAllInfo = async () => {
-        console.log("User Data Fetching")
-        const tmpUserData = await getUserData()
-        console.log("OtherUser Data Fetching")
-
-        const tmpOtherUserData = await getOtherUserData(idPseudo)
-        setLoaded(true)
-        if (!tmpUserData || !tmpOtherUserData)
-            return;
-
-        console.log("Relation Data Fetching")
-        const relationData = await getRelation(tmpUserData.id_pseudo, tmpOtherUserData.id_pseudo)
-    }
 
     const removeRelation = async (otherUserPseudo: string) => {
         const ret = await fetch(`${backEndUrl}/relation/remove`, {
@@ -206,16 +160,12 @@ export default function OtherUser() {
         return ret
     }
 
-
+    //Change l'URL et update le profile a charger
     const handleSearchBarSubmit = (event) => {
         event.preventDefault()
-        console.log("OtherUser barSearch : ", searchInput)
-        if (searchInput === user.id_pseudo)
-            navigate("/profile")
-        else {
-            navigate(`/profile/${searchInput}`)
-            setIdPseudo(searchInput)
-        }
+        navigate(`/profile/${searchInput}`)
+        setIdPseudo(searchInput)
+        setUpdate(!update)
     }
 
     const handleSearchChange = (event) => {
@@ -223,45 +173,22 @@ export default function OtherUser() {
     }
 
     const handleBlocking = async (status) => {
-        console.log("handleblocking : status : ", status)
-        //if relation === 4 === click - demande de DEblocage === restart relation
         if (status === 4)
             await removeRelation(otherUserData.id_pseudo)
         else
             await updateRelation(otherUserData.id_pseudo, 4, 5)
-        //if relation ==!4 - click ==== demande de blocage === update relation
-        setUpdate(update + 1)
+        setUpdate(!update)
     }
 
     const handleAddFriend = async (status: number) => {
-        //Add request
         if (status === 0)
             await updateRelation(otherUserData.id_pseudo, 1, 2)
-        //Accept request
         else
             await updateRelation(otherUserData.id_pseudo, 3, 3)
-        setUpdate(update + 1)
+        setUpdate(!update)
     }
 
-    function BlockButton({ status }) {
-        //4 bloque
-        return (
-            <Button
-                id="basic-button"
-                variant="contained"
-                startIcon={status === 4 ? <LockOpenTwoTone /> : <LockTwoTone />}
-                color="error"
-                onClick={() => { handleBlocking(status) }}
-                sx={{
-                    marginTop: "10px",
-                }}
-            >
-                {(status === 4) ? "Unblock" : "Block"}
-            </Button>
-        )
-    }
-
-    function AddFriendButton({ status }) {
+    function FriendBlockButton({ status }) {
         // 0 = NOT FRIENDS
         // 1 = SENT / Waiting
         // 2 = RECEIVED
@@ -287,6 +214,18 @@ export default function OtherUser() {
                         onClick={() => handleBlocking(4)}>
                         Remove
                     </Button>
+                    <Button
+                        id="basic-button"
+                        variant="contained"
+                        startIcon={status === 4 ? <LockOpenTwoTone /> : <LockTwoTone />}
+                        color="error"
+                        onClick={() => { handleBlocking(status) }}
+                        sx={{
+                            marginTop: "10px",
+                        }}
+                    >
+                        {(status === 4) ? "Unblock" : "Block"}
+                    </Button>
                 </Fragment>
             )
         }
@@ -311,62 +250,24 @@ export default function OtherUser() {
         }
     }
 
-    const test = true;
-
-    // AJOUT JOANN TEST DEFY
-   
-     const onClickDefy = (challenger : IUser, challengee : IUser) => {
-        //console.log(`${challenger.id_pseudo} is defying ${challengee.id_pseudo}`);
-        //console.log(`challenger status : ${challenger.status}`);
-        if (challenger.status === "IN GAME")
-            alert("Your are already in a game");
-        else if (challengee.status === "IN GAME") 
-            alert(`${challengee.id_pseudo} is busy playing`);
-        else if (challengee.status === "IN QUEUE")
-            alert(`${challengee.id_pseudo} is already waiting for another player`);
-        else if (challengee.status === "OFFLINE")
-            alert(`${challengee.id_pseudo} is not connected`);
-        else
-            navigate(`/game/challenge/${challengee.id_pseudo}`);
-    }
-
-    const onClickWatch = (watcher : IUser, watchee : IUser) => {
-        //console.log(`${watcher.id_pseudo} is watching ${watchee.id_pseudo}`);
-        //console.log(`watchee status : ${watchee.status}`);
-        if (watchee.status === "ONLINE" || watchee.status === "IN QUEUE")
-            alert(`${watchee.id_pseudo} is not in a game at the moment`);
-        else if (watchee.status === "OFFLINE")
-            alert(`${watchee.id_pseudo} is not connected`);
-        else
-            navigate(`/game/watch/${watchee.id_pseudo}`);       
-    }
-    // FIN AJOUT JOANN
-  
-
-
-    //Render du Composant
-    if (loaded === false) {
+    function ButtonBlock({ status }) {
         return (
             <Fragment>
-                <Toolbar />
-                <Box style={{
-                    position: "relative",
-                    marginTop: "15%",
-                    display: "flex",
-                    width: "85%",
-                    height: "70%",
-                    justifyContent: "center",
-                    alignContent: "center"
-                }}>
-                    <img src={LoadingGif} alt="Loading the page" style={{
-                        borderRadius: "50%"
-                    }} />
-                </Box>
+                <Chip icon={<PetsIcon />} label="ONE" color="secondary" />
+                <Chip icon={<FaceIcon />} label="TWO" variant="outlined" color="secondary" />
+                {idPseudo !== context.user.id_pseudo && <FriendBlockButton status={relation} />}
             </Fragment>
         )
     }
-    //Affichage :  USER DOES NOT EXIST
-    //Soit il existe pas soit il m'a bloque
+
+    //LOADING
+    if (loaded === false) {
+        return (
+            <Fragment>
+            </Fragment>
+        )
+    }
+    //USER INEXISTENT or BLOCKED
     if (relation === 5 || otherUserData === null) {
         return (
             <Fragment>
@@ -405,6 +306,7 @@ export default function OtherUser() {
             </Fragment >
         )
     }
+    //Render OTHERUSER PROFILE
     else {
         return (
             <Fragment>
@@ -442,10 +344,7 @@ export default function OtherUser() {
                                             overflow: "hidden"
                                         }} />
                                     </Badge>
-                                    {/* START ____ Ajout Joann pour tester defi */}
-                                    <Button variant="contained" onClick={() => onClickDefy(user, otherUserData)}> DEFY </Button>
-                                    <Button variant="contained" onClick={() => onClickWatch(user, otherUserData)}> Watch </Button>
-                                    {/* END ___Ajout Joann pour tester defi */}
+
                                 </Box>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
                                 <Box sx={profileStyle.content_1}>
@@ -459,15 +358,13 @@ export default function OtherUser() {
                                 }} />
 
                                 <Box sx={profileStyle.content_2}>
-                                    <AddFriendButton status={relation} />
-                                    <BlockButton status={relation} />
-
+                                    <ButtonBlock status={relation} />
                                 </Box>
                             </Box>
 
                             <Box sx={profileStyle.matchHistory}>
                                 <Button variant="contained" onClick={() => { setModal({ ...modalState, match: true }) }} sx={{ width: "100%" }}> Match history </Button>
-                                {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} /> : null}
+                                {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} user={otherUserData}/> : null}
                             </Box>
                         </Box >
                     </Box>
@@ -475,5 +372,4 @@ export default function OtherUser() {
             </Fragment >
         );
     }
-
 }
