@@ -1,6 +1,7 @@
 import {
 	Controller,
 	Delete,
+	Get,
 	HttpCode,
 	Param,
 	Put,
@@ -15,6 +16,10 @@ import { OwnerGuard } from './guards/owner.guard';
 @UseGuards(AdminGuard)
 export class AdminController {
 	constructor(private adminService: AdminService) {}
+	@Get('users')
+	async getAllUsers() {
+		return await this.adminService.getAllUsers();
+	}
 	// GIVE ADMIN ROLE TO USER
 	@UseGuards(OwnerGuard)
 	@Put(':id_pseudo')
@@ -37,5 +42,10 @@ export class AdminController {
 	@Put('ban/:id_pseudo')
 	async banUser(@Req() req, @Param() userId: string): Promise<void> {
 		await this.adminService.banUser(req.user, userId);
+	}
+	// UNBAN AN USER
+	@Put('unban/:id_pseudo')
+	async unbanUser(@Req() req, @Param() userId: string): Promise<void> {
+		await this.adminService.unbanUser(req.user, userId);
 	}
 }

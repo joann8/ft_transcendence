@@ -108,6 +108,13 @@ export class AuthService {
 		return { access_token, refresh_token };
 	}
 
+	async set_online(user: User): Promise<User> {
+		await this.userService.update(user.id, {
+			status: status.ONLINE,
+		});
+		return this.userService.findOne(user.id.toString());
+	}
+
 	async logout(user: User): Promise<void> {
 		await this.userService.update(user.id, {
 			status: status.OFFLINE,
@@ -148,7 +155,7 @@ export class AuthService {
 			throw new ForbiddenException('2FA is already on for this user');
 		}
 		if (!this.isTwoFaCodeValid(secret, user)) {
-			throw new UnauthorizedException(
+			throw new ForbiddenException(
 				'Wrong authentication code. Please try to generate 2FA QR Code first',
 			);
 		}

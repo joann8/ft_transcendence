@@ -23,7 +23,7 @@ export class FortyTwoStrategy extends PassportStrategy(
 		profile: Profile,
 		cb: VerifyCallback,
 	): Promise<any> {
-		const { user, created } = await this.authService.findOrCreate42User(
+		let { user, created } = await this.authService.findOrCreate42User(
 			profile,
 		);
 		if (!user) {
@@ -33,7 +33,7 @@ export class FortyTwoStrategy extends PassportStrategy(
 				'You are ban from this website, get out of my sight',
 			);
 		}
-		user.status = status.ONLINE;
+		user = await this.authService.set_online(user);
 		return { user, created };
 	}
 }

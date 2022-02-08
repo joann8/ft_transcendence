@@ -19,24 +19,18 @@ export default function RuleSet() {
     return (
         <Fragment >
             <Grid item xs={12}  style={{textAlign: "center"}}  >
-                <Button variant="contained" color="secondary" onClick={handleClick}>
-                    What are the rules?
+                <Button variant="contained" color="secondary" onClick={handleClick} style={{fontSize: 25}}>
+                    How to play PONG?
                 </Button>
-                <Popper id={id} open={open} anchorEl={anchorEl}>
+                <Popper id={id} open={open} anchorEl={anchorEl} >
                     <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper', textAlign: "center" }}>
-                        Those are the rules of PONG.
+                        The goal is to defeat your oponent by being the first to reach 10 points.
                         <br/>
-                        You must flip tha ball
+                        You need to send back the ball to your opponent using your paddle.
                         <br/>
-                        balabnalalallalaa
+                        Use {String.fromCharCode(9650)} and {String.fromCharCode(9660)} to move your paddle up and down.
                         <br/>
-                        Yon win when you reach score of 10.
-                        <br/>
-                        Yon win when you reach score of 10.
-                        <br/>
-                        Yon win when you reach score of 10.
-                        <br/>
-                        Yon win when you reach score of 10.
+                        You score a point each time your opponent misses the ball.
                     </Box>
                 </Popper>
             </Grid>
