@@ -125,7 +125,6 @@ export default function SideBar(props: any) {
       })
       .then((resData) => {
         setUser(resData);
-        // console.log("UserData : ", resData)
       })
       .catch((err) => {
         console.error("Error caught: ", err);
@@ -158,7 +157,6 @@ export default function SideBar(props: any) {
   React.useEffect(() => {
     window.addEventListener("beforeunload", (e) => {
       e.preventDefault();
-      console.log("Hello from window listener!")// Appelé a chaque changement de page?
       if (user) {
         console.log("--> user: ", user.id_pseudo)
         fetch(api_url + "/user", {
@@ -191,7 +189,6 @@ export default function SideBar(props: any) {
   } else {
     return (
       <Fragment>
-        {/*<ThemeProvider theme={mdTheme}>*/}
           <Box sx={{ display: "flex" }}>
             <CssBaseline />
             <AppBar position="absolute" open={open}>
@@ -323,7 +320,6 @@ export default function SideBar(props: any) {
               <Outlet />
             </Context.Provider>
           </Box>
-       {/*} </ThemeProvider>*/}
       </Fragment>
     );
   }

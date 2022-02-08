@@ -19,29 +19,6 @@ export default function GamePong(props: PropsGame) {
     
     const [game, setGame] = useState(gameStateInit);
 
-    useEffect(() => {
-        socket.on("updateState", (updateState : any) => {
-            setGame(updateState);
-        });
-        return () => {
-            socket.removeAllListeners("updateState");
-        };
-    }, []);
-    
-
-    useEffect (() => {
-        window.addEventListener('keydown', (e) => {
-            if (ref)
-            {
-                if (e.code ==='ArrowUp') {
-                    socket.emit('up_paddle');
-                } else if (e.code ==='ArrowDown') {
-                    socket.emit('down_paddle');
-                }
-            }
-        })
-    }, []);
-    
     //Additionnal features
     const [ballCheck, setBallCheck] = useState(false); // initial state (not activated)
     const [paddleCheck, setPaddleCheck] = useState(false); // initial state (not activated)
@@ -64,7 +41,10 @@ export default function GamePong(props: PropsGame) {
         setColorMode(event.target.checked);
     };
 
-    useEffect(()=> {
+    useEffect(() => {
+        socket.on("updateState", (updateState : any) => {
+            setGame(updateState);
+        });
         socket.on("ball_on_server", (args : any) => {
             setBallCheck(true);                    
         });
@@ -74,14 +54,25 @@ export default function GamePong(props: PropsGame) {
         });
 
         return () => {
+            socket.removeAllListeners("updateState");
             socket.removeAllListeners("ball_on_server");
             socket.removeAllListeners("ball_off_server");
         };
     }, []);
+    
+    useEffect (() => {
+        window.addEventListener('keydown', (e) => {
+            if (ref) {
+                if (e.code ==='ArrowUp')
+                    socket.emit('up_paddle');
+                else if (e.code ==='ArrowDown')
+                    socket.emit('down_paddle');
+            }
+        })
+    }, []);
 
     useEffect(() => {
-        if (ref)
-        {
+        if (ref) {
             let c : HTMLCanvasElement = ref.current; //canvas
             let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
             draw_all(colorMode, ctx, game, color_object);
@@ -108,4 +99,4 @@ export default function GamePong(props: PropsGame) {
             </Grid>
         </Fragment>
     );
-}
+    }

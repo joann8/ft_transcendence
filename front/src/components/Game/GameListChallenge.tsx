@@ -28,41 +28,40 @@ export default function GameListChallenge(props : PropsGame) {
       referrerPolicy: "same-origin",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({status: `${newStatus}`}),
-      }).then((res) => {
-      if (!res.ok)
-        throw new Error(res.statusText);
-      return (res.json());
-    }).catch((err) => {
-      console.log("Error caught: ", err);
-    })
-  };
+      })
+      .then((res) => {
+        if (!res.ok)
+          throw new Error(res.statusText);
+        return (res.json());
+      })
+      .catch((err) => {
+        console.log("Error caught: ", err);
+      })
+    };
 
   const [update, setUpdate] = useState(false);
   const [challenges, setChallenges] = useState([]);
   
   useEffect(() => {
-      const getChallenges = async () => {
+    const getChallenges = async () => {
       await fetch(`http://127.0.0.1:3001/game/challenge/toanswer/`, {
           method: "GET",
           credentials : "include",
           referrerPolicy: "same-origin"
       })
       .then((res) => {
-          if (res.status === 401)
-              console.log("oupsy");
-          else if (!res.ok)
+          if (!res.ok)
               throw new Error(res.statusText);
           return (res.json());
       })
       .then((resJson) => {
-          console.log("challenges:", resJson);
           setChallenges(resJson);
       })
       .catch((err) => {
           console.log("Error caught: ", err);
       })
-      };
-      getChallenges();
+    };
+    getChallenges();
   }, [update]); 
 
   const [openChallenge, setOpenChallenge] = React.useState(false);
@@ -72,7 +71,6 @@ export default function GameListChallenge(props : PropsGame) {
     setOpenChallenge(true);
     handleUpdate();
     socket.emit("answer_challenge", { id_challenge : id_challenge, answer : "accepted"});
-
   };
   
   const refuseChallenge = (id_challenge : number)  => {
@@ -95,16 +93,16 @@ export default function GameListChallenge(props : PropsGame) {
   }
     
   const handleCloseAlertLeave = () => {
-    socket.emit('my_disconnect'); // a revoir dans le back
+    socket.emit('my_disconnect');
     updateStatus("ONLINE");
     setOpenChallenge(false);
     setOpenAlert(false);
-    setUpdate(!context.update);
+    setUpdate(!context.update); // a verifier
   }
 
   useEffect(() => {
     socket.on('no_such_challenge', (args : any) => {
-      socket.emit('my_disconnect'); // a revoir dans le back
+      socket.emit('my_disconnect'); 
       updateStatus("ONLINE");
       setOpenChallenge(false);
       alert("Challenger cancelled the challenge");
@@ -113,15 +111,14 @@ export default function GameListChallenge(props : PropsGame) {
       socket.removeAllListeners("no_such_challenge");
     }
   }, [])
-  
-  
+
   return (
     <Fragment> 
         <TableContainer component={Paper}>
           <Table >
             <TableHead>
               <TableRow>
-                <TableCell align="center" colSpan={4}> CHALLENGES </TableCell>
+                <TableCell align="center" colSpan={2}> CHALLENGES </TableCell>
                 <TableCell align="right" colSpan={1}>
                     <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update </Button>
                 </TableCell>             

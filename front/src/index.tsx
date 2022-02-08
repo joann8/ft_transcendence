@@ -16,33 +16,21 @@ import Friend from "./components/Friend/Friend";
 import { createTheme, ThemeProvider } from "@mui/material";
 import Dashboard from "./components/Admin/Dashboard";
 
-
-//const mdTheme = createTheme();
 const mdTheme = createTheme({
     palette: {
       primary: {
         main: '#000000'
       },
       secondary: {
-        main: '#E8C0C0' //call obj from color
+        main: '#F185A3'//'#29ADB4' // //'#E8C0C0' 
       }
      }
-     /*
-     you can import font from google font to change the police ==> index.css
-     typography: {
-       fontFamily:'Quicksand',
-       fontWeightLight: 400,
-       fontWeightRegular: 500,
-       fontWeightMedium: 600,
-       fontWeightBold: 700,
-     }*/
   });
 
 function Root() {
   return (
     <ThemeProvider theme={mdTheme}>
     <Router>
-      {/*<SideBars />*/}
       <Routes>
         <Route path="/login/twofa" element={<Login twofa={true} />} />
         <Route path="/login" element={<Login twofa={false} />} />
@@ -80,9 +68,7 @@ export default Root;
 
 ReactDOM.render(
   <React.StrictMode>
-    {/*  <socketContext.Provider value={socket}>*/}
     <Root />
-    {/*</socketContext.Provider>*/}
   </React.StrictMode>,
   document.getElementById("root")
 );

@@ -33,9 +33,9 @@ export default function GameMenu(props : PropsInit) {
         if (!res.ok)
             throw new Error(res.statusText);
         return (res.json());
-    }).catch((err) => {
+      }).catch((err) => {
         console.log("Error caught: ", err);
-    })
+      })
     };
 
     useEffect(() => {
@@ -71,7 +71,7 @@ export default function GameMenu(props : PropsInit) {
     }
     
     const handleCloseAlertLeave = () => {
-      socket.emit('my_disconnect'); // a revoir dans le back
+      socket.emit('my_disconnect'); 
       updateStatus("ONLINE");
       setOpenGame(false);
       setOpenAlert(false);
@@ -125,4 +125,3 @@ export default function GameMenu(props : PropsInit) {
             </Paper>
           </Fragment>);
 }
-

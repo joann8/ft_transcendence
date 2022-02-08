@@ -17,7 +17,6 @@ export default function LeaderTable() {
   const [update, setUpdate] = useState(false);
   const [leaders, setLeaders] = useState([]);
   
-  // BACK URL en var?
   useEffect(() => {
       const getLeaders = async () => {
       fetch("http://127.0.0.1:3001/user/all/leaderboard", {
@@ -44,10 +43,7 @@ export default function LeaderTable() {
   }, [update]); 
 
   const handleUpdate=() => {
-    if (update === false)
-      setUpdate(true);
-    else
-      setUpdate(false);
+    setUpdate(!update);
   }
 
   return (

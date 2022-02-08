@@ -30,18 +30,17 @@ export default function GameChallenge(props : PropsChallenge) {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({status: `${newStatus}`}),
         }).then((res) => {
-        if (!res.ok)
+          if (!res.ok)
             throw new Error(res.statusText);
-        return (res.json());
-      }).catch((err) => {
-        console.log("Error caught: ", err);
-      })
+          return (res.json());
+        }).catch((err) => {
+          console.log("Error caught: ", err);
+        })
     };
 
     useEffect(() => {
       socket.emit("check_game", userID);
-    }
-    , []);
+    }, []);
 
     useEffect(() => {
         socket.on("allowed", (args : any) => {
@@ -86,10 +85,10 @@ export default function GameChallenge(props : PropsChallenge) {
     const handleCloseAlertLeave = () => {
       if (start === false)
         socket.emit('cancel_challenge', {challenger : userID, challengee : challengee});
-      socket.emit('my_disconnect'); // a revoir dans le back
+      socket.emit('my_disconnect');
       updateStatus("ONLINE");
       setOpenAlert(false);
-      context.setUpdate(!context.update);
+      context.setUpdate(!context.update); // a verifier
       navigate(`/game`);
     }
   

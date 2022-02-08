@@ -121,8 +121,7 @@ export default function Profile() {
               />
               <Box sx={profileStyle.content_2}>
                 { context.user.achievement1 ? <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" color="success" /> :  <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" variant="outlined" color="secondary" /> }
-                <br/>
-                { context.user.achievement2 ? <Chip icon={<EmojiEventsIcon />} label="Win 3 times" color="success" /> : <Chip icon={<EmojiEventsIcon />} label="Win 3 times" variant="outlined" color="secondary" /> }
+                { context.user.achievement2 ? <Chip icon={<EmojiEventsIcon />} label="Win 3 times" color="success" /> : <Chip icon={<EmojiEventsIcon />} label="Win 3 times" variant="outlined" color="secondary" /> }              
                 <Button
                   variant="contained"
                   startIcon={<NotificationAddIcon color="error" />}

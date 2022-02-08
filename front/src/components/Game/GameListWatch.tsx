@@ -33,7 +33,6 @@ export default function GameList(props : PropsWatch) {
           referrerPolicy: "same-origin"
       })
       .then((res) => {
-          console.log("return from database all games:", res.status)
           if (res.status === 401)
               console.log("oupsy");
           else if (!res.ok)
@@ -41,7 +40,6 @@ export default function GameList(props : PropsWatch) {
           return (res.json());
       })
       .then((resJson) => {
-          console.log(resJson);
           setGames(resJson);
       })
       .catch((err) => {
@@ -57,15 +55,9 @@ export default function GameList(props : PropsWatch) {
         referrerPolicy: "same-origin"
     })
     .then((res) => {
-        console.log("return from database One game:", res.status)
-        console.log("res ok? :", res.ok)
-        if (res.status === 401)
-            console.log("oupsy");
-        else if (!res.ok)
+        if (!res.ok)
             throw new Error(res.statusText);
-        else if (res.status === 204)
-        {
-          console.log("reno res");
+        else if (res.status === 204) { // pas de jeu en cours
           return({})
         }
         else
@@ -107,7 +99,7 @@ export default function GameList(props : PropsWatch) {
           handleUpdate();
         }
         else {
-          alert("This game is over");
+          alert(`${watchee} is not in a game at the moment`);
           navigate("/game")
         }
         return () => {

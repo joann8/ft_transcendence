@@ -254,7 +254,6 @@ export default function OtherUser() {
         return (
             <Fragment>
                 { otherUserData.achievement1 ? <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" color="success" /> :  <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" variant="outlined" color="secondary" /> }
-                <br/>
                 { otherUserData.achievement2 ? <Chip icon={<EmojiEventsIcon />} label="Win 3 times" color="success" /> : <Chip icon={<EmojiEventsIcon />} label="Win 3 times" variant="outlined" color="secondary" /> }
                 {idPseudo !== context.user.id_pseudo && <FriendBlockButton status={relation} />}
             </Fragment>
@@ -333,6 +332,7 @@ export default function OtherUser() {
 
                             <Box sx={profileStyle.profileBlock}>
                                 <Box sx={profileStyle.content_2}>
+                                    {context.user.id !== otherUserData.id ?
                                     <Badge
                                         overlap="circular"
                                         badgeContent={otherUserData.status}
@@ -344,7 +344,13 @@ export default function OtherUser() {
                                             height: "125px",
                                             overflow: "hidden"
                                         }} />
-                                    </Badge>
+                                    </Badge> :
+                                    <Avatar src={otherUserData.avatar} style={{
+                                        width: "125px",
+                                        height: "125px",
+                                        overflow: "hidden"
+                                    }} /> 
+                                    }
 
                                 </Box>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
