@@ -14,6 +14,8 @@ import Admin from "./components/Admin/Dashboard";
 import OtherUser from "./components/Profile/OtherUser";
 import Friend from "./components/Friend/Friend";
 import Dashboard from "./components/Admin/Dashboard";
+import Registration from "./components/Login/Registration";
+import EditPage from "./components/MainCompo/EditPage";
 
 function Root() {
   return (
@@ -22,8 +24,10 @@ function Root() {
       <Routes>
         <Route path="/login/twofa" element={<Login twofa={true} />} />
         <Route path="/login" element={<Login twofa={false} />} />
+        <Route path="/registration" element={<Registration/>}/>
         <Route path="/" element={<SideBars />}>
           <Route index element={<Homepage />} />
+          <Route path="edit" element={<EditPage/>}/>
           <Route path="game">
             <Route index element={<Game mode={"random"} />} />
             <Route path="challenge">

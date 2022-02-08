@@ -3,25 +3,26 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { Grid, TextField, BottomNavigation, IconButton, Avatar, styled, MobileStepper, useTheme } from '@mui/material';
+import { Grid, TextField, BottomNavigation, IconButton, Avatar, styled, MobileStepper, useTheme, Paper } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera, SentimentSatisfiedOutlined } from '@mui/icons-material';
-import { Context } from './SideBars';
 import { useNavigate } from 'react-router';
 import validator from 'validator'
+import registrationBg from "../Images/registrationBg.jpg"
+import { Context } from './SideBars';
 
 
 const style = {
-    position: 'absolute' as 'absolute',
+    position: 'relative',
     top: '50%',
     left: '50%',
+    maxHeight: "50vh",
     transform: 'translate(-50%, -50%)',
-    bgcolor: 'background.paper',
+    bgcolor: 'rgba(250, 250, 250)',
     border: '2px solid #000',
-    boxShadow: 24,
-    overflow: "auto",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
+    //  alignItems: "center",
+    overflow: "auto",
     p: 4,
 };
 
@@ -31,54 +32,37 @@ const Input = styled('input')({
 });
 
 const editLayout = {
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
 }
 
 
-export default function RegistrationModal(props: any) {
+export default function Registration() {
+
 
     const context = useContext(Context)
-
     const [avatar, setAvatar] = useState(null)
     const [pseudo, setPseudo] = useState("")
     const [activeStep, setActiveStep] = useState(0);
 
 
-    const nav = useNavigate()
+    const navigate = useNavigate()
 
-    const handleClose = () => props.setModal(false);
 
-    //INTERNAL COMPONENT
-    //END BUTTON
-    function EndDisplay() {
 
-        const updateAvatar = async () => {
-            if (avatar) {
-                const formData = new FormData()
-                formData.append("avatar", avatar, avatar.name)
-                const response = await fetch("http://127.0.0.1:3001/user/upload", {
-                    method: "POST",
-                    credentials: "include",
-                    referrerPolicy: "same-origin",
-                    body: formData
-                })
-                    .then(res => {
-                        if (!res.ok)
-                            throw new Error(res.statusText)
-                    })
-                    .catch(err => {
-                        throw new Error(`Avatar Upload Failed : [${err}]`)
-                    })
-            }
+
+
+    //EDIT PSEUDO 
+    function InfoDisplay() {
+
+        function handleChange(evt: any) {
+            setPseudo(evt.target.value)
         }
 
         const updatePseudo = async () => {
 
-            if(!pseudo)
-            {
+            if (!pseudo) {
                 throw new Error("Pseudo cannot be empty")
-                return
             }
             if (pseudo) {
                 if (!(validator.isAlpha(pseudo[0]) && validator.isAlphanumeric(pseudo)))
@@ -99,10 +83,7 @@ export default function RegistrationModal(props: any) {
                 body: JSON.stringify(updatePseudo),
             })
                 .then(res => {
-                    if (res.status === 401) {
-                        nav("/login")
-                    }
-                    else if (!res.ok) {
+                    if (!res.ok) {
                         if (res.status === 409)
                             throw new Error("Pseudo not available")
                         else
@@ -113,57 +94,25 @@ export default function RegistrationModal(props: any) {
                     throw new Error(`Update Pseudo Failed : [${err}]`)
                 })
         }
-
-        const handleCompleteRegistration = async () => {
+        const handleSubmit = async (evt: any) => {
+            evt.preventDefault()
             try {
-                await updateAvatar()
                 await updatePseudo()
             }
             catch (error) {
-                alert(`Please Re-enter info : ${error}`)
+                alert(`Update Pseudo Failed : ${error}`)
                 return
             }
-            setActiveStep(0)
             context.setUpdate(!context.update)
-            handleClose()
         }
 
         return (
             <Fragment>
-                <Box sx={{
-                    display: "flex",
-                    justifyContent: "center"
-                }}>
-                    <Button
-                        variant="contained"
-                        color="success"
-                        onClick={handleCompleteRegistration}>
-                        Finish Registration
-                    </Button>
-                </Box>
-            </Fragment>
-        )
-    }
-
-    //EDIT PSEUDO 
-    function InfoDisplay() {
-
-        function handleChange(evt: any) {
-            setPseudo(evt.target.value)
-        }
-
-        function handleSubmit(evt: any) {
-            evt.preventDefault()
-            setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        }
-
-        return (
-            <Fragment>
-                <Box component="form" onSubmit={handleSubmit} 
-                sx={{
-                    display : "flex",
-                    justifyContent : "center",
-                }}>
+                <Box component="form" onSubmit={handleSubmit}
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                    }}>
                     <TextField
                         autoFocus
                         name="id_pseudo"
@@ -172,9 +121,13 @@ export default function RegistrationModal(props: any) {
                         onChange={handleChange}
                         sx={{
                             maxWidth: "400px",
+                            marginRight: "20px",
                             flexGrow: 1
                         }}
                     />
+                    <Button variant="contained" color="success" onClick={handleSubmit}>
+                        Confirm Pseudo
+                    </Button>
                 </Box>
             </Fragment>
         )
@@ -182,6 +135,28 @@ export default function RegistrationModal(props: any) {
 
     //EDIT AVATAR
     function AvatarDisplay() {
+
+
+
+        const uploadAvatar = async () => {
+            if (avatar) {
+                const formData = new FormData()
+                formData.append("avatar", avatar, avatar.name)
+                const response = await fetch("http://127.0.0.1:3001/user/upload", {
+                    method: "POST",
+                    credentials: "include",
+                    referrerPolicy: "same-origin",
+                    body: formData
+                })
+                    .then(res => {
+                        if (!res.ok)
+                            throw new Error(res.statusText)
+                    })
+                    .catch(err => {
+                        throw new Error(`Avatar Upload Failed : [${err}]`)
+                    })
+            }
+        }
         //Recupere la file suite a l'ouverture auto de la fenetre d'upload
         const handleFileReception = event => {
             if (event.target.files[0].size > 15000000)
@@ -194,29 +169,42 @@ export default function RegistrationModal(props: any) {
             setAvatar(event.target.files[0])
         }
 
+        const handleUpload = async () => {
+            try {
+                await uploadAvatar()
+            }
+            catch (error) {
+                alert(`Avatar upload failed : ${error}`)
+                return
+            }
+            context.setUpdate(!context.update)
+        }
+
+
         return (
             <Fragment>
                 <Grid container columns={12} spacing={2} style={editLayout}>
                     <Grid item xs={4} >
-                        <Avatar src={avatar ? URL.createObjectURL(avatar) : context.user.avatar} style={{
+                        <Avatar src={avatar ? URL.createObjectURL(avatar) : ""} style={{
                             minWidth: "100px",
                             minHeight: "100px",
                             flexGrow: 1,
                             border: "3px solid purple"
                         }} />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                         <label htmlFor="contained-button-file">
                             <Input accept="image/*" id="contained-button-file" type="file"
                                 onChange={(event) => handleFileReception(event)} />
                             <Button variant="contained" component="span" startIcon={<PhotoCamera />} style={{
-                                marginTop: "10px",
-                                marginRight: "5px",
-                                marginLeft: "5px",
+                                marginBottom: "10px",
                             }} >
                                 Upload
                             </Button>
                         </label>
+                        <Button variant="contained" color="success" onClick={handleUpload} >
+                            Confirm Change
+                        </Button>
                     </Grid>
                 </Grid>
             </Fragment>
@@ -240,16 +228,16 @@ export default function RegistrationModal(props: any) {
         return (
             <MobileStepper
                 variant="dots"
-                steps={3}
+                steps={2}
                 position="static"
                 activeStep={activeStep}
                 sx={{
-                    bgcolor: "rgba(200, 200, 200, 0.9)",
-                    maxWidth: 400,
+                    bgcolor: 'rgba(50, 50, 50, 0.1)',
+                    maxWidth: "100%",
                     flexGrow: 1
                 }}
                 nextButton={
-                    <Button size="small" onClick={handleNext} disabled={activeStep === 2}>
+                    <Button size="small" onClick={handleNext} disabled={activeStep === 1}>
                         Next
                         {theme.direction === 'rtl' ? (
                             <KeyboardArrowLeft />
@@ -274,28 +262,31 @@ export default function RegistrationModal(props: any) {
 
     //MODAL RENDERING
     return (
-        <div>
-            <Modal
-                open={props.modalState}
-                onClose={handleClose/*() => /*alert("Sorry, you must finished the registration process")*/ }
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
+        <Fragment>
+            <Paper style={{
+                backgroundImage: `url(${registrationBg})`,
+                backgroundPosition: 'center',
+                backgroundRepeat: 'repeat',
+                backgroundSize: 'cover',
+                width: '100vw',
+                height: '100vh',
+                display: "flex",
+                overflow: "auto"
+            }}>
                 <Box sx={style}>
                     <Grid container spacing={3} >
-                        <Grid item xs={12}>
+                        <Grid item xs={12} sx={{ alignSelf: "end" }}>
                             {activeStep === 0 ? <AvatarDisplay /> : ""}
                             {activeStep === 1 ? <InfoDisplay /> : ""}
-                            {activeStep === 2 ? <EndDisplay /> : ""}
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} sx={{ alignSelf: "end" }}>
                             <BottomNavigation>
                                 <DotsMobileStepper />
                             </BottomNavigation>
                         </Grid>
                     </Grid>
                 </Box>
-            </Modal>
-        </div >
+            </Paper>
+        </Fragment>
     );
 }

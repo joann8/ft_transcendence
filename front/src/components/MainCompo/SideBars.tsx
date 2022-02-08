@@ -17,16 +17,12 @@ import {
   CssBaseline,
   Menu,
   MenuItem,
-  MobileStepper,
 } from "@mui/material";
 import { Outlet, useNavigate } from "react-router";
 import EditIcon from "@mui/icons-material/Edit";
-import AvatarModal from "./AvatarModal";
-import InfoModal from "./InfoModal ";
 import { IUser } from "../Profile/profileStyle";
 import { api_url } from "../../ApiCalls/var";
-import RegistrationModal from "./RegistrationModal";
-import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+
 
 /* Notification clochette
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -100,9 +96,6 @@ export default function SideBar(props: any) {
     };
   */
   const [open, setOpen] = React.useState(true);
-  const [avatarModal, setAvatarModal] = React.useState(false);
-  const [registrationModal, setRegistrationModal] = React.useState(false);
-  const [pseudoModal, setPseudoModal] = React.useState(false);
   const [update, setUpdate] = React.useState(true);
   const [user, setUser] = React.useState<IUser>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -236,12 +229,7 @@ export default function SideBar(props: any) {
                         open={Boolean(anchorEl)}
                         onClose={handleEditClose}
                       >
-                        <MenuItem onClick={() => setPseudoModal(true)}> Pseudo </MenuItem>
-                        <InfoModal modalState={pseudoModal} setModal={setPseudoModal} />
-                        <MenuItem onClick={() => setAvatarModal(true)}> Avatar </MenuItem>
-                        <AvatarModal modalState={avatarModal} setModal={setAvatarModal} />
-                        <MenuItem onClick={() => setRegistrationModal(true)} > StartInfo </MenuItem>
-                        <RegistrationModal modalState={registrationModal} setModal={setRegistrationModal} />
+                        <MenuItem onClick={() => navigate("/edit")}> Profile </MenuItem>
                       </Menu>
                     </Context.Provider>
                   </Fragment>)}

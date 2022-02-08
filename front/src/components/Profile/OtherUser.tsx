@@ -332,6 +332,7 @@ export default function OtherUser() {
 
                             <Box sx={profileStyle.profileBlock}>
                                 <Box sx={profileStyle.content_2}>
+                                    {otherUserData.id === context.user.id ? null :
                                     <Badge
                                         overlap="circular"
                                         badgeContent={otherUserData.status}
@@ -343,8 +344,7 @@ export default function OtherUser() {
                                             height: "125px",
                                             overflow: "hidden"
                                         }} />
-                                    </Badge>
-
+                                    </Badge>}
                                 </Box>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
                                 <Box sx={profileStyle.content_1}>
