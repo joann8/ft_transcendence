@@ -29,14 +29,17 @@ function App(props: any) {
   const [canvas, setCanvas] = useState(homePage);
 
 
-  const mdTheme = createTheme();
-  {/*const mdTheme = createTheme({
+  //const mdTheme = createTheme();
+  const mdTheme = createTheme({
     palette: {
       primary: {
-        main: '#fefefe'
+        main: '#000000'
       },
-      secondary: purple //call obj from color
+      secondary: {
+        main: '#e1e1e1' //call obj from color
+      }
      }
+     /*
      you can import font from google font to change the police ==> index.css
      typography: {
        fontFamily:'Quicksand',
@@ -44,8 +47,8 @@ function App(props: any) {
        fontWeightRegular: 500,
        fontWeightMedium: 600,
        fontWeightBold: 700,
-     }
-  });*/}
+     }*/
+  });
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>

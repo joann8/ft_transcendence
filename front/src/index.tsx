@@ -15,12 +15,11 @@ import OtherUser from "./components/Profile/OtherUser";
 import Friend from "./components/Friend/Friend";
 import Dashboard from "./components/Admin/Dashboard";
 import Registration from "./components/Login/Registration";
-import EditPage from "./components/MainCompo/EditPage";
+import EditPage from "./components/MainCompo/EditPage"
 
 function Root() {
   return (
     <Router>
-      {/*<SideBars />*/}
       <Routes>
         <Route path="/login/twofa" element={<Login twofa={true} />} />
         <Route path="/login" element={<Login twofa={false} />} />
@@ -52,6 +51,7 @@ function Root() {
     </Router>
   );
 }
+
 
 export default Root;
 

@@ -1,4 +1,4 @@
-import { GameSate } from "./GameTypes";
+import { GameState } from "./GameTypes";
 import { width, height, ball_radius, l_paddle_x,r_paddle_x, paddle_w, color_object2, color_object3} from "./GameConst";
 import { color_background, color_background2, font_text} from "./GameConst";
 import { WAIT, PLAY, OVER } from "./GameConst";
@@ -39,7 +39,7 @@ import { WAIT, PLAY, OVER } from "./GameConst";
         ctx.fillText(text, x, y);
     }
 
-    export function draw_end(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate, colorObject : string) {
+    export function draw_end(color : boolean, ctx : CanvasRenderingContext2D, game : GameState, colorObject : string) {
         let back : string, object : string;
         if (color) {
             back = color_background2;
@@ -56,7 +56,7 @@ import { WAIT, PLAY, OVER } from "./GameConst";
         draw_text(ctx, game.players.p2, object, "20px gameFont", 7 * (width / 8), height / 12) 
     }
 
-    export function draw_wait(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate, colorObject : string) {
+    export function draw_wait(color : boolean, ctx : CanvasRenderingContext2D, game : GameState, colorObject : string) {
         let back : string, object : string;
         if (color) {
             back = color_background2;
@@ -69,10 +69,10 @@ import { WAIT, PLAY, OVER } from "./GameConst";
         draw_background(ctx, back); 
         ctx.fillStyle = object;
         ctx.font = font_text; 
-        ctx.fillText("Waiting for Player", 125, height / 2);
+        ctx.fillText("Waiting for Player", 150, height / 2);
     }
 
-    export function draw_already(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate, colorObject : string) {
+    export function draw_already(color : boolean, ctx : CanvasRenderingContext2D, game : GameState, colorObject : string) {
         let back : string, object : string;
         if (color) {
             back = color_background2;
@@ -85,10 +85,10 @@ import { WAIT, PLAY, OVER } from "./GameConst";
         draw_background(ctx, back); 
         ctx.fillStyle = object;
         ctx.font = font_text; 
-        ctx.fillText("Waiting for Player", 125, height / 2);
+        ctx.fillText("Waiting for Player", 150, height / 2);
     }
 
-    export function draw_game(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate, colorObject : string) {
+    export function draw_game(color : boolean, ctx : CanvasRenderingContext2D, game : GameState, colorObject : string) {
         let back : string, object : string;
         if (color) {
             back = color_background2;
@@ -109,7 +109,7 @@ import { WAIT, PLAY, OVER } from "./GameConst";
         draw_text(ctx, game.players.p2, object, "20px gameFont", 7 * (width / 8), height / 12)    
     }
     
-    export function draw_all(color : boolean, ctx : CanvasRenderingContext2D, game : GameSate,  colorObject : string) {
+    export function draw_all(color : boolean, ctx : CanvasRenderingContext2D, game : GameState,  colorObject : string) {
         if (game.state === PLAY)
             draw_game(color, ctx, game, colorObject);     
         else if (game.state === OVER)

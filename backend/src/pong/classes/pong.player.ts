@@ -1,8 +1,6 @@
 import { Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";
 import { Const } from "../static/pong.constants"
-import { States } from "../static/pong.states";
-import { Game } from "./pong.game";
 import { Paddle } from "./pong.paddle";
 
 export class Player {

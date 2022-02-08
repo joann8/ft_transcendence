@@ -7,8 +7,8 @@ import MatchModal from "./MatchModal";
 import profileStyle from './profileStyle'
 import { LockOpenTwoTone, LockTwoTone, Pending, PersonAdd, PersonRemove, QuestionMark } from "@mui/icons-material";
 import { Context } from "../MainCompo/SideBars";
-import PetsIcon from '@mui/icons-material/Pets';
-import FaceIcon from '@mui/icons-material/Face';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import StarsIcon from '@mui/icons-material/Stars';
 
 const backEndUrl = "http://127.0.0.1:3001"
 
@@ -253,8 +253,8 @@ export default function OtherUser() {
     function ButtonBlock({ status }) {
         return (
             <Fragment>
-                <Chip icon={<PetsIcon />} label="ONE" color="secondary" />
-                <Chip icon={<FaceIcon />} label="TWO" variant="outlined" color="secondary" />
+                {otherUserData.achievement1 ? <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" color="success" /> : <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" variant="outlined" color="secondary" />}
+                {otherUserData.achievement2 ? <Chip icon={<EmojiEventsIcon />} label="Win 3 times" color="success" /> : <Chip icon={<EmojiEventsIcon />} label="Win 3 times" variant="outlined" color="secondary" />}
                 {idPseudo !== context.user.id_pseudo && <FriendBlockButton status={relation} />}
             </Fragment>
         )
@@ -332,19 +332,26 @@ export default function OtherUser() {
 
                             <Box sx={profileStyle.profileBlock}>
                                 <Box sx={profileStyle.content_2}>
-                                    {otherUserData.id === context.user.id ? null :
-                                    <Badge
-                                        overlap="circular"
-                                        badgeContent={otherUserData.status}
-                                        color="secondary"
-                                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                                    >
+                                    {context.user.id !== otherUserData.id ?
+                                        <Badge
+                                            overlap="circular"
+                                            badgeContent={otherUserData.status}
+                                            color="secondary"
+                                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                        >
+                                            <Avatar src={otherUserData.avatar} style={{
+                                                width: "125px",
+                                                height: "125px",
+                                                overflow: "hidden"
+                                            }} />
+                                        </Badge> :
                                         <Avatar src={otherUserData.avatar} style={{
                                             width: "125px",
                                             height: "125px",
                                             overflow: "hidden"
                                         }} />
-                                    </Badge>}
+                                    }
+
                                 </Box>
                                 <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
                                 <Box sx={profileStyle.content_1}>
@@ -364,7 +371,7 @@ export default function OtherUser() {
 
                             <Box sx={profileStyle.matchHistory}>
                                 <Button variant="contained" onClick={() => { setModal({ ...modalState, match: true }) }} sx={{ width: "100%" }}> Match history </Button>
-                                {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} user={otherUserData}/> : null}
+                                {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} user={otherUserData} /> : null}
                             </Box>
                         </Box >
                     </Box>

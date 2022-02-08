@@ -155,7 +155,7 @@ export class AuthService {
 			throw new ForbiddenException('2FA is already on for this user');
 		}
 		if (!this.isTwoFaCodeValid(secret, user)) {
-			throw new UnauthorizedException(
+			throw new ForbiddenException(
 				'Wrong authentication code. Please try to generate 2FA QR Code first',
 			);
 		}

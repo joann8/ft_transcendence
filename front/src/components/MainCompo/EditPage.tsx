@@ -260,7 +260,7 @@ export default function Registration() {
         );
     }
 
-    //MODAL RENDERING
+    //COMPONENT RENDERING
     return (
         <Fragment>
             <Paper style={{
