@@ -65,12 +65,8 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function RoleList({
-  roleList,
-  fetchUsers,
-  currentChannel,
-  currentUser,
-}: RoleListProps) {
+function RoleList({ currentChannel, currentUser }: RoleListProps) {
+  const [roleList, setRoleList] = React.useState<userChannelRole[]>([]);
   const [targetRole, setTargetRole] = React.useState<userChannelRole>();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -85,7 +81,18 @@ function RoleList({
       .catch((error) => alert(error.response.data.message));
     fetchUsers();
   };
-
+  const fetchUsers = async () => {
+    const result = await back.get(
+      `http://127.0.0.1:3001/channel/${currentChannel.id}/users`
+    );
+    console.log("fetch users ok");
+    setRoleList(result.data);
+  };
+  React.useEffect(() => {
+    if (currentChannel) {
+      fetchUsers();
+    }
+  }, [currentChannel]);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const element = event.currentTarget as HTMLInputElement;
     const id = +element.getAttribute("data-index");

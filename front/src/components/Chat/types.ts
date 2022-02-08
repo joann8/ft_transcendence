@@ -92,8 +92,6 @@ type CreateChannelProps = {
 type RoleListProps = {
   currentChannel: Channel;
   currentUser: User;
-  roleList: userChannelRole[];
-  fetchUsers: () => Promise<void>;
 };
 type AddUserProps = {
   currentChannel: Channel;
@@ -110,9 +108,11 @@ type ThemeOptions = {
 
 interface ServerToClientEvents {
   message: (channel: Channel, message: Message) => void;
+  channelConnect: (channel: Channel) => void;
 }
 interface ClientToServerEvents {
   message: (user: User, channel: Channel, content: string) => void;
+  channelConnect: (channel: Channel) => void;
 }
 
 export type {

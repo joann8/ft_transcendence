@@ -29,6 +29,7 @@ function MessageList({
     if (myRef && myRef.current) {
       myRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
+    socket.emit("channelConnect", currentChannel);
   }, [currentChannel]);
 
   useEffect(() => {

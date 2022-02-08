@@ -29,14 +29,13 @@ function Chat() {
     React.useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
   const [channelList, setChannelList] = React.useState<Channel[]>([]);
   const [currentChannel, setCurrentChannel] = React.useState<Channel>();
-  const [roleList, setRoleList] = React.useState<userChannelRole[]>([]);
+
   const [currentUser, setCurrentUser] = React.useState<User>();
 
   /** BACK END CALLS */
 
   const fetchChannelList = async () => {
     const result = await back.get("http://127.0.0.1:3001/channel/me");
-    console.log("fetch channel list ok");
     setChannelList(result.data);
     setCurrentChannel(result.data[0]);
   };
@@ -45,24 +44,6 @@ function Chat() {
     const result = await back.get("http://127.0.0.1:3001/user");
     setCurrentUser(result.data);
   }
-
-  const fetchUsers = async () => {
-    const result = await back.get(
-      `http://127.0.0.1:3001/channel/${currentChannel.id}/users`
-    );
-    console.log("fetch users ok");
-
-    setRoleList(result.data);
-  };
-
-  /* const fetchPostMessage = async (content: string) => {
-    const result = await back.post(
-      `http://127.0.0.1:3001/channel/${currentChannel.id}/messages`,
-      {
-        content: content,
-      }
-    );
-  };*/
 
   /*
    *   HOOKS
@@ -81,13 +62,6 @@ function Chat() {
       newSocket.disconnect();
     };
   }, [setSocket]);
-
-  /*React.useEffect(() => {
-    if (currentChannel) {
-      fetchMessages();
-      fetchUsers();
-    }
-  }, [currentChannel]);*/
 
   /*
    *   FUNCTIONS
@@ -132,8 +106,6 @@ function Chat() {
 
             <RoleList
               currentUser={currentUser}
-              roleList={roleList}
-              fetchUsers={fetchUsers}
               currentChannel={currentChannel}
             ></RoleList>
           </Grid>

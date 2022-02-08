@@ -26,7 +26,7 @@ export class ChannelGateway
 	server: Server;
 
 	private logger: Logger = new Logger('*** Channel Interface ***');
-
+	private clientsRooms = {};
 	afterInit(server: Server) {
 		this.logger.log('Initialized!');
 	}
@@ -36,17 +36,40 @@ export class ChannelGateway
 	}
 
 	handleDisconnect(client: Socket) {
+		if (this.clientsRooms[`${client.id}`]) {
+			client.leave(this.clientsRooms[`${client.id}`]);
+			this.logger.log(
+				`client : ${client.id} leave ${
+					this.clientsRooms[`${client.id}}`]
+				}`,
+			);
+		}
 		this.logger.log(
 			`HANDLE DISCONNECT A client disconnected : ${client.id}`,
 		);
 	}
 
+	@SubscribeMessage('channelConnect')
+	async connectToChannel(client: Socket, channel: Channel) {
+		if (this.clientsRooms[`${client.id}`]) {
+			client.leave(this.clientsRooms[`${client.id}`]);
+			this.logger.log(
+				`client : ${client.id} leave ${
+					this.clientsRooms[`${client.id}`]
+				}`,
+			);
+		}
+		client.join(`${channel.name}`);
+		this.clientsRooms[`${client.id}`] = channel.name;
+		this.logger.log(
+			`client : ${client.id} joined ${this.clientsRooms[`${client.id}`]}`,
+		);
+	}
 	@SubscribeMessage('message')
 	async handleMessage(
 		client: Socket,
 		[user, channel, content]: [User, Channel, string],
 	) {
-		console.log('new message');
 		this.channelService.postMessage(channel, null, user, {
 			content: content,
 		});
@@ -54,6 +77,6 @@ export class ChannelGateway
 			content: content,
 		});
 		//server emit
-		client.emit('message', channel, message);
+		this.server.to(`${channel.name}`).emit('message', channel, message);
 	}
 }
