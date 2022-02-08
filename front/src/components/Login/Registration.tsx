@@ -64,8 +64,8 @@ export default function Registration() {
                         if (!res.ok)
                             throw new Error(res.statusText)
                     })
-                    .catch(err => {
-                        throw new Error(`Avatar Upload Failed : [${err}]`)
+                    .catch(error => {
+                        throw new Error(`Avatar Upload Failed : [${error}]`)
                     })
             }
         }
@@ -102,8 +102,8 @@ export default function Registration() {
                             throw new Error(res.statusText)
                     }
                 })
-                .catch(err => {
-                    throw new Error(`Update Pseudo Failed : [${err}]`)
+                .catch(error => {
+                    throw new Error(`Update Pseudo Failed : [${error}]`)
                 })
         }
 
@@ -117,8 +117,9 @@ export default function Registration() {
                 return
             }
             setActiveStep(0)
-            navigate("/profile")
+            navigate("/")
         }
+
         return (
             <Fragment>
                 <Box sx={{
@@ -174,7 +175,7 @@ export default function Registration() {
     //EDIT AVATAR
     function AvatarDisplay() {
         //Recupere la file suite a l'ouverture auto de la fenetre d'upload
-        const handleFileReception = event => {
+        const handleFileReception = (event : any) => {
             if (event.target.files[0].size > 15000000)
                 return alert("Error : Avatar file size >= 15 Mb")
             const fileName = event.target.files[0].name

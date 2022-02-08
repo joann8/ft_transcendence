@@ -1,35 +1,13 @@
-import { Toolbar, Grid, Paper, Avatar, Container, CssBaseline, Box, Typography, Card, autocompleteClasses, TextField, Button, IconButton, Menu, MenuItem, Modal, Divider } from "@mui/material";
-import React, { createContext, Fragment, useCallback, useContext, useEffect, useReducer, useState } from "react";
-import Badge from '@mui/material/Badge';
-import EditIcon from '@mui/icons-material/Edit';
-import { LockOpenTwoTone, LockTwoTone, LoyaltyRounded, NotificationAdd, SettingsBackupRestoreOutlined, VideogameAsset, VideogameAssetSharp } from "@mui/icons-material";
-import { Navigate, useNavigate } from "react-router";
+import { Paper, Avatar, Box, Typography, TextField, Button, Divider } from "@mui/material";
+import React, { Fragment, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import MatchModal from "./MatchModal";
-import AvatarModal from "../MainCompo/AvatarModal";
-import InfoModal from "../MainCompo/InfoModal ";
 import profileStyle from './profileStyle'
-import OtherUser from './OtherUser'
 import { IUser } from "./profileStyle";
 import FriendRequestModal from "./FriendRequestModal";
-import LoadingModal from "./LoadingModal ";
 import { Context } from "../MainCompo/SideBars";
 
-const backEndUrl = "http://127.0.0.1:3001"
-
-
-const defaultUser: IUser = {
-    id: 0,
-    id_pseudo: "",
-    email: "",
-    avatar: "",
-    role: "",
-    elo: 0,
-    status: "",
-    two_factor: false,
-    achievement1: false,
-    achievement2: false,
-}
 
 export default function Profile() {
 
@@ -43,20 +21,14 @@ export default function Profile() {
         friend: false
     })
     const [update, setUpdate] = useState(0)
-    //   const [userData, setUserData] = useState(defaultUser)
     const [userData, setUserData] = useState<IUser>(context.user)
 
     const navigate = useNavigate()
 
 
     useEffect(() => {
-        //  console.log("Search bar : ", searchInput)
-    })
-
-    useEffect(() => {
-        //    getUserData()
         setUserData(context.user)
-    }, [context.user]/*[value, update]*/)
+    }, [context.user])
 
     const handleSearchBarSubmit = async (event) => {
         event.preventDefault()
@@ -117,16 +89,6 @@ export default function Profile() {
                                     Friend Request
                                 </Button>
                                 {modalState.friend ? <FriendRequestModal user={userData} modalState={modalState.friend} setModal={setModal} update={update} setUpdate={setUpdate} /> : null}
-
-                                <Button
-                                    variant="contained"
-                                    onClick={handleAuth}
-                                    startIcon={userData.two_factor ? <LockTwoTone /> : <LockOpenTwoTone />}
-                                    style={{
-                                        marginTop: "10px",
-                                    }}>
-                                    Auth {userData.two_factor ? "ON" : "OFF"}
-                                </Button>
                             </Box>
                         </Box>
 

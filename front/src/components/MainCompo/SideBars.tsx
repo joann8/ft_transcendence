@@ -206,10 +206,12 @@ export default function SideBar(props: any) {
                 
                             */}
                 {user && (
-                  <Typography sx={{ margin: 1 }}>{user.id_pseudo}</Typography>
+                  <Button variant="outlined" style={{ textTransform: "none" }} onClick={() => { navigate("/profile") }}>
+                    <Typography sx={{ color: "#FFFFFF", margin: 1 }}>{user.id_pseudo}</Typography>
+                    <Avatar src={user.avatar} style={{ marginLeft: "10px" }} />
+                  </Button>
                 )}
-                <Divider orientation="vertical" sx={{ margin: 1 }} />
-                {user && <Avatar src={user.avatar}></Avatar>}
+
 
                 <Divider orientation="vertical" sx={{ margin: 1 }} />
                 {user && (
