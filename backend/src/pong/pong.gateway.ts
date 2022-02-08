@@ -236,13 +236,36 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     private removeGame(game : Game) : void {
         let match = this.matches.find(item => item.getRoom() === game.getRoom());
-         if (match) 
-            this.matches.splice(this.matches.indexOf(match));
+            if (match) {
+                this.checkAchievement(match.getPlayer1().getUser());
+                this.checkAchievement(match.getPlayer2().getUser());
+                this.matches.splice(this.matches.indexOf(match));
+            }
+
     }
 
     // Deconnexion des matchs (challenge pending pris en charge dans cancel challenge)
     private disconnectClient(client : Socket) {
         let match = this.matches.find((game) => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket() === client );
         match ? match.disconnectPlayer(client) : this.queue.delete(client);
+    }
+
+    // Check achievements
+    private async checkAchievement(user : User) : Promise<void> {
+        console.log("____user____ : ", user.id_pseudo);
+                let nb1 = await this.pongService.getMaxUser(user);
+        console.log("Max score reached : ", nb1);
+        let nb2 = await this.pongService.getWinsUser(user);
+        console.log("Nb of wins : ", nb2);
+        if(nb1 >= 1) // if user won at least one time with max Score
+        {
+            let update1 = { achievement1: true};
+            this.userService.update(user.id, update1);
+        }
+        if (nb2 >= 3) // if user won at least 3 games
+        {
+            let update2 = { achievement2: true};
+            this.userService.update(user.id, update2);
+        }
     }
 }

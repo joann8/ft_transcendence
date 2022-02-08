@@ -95,4 +95,16 @@ export class PongService {
 		return (lost ? lost.length : 0);
 	}
 
+	// Achievements
+
+	//1st : wins 3 Games --> use getWins user
+	//2nd : win with the max score
+	async getMaxUser(user: User): Promise<Number> {
+		let games = await this.pongRepository.find( {
+			where :[{ player1 : {id: user.id}, scorePlayer1 : Const.MAX_SCORE, scorePlayer2 : '0'}, { player2: {id: user.id}, scorePlayer1 : '0',scorePlayer2 : Const.MAX_SCORE}],
+			relations : ["player1", "player2"],
+			order: { date : "ASC" }
+		});
+		return (games ? games.length : 0);
+	}
 }

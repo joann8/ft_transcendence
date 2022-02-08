@@ -6,6 +6,7 @@ import {
   TextField,
   Button,
   Divider,
+  Chip,
 } from "@mui/material";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { LockOpenTwoTone, LockTwoTone } from "@mui/icons-material";
@@ -16,6 +17,8 @@ import profileStyle from "./profileStyle";
 import { IUser } from "./profileStyle";
 import FriendRequestModal from "./FriendRequestModal";
 import { Context } from "../MainCompo/SideBars";
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import StarsIcon from '@mui/icons-material/Stars';
 
 export default function Profile() {
   const context = useContext(Context);
@@ -117,6 +120,9 @@ export default function Profile() {
                 }}
               />
               <Box sx={profileStyle.content_2}>
+                { context.user.achievement1 ? <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" color="success" /> :  <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" variant="outlined" color="secondary" /> }
+                <br/>
+                { context.user.achievement2 ? <Chip icon={<EmojiEventsIcon />} label="Win 3 times" color="success" /> : <Chip icon={<EmojiEventsIcon />} label="Win 3 times" variant="outlined" color="secondary" /> }
                 <Button
                   variant="contained"
                   startIcon={<NotificationAddIcon color="error" />}
