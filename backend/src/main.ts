@@ -7,6 +7,7 @@ import { AppModule } from './app.module';
 declare const module: any;
 
 async function bootstrap() {
+	console.log
 	/* HTTPS application params
 	const httpsOptions = {
 		key: fs.readFileSync('./secrets/private-key.pem'),
@@ -18,11 +19,16 @@ async function bootstrap() {
 		// httpsOptions,
 	});
 	// Enable CORS
+	
 	app.enableCors({
 		origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_BIS],
 		credentials: true,
 	});
+	
+/*
+	app.enableCors();
 	// cookieParser middleware as global for parsing cookies
+	*/
 	app.use(cookieParser());
 
 	// Enable dto validation globaly

@@ -1,5 +1,6 @@
 import {
 	IsEmail,
+	isNotEmpty,
 	IsNotEmpty,
 	IsOptional,
 	IsPositive,
@@ -23,6 +24,7 @@ export class UpdateUserDto {
 	@IsOptional()
 	@IsNotEmpty()
 	avatar: string;
+
 
 	@IsOptional()
 	role: user_role;

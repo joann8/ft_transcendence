@@ -12,12 +12,14 @@ import {
 	PrimaryColumn,
 } from 'typeorm';
 
+
 export enum status {
 	OFFLINE = 'OFFLINE',
 	ONLINE = 'ONLINE',
 	IN_GAME = 'IN GAME',
 	BAN = 'BAN',
 }
+
 
 export enum user_role {
 	OWNER = 'owner',

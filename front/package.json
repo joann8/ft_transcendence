@@ -5,28 +5,35 @@
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "@mui/icons-material": "^5.2.5",
-    "@mui/material": "^5.2.7",
+    "@mui/lab": "^5.0.0-alpha.67",
+    "@mui/material": "^5.4.0",
     "@mui/styles": "^5.2.3",
+    "@mui/x-data-grid": "^5.4.0",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.4.0",
-    "@types/node": "^16.11.19",
+    "@types/node": "^16.11.21",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
     "axios": "^0.24.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "notistack": "^1.0.10",
     "react": "^17.0.2",
+    "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",
     "react-router": "^6.2.1",
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
     "react-tsparticles": "^1.39.0",
     "recharts": "^2.1.8",
-    "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
     "tsparticles": "^1.39.0",
     "typescript": "^4.5.4",
+    "validator": "^13.7.0",
     "web-vitals": "^2.1.2"
   },
   "scripts": {
@@ -52,5 +59,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/validator": "^13.7.1"
   }
 }

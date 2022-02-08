@@ -14,6 +14,15 @@ import { AdminModule } from './admin/admin.module';
 import { userChannelRole } from './chat/channel/entities/userChannelRole.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ChannelService } from './chat/channel/channel.service';
+import { PongModule } from './pong/pong.module';
+import { PongService } from './pong/pong.service';
+import { Pong } from './pong/entities/pong.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path/posix';
+import { RelationModule } from './relation/relation.module';
+import { Relation } from './relation/entities/relation.entity';
+import { RelationService } from './relation/relation.service';
+import { Challenge } from './pong/entities/challenge.entity';
 
 @Module({
 	imports: [
@@ -27,15 +36,29 @@ import { ChannelService } from './chat/channel/channel.service';
 			username: process.env.DATABASE_USERNAME,
 			password: process.env.DATABASE_PASSWORD,
 			database: process.env.DATABASE_NAME,
-			entities: [User, Channel, Message, userChannelRole],
+			entities: [
+				User,
+				Channel,
+				Message,
+				userChannelRole,
+				Pong,
+				Challenge,
+				Relation,
+			],
 			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
 			keepConnectionAlive: true,
+		}),
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '..', '/avatars/'),
+			serveRoot: '/avatars/',
 		}),
 		UserModule,
 		ChatModule,
 		AuthModule,
 		AdminModule,
+		PongModule,
+		RelationModule,
 	],
 	controllers: [AppController],
 	providers: [
@@ -46,6 +69,8 @@ import { ChannelService } from './chat/channel/channel.service';
 		AppService,
 		UserService,
 		ChannelService,
+		PongService,
+		RelationService,
 	],
 })
 export class AppModule {}

@@ -16,7 +16,7 @@ export default function LoginParticlesTitle() {
         detectRetina: false,
         fullScreen: true,
         interactivity: {
-          detectsOn: "window",
+          detectsOn: "canvas",
           events: {
             onHover: {
               enable: true,
@@ -132,7 +132,7 @@ export default function LoginParticlesTitle() {
               value: "#471919",
             },
             consent: false,
-            distance: 50,
+            distance: 40,
             enable: true,
             frequency: 1,
             opacity: 0.5,
