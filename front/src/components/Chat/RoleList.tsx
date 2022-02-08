@@ -82,9 +82,10 @@ function RoleList({ currentChannel, currentUser }: RoleListProps) {
     fetchUsers();
   };
   const fetchUsers = async () => {
-    const result = await back.get(
-      `http://127.0.0.1:3001/channel/${currentChannel.id}/users`
-    );
+    const result = await back
+      .get(`http://127.0.0.1:3001/channel/${currentChannel.id}/users`)
+      .catch((error) => alert(error.response.data.message));
+    if (!result) return;
     console.log("fetch users ok");
     setRoleList(result.data);
   };

@@ -75,7 +75,7 @@ export class AuthService {
 	}
 
 	async getUSerById(id: string): Promise<User> {
-		return this.userService.findOne(+id);
+		return this.userService.findOne(id);
 	}
 
 	async generateAccessToken(user: User, isTwoFa: boolean = false) {

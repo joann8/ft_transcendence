@@ -12,13 +12,25 @@ import {
 import { CreateChannelDto } from '../dto/create-channel-dto';
 import { userChannelRole } from './userChannelRole.entity';
 
+export enum channelType {
+	PUBLIC,
+	PRIVATE,
+	DIRECT,
+}
+
 @Entity()
 export class Channel {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ default: 'default' })
+	@Column({ unique: true })
 	name: string;
+
+	/*@Column()
+	type: channelType;
+
+	@Column()
+	password?: string | null;*/
 
 	@OneToMany((type) => Message, (message) => message.channel, {
 		cascade: true,

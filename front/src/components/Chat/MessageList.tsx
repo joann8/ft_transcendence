@@ -18,9 +18,10 @@ function MessageList({
   const [messages, setMessages] = React.useState<Message[]>([]);
 
   const fetchMessages = async () => {
-    const result = await back.get(
-      `http://127.0.0.1:3001/channel/${currentChannel.id}/messages`
-    );
+    const result = await back
+      .get(`http://127.0.0.1:3001/channel/${currentChannel.id}/messages`)
+      .catch((error) => alert(error.response.data.message));
+    if (!result) return;
     setMessages(result.data);
   };
 

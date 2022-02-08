@@ -40,12 +40,9 @@ function AddUser({ fetchUsers, currentChannel }: AddUserProps) {
   const handleClose = () => setOpen(false);
   const classes = useStyle();
   const fetchPostUser = async (pseudo: string) => {
-    console.log(
-      `http://127.0.0.1:3001/channel/${currentChannel.id}/add/${pseudo}`
-    );
-    const result = await back.put(
-      `http://127.0.0.1:3001/channel/${currentChannel.id}/add/${pseudo}`
-    );
+    const result = await back
+      .put(`http://127.0.0.1:3001/channel/${currentChannel.id}/add/${pseudo}`)
+      .catch((error) => alert(error.response.data.message));
     fetchUsers();
     setOpen(false);
   };

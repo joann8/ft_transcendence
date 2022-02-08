@@ -17,7 +17,7 @@ import {
 } from './entities/userChannelRole.entity';
 import { CheckBann } from './decorators/channel-banned.decorator';
 import { CreateMessageDto } from '../messages/dto/create-message-dto';
-
+const PG_UNIQUE_CONSTRAINT_VIOLATION = '23505';
 @Injectable()
 export class ChannelService {
 	constructor(
@@ -34,20 +34,24 @@ export class ChannelService {
 	 */
 
 	async createOne(createChannelDto: CreateChannelDto, user: User) {
-		const newChannel = await this.channelRepository.save(
-			this.channelRepository.create({
-				name: createChannelDto.name,
-			}),
-		);
-		const newRole = getRepository(userChannelRole).create({
-			user: user,
-			channel: newChannel,
-			role: channelRole.owner,
-		});
-		await getRepository(userChannelRole).save(newRole);
-		return await this.channelRepository.findOne(newChannel, {
-			relations: ['roles'],
-		});
+		try {
+			const newChannel = await this.channelRepository.save(
+				this.channelRepository.create({
+					name: createChannelDto.name,
+				}),
+			);
+			const newRole = getRepository(userChannelRole).create({
+				user: user,
+				channel: newChannel,
+				role: channelRole.owner,
+			});
+			return await getRepository(userChannelRole).save(newRole);
+		} catch (err) {
+			if (err && err.code === PG_UNIQUE_CONSTRAINT_VIOLATION) {
+				throw new ForbiddenException('This name is already taken');
+			}
+			return;
+		}
 	}
 
 	/**
@@ -105,8 +109,6 @@ export class ChannelService {
 		channel.roles.push(newRole);
 
 		const test = await getRepository(Channel).save(channel);
-		console.log('here');
-
 		return newRole;
 	}
 

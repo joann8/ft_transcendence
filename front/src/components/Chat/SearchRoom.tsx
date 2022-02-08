@@ -47,7 +47,10 @@ function SearchRoom() {
   const [allChannelList, setAllChannelList] = React.useState<Channel[]>([]);
   const classes = useStyle();
   const fetchChannelList = async () => {
-    const result = await back.get("http://127.0.0.1:3001/channel/");
+    const result = await back
+      .get("http://127.0.0.1:3001/channel/")
+      .catch((error) => alert(error.response.data.message));
+    if (!result) return;
     setAllChannelList(result.data);
   };
   const handleOpenSearch = () => {

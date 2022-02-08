@@ -35,13 +35,20 @@ function Chat() {
   /** BACK END CALLS */
 
   const fetchChannelList = async () => {
-    const result = await back.get("http://127.0.0.1:3001/channel/me");
+    const result = await back
+      .get("http://127.0.0.1:3001/channel/me")
+      .catch((error) => alert(error.response.data.message));
+    if (!result) return;
     setChannelList(result.data);
     setCurrentChannel(result.data[0]);
   };
 
   async function fetchCurrentUser() {
-    const result = await back.get("http://127.0.0.1:3001/user");
+    const result = await back
+      .get("http://127.0.0.1:3001/user")
+      .catch((error) => alert(error.response.data.message));
+    if (!result) return;
+
     setCurrentUser(result.data);
   }
 

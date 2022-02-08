@@ -64,9 +64,9 @@ function ChannelList({
 }: ChannelListProps) {
   const classes = useStyle();
   async function fetchDeleteRoom(channel: Channel) {
-    const result = await back.delete(
-      `http://127.0.0.1:3001/channel/${channel.id}`
-    );
+    const result = await back
+      .delete(`http://127.0.0.1:3001/channel/${channel.id}`)
+      .catch((error) => alert(error.response.data.message));
     console.log("back delete completed");
   }
   function handleClick(event: React.MouseEvent) {

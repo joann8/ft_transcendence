@@ -37,7 +37,7 @@ export class AdminService {
 	}
 
 	async banUser(admin: User, id: string) {
-		const user = await this.userService.findOne(+id);
+		const user = await this.userService.findOne(id);
 		if (!user) {
 			throw new NotFoundException('This user does not exist');
 		}
@@ -65,7 +65,7 @@ export class AdminService {
 	}
 
 	async setAdmin(id: string) {
-		const user = await this.userService.findOne(+id);
+		const user = await this.userService.findOne(id);
 		if (!user) {
 			throw new NotFoundException('This user does not exist');
 		}

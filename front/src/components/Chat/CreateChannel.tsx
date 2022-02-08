@@ -47,9 +47,11 @@ function CreateChannel({ fetchChannelList }: CreateChannelProps) {
   const handleOpenCreate = () => setOpenCreate(true);
   const handleCloseCreate = () => setOpenCreate(false);
   const fetchPostChannel = async () => {
-    const result = await back.post(`http://127.0.0.1:3001/channel`, {
-      name: content,
-    });
+    const result = await back
+      .post(`http://127.0.0.1:3001/channel`, {
+        name: content,
+      })
+      .catch((error) => alert(error.response.data.message));
     fetchChannelList();
     setOpenCreate(false);
   };
