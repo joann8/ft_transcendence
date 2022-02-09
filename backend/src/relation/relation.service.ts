@@ -29,7 +29,10 @@ export class RelationService {
     return this.relationsRepository.find({
       where: [
         { userId1: userId, relation1: 3, relation2: 3 },
-        { userId2: userId, relation1: 3, relation2: 3 }
+        { userId2: userId, relation1: 3, relation2: 3 },
+        { userId1: userId, relation1: 4, relation2: 5 },
+        { userId2: userId, relation1: 5, relation2: 4 },
+
       ],
       relations: ["userId1", "userId2"]
     })

@@ -112,8 +112,8 @@ export default function MatchModal({ setModal, modalState, user }) {
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center"> Date</TableCell>
-                                <TableCell align="center" colSpan={2}> Yourself </TableCell>
-                                <TableCell align="center" colSpan={2}> Opponent</TableCell>
+                                <TableCell align="center" colSpan={2}> Player One </TableCell>
+                                <TableCell align="center" colSpan={2}> Player Two</TableCell>
                                 <TableCell align="center"> Result </TableCell>
                                 <TableCell align="center"> Score </TableCell>
                             </TableRow>
@@ -136,7 +136,6 @@ export default function MatchModal({ setModal, modalState, user }) {
                                         {match.player2.id_pseudo}
                                     </TableCell>
                                     <TableCell align="left">
-
                                         <Avatar src={match.player2.avatar} />
                                     </TableCell>
 

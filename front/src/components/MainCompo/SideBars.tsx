@@ -102,6 +102,7 @@ export default function SideBar(props: any) {
   const [user, setUser] = React.useState<IUser>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
+
   // const { error, isPending, data: user } = useFromApi("/user");
 
   const navigate = useNavigate();
@@ -215,9 +216,9 @@ export default function SideBar(props: any) {
                 Welcome to Transcendence!
               </Typography>
               {user && (
-                <Button variant="outlined" style={{ textTransform: "none" }} onClick={() => { navigate("/profile") }}>
+                <Button variant="outlined" style={{ textTransform: "none", margin: 1 }} onClick={() => { navigate("/profile") }}>
                   <Typography sx={{ color: "#FFFFFF", margin: 1 }}>{user.id_pseudo}</Typography>
-                  <Avatar src={user.avatar} style={{ marginLeft: "10px" }} />
+                  <Avatar src={user.avatar} style={{ margin: 1 }} />
                 </Button>
               )}
 
@@ -232,12 +233,12 @@ export default function SideBar(props: any) {
                       setUpdate: setUpdate,
                     }}
                   >
-                    {" "}
                     <Button
-                      style={{ border: "1px solid white", color: "#FFFFFF" }}
-                      startIcon={<EditIcon />}
-                      onClick={handleEditOpen}
-                    >
+                    size="small"
+                    style={{ border: "1px solid white", color: "#FFFFFF", margin : 1}}
+                    startIcon={<EditIcon />}
+                    onClick={handleEditOpen}
+                  >
                       Edit
                     </Button>
                     <Menu

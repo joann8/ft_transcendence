@@ -38,7 +38,7 @@ export class AuthController {
 		res.cookie('access_token', access_token);
 		res.cookie('refresh_token', refresh_token);
 		if (created) {
-			front_url += '/'; // MODIFIER ROUTE POUR ACCEDER A LA MODIFICATION DES VARS USER LORS DE LA CREATION
+			front_url += '/registration';
 		} else if (user.two_factor_enabled) {
 			front_url += '/login/twofa';
 		}

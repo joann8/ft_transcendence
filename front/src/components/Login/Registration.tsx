@@ -3,11 +3,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { Grid, TextField, BottomNavigation, IconButton, Avatar, styled, MobileStepper, useTheme, Paper } from '@mui/material';
+import { Grid, TextField, BottomNavigation, IconButton, Avatar, styled, MobileStepper, useTheme, Paper, CircularProgress } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera, SentimentSatisfiedOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import validator from 'validator'
 import registrationBg from "../Images/registrationBg.jpg"
+import { IUser } from '../Profile/profileStyle';
 
 
 const style = {
@@ -38,13 +39,39 @@ const editLayout = {
 
 export default function Registration() {
 
-
-    const [avatar, setAvatar] = useState(null)
-    const [pseudo, setPseudo] = useState("")
+    const [user, setUser] = useState<IUser>(null)
+    const [avatar, setAvatar] = useState<any>((null))
+    const [pseudo, setPseudo] = useState((""))
     const [activeStep, setActiveStep] = useState(0);
 
-
     const navigate = useNavigate()
+
+    const getUser = async () => {
+        await fetch(`http://127.0.0.1:3001/user/`, {
+            method: "GET",
+            credentials: "include",
+            referrerPolicy: "same-origin"
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error(res.statusText);
+                }
+                return res.json();
+            })
+            .then((resData: IUser) => {
+                setUser(resData)
+                setAvatar(resData.avatar)
+                setPseudo(resData.id_pseudo)
+            })
+            .catch((error) => {
+                throw new Error(`User Data Fetching Failed : ${error}`)
+                //alert(`Error while searching for user : [${err}]`)
+            })
+    }
+
+    useEffect(() => {
+        setTimeout(getUser, 1000)
+    }, [])
 
     //INTERNAL COMPONENT
     //END BUTTON
@@ -109,8 +136,10 @@ export default function Registration() {
 
         const handleCompleteRegistration = async () => {
             try {
-                await updateAvatar()
-                await updatePseudo()
+                if (user.avatar != avatar)
+                    await updateAvatar()
+                if (user.id_pseudo != pseudo)
+                    await updatePseudo()
             }
             catch (error) {
                 alert(`Please Re-enter info : ${error}`)
@@ -130,10 +159,11 @@ export default function Registration() {
                         variant="contained"
                         color="success"
                         onClick={handleCompleteRegistration}>
-                        Finish Registration
+                        Confirm Registration
                     </Button>
                 </Box>
             </Fragment>
+
         )
     }
 
@@ -175,7 +205,7 @@ export default function Registration() {
     //EDIT AVATAR
     function AvatarDisplay() {
         //Recupere la file suite a l'ouverture auto de la fenetre d'upload
-        const handleFileReception = (event : any) => {
+        const handleFileReception = (event: any) => {
             if (event.target.files[0].size > 15000000)
                 return alert("Error : Avatar file size >= 15 Mb")
             const fileName = event.target.files[0].name
@@ -190,11 +220,11 @@ export default function Registration() {
             <Fragment>
                 <Grid container columns={12} spacing={2} style={editLayout}>
                     <Grid item xs={4} >
-                        <Avatar src={avatar ? URL.createObjectURL(avatar) : ""} style={{
+                        <Avatar src={avatar} style={{
                             minWidth: "100px",
                             minHeight: "100px",
                             flexGrow: 1,
-                            border: "3px solid purple"
+                            border: "2px solid black"
                         }} />
                     </Grid>
                     <Grid item xs={6}>
@@ -279,16 +309,24 @@ export default function Registration() {
             }}>
                 <Box sx={style}>
                     <Grid container spacing={3} >
-                        <Grid item xs={12}>
-                            {activeStep === 0 ? <AvatarDisplay /> : ""}
-                            {activeStep === 1 ? <InfoDisplay /> : ""}
-                            {activeStep === 2 ? <EndDisplay /> : ""}
-                        </Grid>
-                        <Grid item xs={12}>
-                            <BottomNavigation>
-                                <DotsMobileStepper />
-                            </BottomNavigation>
-                        </Grid>
+                        {user ?
+                            <Fragment>
+                                <Grid item xs={12}>
+                                    {activeStep === 0 ? <AvatarDisplay /> : ""}
+                                    {activeStep === 1 ? <InfoDisplay /> : ""}
+                                    {activeStep === 2 ? <EndDisplay /> : ""}
+                                </Grid>
+                                <Grid item xs={12} >
+                                    <BottomNavigation>
+                                        <DotsMobileStepper />
+                                    </BottomNavigation>
+                                </Grid>
+                            </Fragment>
+                            :
+                            <Grid item xs={12} sx={{ margin: "auto" }}>
+                                <CircularProgress />
+                            </Grid>
+                        }
                     </Grid>
                 </Box>
             </Paper>

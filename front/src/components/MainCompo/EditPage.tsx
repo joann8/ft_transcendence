@@ -13,9 +13,10 @@ import { Context } from './SideBars';
 
 const style = {
     position: 'relative',
-    top: '50%',
-    left: '50%',
-    maxHeight: "50vh",
+    top: '55%',
+    left: '55%',
+    maxHeight: "40vh",
+    maxWidth: "50vw",
     transform: 'translate(-50%, -50%)',
     bgcolor: 'rgba(250, 250, 250)',
     border: '2px solid #000',
@@ -37,20 +38,14 @@ const editLayout = {
 }
 
 
-export default function Registration() {
-
+export default function EditPage() {
 
     const context = useContext(Context)
     const [avatar, setAvatar] = useState(null)
     const [pseudo, setPseudo] = useState("")
     const [activeStep, setActiveStep] = useState(0);
 
-
     const navigate = useNavigate()
-
-
-
-
 
     //EDIT PSEUDO 
     function InfoDisplay() {
@@ -126,7 +121,7 @@ export default function Registration() {
                         }}
                     />
                     <Button variant="contained" color="success" onClick={handleSubmit}>
-                        Confirm Pseudo
+                        Confirm
                     </Button>
                 </Box>
             </Fragment>
@@ -184,12 +179,12 @@ export default function Registration() {
         return (
             <Fragment>
                 <Grid container columns={12} spacing={2} style={editLayout}>
-                    <Grid item xs={4} >
-                        <Avatar src={avatar ? URL.createObjectURL(avatar) : ""} style={{
-                            minWidth: "100px",
-                            minHeight: "100px",
+                    <Grid item xs={4} sx={{marginRight: "30px",}} >
+                        <Avatar src={avatar ? URL.createObjectURL(avatar) : context.user.avatar} style={{
+                            minWidth: "125px",
+                            minHeight: "125px",
                             flexGrow: 1,
-                            border: "3px solid purple"
+                            border: "2px solid black "
                         }} />
                     </Grid>
                     <Grid item xs={4}>
@@ -203,7 +198,7 @@ export default function Registration() {
                             </Button>
                         </label>
                         <Button variant="contained" color="success" onClick={handleUpload} >
-                            Confirm Change
+                            Confirm 
                         </Button>
                     </Grid>
                 </Grid>
