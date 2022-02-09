@@ -154,22 +154,7 @@ export default function SideBar(props: any) {
     refreshTokens();
   }, [update]);
 
-  React.useEffect(() => {
-    window.addEventListener("beforeunload", (e) => {
-      e.preventDefault();
-      if (user) {
-        console.log("--> user: ", user.id_pseudo)
-        fetch(api_url + "/user", {
-          method: "PUT",
-          credentials: "include",
-          referrerPolicy: "same-origin",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: "OFFLINE" }),
-        });
-      }
-    });
-  }, []);
-
+  
   const toggleDrawer = () => {
     setOpen(!open);
   };
