@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Res, HttpException, HttpStatus, UsePipes, ValidationPipe, ConsoleLogger, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Res, HttpException, HttpStatus, UsePipes, ValidationPipe,  Req } from '@nestjs/common';
 import { RelationService } from './relation.service';
 import { RelationDto } from './dto/relation.dto';
 import { Relation, relation } from './entities/relation.entity';
@@ -51,7 +51,6 @@ export class RelationController {
 
     //Get all friend Request in a Relation[]
     const relationFriendRequestArray = await this.relationService.findAllMyFriendRequest(req.user.id)
-    console.log(relationFriendRequestArray)
     const userFriendRequestArray = []
 
     //Convert Relation[] to User[]
@@ -116,13 +115,10 @@ export class RelationController {
 
     //Find relation if exist with [NEEDLE]
     const relationInDatabase = await this.relationService.findOne(findRelationRequest)
-    console.log("Relation in DB : ", relationInDatabase)
 
     //If relation does not exist create it with the REQUEST parameters
     if (!relationInDatabase) {
-      console.log("Creating relation : ", relationRequest)
       const newRelation = await this.relationService.create(relationRequest)
-      console.log("New realtion : ", newRelation)
       return newRelation
     }
     else {
@@ -133,9 +129,6 @@ export class RelationController {
       updateRelationRequest.relation1 = (relationRequest.userId1 === relationInDatabase.userId1bis ? relationRequest.relation1 : relationRequest.relation2)
       updateRelationRequest.relation2 = (relationRequest.userId2 === relationInDatabase.userId2bis ? relationRequest.relation2 : relationRequest.relation1)
       updateRelationRequest.id = relationInDatabase.id
-
-      console.log("Update Request : ", relationRequest)
-      console.log("Updating DTO as : ", updateRelationRequest)
 
       await this.relationService.update(updateRelationRequest);
       const upDatedRelation = await this.relationService.findOne(findRelationRequest)
@@ -148,7 +141,6 @@ export class RelationController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async remove(@Req() req, @Body(ParseOther) getRelationRequest: GetRelationDto) {
 
-    console.log("Remove controller")
     //try catch ? si remove ou findOne fail
     const relationToRemove = await this.relationService.findOne({ userId1: req.user.id, userId2: getRelationRequest.otherUser.id })
     if (!relationToRemove)
@@ -156,12 +148,4 @@ export class RelationController {
     return await this.relationService.remove(relationToRemove.id);
   }
 
-  //A Supprimer (utile pour delete une relation depuis POSTMAN)
-  @Delete('remove/:id')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async removeId(@Param('id') id: number) {
-    //try catch ? si remove ou findOne fail
-    const ret = await this.relationService.remove(id);
-    return (ret)
-  }
 }

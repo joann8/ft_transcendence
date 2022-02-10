@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router';
-import { Avatar, CircularProgress, getBreadcrumbsUtilityClass, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Avatar, CircularProgress, Divider, getBreadcrumbsUtilityClass, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { IUser } from './profileStyle';
 import { match } from 'assert';
 import Badge from '@mui/material/Badge';
@@ -34,27 +34,63 @@ interface IMatch {
     date: Date
 }
 
+interface IResult {
+    win: number,
+    lost: number
+}
+
 export default function MatchModal({ setModal, modalState, user }) {
 
     const [history, setHistory] = useState<IMatch[]>(null)
+    const [results, setResults] = useState<IResult>(null)
     const navigate = useNavigate()
 
+    const getWinLost = async () => {
+        await fetch(`http://127.0.0.1:3001/game/results/${user.id_pseudo}`,
+            {
+                credentials: "include",
+                referrerPolicy: "same-origin",
+                method: "GET"
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403)
+                {
+                    if (res.status === 403)
+                        alert("You are banned from this website")
+                    navigate("/login")
+                }
+                else if (!res.ok)
+                    throw new Error(res.statusText)
+                return res.json()
+            })
+            .then(resData => {
+                setResults(resData)
+            })
+            .catch(error => {
+                alert(`Results Fetching Failed : ${error}`)
+                handleClose()
+            })
+    }
+
     const getHistory = async () => {
-        await setTimeout(() => { }, 30000)
+        await getWinLost()
         await fetch(`http://127.0.0.1:3001/game/history/${user.id_pseudo}`, {
             credentials: "include",
             referrerPolicy: "same-origin",
             method: "GET"
         })
             .then(res => {
-                if (res.status === 401)
+                if (res.status === 401 || res.status === 403)
+                {
+                    if (res.status === 403)
+                        alert("You are banned from this website")
                     navigate("/login")
+                }
                 else if (!res.ok)
                     throw new Error(res.statusText)
                 return res.json()
             })
             .then((resData) => {
-                console.log("History : ", resData)
                 //Met le joueur au player one 
                 for (let i = 0; i < resData.length; i++) {
 
@@ -66,20 +102,17 @@ export default function MatchModal({ setModal, modalState, user }) {
                         resData[i].player2 = tmpPlayer
                         resData[i].scorePlayer2 = tmpScore
                     }
-                    console.log("match: ", resData[i])
                 }
                 setHistory(resData)
             })
-            .catch(err => {
-                alert(err)
+            .catch(error => {
+                alert(`History Fetching Failed : ${error}`)
+                handleClose()
             })
-        console.log("Fetching finished")
-
     }
 
     useEffect(() => {
         getHistory()
-        console.log("UseEffect log")
     }, [])
 
 
@@ -108,8 +141,10 @@ export default function MatchModal({ setModal, modalState, user }) {
         return (
             <React.Fragment>
                 <TableContainer component={Paper}>
+
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
+
                             <TableRow>
                                 <TableCell align="center"> Date</TableCell>
                                 <TableCell align="center" colSpan={2}> Player One </TableCell>
@@ -160,11 +195,18 @@ export default function MatchModal({ setModal, modalState, user }) {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <div>
-                        {history ? <MatchTable /> : <CircularProgress />}
-                    </div>
+                    {results  && 
+                    <Typography align="center" sx={{
+                        backgroundColor: "rgba(0,0,0, 0.9)",
+                        color: "rgba(255,255,255,1)",
+                        padding: "10px",
+                        borderRadius: "15px",
+                        border: "1.5px solid rgba(150, 150, 150, 0.3)",
+                    }}>
+                        Victory : {results.win}  |  Defeat : {results.lost}
+                    </Typography>}
+                    {history  ? <MatchTable /> : <CircularProgress />}
                 </Box>
-
             </Modal>
         </div>
     );

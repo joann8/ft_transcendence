@@ -78,15 +78,17 @@ export default function EditPage() {
                 body: JSON.stringify(updatePseudo),
             })
                 .then(res => {
-                    if (!res.ok) {
+                    if (res.status === 401 || res.status === 403) {
+                        if (res.status === 403)
+                            alert("You are banned from this website")
+                        navigate("/login")
+                    }
+                    else if (!res.ok) {
                         if (res.status === 409)
                             throw new Error("Pseudo not available")
                         else
                             throw new Error(res.statusText)
                     }
-                })
-                .catch(err => {
-                    throw new Error(`Update Pseudo Failed : [${err}]`)
                 })
         }
         const handleSubmit = async (evt: any) => {
@@ -95,7 +97,7 @@ export default function EditPage() {
                 await updatePseudo()
             }
             catch (error) {
-                alert(`Update Pseudo Failed : ${error}`)
+                alert(`${error}`)
                 return
             }
             context.setUpdate(!context.update)
@@ -144,7 +146,12 @@ export default function EditPage() {
                     body: formData
                 })
                     .then(res => {
-                        if (!res.ok)
+                        if (res.status === 401 || res.status === 403) {
+                            if (res.status === 403)
+                                alert("You are banned from this website")
+                            navigate("/login")
+                        }
+                        else if (!res.ok)
                             throw new Error(res.statusText)
                     })
                     .catch(err => {
@@ -179,7 +186,7 @@ export default function EditPage() {
         return (
             <Fragment>
                 <Grid container columns={12} spacing={2} style={editLayout}>
-                    <Grid item xs={4} sx={{marginRight: "30px",}} >
+                    <Grid item xs={4} sx={{ marginRight: "30px", }} >
                         <Avatar src={avatar ? URL.createObjectURL(avatar) : context.user.avatar} style={{
                             minWidth: "125px",
                             minHeight: "125px",
@@ -198,7 +205,7 @@ export default function EditPage() {
                             </Button>
                         </label>
                         <Button variant="contained" color="success" onClick={handleUpload} >
-                            Confirm 
+                            Confirm
                         </Button>
                     </Grid>
                 </Grid>
