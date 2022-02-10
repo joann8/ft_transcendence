@@ -1,6 +1,5 @@
-import { Socket } from 'socket.io';
 import { User } from 'src/user/entities/user.entity';
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Challenge {
@@ -12,9 +11,6 @@ export class Challenge {
 
 	@ManyToOne((type) => User)
 	challengee: User;
-
-	@Column()
-	status : string;
 
 	@CreateDateColumn()
 	date : Date

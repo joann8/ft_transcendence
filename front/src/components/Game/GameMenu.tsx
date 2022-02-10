@@ -28,27 +28,36 @@ export default function GameMenu(props : PropsInit) {
         credentials : "include",
         referrerPolicy: "same-origin",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({status: newStatus }),
+        body: JSON.stringify({status: `${newStatus}` }),
       }).then((res) => {
         if (!res.ok)
             throw new Error(res.statusText);
         return (res.json());
-    }).catch((err) => {
-        console.log("Error ici ", err);
-    })
+      }).catch((err) => {
+        console.log("Error caught: ", err);
+      })
     };
 
     useEffect(() => {
         socket.on("allowed", (args : any) => {
-          updateStatus("IN GAME");
+          updateStatus("IN QUEUE");
           setOpenGame(true);
         });
         socket.on("not_allowed_playing", (args : any) => {
-          alert("already playing"); // a faire en plus jolie?
+          alert('You are already playing'); // a faire en plus jolie?
         });
         socket.on("not_allowed_queue", (args : any) => {
-          alert("already in queue"); // a faire en plus jolie?
-        })
+          alert("You are already in queue"); // a faire en plus jolie?
+        });
+        socket.on("start_game", (args : any) => {
+          updateStatus("IN GAME");
+        });
+        return () => {
+          socket.removeAllListeners("allowed");
+          socket.removeAllListeners("not_allowed_playing");
+          socket.removeAllListeners("not_allowed_queue");
+          socket.removeAllListeners("start_game");
+        };
     }, [])
 
     const handleCloseGame = () => {
@@ -62,8 +71,7 @@ export default function GameMenu(props : PropsInit) {
     }
     
     const handleCloseAlertLeave = () => {
-      socket.emit('my_disconnect'); // a revoir dans le back
-      console.log("---> from ingame to online")
+      socket.emit('my_disconnect'); 
       updateStatus("ONLINE");
       setOpenGame(false);
       setOpenAlert(false);
@@ -86,7 +94,7 @@ export default function GameMenu(props : PropsInit) {
                   <Button variant="contained" onClick={handleOpenGame} style={{fontSize: 35}}>Play Random</Button>
                   <Modal open={openGame} onBackdropClick={handleCloseGame} >
                     <Box sx={gameStyles.boxModal}>
-                      <GamePong width={800} height={600} socket={socket} user={userID} mode={"random"}/>
+                      <GamePong socket={socket} user={userID} mode={"random"}/>
                       <Dialog open={openAlert} onClose={handleCloseAlertStay} >
                         <DialogTitle> {"Leave current Pong Game?"} </DialogTitle>
                         <DialogActions>
@@ -101,13 +109,13 @@ export default function GameMenu(props : PropsInit) {
                   <Button variant="contained" onClick={handleOpenChallenges} style={{fontSize: 35}}> Challenges </Button>
                   <Modal open={openChallenge} onBackdropClick={handleCloseChallenges} >
                     <Box sx={gameStyles.boxModal}>
-                      <GameListChallenge width={800} height={600} socket={socket} user={userID} mode={"challenge"}/>
+                      <GameListChallenge socket={socket} user={userID} mode={"challenge"}/>
                     </Box>
                   </Modal>
                 </Grid>
                 <Grid item xs={2}/>
                 <Grid item xs={8}>
-                  <GameList width={800} height={600} socket={socket} user={userID} mode={"watch"} watchee={""} />
+                  <GameList socket={socket} user={userID} mode={"watch"} watchee={""} />
                 </Grid>
                 <Grid item xs={2}/>
                 <Grid item xs={12}>
@@ -117,4 +125,3 @@ export default function GameMenu(props : PropsInit) {
             </Paper>
           </Fragment>);
 }
-

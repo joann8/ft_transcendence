@@ -4,9 +4,10 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router';
-import { Avatar, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Avatar, CircularProgress, getBreadcrumbsUtilityClass, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { IUser } from './profileStyle';
 import { match } from 'assert';
+import Badge from '@mui/material/Badge';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -34,11 +35,7 @@ interface IMatch {
 }
 
 export default function MatchModal({ setModal, modalState, user }) {
-    /*  const [modal, setModal] = React.useState(props.modalState);
-      useEffect(() => {
-          props.setModal(modal);
-      }, [props.modalState])
-      */
+
     const [history, setHistory] = useState<IMatch[]>(null)
     const navigate = useNavigate()
 
@@ -86,13 +83,23 @@ export default function MatchModal({ setModal, modalState, user }) {
     }, [])
 
 
-    function getMyDate(date : Date) : string {
-        console.log("date : ", date)
+    function getMyDate(dbDate: Date): string {
+        const date = new Date(dbDate)
         const day = date.getDate()
         const month = date.getMonth()
         const year = date.getFullYear()
-        const fullDate = `${day}-${month}-${year}`
+        const fullDate = `${day} / ${month} / ${year}`
         return fullDate
+    }
+
+    function getResult(match: IMatch): string {
+        const result = match.scorePlayer1 - match.scorePlayer2
+        if (result === 0)
+            return ("Draw")
+        else if (result > 0)
+            return ("Victory")
+        else
+            return ("Defeat")
     }
 
     const handleClose = () => setModal(false);
@@ -105,9 +112,10 @@ export default function MatchModal({ setModal, modalState, user }) {
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center"> Date</TableCell>
-                                <TableCell align="center"> User</TableCell>
-                                <TableCell align="center"> Opponent</TableCell>
+                                <TableCell align="center" colSpan={2}> Player One </TableCell>
+                                <TableCell align="center" colSpan={2}> Player Two</TableCell>
                                 <TableCell align="center"> Result </TableCell>
+                                <TableCell align="center"> Score </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -117,15 +125,23 @@ export default function MatchModal({ setModal, modalState, user }) {
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell align="center">{getMyDate(match.date)}</TableCell>
-                                    <TableCell align="center">
+                                    <TableCell align="right">
                                         {match.player1.id_pseudo}
+                                    </TableCell>
+                                    <TableCell align="left">
+
                                         <Avatar src={match.player1.avatar} />
                                     </TableCell>
-                                    <TableCell align="center">
+                                    <TableCell align="right">
                                         {match.player2.id_pseudo}
+                                    </TableCell>
+                                    <TableCell align="left">
                                         <Avatar src={match.player2.avatar} />
                                     </TableCell>
-                                    <TableCell align="center">{match.status}</TableCell>
+
+                                    <TableCell align="center">{getResult(match)}</TableCell>
+                                    <TableCell align="center">{match.scorePlayer1} - {match.scorePlayer2}</TableCell>
+
                                 </TableRow>
                             ))}
                         </TableBody>

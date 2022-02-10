@@ -1,13 +1,13 @@
-import { Toolbar, Paper, Avatar, Box, Typography, TextField, Button, Divider, Chip } from "@mui/material";
+import { Toolbar, Paper, Avatar, Box, Typography, TextField, Button, Divider, Chip, ButtonGroup } from "@mui/material";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import Badge from '@mui/material/Badge';
-import DoneIcon from '@mui/icons-material/Done';
 import { useNavigate, useParams } from "react-router";
 import MatchModal from "./MatchModal";
 import profileStyle from './profileStyle'
-import { LockOpenTwoTone, LockTwoTone, Pending, PersonAdd, PersonRemove, QuestionMark } from "@mui/icons-material";
+import { LockTwoTone, Pending, PersonAdd, QuestionMark } from "@mui/icons-material";
 import { Context } from "../MainCompo/SideBars";
-import PetsIcon from '@mui/icons-material/Pets';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import StarsIcon from '@mui/icons-material/Stars';
 import FaceIcon from '@mui/icons-material/Face';
 
 const backEndUrl = "http://127.0.0.1:3001"
@@ -95,6 +95,7 @@ export default function OtherUser() {
                 else
                     resData = 0
                 setRelation(resData)
+                console.log("Relation state : ", resData)
                 return resData;
             })
             .catch((err) => {
@@ -105,7 +106,7 @@ export default function OtherUser() {
 
 
     const removeRelation = async (otherUserPseudo: string) => {
-        const ret = await fetch(`${backEndUrl}/relation/remove`, {
+        const ret = await fetch(`http://127.0.0.1:3001/relation/remove`, {
             credentials: "include",
             referrerPolicy: "same-origin",
             method: "DELETE",
@@ -188,57 +189,42 @@ export default function OtherUser() {
         setUpdate(!update)
     }
 
-    function FriendBlockButton({ status }) {
-        // 0 = NOT FRIENDS
-        // 1 = SENT / Waiting
-        // 2 = RECEIVED
-        // 3 = FRIEND
-        // 4 = BLOCK ACTIVE
-        // if 2 --> Button devient Button menu pour unfriend
-        if (status === 4)
-            return (<div />)
+
+    function FriendButton({ status }) {
+
+        //FRIEND
+        //MAKE BUTTON MENU
+        if (status === 4) {
+            return (
+                <Fragment>
+                    <Button sx={{ margin: "2px" }} variant="contained" color="error" startIcon={<LockTwoTone />}>
+                        BLOCKED
+                    </Button>
+                </Fragment >
+            )
+        }
         if (status === 3) {
             return (
                 <Fragment>
-                    <Button
-                        variant="contained"
-                        startIcon={<DoneIcon />}
-                        style={{ marginBottom: "10px" }}
-                    >
-                        Friend
+                    <Button sx={{ margin: "2px" }} variant="contained" color="success" startIcon={<FaceIcon />}>
+                        Friends
                     </Button>
-                    <Button
-                        variant="contained"
-                        color="warning"
-                        startIcon={<PersonRemove />}
-                        onClick={() => handleBlocking(4)}>
-                        Remove
-                    </Button>
-                    <Button
-                        id="basic-button"
-                        variant="contained"
-                        startIcon={status === 4 ? <LockOpenTwoTone /> : <LockTwoTone />}
-                        color="error"
-                        onClick={() => { handleBlocking(status) }}
-                        sx={{
-                            marginTop: "10px",
-                        }}
-                    >
-                        {(status === 4) ? "Unblock" : "Block"}
-                    </Button>
-                </Fragment>
+                </Fragment >
             )
         }
+        //ADD or WAITING or ACCEPT
         else {
-            let addButton: string;
+            let addButton: string
             if (status === 2)
                 addButton = "Accept"
             else
                 addButton = (status === 0 ? "Add" : "Waiting")
+            console.log("ici?")
             return (
                 <Button variant="contained"
                     disabled={status === 1 ? true : false}
                     style={{
+                        margin: "2px",
                         backgroundColor: "rgba(255,255,255, 1)",
                         color: "rgba(0,0,0,1)"
                     }}
@@ -251,11 +237,12 @@ export default function OtherUser() {
     }
 
     function ButtonBlock({ status }) {
+        console.log("ButtonBlock status :", status)
         return (
             <Fragment>
-                <Chip icon={<PetsIcon />} label="ONE" color="secondary" />
-                <Chip icon={<FaceIcon />} label="TWO" variant="outlined" color="secondary" />
-                {idPseudo !== context.user.id_pseudo && <FriendBlockButton status={relation} />}
+                {otherUserData.achievement1 ? <Chip sx={{ margin: "2px" }} icon={<StarsIcon />} label="Win with Max Score (3-0)" color="success" /> : <Chip sx={{ margin: "2px" }} icon={<StarsIcon />} label="Win with Max Score (3-0)" variant="outlined" color="secondary" />}
+                {otherUserData.achievement2 ? <Chip sx={{ margin: "2px" }} icon={<EmojiEventsIcon />} label="Win 3 times" color="success" /> : <Chip sx={{ margin: "2px" }} icon={<EmojiEventsIcon />} label="Win 3 times" variant="outlined" color="secondary" />}
+                {otherUserData.id !== context.user.id && <FriendButton status={status} />}
             </Fragment>
         )
     }
@@ -291,14 +278,9 @@ export default function OtherUser() {
                                 />
                             </Box>
                             <Box sx={profileStyle.profileBlock}>
-                                <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
-                                <Box sx={profileStyle.content_1}>
-                                    <Typography style={profileStyle.textBox}> Sorry, there is no player with pseudo : [{idPseudo}] </Typography>
+                                <Box sx={profileStyle.middleBox}>
+                                    <Typography style={{ color: "#FFFFFF" }}> Sorry, there is no player with pseudo : [ {idPseudo} ] </Typography>
                                 </Box>
-                                <Divider orientation="vertical" sx={{
-                                    height: "50%",
-                                    backgroundColor: "rgba(191, 85, 236, 1)"
-                                }} />
                             </Box>
                         </Box >
                     </Box>
@@ -331,40 +313,45 @@ export default function OtherUser() {
                             </Box>
 
                             <Box sx={profileStyle.profileBlock}>
-                                <Box sx={profileStyle.content_2}>
-                                    <Badge
-                                        overlap="circular"
-                                        badgeContent={otherUserData.status}
-                                        color="secondary"
-                                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                                    >
+                                <Box sx={profileStyle.leftRightBox}>
+                                    {context.user.id !== otherUserData.id ?
+                                        <Badge
+                                            overlap="circular"
+                                            badgeContent={otherUserData.status}
+                                            color="secondary"
+                                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                        >
+                                            <Avatar src={otherUserData.avatar} style={{
+                                                width: "125px",
+                                                height: "125px",
+                                                overflow: "hidden"
+                                            }} />
+                                        </Badge> :
                                         <Avatar src={otherUserData.avatar} style={{
                                             width: "125px",
                                             height: "125px",
                                             overflow: "hidden"
                                         }} />
-                                    </Badge>
+                                    }
 
                                 </Box>
-                                <Divider orientation="vertical" sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }} />
-                                <Box sx={profileStyle.content_1}>
-                                    <Typography style={profileStyle.textBox}> {otherUserData.id_pseudo}</Typography>
-                                    <Typography style={profileStyle.textBox}> {otherUserData.elo} </Typography>
-                                    <Typography style={profileStyle.textBox}>{otherUserData.email}</Typography>
+                                <Divider orientation="vertical" sx={profileStyle.divider} />
+                                <Box sx={profileStyle.middleBox}>
+                                    <Typography style={profileStyle.text}> {otherUserData.id_pseudo}</Typography>
+                                    <Typography style={profileStyle.text}> {otherUserData.elo} </Typography>
+                                    <Typography style={profileStyle.text}>{otherUserData.email}</Typography>
                                 </Box>
-                                <Divider orientation="vertical" sx={{
-                                    height: "50%",
-                                    backgroundColor: "rgba(191, 85, 236, 1)"
-                                }} />
-
-                                <Box sx={profileStyle.content_2}>
-                                    <ButtonBlock status={relation} />
+                                <Divider orientation="vertical" sx={profileStyle.divider} />
+                                <Box sx={profileStyle.leftRightBox}>
+                                    <ButtonGroup orientation="vertical">
+                                        <ButtonBlock status={relation} />
+                                    </ButtonGroup>
                                 </Box>
                             </Box>
 
                             <Box sx={profileStyle.matchHistory}>
                                 <Button variant="contained" onClick={() => { setModal({ ...modalState, match: true }) }} sx={{ width: "100%" }}> Match history </Button>
-                                {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} user={otherUserData}/> : null}
+                                {modalState.match ? <MatchModal modalState={modalState.match} setModal={setModal} user={otherUserData} /> : null}
                             </Box>
                         </Box >
                     </Box>

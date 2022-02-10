@@ -17,17 +17,22 @@ export default function GameWatch(props: PropsGame) {
         socket.on("updateState", (updateState : any) => {
             setGame(updateState);
         });
+        return () => {
+            socket.removeAllListeners("updateState");
+        };
     });
 
     useEffect(() => {
-        let c : HTMLCanvasElement = ref.current; //canvas
-        let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
-        draw_all(false, ctx, game, color_object3);
+        if (ref) {
+            let c : HTMLCanvasElement = ref.current; 
+            let ctx : CanvasRenderingContext2D = c.getContext("2d")!;
+            draw_all(false, ctx, game, color_object3);
+        }
     }, [game]);
 
     return (
         <Fragment>
-            <Grid container alignItems="center" justifyContent="center"  >
+            <Grid container alignItems="center" justifyContent="center" >
                 <Grid item xs={12} style={{textAlign: "center"}}>
                     <canvas width={width} height={height} ref={ref}> 
                     </canvas>

@@ -9,6 +9,7 @@ import { getRepository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { ParseOther } from './pipes/parseOther';
 import { ParseUpdate } from './pipes/parseUpdate';
+import { FriendDto } from './dto/friendDto';
 
 @Controller('relation')
 export class RelationController {
@@ -60,67 +61,73 @@ export class RelationController {
       const otherGuy = await getRepository(User).findOne(otherGuyId)
       userFriendRequestArray.push(otherGuy)
     }
-    console.log("Tmp Array:", userFriendRequestArray)
     return userFriendRequestArray as User[]
   }
 
-@Get('friends')
-async findFriends(@Req() req): Promise < User[] > {
-  console.log("Route /relation/friends called")
+  @Get('friends')
+  async findFriends(@Req() req): Promise<FriendDto[]> {
 
-    const friendArray = []
+    const friendArray: FriendDto[] = []
     const relationFriendArray = await this.relationService.findAllMyFriend(req.user.id)
-    for(const item of relationFriendArray) {
-    const friendId = (item.userId1bis === req.user.id ? item.userId2bis : item.userId1bis)
-    const friendUser = await getRepository(User).findOne(friendId)
-    friendArray.push(friendUser)
+    for (const item of relationFriendArray) {
+      const friendId = (item.userId1bis === req.user.id ? item.userId2bis : item.userId1bis)
+      const friendUser = await getRepository(User).findOne(friendId)
+      const findRelationRequest: FindRelationDto = {
+        userId1: req.user.id,
+        userId2: friendId
+      }
+      const relationFriend = await this.relationService.findOne(findRelationRequest)
+      const friendComplete: FriendDto = {
+        user: friendUser,
+        relation: (req.user.id === relationFriend.userId1bis ? relationFriend.relation1 : relationFriend.relation2)
+      }
+      friendArray.push(friendComplete)
+    }
+    return friendArray as FriendDto[]
   }
-    console.log("Friend Array = :", friendArray)
-    return friendArray as User[]
-}
 
 
-/*json body {
-  //user to update
-  id_pseudo1: ""
-  id_pseudo2: "",
-  //relation to update 
-  relation1: "",
-  relation2: "",
+  /*json body {
+    //user to update
+    id_pseudo1: ""
+    id_pseudo2: "",
+    //relation to update 
+    relation1: "",
+    relation2: "",
+  
+    //en options (a supprimer ? )
+    userId1 : number,
+    userId2 : number
+  }*/
+  @Put('update')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async update(@Req() req, @Body(ParseUpdate) relationRequest: RelationDto): Promise<Relation> {
 
-  //en options (a supprimer ? )
-  userId1 : number,
-  userId2 : number
-}*/
-@Put('update')
-@UsePipes(new ValidationPipe({ transform: true }))
-async update(@Req() req, @Body(ParseUpdate) relationRequest: RelationDto): Promise < Relation > {
-
-  //Complete relationRequest with currentUser info
-  relationRequest.id_pseudo1 = req.user.id_pseudo
+    //Complete relationRequest with currentUser info
+    relationRequest.id_pseudo1 = req.user.id_pseudo
     relationRequest.userId1 = req.user.id
     relationRequest.userId1bis = req.user.id
 
     //Create Needle to find to relation between Users
     const findRelationRequest: FindRelationDto = {
-    userId1: relationRequest.userId1,
-    userId2: relationRequest.userId2
-  }
+      userId1: relationRequest.userId1,
+      userId2: relationRequest.userId2
+    }
 
     //Find relation if exist with [NEEDLE]
     const relationInDatabase = await this.relationService.findOne(findRelationRequest)
     console.log("Relation in DB : ", relationInDatabase)
 
     //If relation does not exist create it with the REQUEST parameters
-    if(!relationInDatabase) {
-    console.log("Creating relation : ", relationRequest)
-    const newRelation = await this.relationService.create(relationRequest)
-    console.log("New realtion : ", newRelation)
-    return newRelation
-  }
+    if (!relationInDatabase) {
+      console.log("Creating relation : ", relationRequest)
+      const newRelation = await this.relationService.create(relationRequest)
+      console.log("New realtion : ", newRelation)
+      return newRelation
+    }
     else {
-    //If exist UPDATE it with the REQUEST parameters
-    let updateRelationRequest = new UpdateRelationDto()
+      //If exist UPDATE it with the REQUEST parameters
+      let updateRelationRequest = new UpdateRelationDto()
       //Update les stauts au bon endroit 
 
       updateRelationRequest.relation1 = (relationRequest.userId1 === relationInDatabase.userId1bis ? relationRequest.relation1 : relationRequest.relation2)
@@ -131,29 +138,30 @@ async update(@Req() req, @Body(ParseUpdate) relationRequest: RelationDto): Promi
       console.log("Updating DTO as : ", updateRelationRequest)
 
       await this.relationService.update(updateRelationRequest);
-    const upDatedRelation = await this.relationService.findOne(findRelationRequest)
+      const upDatedRelation = await this.relationService.findOne(findRelationRequest)
       return upDatedRelation
+    }
   }
-}
 
-//Si on est deja friends ou block
-@Delete('remove')
-@UsePipes(new ValidationPipe({ transform: true }))
-async remove(@Req() req, @Body(ParseOther) getRelationRequest: GetRelationDto) {
+  //Si on est deja friends ou block
+  @Delete('remove')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async remove(@Req() req, @Body(ParseOther) getRelationRequest: GetRelationDto) {
 
-  //try catch ? si remove ou findOne fail
-  const relationToRemove = await this.relationService.findOne({ userId1: req.user.id, userId2: getRelationRequest.otherUser.id })
-  if (!relationToRemove)
-    throw new HttpException("Relation : DeleteByPseudo : Not existing relationship", HttpStatus.OK)
-  return await this.relationService.remove(relationToRemove.id);
-}
+    console.log("Remove controller")
+    //try catch ? si remove ou findOne fail
+    const relationToRemove = await this.relationService.findOne({ userId1: req.user.id, userId2: getRelationRequest.otherUser.id })
+    if (!relationToRemove)
+      throw new HttpException("Relation : DeleteByPseudo : Not existing relationship", HttpStatus.OK)
+    return await this.relationService.remove(relationToRemove.id);
+  }
 
-//A Supprimer (utile pour delete une relation depuis POSTMAN)
-@Delete('remove/:id')
-@UsePipes(new ValidationPipe({ transform: true }))
-async removeId(@Param('id') id: number) {
-  //try catch ? si remove ou findOne fail
-  const ret = await this.relationService.remove(id);
-  return (ret)
-}
+  //A Supprimer (utile pour delete une relation depuis POSTMAN)
+  @Delete('remove/:id')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async removeId(@Param('id') id: number) {
+    //try catch ? si remove ou findOne fail
+    const ret = await this.relationService.remove(id);
+    return (ret)
+  }
 }
