@@ -34,6 +34,7 @@ const mdTheme = createTheme({
   },
 });
 
+
 function Root() {
   React.useEffect(() => {
     window.addEventListener("beforeunload", (e) => {

@@ -94,17 +94,18 @@ export default function Profile() {
                   {userData.id_pseudo}
                 </Typography>
                 <Typography style={profileStyle.text}>
-                  {userData.elo}
-                </Typography>
-                <Typography style={profileStyle.text}>
                   {userData.email}
                 </Typography>
+                <Typography style={profileStyle.text}>
+                  Rank : {userData.elo}
+                </Typography>
+           
               </Box>
               <Divider orientation="vertical" sx={profileStyle.divider} />
               <Box sx={profileStyle.leftRightBox}>
                 {context.user.achievement1 ? <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" color="success" /> : <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" variant="outlined" color="secondary" />}
                 {context.user.achievement2 ? <Chip icon={<EmojiEventsIcon />} label="Win 3 times" color="success" /> : <Chip icon={<EmojiEventsIcon />} label="Win 3 times" variant="outlined" color="secondary" />}
-       
+
 
               </Box>
             </Box>
