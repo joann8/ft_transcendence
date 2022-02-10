@@ -3,7 +3,7 @@ import Image from '../Images/pig.jpg'
 const leaderStyles = {
     backgroundImage: {
       backgroundImage: `url(`+ `${Image}` + ')',
-      backgroundPosition: 'left',
+      backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'cover',
       width: '100%',

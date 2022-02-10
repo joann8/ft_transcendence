@@ -19,31 +19,6 @@ export default function GamePong(props: PropsGame) {
     
     const [game, setGame] = useState(gameStateInit);
 
-    useEffect(() => {
-        socket.on("updateState", (updateState : any) => {
-            setGame(updateState);
-        });
-    }, []);
-    
-    useEffect (() => {
-        window.addEventListener('keydown', (e) => {
-            if (e.code ==='ArrowUp') {
-                socket.emit('up_paddle');
-            } else if (e.code ==='ArrowDown') {
-                socket.emit('down_paddle');
-            }
-        })
-    }, []);
-    /*
-        window.addEventListener('keyup', (e) => {
-            if (e.code ==='ArrowUp') {
-                socket.emit ('up_paddle', 'up');
-            } else if (e.code ==='ArrowDown'){
-                socket.emit('down_paddle', 'up');
-            }
-        });
-    }, []);*/
-          
     //Additionnal features
     const [ballCheck, setBallCheck] = useState(false); // initial state (not activated)
     const [paddleCheck, setPaddleCheck] = useState(false); // initial state (not activated)
@@ -66,7 +41,10 @@ export default function GamePong(props: PropsGame) {
         setColorMode(event.target.checked);
     };
 
-    useEffect(()=> {
+    useEffect(() => {
+        socket.on("updateState", (updateState : any) => {
+            setGame(updateState);
+        });
         socket.on("ball_on_server", (args : any) => {
             setBallCheck(true);                    
         });
@@ -74,12 +52,31 @@ export default function GamePong(props: PropsGame) {
         socket.on("ball_off_server", (args : any) => {
             setBallCheck(false);                    
         });
+
+        return () => {
+            socket.removeAllListeners("updateState");
+            socket.removeAllListeners("ball_on_server");
+            socket.removeAllListeners("ball_off_server");
+        };
+    }, []);
+    
+    useEffect (() => {
+        window.addEventListener('keydown', (e) => {
+            if (ref) {
+                if (e.code ==='ArrowUp')
+                    socket.emit('up_paddle');
+                else if (e.code ==='ArrowDown')
+                    socket.emit('down_paddle');
+            }
+        })
     }, []);
 
     useEffect(() => {
-        let c : HTMLCanvasElement = ref.current; //canvas
-        let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
-        draw_all(colorMode, ctx, game, color_object);
+        if (ref) {
+            let c : HTMLCanvasElement = ref.current; //canvas
+            let ctx : CanvasRenderingContext2D = c.getContext("2d")!; //canvas context
+            draw_all(colorMode, ctx, game, color_object);
+        }
     }, [game, colorMode]);
     
     return (
@@ -102,4 +99,4 @@ export default function GamePong(props: PropsGame) {
             </Grid>
         </Fragment>
     );
-}
+    }

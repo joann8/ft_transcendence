@@ -6,9 +6,10 @@ import { PongService } from "./pong.service";
 import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
 import { Challenge } from "./classes/pong.challenge";
-import { INSTANCE_ID_SYMBOL } from "@nestjs/core/injector/instance-wrapper";
 
-@WebSocketGateway( { namespace : "/game", cors: { origin:'*', },}) // CORS A REVOIR
+@WebSocketGateway( { namespace : "/game", cors: { origin: '*'}}) 
+//cors: { origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_BIS],
+//        credentials: true,},}) // CORS A REVOIR
 
 export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {  
     constructor( private userService : UserService, private pongService : PongService) {}
@@ -17,11 +18,9 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     server: Server;
     
     private logger: Logger = new Logger("*** Pong Interface ***");
-    private clients: Set<Socket> = new Set(); // liste des clients ID
-    private queue: Map<Socket, User> = new Map<Socket, User>(); // client dans la queue
+    private queue: Map<Socket, User> = new Map<Socket, User>(); // clients dans la queue
     private matches: Game[] = []; // liste des matches en cours
     private challenges: Challenge[] = []; // liste des matches en cours
-   // private challenges: Map<User, User> = new Map<User, User>(); // liste des defis
 
     // Fonctions de base
 
@@ -38,81 +37,63 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         this.disconnectClient(client);
     }
 
-    // Fonctions pour jouer RANDOM
-
-    @SubscribeMessage('my_disconnect')
-    async myDisconnect(client: Socket) : Promise <void> {
-        this.logger.log(`[ MY DISCONNECT received ] A client disconnected : ${client.id}`);
-        this.disconnectClient(client);     
-    }
-
+    // Verifie si le joeur est deja dans une queue / dans un match / dans un challenge
     @SubscribeMessage('check_game')
     async checkGame(client: Socket, userID: User) : Promise <void> {
-        console.log("enter check game")
         let match = this.matches.find(game => game.getPlayer1().getUser().id === userID.id || game.getPlayer2().getUser().id === userID.id);
         if (match) {
-            console.log("--> emit not allowed playing")
             client.emit('not_allowed_playing');
             return;
         }
         let it = this.queue.values();
         for(let i = 0; i < this.queue.size; i++) {
             if (it.next().value.id === userID.id) {
-                console.log("--> emit not allowed queue")
                 client.emit('not_allowed_queue');
                 return;
             }
         }
-        console.log("--> emit allowed")
-        client.emit('allowed');
+        let challenge = this.challenges.find(challenge => challenge.getChallenger().id === userID.id)
+        if (challenge) {
+            client.emit('not_allowed_playing');
+            return;
+        }
+        client.emit('allowed'); 
     }
+
+    // Fonctions pour jouer RANDOM
 
     @SubscribeMessage('join_queue')
     async joinQueue(client: Socket, userID: User) : Promise <void> {
-        //console.log(`user ID received : ${userID.id_pseudo}`)
         if (this.queue.has(client) === true)    
-            return;
-        if (this.clients.has(client) === false)
-            this.clients.add(client);       
-        //this.logger.log(`Client ${client.id} / userID ${userID.id_pseudo} joins the queue`);
+            return;  
         this.queue.set(client, userID);
-        //this.logger.log(`queue length :  ${this.queue.size}`);
-        if (this.queue.size > 1) {
-            //this.logger.log(`start a match!`);
+        if (this.queue.size > 1)
             this.matchInit(this.queue)
-        }
     }
 
-    // Fonctions pour jouer DUEL
+    @SubscribeMessage('my_disconnect')
+    async myDisconnect(client: Socket) : Promise <void> {
+        this.disconnectClient(client);     
+    }  
 
-    /* Besoin validation dans chat pour arriver a la page avec direct les deux clients et socket */
-    //check_game
-   
+    // Fonctions pour jouer CHALLENGE
+  
     @SubscribeMessage('create_challenge')
     async createChallenge(client: Socket, info : {challenger: User, challengee : User}) : Promise <void> {
-        console.log("___enter create challenge")
-        console.log("BEFORE challenges:", this.challenges)
         let challenge1 = {
             challenger : info.challenger,
             challengee : info.challengee,
-            status: "pending",
         }
-        console.log("challenge to register : ", challenge1)
         let id_challenge = await this.pongService.createChallenge(challenge1);
         let challenge2 = new Challenge(id_challenge, info.challenger, client, info.challengee);
         this.challenges.unshift(challenge2); // enregistrement du challenge
-        console.log("AFTER challenges:", this.challenges)
     }
 
     @SubscribeMessage('answer_challenge')
     async answerChallenge(client: Socket, info : { id_challenge : number, answer : string}) : Promise <void> {
-        console.log("___enter answer challenge")
         let challenge =  this.challenges.find(challenge => challenge.getId() === info.id_challenge);
         if (challenge) {
-            const challenge_data = await this.pongService.getChallenge(info.id_challenge);
-            if (info.answer === "accepted")
-            {
-                console.log("----> challenge foudn and accepted!")
+            if (info.answer === "accepted") {
                 challenge.getChallengerSocket().emit("challenge_accepted", challenge.getId());
                 let binome : Map<Socket, User> = new Map<Socket, User>(); 
                 binome.set(challenge.getChallengerSocket(), challenge.getChallenger());
@@ -120,10 +101,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
                 this.matchInit(binome);                
             }
             else
-            {
-                console.log("----> challenge found and refused!")
                 challenge.getChallengerSocket().emit("challenge_refused", challenge.getId());
-            }
             await this.pongService.deleteChallenge(info.id_challenge);
             this.challenges.splice(this.challenges.indexOf(challenge));
         }
@@ -133,19 +111,11 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     @SubscribeMessage('cancel_challenge')
     async cancelChallenge(client: Socket, info : {challenger: User, challengee : User}) : Promise <void> {
-        console.log("___enter cancel challenge")
-        console.log("BEFORE challenges:", this.challenges)
         let challenge =  this.challenges.find(challenge => (challenge.getChallenger().id === info.challenger.id && challenge.getChallengee().id === info.challengee.id));
-        if (challenge)  
-        {   
-            console.log("----> delete challene id ", challenge.getId())
+        if (challenge) {
             await this.pongService.deleteChallenge(challenge.getId());
             this.challenges.splice(this.challenges.indexOf(challenge));
-            console.log("AFTER challenges:", this.challenges)
         }
-        else
-            console.log("---> no challenge found")
-
     }
     
     // MOUVEMENTS RAQUETTES
@@ -204,18 +174,14 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage('check_match')
     async checkMatch(client: Socket, room : string) : Promise <void> {
         let match = this.matches.find(game => game.getRoom() === room);
-        if (match)
-            client.emit('allowed_watch', room);
-        else
-            client.emit('not_allowed_watch');
+        match ? client.emit('allowed_watch', room) : client.emit('not_allowed_watch');
     }
 
     @SubscribeMessage('watch_game')
     async handleListGames(client : Socket, room : string): Promise<void> {
         let match = this.matches.find(game => game.getRoom() === room);
-        if (match) {
+        if (match)
             match.addSpectator(client);
-        }
     }
     
     @SubscribeMessage('unwatch_game')
@@ -232,9 +198,10 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     // Fonctions du Back pour calculer les nouvelles positions, le status du jeu, etc.
  
     private matchInit(source : Map<Socket, User>) {
-        console.log("Match!!!!!")
+
         let game = new Game(source, this.server, this.removeGame.bind(this), this.pongService, this.userService);
-        // A verifier
+        game.getPlayer1().getSocket().emit("start_game");
+        game.getPlayer2().getSocket().emit("start_game");
         this.queue.delete(game.getPlayer1().getSocket());
         this.queue.delete(game.getPlayer2().getSocket());
         this.matches.unshift(game); // enregistrement du match
@@ -242,20 +209,30 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     private removeGame(game : Game) : void {
         let match = this.matches.find(item => item.getRoom() === game.getRoom());
-         if (match) {
-            //this.clients.delete(match.getPlayer1().getSocket());      
-            //this.clients.delete(match.getPlayer2().getSocket());      
+        if (match) {
+            this.checkAchievement(match.getPlayer1().getUser());
+            this.checkAchievement(match.getPlayer2().getUser());
             this.matches.splice(this.matches.indexOf(match));
         }
     }
 
+    // Deconnexion des matchs (challenge pending pris en charge dans cancel challenge)
     private disconnectClient(client : Socket) {
         let match = this.matches.find((game) => game.getPlayer1().getSocket() === client || game.getPlayer2().getSocket() === client );
-        if (match)
-            match.disconnectPlayer(client);
-        else {
-            this.clients.delete(client);
-            this.queue.delete(client);
+        match ? match.disconnectPlayer(client) : this.queue.delete(client);
+    }
+
+    // Check achievements
+    private async checkAchievement(user : User) : Promise<void> {
+        let nb1 = await this.pongService.getMaxUser(user);
+        let nb2 = await this.pongService.getWinsUser(user);
+        if(nb1 >= 1) {// if user won at least one time with max Score
+            let update1 = { achievement1: true};
+            this.userService.update(user.id, update1);
+        }
+        if (nb2 >= 3) { // if user won at least 3 games
+            let update2 = { achievement2: true};
+            this.userService.update(user.id, update2);
         }
     }
 }

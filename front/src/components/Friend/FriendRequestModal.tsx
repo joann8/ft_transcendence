@@ -1,13 +1,12 @@
-import * as React from 'react';
+import  React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Fragment, useEffect, useState } from 'react';
-import { Avatar, Card, CardContent, CardMedia, Divider, Grid } from '@mui/material';
-import Alone from "../Images/alone.jpg"
+import { Avatar, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { IUser } from './profileStyle';
+import { IUser } from '../Profile/profileStyle';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -29,9 +28,10 @@ const style = {
 };
 
 const request = {
-    width: "100%",
-    minHeight: "15%",
-    marginLeft: "2%"
+    padding: "10px",
+    alignItems: "center",
+   // border: " 1px solid black"
+
 }
 
 
@@ -50,9 +50,8 @@ export default function FriendRequestModal(props: any) {
             .then((res) => {
                 if (res.status === 401)
                     navigate("/login")
-                else if (!res.ok)
-                {
-                    console.log("res : ", res)            
+                else if (!res.ok) {
+                    console.log("res : ", res)
                     throw new Error(res.statusText)
                 }
                 return res.json()
@@ -130,7 +129,10 @@ export default function FriendRequestModal(props: any) {
         const newArray = requestArray.filter(function (item) {
             return item !== friend;
         })
-        setRequestArray(newArray)
+        if (newArray.length === 0)
+            handleClose()
+        else
+            setRequestArray(newArray)
     }
 
     const handleRefuse = async (friend: IUser) => {
@@ -144,7 +146,6 @@ export default function FriendRequestModal(props: any) {
 
     const handleClose = () => props.setModal(false);
 
-
     return (
         <Fragment>
             <Modal
@@ -155,53 +156,52 @@ export default function FriendRequestModal(props: any) {
             >
                 {(requestArray && requestArray.length) ?
                     <Box sx={style}>
-
                         <Grid container sx={request}>
-                            <Grid container item sx={{
-                                justifyContent: "space-evenly",
-                                alignItems: "center",
-                                backgroundColor: "rgba(0, 0, 0, 0.4)",
-
-                            }}>
-                                {requestArray.map((user: IUser) =>
-                                    <Fragment key={user.id}>
-                                        < Grid item xs={3}>
-                                            <Avatar sx={{
-                                                marginLeft: "10px",
-                                                width: "50px",
-                                                height: "50px"
-                                            }} src={user.avatar} />
-                                        </Grid>
-                                        <Grid item xs={3}> {user.id_pseudo} </Grid>
-                                        <Grid item xs={3}>
-                                            <Button
-                                                variant="contained"
-                                                color="success"
-                                                onClick={() => handleAccept(user)}>Accept </Button>
-                                        </Grid>
-                                        <Grid item xs={3}>
-                                            <Button
-                                                variant="contained"
-                                                color="warning"
-                                                onClick={() => handleRefuse(user)}>Refuse </Button>
-                                        </Grid >
-                                        <Divider variant="middle" />
-                                    </Fragment>
-                                )}
-                            </Grid>
+                            {requestArray.map((user: IUser) =>
+                                <Fragment key={user.id}>
+                                    < Grid item xs={3}>
+                                        <Avatar sx={{
+                                            margin: "auto",
+                                            width: "50px",
+                                            height: "50px"
+                                        }} src={user.avatar} />
+                                    </Grid>
+                                    <Grid item xs={2}> {user.id_pseudo} </Grid>
+                                    <Grid item xs={2}>
+                                        <Button
+                                            size="small"
+                                            variant="contained"
+                                            color="success"
+                                            onClick={() => handleAccept(user)}>Accept
+                                        </Button>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <Button
+                                            size="small"
+                                            variant="contained"
+                                            color="warning"
+                                            onClick={() => handleRefuse(user)}>Refuse
+                                        </Button>
+                                    </Grid>
+                                </Fragment>
+                            )}
                         </Grid>
                     </Box>
 
                     :
-                    <Card sx={style}>
-                        <CardMedia component="img" image={Alone} />
-                        <CardContent>
+                    <Box sx={style}>
+                        <Box sx={{
+                            padding: "5%",
+                            borderRadius: "5px",
+                            color: "rgba(250,250,250, 0.9)",
+                            bgcolor: "rgba(30, 30, 30, 0.9)",
+                            margin: "auto"
+                        }}>
                             <Typography variant="body1">
-                                Ouch ... sorry but it seems that no one wants to be your friend
+                                No Friend Request
                             </Typography>
-                        </CardContent>
-
-                    </Card>
+                        </Box>
+                    </Box>
                 }
 
             </Modal>

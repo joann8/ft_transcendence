@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router';
 import { useState, useEffect } from 'react';
 import { Avatar, Button } from '@mui/material';
 
-
 export default function LeaderTable() {
 
   const navigate = useNavigate();
@@ -44,10 +43,7 @@ export default function LeaderTable() {
   }, [update]); 
 
   const handleUpdate=() => {
-    if (update === false)
-      setUpdate(true);
-    else
-      setUpdate(false);
+    setUpdate(!update);
   }
 
   return (
@@ -60,12 +56,6 @@ export default function LeaderTable() {
                     <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update </Button>
                 </TableCell>             
               </TableRow>
-              {/*
-              <TableRow>
-                <TableCell align="center" colSpan={2}> Player </TableCell>
-                <TableCell align="center" colSpan={1}> Elo </TableCell>
-              </TableRow>
-              */}
             </TableHead>
             <TableBody>
               {leaders.map((user : any) => (

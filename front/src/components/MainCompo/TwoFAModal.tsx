@@ -71,9 +71,9 @@ export default function TwoFAModal(props: any) {
           });
         } else {
           setActivate(true);
+          context.setUpdate(!context.update);
         }
         setIsPending(false);
-        context.setUpdate(!context.update);
       })
       .catch((err) => {
         setTitleError(err.message);
@@ -98,9 +98,9 @@ export default function TwoFAModal(props: any) {
           });
         } else {
           setActivate(false);
+          context.setUpdate(!context.update);
         }
         setIsPending(false);
-        context.setUpdate(!context.update);
       })
       .catch((err) => {
         setTitleError(err.message);

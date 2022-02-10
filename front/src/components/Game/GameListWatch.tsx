@@ -1,16 +1,15 @@
 import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Navigate, useNavigate } from 'react-router';
-import { useState, useEffect } from 'react';
-import { Alert, Avatar, Box, Button, Modal, styled } from '@mui/material';
+import { useNavigate } from 'react-router';
+import { useState, useEffect} from 'react';
+import { Avatar, Box, Button, Modal } from '@mui/material';
 import { Fragment } from 'react';
-import { Socket } from 'socket.io-client';
 import GameWatch from './GameWatch';
 import { PropsWatch } from './GameTypes';
 import gameStyles from './GameStyles';
@@ -34,7 +33,6 @@ export default function GameList(props : PropsWatch) {
           referrerPolicy: "same-origin"
       })
       .then((res) => {
-          console.log("return from database all games:", res.status)
           if (res.status === 401)
               console.log("oupsy");
           else if (!res.ok)
@@ -42,7 +40,6 @@ export default function GameList(props : PropsWatch) {
           return (res.json());
       })
       .then((resJson) => {
-          console.log(resJson);
           setGames(resJson);
       })
       .catch((err) => {
@@ -58,15 +55,9 @@ export default function GameList(props : PropsWatch) {
         referrerPolicy: "same-origin"
     })
     .then((res) => {
-        console.log("return from database One game:", res.status)
-        console.log("res ok? :", res.ok)
-        if (res.status === 401)
-            console.log("oupsy");
-        else if (!res.ok)
+        if (!res.ok)
             throw new Error(res.statusText);
-        else if (res.status === 204)
-        {
-          console.log("reno res");
+        else if (res.status === 204) { // pas de jeu en cours
           return({})
         }
         else
@@ -103,15 +94,23 @@ export default function GameList(props : PropsWatch) {
         socket.emit('watch_game', room);
       });
       socket.on("not_allowed_watch", (args : any) => {
-        console.log("match over received")
-        alert("This match is over"); // a faire en plus jolie?
-        handleUpdate();
+        if (watchee === "") {
+          alert("This match is over"); // a faire en plus jolie?
+          handleUpdate();
+        }
+        else {
+          alert(`${watchee} is not in a game at the moment`);
+          navigate("/game")
+        }
+        return () => {
+          socket.removeAllListeners("allowed_watch");
+          socket.removeAllListeners("not_allowed_watch");
+        }
       });
      
   }, []);
 
   const handleCloseWatch= () => {
-    console.log("hanCloseWatch called")
     socket.emit('unwatch_game');
     setOpenWatch(false);
     if (watchee !== "")
@@ -129,18 +128,13 @@ export default function GameList(props : PropsWatch) {
  
   if (watchee !== "")
   {
-    if (oneGame === {})
-    {
-      alert("This game is over");
-            navigate("/game")
-    }
     if (oneGame !== null && oneGame !== {}) 
       handleOpenWatch(oneGame.room);
     return(
         <Fragment>
             <Modal open={openWatch} onBackdropClick={handleCloseWatch}>               
                 <Box sx={gameStyles.boxModal}>
-                  <GameWatch width={props.width} height={props.height} socket={socket} user={props.user} mode={"watch"}/>
+                  <GameWatch socket={socket} user={props.user} mode={"watch"}/>
                 </Box>
             </Modal>
         </Fragment>
@@ -156,7 +150,7 @@ export default function GameList(props : PropsWatch) {
                 <TableRow>
                   <TableCell align="center" colSpan={4}> LIVE GAMES </TableCell>
                   <TableCell align="right" colSpan={1}>
-                      <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update List Game </Button>
+                      <Button variant="outlined" color="secondary" onClick={handleUpdate}> Update </Button>
                   </TableCell>             
                 </TableRow>
               </TableHead>
@@ -180,7 +174,7 @@ export default function GameList(props : PropsWatch) {
           </TableContainer>
           <Modal open={openWatch} onBackdropClick={handleCloseWatch}>               
             <Box sx={gameStyles.boxModal}>
-              <GameWatch width={props.width} height={props.height} socket={socket} user={props.user} mode={"watch"}/>
+              <GameWatch socket={socket} user={props.user} mode={"watch"}/>
             </Box>
         </Modal>
       </Fragment>

@@ -6,7 +6,6 @@ const gameStyles = {
       backgroundPosition: 'left',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'cover',
-     // backgroundColor: 'grey',
       width: '100%',
       height: '100%',
       overflow: 'auto',
@@ -19,7 +18,7 @@ const gameStyles = {
       transform: 'translate(-50%, -50%)',
       width: 'auto',
       height: 'auto',
-      bgcolor: "#FFFFFF", //si je veux transparent rajouter 2 chiffres pour opacity a la dfun
+      bgcolor: "#FFFFFF",
       border: '2px solid #000',
       boxShadow: 24,
       p: 4,
