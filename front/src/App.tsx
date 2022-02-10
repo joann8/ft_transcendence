@@ -13,13 +13,6 @@ function App(props: any) {
     setCanvas(iconId);
   };
 
-  const test = () => {
-    fetch("http://localhost:3001").then((res) => {
-      console.log(res);
-    });
-  };
-  test();
-
   const homePage = <Homepage handleCanvas={handleCanvas} />;
   const [canvas, setCanvas] = useState(homePage);
 
