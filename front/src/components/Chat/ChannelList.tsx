@@ -60,9 +60,11 @@ function ChannelList({
   changeChannel,
   currentUser,
   channelList,
+  setChannelList,
   fetchChannelList,
 }: ChannelListProps) {
   const classes = useStyle();
+
   async function fetchDeleteRoom(channel: Channel) {
     const result = await back
       .delete(`http://127.0.0.1:3001/channel/${channel.id}`)

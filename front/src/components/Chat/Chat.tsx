@@ -16,6 +16,7 @@ import RoleList from "./RoleList";
 import back from "./backConnection";
 import CreateChannel from "./CreateChannel";
 import { io, Socket } from "socket.io-client";
+import { Context } from "../MainCompo/SideBars";
 
 function Chat() {
   /*
@@ -30,8 +31,8 @@ function Chat() {
   const [channelList, setChannelList] = React.useState<Channel[]>([]);
   const [currentChannel, setCurrentChannel] = React.useState<Channel>();
 
-  const [currentUser, setCurrentUser] = React.useState<User>();
-
+  //const [currentUser, setCurrentUser] = React.useState<User>();
+  const currentUser = React.useContext(Context).user;
   /** BACK END CALLS */
 
   const fetchChannelList = async () => {
@@ -39,30 +40,30 @@ function Chat() {
       .get("http://127.0.0.1:3001/channel/me")
       .catch((error) => alert(error.response.data.message));
     if (!result) return;
+    console.log(result.data);
     setChannelList(result.data);
     setCurrentChannel(result.data[0]);
   };
 
-  async function fetchCurrentUser() {
+  /*async function fetchCurrentUser() {
     const result = await back
       .get("http://127.0.0.1:3001/user")
       .catch((error) => alert(error.response.data.message));
     if (!result) return;
 
     setCurrentUser(result.data);
-  }
+  }*/
 
   /*
    *   HOOKS
    */
 
   React.useEffect(() => {
-    fetchCurrentUser();
+    //fetchCurrentUser();
     fetchChannelList();
   }, []);
 
   React.useEffect(() => {
-    console.log("here");
     const newSocket = io(`http://127.0.0.1:3001/channel`);
     setSocket(newSocket);
     return () => {
@@ -99,6 +100,7 @@ function Chat() {
               currentChannel={currentChannel}
               changeChannel={setCurrentChannel}
               channelList={channelList}
+              setChannelList={setChannelList}
               fetchChannelList={fetchChannelList}
             ></ChannelList>
             {socket ? (

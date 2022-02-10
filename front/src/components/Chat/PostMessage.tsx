@@ -43,6 +43,7 @@ function PostMessage({ submit }: MessagePostProps) {
           onClick={() => {
             if (content) {
               submit(content);
+              setContent("");
             }
             return;
           }}

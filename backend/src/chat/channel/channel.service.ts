@@ -5,11 +5,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getRepository, In, Repository } from 'typeorm';
-import { Channel } from './entities/channel.entity';
+import { Channel, channelType } from './entities/channel.entity';
 import { CreateChannelDto } from './dto/create-channel-dto';
 import { Message } from '../messages/entities/message.entity';
 import { User } from 'src/user/entities/user.entity';
 import { CheckRoles } from './decorators/channel-role.decorator';
+import * as bcrypt from 'bcrypt';
 
 import {
 	channelRole,
@@ -25,6 +26,18 @@ export class ChannelService {
 		private channelRepository: Repository<Channel>,
 	) {}
 
+	async hashPassword(password): Promise<string> {
+		const saltRounds = 10;
+
+		const hashedPassword = await new Promise((resolve, reject) => {
+			bcrypt.hash(password, saltRounds, function (err, hash) {
+				if (err) reject(err);
+				resolve(hash);
+			});
+		});
+
+		return hashedPassword as string;
+	}
 	/**
 	 * *CREATE A CHANNEL
 	 * @param createChannelDto The information about the channel we are trying to create
@@ -35,9 +48,15 @@ export class ChannelService {
 
 	async createOne(createChannelDto: CreateChannelDto, user: User) {
 		try {
+			let hash = null;
+			if (createChannelDto.mode === channelType.PRIVATE) {
+				hash = await this.hashPassword(createChannelDto.password);
+			}
 			const newChannel = await this.channelRepository.save(
 				this.channelRepository.create({
 					name: createChannelDto.name,
+					mode: createChannelDto.mode,
+					password: hash,
 				}),
 			);
 			const newRole = getRepository(userChannelRole).create({
@@ -45,12 +64,13 @@ export class ChannelService {
 				channel: newChannel,
 				role: channelRole.owner,
 			});
-			return await getRepository(userChannelRole).save(newRole);
+			await getRepository(userChannelRole).save(newRole);
+			return newChannel;
 		} catch (err) {
 			if (err && err.code === PG_UNIQUE_CONSTRAINT_VIOLATION) {
 				throw new ForbiddenException('This name is already taken');
 			}
-			return;
+			throw err;
 		}
 	}
 
@@ -259,6 +279,9 @@ export class ChannelService {
 		}*/
 	}
 
+	async removeOneRole(id: number) {
+		return getRepository(userChannelRole).delete(id);
+	}
 	/**
 	 *
 	 *

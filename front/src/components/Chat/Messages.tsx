@@ -39,7 +39,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function Message({ message }: MessageProps) {
+function Message({ message, currentUser }: MessageProps) {
   function formatDate(date: Date) {
     var theMinutesNow = new Date().getTime() / (1000 * 60);
     var theMinutesMessage = new Date(date).getTime() / (1000 * 60);
@@ -63,7 +63,7 @@ function Message({ message }: MessageProps) {
           {formatDate(message.date)}
         </Typography>
       </Grid>
-      {message.author.id_pseudo !== "Thib" ? (
+      {message.author.id_pseudo !== currentUser.id_pseudo ? (
         <Grid item xs={1} md={3} lg={1}>
           <Avatar src={message.author.avatar}></Avatar>
         </Grid>
@@ -71,7 +71,7 @@ function Message({ message }: MessageProps) {
         <div></div>
       )}
       <Grid item xs={11} md={9} lg={11}>
-        {message.author.id_pseudo === "Thib" ? (
+        {message.author.id_pseudo === currentUser.id_pseudo ? (
           <Container className={classes.typo}>
             <Typography
               component="div"
@@ -95,13 +95,13 @@ function Message({ message }: MessageProps) {
     </Grid>
   );
 }
-function Messages({ messageList, innerref }: MessagesProps) {
+function Messages({ messageList, innerref, currentUser }: MessagesProps) {
   const classes = useStyle();
 
   return (
     <Container className={classes.messagesContainer}>
       {messageList.map((elem, key) => (
-        <Message key={key} message={elem}></Message>
+        <Message key={key} message={elem} currentUser={currentUser}></Message>
       ))}
       <div ref={innerref}></div>
     </Container>

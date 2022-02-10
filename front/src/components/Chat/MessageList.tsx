@@ -61,7 +61,11 @@ function MessageList({
     <Grid item xs={12} md={4} lg={6}>
       <Grid container rowSpacing={2}>
         <Grid item xs={12} md={12} lg={12}>
-          <Messages innerref={myRef} messageList={messages}></Messages>
+          <Messages
+            innerref={myRef}
+            messageList={messages}
+            currentUser={currentUser}
+          ></Messages>
         </Grid>
         <Grid item xs={12} md={12} lg={12}>
           <PostMessage submit={postMessage}></PostMessage>

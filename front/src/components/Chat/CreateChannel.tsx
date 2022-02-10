@@ -5,12 +5,15 @@ import {
   Container,
   Modal,
   TextField,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
 import * as React from "react";
 import back from "./backConnection";
-import { CreateChannelProps, ThemeOptions } from "./types";
+import { CreateChannelProps, ThemeOptions, channelType } from "./types";
 
 const style = {
   position: "absolute" as "absolute",
@@ -42,14 +45,20 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
 
 function CreateChannel({ fetchChannelList }: CreateChannelProps) {
   const [open, setOpenCreate] = React.useState(false);
-  const [content, setContent] = React.useState<string>("");
+  const [roomName, setRoomName] = React.useState<string>("");
+  const [password, setPassword] = React.useState<string>("");
+  const [publicMode, setPublic] = React.useState(true);
+  const [privateMode, setPrivate] = React.useState(false);
+
   const classes = useStyle();
   const handleOpenCreate = () => setOpenCreate(true);
   const handleCloseCreate = () => setOpenCreate(false);
   const fetchPostChannel = async () => {
     const result = await back
       .post(`http://127.0.0.1:3001/channel`, {
-        name: content,
+        name: roomName,
+        mode: publicMode ? channelType.PUBLIC : channelType.PRIVATE,
+        password: password ? password : null,
       })
       .catch((error) => alert(error.response.data.message));
     fetchChannelList();
@@ -79,22 +88,67 @@ function CreateChannel({ fetchChannelList }: CreateChannelProps) {
           >
             CREATE A CHANNEL ROOM
           </Typography>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={publicMode}
+                  onChange={() => {
+                    if (publicMode === true) return;
+                    setPublic(true);
+                    setPrivate(false);
+                  }}
+                />
+              }
+              label="public"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={privateMode}
+                  onChange={() => {
+                    if (privateMode === true) return;
+                    setPublic(false);
+                    setPrivate(true);
+                  }}
+                />
+              }
+              label="private"
+            />
+          </FormGroup>
           <TextField
             className={classes.name}
             id="outlined-basic"
             label="Room name"
             variant="outlined"
-            value={content}
+            value={roomName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setContent(e.currentTarget.value)
+              setRoomName(e.currentTarget.value)
             }
           />
+          {privateMode && (
+            <TextField
+              className={classes.name}
+              id="outlined-basic"
+              label="Password"
+              variant="outlined"
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.currentTarget.value)
+              }
+            />
+          )}
           <Button
             className={classes.button}
             variant="contained"
             onClick={() => {
-              if (content) {
+              if (
+                (publicMode && roomName) ||
+                (privateMode && roomName && password)
+              ) {
                 fetchPostChannel();
+                setRoomName("");
+                setPassword("");
               }
               return;
             }}

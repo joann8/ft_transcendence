@@ -26,11 +26,11 @@ export class Channel {
 	@Column({ unique: true })
 	name: string;
 
-	/*@Column()
-	type: channelType;
-
 	@Column()
-	password?: string | null;*/
+	mode: channelType;
+
+	@Column({ nullable: true })
+	password?: string;
 
 	@OneToMany((type) => Message, (message) => message.channel, {
 		cascade: true,

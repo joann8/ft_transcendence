@@ -3,6 +3,13 @@ import { Socket } from "socket.io-client";
 /**
  *  BACK TYPE
  */
+
+export enum channelType {
+  PUBLIC,
+  PRIVATE,
+  DIRECT,
+}
+
 export enum status {
   OFFLINE = "OFFLINE",
   ONLINE = "ONLINE",
@@ -23,7 +30,7 @@ type Message = {
   date: Date;
 };
 
-type User = {
+/*type User = {
   id: number;
   id_pseudo: string;
   avatar: string;
@@ -37,11 +44,26 @@ type User = {
   achievement1: boolean;
   achievement2: boolean;
   roles: userChannelRole[];
-};
+};*/
+
+interface User {
+  id: number;
+  id_pseudo: string;
+  email: string;
+  avatar: string;
+  role: string;
+  elo: number;
+  status: string;
+  two_factor_enabled: boolean;
+  achievement1: boolean;
+  achievement2: boolean;
+}
 
 type Channel = {
   id: number;
   name: string;
+  mode: channelType;
+  password: string;
   messages: Message[];
   roles: userChannelRole[];
 };
@@ -66,6 +88,7 @@ type userChannelRole = {
 type MessagesProps = {
   messageList: Message[];
   innerref: React.MutableRefObject<HTMLDivElement | null>;
+  currentUser: User;
 };
 type MessageListProps = {
   socket: Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -75,6 +98,7 @@ type MessageListProps = {
 type MessageProps = {
   key: number;
   message: Message;
+  currentUser: User;
 };
 type MessagePostProps = {
   submit: (content: string) => void;
@@ -83,6 +107,7 @@ type ChannelListProps = {
   currentUser: User;
   currentChannel: Channel;
   changeChannel: React.Dispatch<React.SetStateAction<Channel>>;
+  setChannelList: React.Dispatch<React.SetStateAction<Channel[]>>;
   fetchChannelList: () => Promise<void>;
   channelList: Channel[];
 };

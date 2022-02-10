@@ -245,4 +245,15 @@ export class ChannelController {
 	) {
 		return this.channelService.findMessagesOfOne(channel, null, req.user);
 	}
+	/**
+	 * ! DELETE A ROLE
+	 * *http://localhost:3001/channel/role/{id}
+	 * @param id Current channels we will working on
+	 * @returns the entity what we have deleted
+	 */
+
+	@Delete('/role/:id')
+	removeOneRole(@Param('id', ParseIntPipe) id: number) {
+		return this.channelService.removeOneRole(id);
+	}
 }
