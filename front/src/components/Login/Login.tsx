@@ -4,6 +4,7 @@ import { Box } from "@mui/system";
 import React, { useState } from "react";
 import LoginMask from "./LoginMask";
 import { useNavigate } from "react-router";
+import { api_url } from "../../ApiCalls/var";
 
 const boxStyle = {
   position: "absolute" as "absolute",
@@ -40,7 +41,7 @@ export default function Login(props: any) {
 
   const handleSubmit = async () => {
     setIsPending(true);
-    fetch("http://127.0.0.1:3001/2fa/authenticate", {
+    fetch(api_url + "/2fa/authenticate", {
       method: "PUT",
       credentials: "include",
       referrerPolicy: "same-origin",
@@ -78,7 +79,7 @@ export default function Login(props: any) {
       <Grid item>
         <Button
           variant="contained"
-          href="http://127.0.0.1:3001/login/42"
+          href={api_url + "/login/42"}
           size="large"
           endIcon={<Send />}
         >
