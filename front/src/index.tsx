@@ -1,7 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import { Route, Routes, BrowserRouter as Router, Navigate } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  BrowserRouter as Router,
+  Navigate,
+} from "react-router-dom";
 import Homepage from "./components/Homepage/Homepage";
 import NoPage from "./components/Errors/NoPage";
 import Game from "./components/Game/Game";
@@ -10,26 +15,39 @@ import Chat from "./components/Chat/Chat";
 import Profile from "./components/Profile/Profile";
 import SideBars from "./components/MainCompo/SideBars";
 import Login from "./components/Login/Login";
-import Admin from "./components/Admin/Dashboard";
 import OtherUser from "./components/Profile/OtherUser";
 import Friend from "./components/Friend/Friend";
 import { createTheme, ThemeProvider } from "@mui/material";
 import Dashboard from "./components/Admin/Dashboard";
 import EditPage from "./components/MainCompo/EditPage";
 import Registration from "./components/Login/Registration";
+import { api_url } from "./ApiCalls/var";
 
 const mdTheme = createTheme({
   palette: {
     primary: {
-      main: '#000000'
+      main: "#000000",
     },
     secondary: {
-      main: '#F185A3'//'#29ADB4' // //'#E8C0C0' 
-    }
-  }
+      main: "#F185A3", //'#29ADB4' // //'#E8C0C0'
+    },
+  },
 });
 
 function Root() {
+  React.useEffect(() => {
+    window.addEventListener("beforeunload", (e) => {
+      e.preventDefault();
+      fetch(api_url + "/user", {
+        method: "PUT",
+        credentials: "include",
+        referrerPolicy: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "OFFLINE" }),
+      });
+    });
+  }, []);
+
   return (
     <ThemeProvider theme={mdTheme}>
       <Router>

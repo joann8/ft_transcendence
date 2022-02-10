@@ -48,8 +48,6 @@ export class AuthService {
 	async ft_login(user: User) {
 		const { access_token, refresh_token } = await this.generateTokens(user);
 		console.log(`${user.id_pseudo} logged in with 42 intranet !`);
-		// FIXME: REMOVE IN PRODUCTION
-		console.log(`access_token=${access_token}`);
 		return { access_token, refresh_token };
 	}
 
@@ -67,8 +65,6 @@ export class AuthService {
 			true,
 		);
 		console.log(`${user.id_pseudo} authenticate with 2FA !`);
-		// FIXME: REMOVE IN PRODUCTION
-		console.log(`access_token=${access_token}`);
 		return { access_token, refresh_token };
 	}
 
@@ -167,8 +163,6 @@ export class AuthService {
 			two_factor_enabled: true,
 		});
 		console.log(`${user.id_pseudo} turned on 2FA !`);
-		// FIXME: REMOVE IN PRODUCTION
-		console.log(`access_token=${access_token}`);
 		return { access_token, refresh_token };
 	}
 
@@ -189,8 +183,6 @@ export class AuthService {
 			user.two_factor_enabled,
 		);
 		console.log(`${user.id_pseudo} refreshed his access_token !`);
-		// FIXME: REMOVE IN PRODUCTION
-		console.log(`access_token=${access_token}`);
 		return access_token;
 	}
 }
