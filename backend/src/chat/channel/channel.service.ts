@@ -18,6 +18,7 @@ import {
 } from './entities/userChannelRole.entity';
 import { CheckBann } from './decorators/channel-banned.decorator';
 import { CreateMessageDto } from '../messages/dto/create-message-dto';
+import { use } from 'passport';
 const PG_UNIQUE_CONSTRAINT_VIOLATION = '23505';
 @Injectable()
 export class ChannelService {
@@ -232,7 +233,11 @@ export class ChannelService {
 	 * @returns list of users's channels
 	 */
 	async findAllofMe(user: User) {
-		const list = user.roles.map((role) => role.channel.id);
+		const list = user.roles
+			.map((role) =>
+				role.role != channelRole.banned ? role.channel.id : null,
+			)
+			.filter((channel) => channel != null);
 		const listRelations = await this.channelRepository.find({
 			where: { id: In(list) },
 			relations: ['roles', 'roles.user'],
@@ -270,13 +275,68 @@ export class ChannelService {
 		user: User,
 		createMesssageDto: CreateMessageDto,
 	) {
-		const userRole = user.roles.find(
-			(elem) => elem.channel.id === channel.id,
-		);
+		const userRole = await getRepository(userChannelRole).findOne({
+			where: {
+				channel: channel,
+				user: user,
+			},
+		});
+		/** IF USER NOT IN CHANNEL */
+		if (!userRole) {
+			return 'you are not in the channel anymore';
+		}
 		/** IF USER IS MUTED */
-		/*if (userRole.role === 'muted') {
-			throw new BadRequestException('You are muted');
-		}*/
+		if (userRole.role === channelRole.muted) {
+			return 'you are muted';
+		}
+		/** IF USER IS BANNED*/
+		if (userRole.role === channelRole.banned) {
+			return 'you are banned';
+		}
+		return null;
+	}
+
+	async createDirectChannel(one: User, two: User) {
+		const newChannel = await this.channelRepository.save(
+			this.channelRepository.create({
+				name: `${one.id_pseudo} - ${two.id_pseudo}`,
+				mode: channelType.DIRECT,
+				password: null,
+			}),
+		);
+		const newRoleOne = getRepository(userChannelRole).create({
+			user: one,
+			channel: newChannel,
+			role: channelRole.user,
+		});
+		const newRoleTwo = getRepository(userChannelRole).create({
+			user: two,
+			channel: newChannel,
+			role: channelRole.user,
+		});
+		await getRepository(userChannelRole).save(newRoleOne);
+		await getRepository(userChannelRole).save(newRoleTwo);
+		return newChannel;
+	}
+
+	async deleteDirectChannel(one: User, two: User) {
+		const directChannel = await this.channelRepository.findOne({
+			where: { name: `${one.id_pseudo} - ${two.id_pseudo}` },
+		});
+		const roles = await getRepository(userChannelRole).find({
+			where: {
+				channel: directChannel,
+			},
+		});
+		await getRepository(userChannelRole).remove(roles);
+		await this.channelRepository.delete(directChannel);
+		return directChannel;
+	}
+
+	async findOneRole(channel: Channel, user: User) {
+		return await getRepository(userChannelRole).findOne({
+			where: { user: user, channel: channel },
+		});
 	}
 
 	async removeOneRole(id: number) {

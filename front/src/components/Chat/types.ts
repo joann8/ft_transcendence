@@ -115,11 +115,14 @@ type CreateChannelProps = {
   fetchChannelList: () => Promise<void>;
 };
 type RoleListProps = {
+  socket: Socket<ServerToClientEvents, ClientToServerEvents>;
+  fetchChannelList: () => Promise<void>;
   currentChannel: Channel;
   currentUser: User;
 };
 type AddUserProps = {
   currentChannel: Channel;
+  socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
   fetchUsers: () => Promise<void>;
 };
@@ -133,10 +136,15 @@ type ThemeOptions = {
 
 interface ServerToClientEvents {
   message: (channel: Channel, message: Message) => void;
+  exception: (exception: string) => void;
+  reload: (channel: Channel) => void;
   channelConnect: (channel: Channel) => void;
 }
 interface ClientToServerEvents {
   message: (user: User, channel: Channel, content: string) => void;
+  exception: (exception: string) => void;
+  reload: (channel: Channel) => void;
+
   channelConnect: (channel: Channel) => void;
 }
 

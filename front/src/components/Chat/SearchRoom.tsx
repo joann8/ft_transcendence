@@ -8,9 +8,10 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
+import { channel } from "diagnostics_channel";
 import * as React from "react";
 import back from "./backConnection";
-import { Channel, ThemeOptions } from "./types";
+import { Channel, channelType, ThemeOptions } from "./types";
 
 const style = {
   position: "absolute" as "absolute",
@@ -40,17 +41,26 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function SearchRoom() {
+function SearchRoom({ channelList }) {
   const [search, setOpenSearch] = React.useState(false);
-  const [currentSearchRoom, setCurrentSearchRoom] = React.useState(0);
+  const [currentSearchRoom, setCurrentSearchRoom] = React.useState<Channel>();
   const [content, setContent] = React.useState<string>("");
+  const [channelListId, setChannelListId] = React.useState<number[]>();
   const [allChannelList, setAllChannelList] = React.useState<Channel[]>([]);
   const classes = useStyle();
+
+  React.useEffect(() => {
+    setChannelListId(channelList.map((elem) => elem.id));
+  }, [channelList]);
+  React.useEffect(() => {
+    setCurrentSearchRoom(allChannelList[0]);
+  }, [allChannelList]);
   const fetchChannelList = async () => {
     const result = await back
       .get("http://127.0.0.1:3001/channel/")
       .catch((error) => alert(error.response.data.message));
     if (!result) return;
+    console.log(result.data);
     setAllChannelList(result.data);
   };
   const handleOpenSearch = () => {
@@ -82,30 +92,39 @@ function SearchRoom() {
           >
             SELECT A ROOM
           </Typography>
-          {allChannelList.map((channel, key) => {
-            if (key === currentSearchRoom)
-              return (
-                <Button key={key} variant="contained">
-                  {channel.name}
-                </Button>
-              );
-            else
-              return (
-                <Button key={key} onClick={() => setCurrentSearchRoom(key)}>
-                  {channel.name}
-                </Button>
-              );
-          })}
-          <TextField
-            className={classes.name}
-            id="outlined-basic"
-            label="Room password"
-            variant="outlined"
-            value={content}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setContent(e.currentTarget.value)
-            }
-          />
+          {currentSearchRoom &&
+            allChannelList.map((channel, key) => {
+              if (channelListId.includes(channel.id)) return;
+              if (channel.id === currentSearchRoom.id)
+                return (
+                  <Button key={key} variant="contained">
+                    {channel.name}
+                  </Button>
+                );
+              else
+                return (
+                  <Button
+                    key={key}
+                    onClick={() => setCurrentSearchRoom(channel)}
+                  >
+                    {channel.name}
+                  </Button>
+                );
+            })}
+          {currentSearchRoom &&
+            currentSearchRoom.mode === channelType.PRIVATE && (
+              <TextField
+                className={classes.name}
+                id="outlined-basic"
+                label="Room password"
+                variant="outlined"
+                value={content}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setContent(e.currentTarget.value)
+                }
+              />
+            )}
+
           <Button
             className={classes.button}
             variant="contained"
@@ -116,7 +135,7 @@ function SearchRoom() {
               return;
             }}
           >
-            SUBMIT
+            JOIN
           </Button>
         </Box>
       </Modal>

@@ -10,7 +10,13 @@ import {
   Menu,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { RoleListProps, ThemeOptions, User, userChannelRole } from "./types";
+import {
+  channelRole,
+  RoleListProps,
+  ThemeOptions,
+  User,
+  userChannelRole,
+} from "./types";
 import * as React from "react";
 import AddUser from "./AddUser";
 import GroupIcon from "@mui/icons-material/Group";
@@ -20,6 +26,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import Group from "@mui/icons-material/Group";
 import back from "./backConnection";
+import { Context } from "../MainCompo/SideBars";
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
   RoleListContainer: () => ({
@@ -65,20 +72,26 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function RoleList({ currentChannel, currentUser }: RoleListProps) {
+function RoleList({
+  currentChannel,
+  currentUser,
+  socket,
+  fetchChannelList,
+}: RoleListProps) {
   const [roleList, setRoleList] = React.useState<userChannelRole[]>([]);
+  const [currentRole, setCurrentRole] = React.useState<userChannelRole>();
   const [targetRole, setTargetRole] = React.useState<userChannelRole>();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const fetchPostAction = async (action: string) => {
-    console.log(targetRole);
     if (!targetRole) return;
     const result = await back
       .put(
         `http://127.0.0.1:3001/channel/${currentChannel.id}/${action}/${targetRole.user.id_pseudo}`
       )
       .catch((error) => alert(error.response.data.message));
+    socket.emit("reload", currentChannel);
     fetchUsers();
   };
   const fetchUsers = async () => {
@@ -86,12 +99,21 @@ function RoleList({ currentChannel, currentUser }: RoleListProps) {
       .get(`http://127.0.0.1:3001/channel/${currentChannel.id}/users`)
       .catch((error) => alert(error.response.data.message));
     if (!result) return;
-    console.log("fetch users ok");
     setRoleList(result.data);
+  };
+  const fetchCurrentRole = async () => {
+    const result = await back
+      .get(`http://127.0.0.1:3001/channel/${currentChannel.id}/role/me`)
+      .catch((error) => alert(error.response.data.message));
+    if (!result) return;
+    if (!result || !result.data || result.data.role === "banned")
+      fetchChannelList();
+    else setCurrentRole(result.data as userChannelRole);
   };
   React.useEffect(() => {
     if (currentChannel) {
       fetchUsers();
+      fetchCurrentRole();
     }
   }, [currentChannel]);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -105,6 +127,18 @@ function RoleList({ currentChannel, currentUser }: RoleListProps) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  React.useEffect(() => {
+    const reloadListener = () => {
+      fetchCurrentRole();
+      fetchUsers();
+    };
+    socket.on("reload", reloadListener);
+    return () => {
+      socket.off("reload", reloadListener);
+    };
+  }, [socket]);
+
   const classes = useStyle();
   return (
     <Grid item xs={12} md={4} lg={3} className={classes.RoleListContainer}>
@@ -179,7 +213,7 @@ function RoleList({ currentChannel, currentUser }: RoleListProps) {
           "aria-labelledby": "basic-button",
         }}
       >
-        {currentUser?.role === "owner" && (
+        {currentRole?.role === channelRole.owner && (
           <MenuItem
             onClick={() => {
               fetchPostAction("admin");
@@ -190,7 +224,8 @@ function RoleList({ currentChannel, currentUser }: RoleListProps) {
             Set Admin
           </MenuItem>
         )}
-        {currentUser?.role === "owner" && (
+        {(currentRole?.role === channelRole.owner ||
+          currentRole?.role === channelRole.admin) && (
           <MenuItem
             onClick={() => {
               fetchPostAction("reset-as-user");
@@ -201,7 +236,8 @@ function RoleList({ currentChannel, currentUser }: RoleListProps) {
             Reset User
           </MenuItem>
         )}
-        {(currentUser?.role === "owner" || currentUser?.role === "admin") && (
+        {(currentRole?.role === channelRole.owner ||
+          currentRole?.role === channelRole.admin) && (
           <MenuItem
             onClick={() => {
               fetchPostAction("mute");
@@ -212,7 +248,8 @@ function RoleList({ currentChannel, currentUser }: RoleListProps) {
             Mute
           </MenuItem>
         )}
-        {(currentUser?.role === "owner" || currentUser?.role === "admin") && (
+        {(currentRole?.role === channelRole.owner ||
+          currentRole?.role === channelRole.admin) && (
           <MenuItem
             onClick={() => {
               fetchPostAction("bann");
@@ -223,7 +260,8 @@ function RoleList({ currentChannel, currentUser }: RoleListProps) {
             Bann
           </MenuItem>
         )}
-        {(currentUser?.role === "owner" || currentUser?.role === "admin") && (
+        {(currentRole?.role === channelRole.owner ||
+          currentRole?.role === channelRole.admin) && (
           <MenuItem
             onClick={() => {
               fetchPostAction("kick");
@@ -239,6 +277,7 @@ function RoleList({ currentChannel, currentUser }: RoleListProps) {
       <AddUser
         fetchUsers={fetchUsers}
         currentChannel={currentChannel}
+        socket={socket}
       ></AddUser>
     </Grid>
   );

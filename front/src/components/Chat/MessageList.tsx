@@ -50,10 +50,15 @@ function MessageList({
         return newMessages;
       });
     };
-
+    const exceptionListener = (exception: string) => {
+      console.log(exception);
+      alert(exception);
+    };
     socket.on("message", messageListener);
+    socket.on("exception", exceptionListener);
     return () => {
       socket.off("message", messageListener);
+      socket.off("exception", exceptionListener);
     };
   }, [socket]);
 

@@ -1,5 +1,5 @@
 import { Container, Grid } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box, margin } from "@mui/system";
 import Toolbar from "@mui/material/Toolbar";
 import * as React from "react";
 import MessageList from "./MessageList";
@@ -17,6 +17,7 @@ import back from "./backConnection";
 import CreateChannel from "./CreateChannel";
 import { io, Socket } from "socket.io-client";
 import { Context } from "../MainCompo/SideBars";
+import SearchRoom from "./SearchRoom";
 
 function Chat() {
   /*
@@ -30,8 +31,6 @@ function Chat() {
     React.useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
   const [channelList, setChannelList] = React.useState<Channel[]>([]);
   const [currentChannel, setCurrentChannel] = React.useState<Channel>();
-
-  //const [currentUser, setCurrentUser] = React.useState<User>();
   const currentUser = React.useContext(Context).user;
   /** BACK END CALLS */
 
@@ -45,21 +44,11 @@ function Chat() {
     setCurrentChannel(result.data[0]);
   };
 
-  /*async function fetchCurrentUser() {
-    const result = await back
-      .get("http://127.0.0.1:3001/user")
-      .catch((error) => alert(error.response.data.message));
-    if (!result) return;
-
-    setCurrentUser(result.data);
-  }*/
-
   /*
    *   HOOKS
    */
 
   React.useEffect(() => {
-    //fetchCurrentUser();
     fetchChannelList();
   }, []);
 
@@ -112,17 +101,45 @@ function Chat() {
             ) : (
               <div>Not Connected</div>
             )}
-
             <RoleList
+              socket={socket}
               currentUser={currentUser}
               currentChannel={currentChannel}
+              fetchChannelList={fetchChannelList}
             ></RoleList>
           </Grid>
         </Container>
       </Box>
     );
   else
-    return <CreateChannel fetchChannelList={fetchChannelList}></CreateChannel>;
+    return (
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === "light"
+              ? theme.palette.grey[100]
+              : theme.palette.grey[900],
+          flexGrow: 1,
+          height: "100vh",
+          overflow: "auto",
+        }}
+      >
+        <Toolbar />
+        <Container disableGutters maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Grid container columnSpacing={1} rowSpacing={0}>
+            <Grid item xs={6} md={6} lg={6}>
+              <CreateChannel
+                fetchChannelList={fetchChannelList}
+              ></CreateChannel>
+            </Grid>
+            <Grid item xs={6} md={6} lg={6}>
+              <SearchRoom channelList={channelList}></SearchRoom>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+    );
 }
 
 export default Chat;

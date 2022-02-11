@@ -155,7 +155,7 @@ function ChannelList({
         }
       })}
       <CreateChannel fetchChannelList={fetchChannelList}></CreateChannel>
-      <SearchRoom></SearchRoom>
+      <SearchRoom channelList={channelList}></SearchRoom>
     </Grid>
   );
 }

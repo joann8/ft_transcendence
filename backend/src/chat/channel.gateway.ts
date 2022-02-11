@@ -8,7 +8,7 @@ import {
 import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
 import { OnGatewayConnection } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { BadRequestException, Logger } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { Channel } from './channel/entities/channel.entity';
 import { ChannelService } from './channel/channel.service';
@@ -65,14 +65,25 @@ export class ChannelGateway
 			`client : ${client.id} joined ${this.clientsRooms[`${client.id}`]}`,
 		);
 	}
+	@SubscribeMessage('reload')
+	async handleReload(client: Socket, channel: Channel) {
+		//server emit
+		this.server.to(`${channel.name}`).emit('reload');
+	}
 	@SubscribeMessage('message')
 	async handleMessage(
 		client: Socket,
 		[user, channel, content]: [User, Channel, string],
 	) {
-		this.channelService.postMessage(channel, null, user, {
+		const ret = await this.channelService.postMessage(channel, null, user, {
 			content: content,
 		});
+		console.log(ret);
+
+		if (ret) {
+			client.emit('exception', ret);
+			return;
+		}
 		const message = await this.messageService.createOne(channel, user, {
 			content: content,
 		});

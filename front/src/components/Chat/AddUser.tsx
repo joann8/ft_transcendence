@@ -32,7 +32,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function AddUser({ fetchUsers, currentChannel }: AddUserProps) {
+function AddUser({ fetchUsers, currentChannel, socket }: AddUserProps) {
   const [open, setOpen] = React.useState(false);
   const [content, setContent] = React.useState<string>("");
 
@@ -43,7 +43,8 @@ function AddUser({ fetchUsers, currentChannel }: AddUserProps) {
     const result = await back
       .put(`http://127.0.0.1:3001/channel/${currentChannel.id}/add/${pseudo}`)
       .catch((error) => alert(error.response.data.message));
-    fetchUsers();
+    //fetchUsers();
+    socket.emit("reload", currentChannel);
     setOpen(false);
   };
   return (
