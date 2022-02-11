@@ -7,9 +7,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { IUser } from '../Profile/profileStyle'
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Avatar, Button, ButtonGroup, Divider, Typography } from '@mui/material';
+import { Avatar, Button, ButtonGroup, Typography } from '@mui/material';
 import { Context } from '../MainCompo/SideBars';
 import { LockOpenTwoTone, LockTwoTone } from '@mui/icons-material';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -42,8 +42,11 @@ export default function FriendList() {
                 referrerPolicy: "same-origin"
             })
             .then(res => {
-                if (res.status === 401)
+                if (res.status === 401 || res.status === 403) {
+                    if (res.status === 403)
+                        alert("You are banned from this website")
                     navigate("/login")
+                }
                 else if (!res.ok)
                     throw new Error(res.statusText)
                 return res.json()
@@ -70,15 +73,17 @@ export default function FriendList() {
             body: JSON.stringify({
                 id_pseudo: otherUserPseudo
             })
+        }).then(res => {
+            if (res.status === 401 || res.status === 403) {
+                if (res.status === 403)
+                    alert("You are banned from this website")
+                navigate("/login")
+            }
+            else if (!res.ok)
+                throw new Error(res.statusText)
+            else
+                return true
         })
-            .then(res => {
-                if (res.status === 401)
-                    navigate('/login')
-                else if (!res.ok)
-                    throw new Error(res.statusText)
-                else
-                    return true
-            })
             .catch((error) => {
                 throw new Error(`${error}`)
             })
@@ -100,8 +105,11 @@ export default function FriendList() {
             })
         })
             .then(res => {
-                if (res.status === 401)
-                    navigate('/login')
+                if (res.status === 401 || res.status === 403) {
+                    if (res.status === 403)
+                        alert("You are banned from this website")
+                    navigate("/login")
+                }
                 else if (!res.ok)
                     throw new Error(res.statusText)
                 else
@@ -113,7 +121,7 @@ export default function FriendList() {
         return ret
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         getFriends()
     }, [modal])
 

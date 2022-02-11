@@ -1,4 +1,4 @@
-import  React from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -30,7 +30,7 @@ const style = {
 const request = {
     padding: "10px",
     alignItems: "center",
-   // border: " 1px solid black"
+    // border: " 1px solid black"
 
 }
 
@@ -48,8 +48,11 @@ export default function FriendRequestModal(props: any) {
             referrerPolicy: "same-origin"
         })
             .then((res) => {
-                if (res.status === 401)
+                if (res.status === 401 || res.status === 403) {
+                    if (res.status === 403)
+                        alert("You are banned from this website")
                     navigate("/login")
+                }
                 else if (!res.ok) {
                     console.log("res : ", res)
                     throw new Error(res.statusText)
@@ -79,8 +82,11 @@ export default function FriendRequestModal(props: any) {
             })
         })
             .then(res => {
-                if (res.status === 401)
-                    navigate('/login')
+                if (res.status === 401 || res.status === 403) {
+                    if (res.status === 403)
+                        alert("You are banned from this website")
+                    navigate("/login")
+                }
                 else if (!res.ok)
                     throw new Error(res.statusText)
                 else
@@ -106,8 +112,11 @@ export default function FriendRequestModal(props: any) {
             })
         })
             .then(res => {
-                if (res.status === 401)
-                    navigate('/login')
+                if (res.status === 401 || res.status === 403) {
+                    if (res.status === 403)
+                        alert("You are banned from this website")
+                    navigate("/login")
+                }
                 else if (!res.ok)
                     throw new Error(res.statusText)
                 else
