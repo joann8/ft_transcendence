@@ -88,7 +88,12 @@ export default function Registration() {
                     body: formData
                 })
                     .then(res => {
-                        if (!res.ok)
+                        if (res.status === 401 || res.status === 403) {
+                            if (res.status === 403)
+                                alert("You are banned from this website")
+                            navigate("/login")
+                        }
+                        else if (!res.ok)
                             throw new Error(res.statusText)
                     })
                     .catch(error => {
@@ -122,7 +127,12 @@ export default function Registration() {
                 body: JSON.stringify(updatePseudo),
             })
                 .then(res => {
-                    if (!res.ok) {
+                    if (res.status === 401 || res.status === 403) {
+                        if (res.status === 403)
+                            alert("You are banned from this website")
+                        navigate("/login")
+                    }
+                    else if (!res.ok) {
                         if (res.status === 409)
                             throw new Error("Pseudo not available")
                         else
@@ -133,6 +143,7 @@ export default function Registration() {
                     throw new Error(`Update Pseudo Failed : [${error}]`)
                 })
         }
+
 
         const handleCompleteRegistration = async () => {
             try {

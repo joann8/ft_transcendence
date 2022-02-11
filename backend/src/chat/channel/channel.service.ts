@@ -297,6 +297,7 @@ export class ChannelService {
 	}
 
 	async createDirectChannel(one: User, two: User) {
+		console.log('la');
 		const newChannel = await this.channelRepository.save(
 			this.channelRepository.create({
 				name: `${one.id_pseudo} - ${two.id_pseudo}`,
@@ -307,12 +308,12 @@ export class ChannelService {
 		const newRoleOne = getRepository(userChannelRole).create({
 			user: one,
 			channel: newChannel,
-			role: channelRole.user,
+			role: channelRole.owner,
 		});
 		const newRoleTwo = getRepository(userChannelRole).create({
 			user: two,
 			channel: newChannel,
-			role: channelRole.user,
+			role: channelRole.owner,
 		});
 		await getRepository(userChannelRole).save(newRoleOne);
 		await getRepository(userChannelRole).save(newRoleTwo);

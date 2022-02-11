@@ -5,11 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Relation } from './entities/relation.entity';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
+import { ChannelService } from 'src/chat/channel/channel.service';
+import { ChannelModule } from 'src/chat/channel/channel.module';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Relation, User])],
+	imports: [TypeOrmModule.forFeature([Relation, User]), ChannelModule],
 	exports: [TypeOrmModule, RelationService, UserService],
-	providers: [RelationService, UserService],
+	providers: [RelationService, UserService, ChannelService],
 	controllers: [RelationController],
 })
 export class RelationModule {}

@@ -48,8 +48,11 @@ export default function OtherUser() {
             referrerPolicy: "same-origin"
         })
             .then((res) => {
-                if (res.status === 401) {
-                    navigate("/login");
+                if (res.status === 401 || res.status === 403)
+                {
+                    if (res.status === 403)
+                        alert("You are banned from this website")
+                    navigate("/login")
                 }
                 else if (!res.ok) {
                     throw new Error(res.statusText);
@@ -77,8 +80,12 @@ export default function OtherUser() {
                 method: "GET",
             }
         ).then((res) => {
-            if (res.status === 401)
+            if (res.status === 401 || res.status === 403)
+            {
+                if (res.status === 403)
+                    alert("You are banned from this website")
                 navigate("/login")
+            }
             else if (!res.ok) {
                 throw new Error(res.statusText)
             }
@@ -95,7 +102,6 @@ export default function OtherUser() {
                 else
                     resData = 0
                 setRelation(resData)
-                console.log("Relation state : ", resData)
                 return resData;
             })
             .catch((err) => {
@@ -118,8 +124,12 @@ export default function OtherUser() {
             })
         })
             .then(res => {
-                if (res.status === 401)
-                    navigate('/login')
+                if (res.status === 401 || res.status === 403)
+                {
+                    if (res.status === 403)
+                        alert("You are banned from this website")
+                    navigate("/login")
+                }
                 else if (!res.ok)
                     throw new Error(res.statusText)
                 else
@@ -147,8 +157,12 @@ export default function OtherUser() {
             })
         })
             .then(res => {
-                if (res.status === 401)
-                    navigate('/login')
+                if (res.status === 401 || res.status === 403)
+                {
+                    if (res.status === 403)
+                        alert("You are banned from this website")
+                    navigate("/login")
+                }
                 else if (!res.ok)
                     throw new Error(res.statusText)
                 else
@@ -219,7 +233,6 @@ export default function OtherUser() {
                 addButton = "Accept"
             else
                 addButton = (status === 0 ? "Add" : "Waiting")
-            console.log("ici?")
             return (
                 <Button variant="contained"
                     disabled={status === 1 ? true : false}
@@ -237,7 +250,6 @@ export default function OtherUser() {
     }
 
     function ButtonBlock({ status }) {
-        console.log("ButtonBlock status :", status)
         return (
             <Fragment>
                 {otherUserData.achievement1 ? <Chip sx={{ margin: "2px" }} icon={<StarsIcon />} label="Win with Max Score (3-0)" color="success" /> : <Chip sx={{ margin: "2px" }} icon={<StarsIcon />} label="Win with Max Score (3-0)" variant="outlined" color="secondary" />}

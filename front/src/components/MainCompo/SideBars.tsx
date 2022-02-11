@@ -114,9 +114,12 @@ export default function SideBar(props: any) {
       referrerPolicy: "same-origin",
     })
       .then((res) => {
-        if (res.status === 401) {
-          navigate("/login");
-        } else if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          if (res.status === 403)
+            alert("You are banned from this website")
+          navigate("/login")
+        }
+        else if (!res.ok) {
           throw new Error(res.statusText);
         }
         return res.json();
@@ -152,7 +155,7 @@ export default function SideBar(props: any) {
     refreshTokens();
   }, [update]);
 
-  
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -219,11 +222,11 @@ export default function SideBar(props: any) {
                     }}
                   >
                     <Button
-                    size="small"
-                    style={{ border: "1px solid white", color: "#FFFFFF", margin : 1}}
-                    startIcon={<EditIcon />}
-                    onClick={handleEditOpen}
-                  >
+                      size="small"
+                      style={{ border: "1px solid white", color: "#FFFFFF", margin: 1 }}
+                      startIcon={<EditIcon />}
+                      onClick={handleEditOpen}
+                    >
                       Edit
                     </Button>
                     <Menu

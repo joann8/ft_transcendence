@@ -24,7 +24,7 @@ import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import BlockIcon from "@mui/icons-material/Block";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import Group from "@mui/icons-material/Group";
+import { useNavigate } from "react-router";
 import back from "./backConnection";
 import { Context } from "../MainCompo/SideBars";
 
@@ -83,12 +83,42 @@ function RoleList({
   socket,
   fetchChannelList,
 }: RoleListProps) {
+  const navigate = useNavigate();
   const [roleList, setRoleList] = React.useState<userChannelRole[]>([]);
   const [currentRole, setCurrentRole] = React.useState<userChannelRole>();
   const [targetRole, setTargetRole] = React.useState<userChannelRole>();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+  const onClickDefy = (challenger: User, challengee: User) => {
+    //console.log(`${challenger.id_pseudo} is defying ${challengee.id_pseudo}`);
+    //console.log(`challenger status : ${challenger.status}`);
+    if (challenger.status === "IN GAME") alert("Your are already in a game");
+    else if (challengee.status === "IN GAME")
+      alert(`${challengee.id_pseudo} is busy playing`);
+    else if (challengee.status === "IN QUEUE")
+      alert(`${challengee.id_pseudo} is already waiting for another player`);
+    else if (challengee.status === "OFFLINE")
+      alert(`${challengee.id_pseudo} is not connected`);
+    else navigate(`/game/challenge/${challengee.id_pseudo}`);
+  };
+
+  const onClickWatch = (watcher: User, watchee: User) => {
+    //console.log(`${watcher.id_pseudo} is watching ${watchee.id_pseudo}`);
+    //console.log(`watchee status : ${watchee.status}`);
+    if (watchee.status === "ONLINE" || watchee.status === "IN QUEUE")
+      alert(`${watchee.id_pseudo} is not in a game at the moment`);
+    else if (watchee.status === "OFFLINE")
+      alert(`${watchee.id_pseudo} is not connected`);
+    else navigate(`/game/watch/${watchee.id_pseudo}`);
+  };
+
+  const handleDuel = () => {
+    onClickDefy(currentUser, targetRole.user);
+  };
+  const handleWatch = () => {
+    onClickWatch(currentUser, targetRole.user);
+  };
   const fetchPostAction = async (action: string) => {
     if (!targetRole) return;
     const result = await back
@@ -288,7 +318,8 @@ function RoleList({
             Kick
           </MenuItem>
         )}
-        {<MenuItem onClick={handleClose}>Duel</MenuItem>}
+        {<MenuItem onClick={handleDuel}>Duel</MenuItem>}
+        {<MenuItem onClick={handleWatch}>Watch</MenuItem>}
       </Menu>
       <AddUser
         fetchUsers={fetchUsers}
