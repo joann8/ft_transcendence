@@ -110,6 +110,7 @@ type ChannelListProps = {
   setChannelList: React.Dispatch<React.SetStateAction<Channel[]>>;
   fetchChannelList: () => Promise<void>;
   channelList: Channel[];
+  socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 };
 type CreateChannelProps = {
   fetchChannelList: () => Promise<void>;

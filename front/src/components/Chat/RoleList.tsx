@@ -70,6 +70,11 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
     verticalAlign: "middle",
     display: "inline-block",
   }),
+  elem2: () => ({
+    width: "100%",
+    margin: "0",
+    padding: "0",
+  }),
 }));
 
 function RoleList({
@@ -93,6 +98,17 @@ function RoleList({
       .catch((error) => alert(error.response.data.message));
     socket.emit("reload", currentChannel);
     fetchUsers();
+  };
+
+  const fetchLeaveChannel = async () => {
+    const result = await back
+      .get(`http://127.0.0.1:3001/channel/leave/${currentChannel.id}`)
+      .catch((error) => alert(error.response.data.message));
+    socket.emit("reload", currentChannel);
+    fetchChannelList();
+  };
+  const handleClickLeave = () => {
+    fetchLeaveChannel();
   };
   const fetchUsers = async () => {
     const result = await back
@@ -279,6 +295,15 @@ function RoleList({
         currentChannel={currentChannel}
         socket={socket}
       ></AddUser>
+      {currentRole?.role !== channelRole.owner && (
+        <Button
+          variant="contained"
+          onClick={handleClickLeave}
+          className={classes.elem2}
+        >
+          LEAVE
+        </Button>
+      )}
     </Grid>
   );
 }

@@ -41,7 +41,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function SearchRoom({ channelList }) {
+function SearchRoom({ channelList, fetchChannelListUser, socket }) {
   const [search, setOpenSearch] = React.useState(false);
   const [currentSearchRoom, setCurrentSearchRoom] = React.useState<Channel>();
   const [content, setContent] = React.useState<string>("");
@@ -62,6 +62,14 @@ function SearchRoom({ channelList }) {
     if (!result) return;
     console.log(result.data);
     setAllChannelList(result.data);
+  };
+  const fetchJoinRoom = async () => {
+    const result = await back
+      .get(`http://127.0.0.1:3001/channel/join/${currentSearchRoom.id}`)
+      .catch((error) => alert(error.response.data.message));
+    if (!result) return;
+    socket.emit("reload", currentSearchRoom);
+    fetchChannelListUser();
   };
   const handleOpenSearch = () => {
     fetchChannelList();
@@ -128,12 +136,7 @@ function SearchRoom({ channelList }) {
           <Button
             className={classes.button}
             variant="contained"
-            onClick={() => {
-              if (content) {
-                // submit(content);
-              }
-              return;
-            }}
+            onClick={fetchJoinRoom}
           >
             JOIN
           </Button>

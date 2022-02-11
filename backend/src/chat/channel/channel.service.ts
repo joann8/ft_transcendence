@@ -321,7 +321,14 @@ export class ChannelService {
 
 	async deleteDirectChannel(one: User, two: User) {
 		const directChannel = await this.channelRepository.findOne({
-			where: { name: `${one.id_pseudo} - ${two.id_pseudo}` },
+			where: [
+				{
+					name: `${one.id_pseudo} - ${two.id_pseudo}`,
+				},
+				{
+					name: `${two.id_pseudo} - ${one.id_pseudo}`,
+				},
+			],
 		});
 		const roles = await getRepository(userChannelRole).find({
 			where: {
@@ -341,6 +348,42 @@ export class ChannelService {
 
 	async removeOneRole(id: number) {
 		return getRepository(userChannelRole).delete(id);
+	}
+
+	async joinChannel(channel: Channel, user: User) {
+		console.log(channel);
+		/* If the user is already in the channel */
+		if (channel.roles.find((elem) => elem.user.id === user.id))
+			throw new ForbiddenException('User already in the channel');
+		/* If there is already 5 users in the channel */
+		if (channel.roles.length >= 5)
+			throw new ForbiddenException(
+				'There is already 5 users in the channel',
+			);
+		/** We save */
+		const userChannelRoleRepo = getRepository(userChannelRole);
+
+		const newRole = await userChannelRoleRepo.save(
+			userChannelRoleRepo.create({
+				user: user,
+				channel: channel,
+				role: channelRole.user,
+			}),
+		);
+		channel.roles.push(newRole);
+
+		const test = await getRepository(Channel).save(channel);
+		return newRole;
+	}
+
+	async leaveChannel(channel: Channel, user: User) {
+		const userRole = user.roles.find(
+			(elem) => elem.channel.id === channel.id,
+		);
+		/** KICK */
+		if (userRole.role !== 'banned' && userRole.role !== 'owner')
+			await getRepository(userChannelRole).remove(userRole);
+		return channel;
 	}
 	/**
 	 *

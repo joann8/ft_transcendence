@@ -62,6 +62,7 @@ function ChannelList({
   channelList,
   setChannelList,
   fetchChannelList,
+  socket,
 }: ChannelListProps) {
   const classes = useStyle();
 
@@ -155,7 +156,11 @@ function ChannelList({
         }
       })}
       <CreateChannel fetchChannelList={fetchChannelList}></CreateChannel>
-      <SearchRoom channelList={channelList}></SearchRoom>
+      <SearchRoom
+        channelList={channelList}
+        fetchChannelListUser={fetchChannelList}
+        socket={socket}
+      ></SearchRoom>
     </Grid>
   );
 }

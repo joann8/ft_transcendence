@@ -89,6 +89,7 @@ function Chat() {
               currentChannel={currentChannel}
               changeChannel={setCurrentChannel}
               channelList={channelList}
+              socket={socket}
               setChannelList={setChannelList}
               fetchChannelList={fetchChannelList}
             ></ChannelList>
@@ -134,7 +135,11 @@ function Chat() {
               ></CreateChannel>
             </Grid>
             <Grid item xs={6} md={6} lg={6}>
-              <SearchRoom channelList={channelList}></SearchRoom>
+              <SearchRoom
+                socket={socket}
+                channelList={channelList}
+                fetchChannelListUser={fetchChannelList}
+              ></SearchRoom>
             </Grid>
           </Grid>
         </Container>

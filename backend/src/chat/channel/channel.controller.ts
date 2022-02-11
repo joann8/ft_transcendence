@@ -268,4 +268,21 @@ export class ChannelController {
 	removeOneRole(@Param('id', ParseIntPipe) id: number) {
 		return this.channelService.removeOneRole(id);
 	}
+	/**
+	 * ! JOIN A CHANNEL
+	 * *http://localhost:3001/channel/role/{id}
+	 * @param id Current channels we will working on
+	 * @returns the entity what we have deleted
+	 */
+
+	@Get('/join/:id')
+	joinOne(@Req() req, @Param('id', ParseChannelPipe) channel: Channel) {
+		console.log(channel);
+		return this.channelService.joinChannel(channel, req.user);
+	}
+
+	@Get('/leave/:id')
+	leaveOne(@Req() req, @Param('id', ParseChannelPipe) channel: Channel) {
+		return this.channelService.leaveChannel(channel, req.user);
+	}
 }
