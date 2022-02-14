@@ -1,13 +1,9 @@
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import {
-	ForbiddenException,
-	Injectable,
-	UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
-import { status, user_role } from 'src/user/entities/user.entity';
+import { status } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -34,7 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 				'Token does not match any user in DB',
 			);
 		} else if (user.status === status.BAN) {
-			throw new ForbiddenException(
+			throw new UnauthorizedException(
 				'You are ban from this website, get out of my sight',
 			);
 		}
