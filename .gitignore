@@ -58,3 +58,6 @@ package-lock.json
 /front/npm-debug.log*
 /front/yarn-debug.log*
 /front/yarn-error.log*
+
+#avatars
+/backend/avatars

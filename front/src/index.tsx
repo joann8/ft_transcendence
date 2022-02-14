@@ -19,7 +19,10 @@ import OtherUser from "./components/Profile/OtherUser";
 import Friend from "./components/Friend/Friend";
 import { createTheme, ThemeProvider } from "@mui/material";
 import Dashboard from "./components/Admin/Dashboard";
+import EditPage from "./components/MainCompo/EditPage";
+import Registration from "./components/Login/Registration";
 import { api_url } from "./ApiCalls/var";
+import { useCookies } from "react-cookie";
 
 const mdTheme = createTheme({
   palette: {
@@ -33,17 +36,30 @@ const mdTheme = createTheme({
 });
 
 function Root() {
+  const [cookies, setCookie] = useCookies(["access_token"]);
+  console.log(cookies);
+
   React.useEffect(() => {
-    window.addEventListener("beforeunload", (e) => {
-      e.preventDefault();
-      fetch(api_url + "/user", {
-        method: "PUT",
-        credentials: "include",
-        referrerPolicy: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "OFFLINE" }),
+    if (cookies.access_token) {
+      window.addEventListener("beforeunload", (e) => {
+        e.preventDefault();
+        fetch(api_url + "/user", {
+          method: "PUT",
+          credentials: "include",
+          referrerPolicy: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "OFFLINE" }),
+        })
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error(res.statusText);
+            }
+          })
+          .catch((err) => {
+            console.error(err.message);
+          });
       });
-    });
+    }
   }, []);
 
   return (
@@ -52,8 +68,10 @@ function Root() {
         <Routes>
           <Route path="/login/twofa" element={<Login twofa={true} />} />
           <Route path="/login" element={<Login twofa={false} />} />
+          <Route path="/registration" element={<Registration />} />
           <Route path="/" element={<SideBars theme={mdTheme} />}>
             <Route index element={<Homepage theme={mdTheme} />} />
+            <Route path="edit" element={<EditPage />} />
             <Route path="game">
               <Route index element={<Game mode={"random"} />} />
               <Route path="challenge">

@@ -30,7 +30,7 @@ export class AuthController {
 	@Get('login/42/redirect')
 	@UseGuards(FortyTwoAuthGuard)
 	async redir(@Req() req, @Res({ passthrough: true }) res) {
-		let front_url = 'http://127.0.0.1:3000';
+		let red_url = process.env.FRONTEND_URL;
 		const { user, created } = req.user;
 		const { access_token, refresh_token } = await this.authService.ft_login(
 			user,
@@ -38,11 +38,11 @@ export class AuthController {
 		res.cookie('access_token', access_token);
 		res.cookie('refresh_token', refresh_token);
 		if (created) {
-			front_url += '/'; // MODIFIER ROUTE POUR ACCEDER A LA MODIFICATION DES VARS USER LORS DE LA CREATION
+			red_url += '/registration';
 		} else if (user.two_factor_enabled) {
-			front_url += '/login/twofa';
+			red_url += '/login/twofa';
 		}
-		res.redirect(front_url);
+		res.redirect(red_url);
 	}
 	// LOGIN WITH 2FA
 	@Public()

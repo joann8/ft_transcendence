@@ -1,6 +1,11 @@
 import * as React from "react";
 import { createContext, Fragment, useEffect } from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import {
+  styled,
+  createTheme,
+  ThemeProvider,
+  useTheme,
+} from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -20,8 +25,6 @@ import {
 } from "@mui/material";
 import { Outlet, useNavigate } from "react-router";
 import EditIcon from "@mui/icons-material/Edit";
-import AvatarModal from "./AvatarModal";
-import InfoModal from "./InfoModal ";
 import { IUser } from "../Profile/profileStyle";
 import { api_url } from "../../ApiCalls/var";
 import TwoFAModal from "./TwoFAModal";
@@ -90,16 +93,7 @@ interface IContext {
 export const Context = createContext<IContext>(null);
 
 export default function SideBar(props: any) {
-  /*
-    const eventSource = new EventSource('http://127.0.0.1:3001/sse');
-    eventSource.onmessage = ({data}) => {
-      console.log('New message', JSON.parse(data));
-      console.log('New message', data);
-    };
-  */
   const [open, setOpen] = React.useState(true);
-  const [avatarModal, setAvatarModal] = React.useState(false);
-  const [pseudoModal, setPseudoModal] = React.useState(false);
   const [twofaModal, setTwofaModal] = React.useState(false);
   const [update, setUpdate] = React.useState(true);
   const [user, setUser] = React.useState<IUser>(null);
@@ -110,7 +104,7 @@ export default function SideBar(props: any) {
   const navigate = useNavigate();
 
   const getUserData = async () => {
-    await fetch(`http://127.0.0.1:3001/user`, {
+    await fetch(api_url + `/user`, {
       method: "GET",
       credentials: "include",
       referrerPolicy: "same-origin",
@@ -127,12 +121,12 @@ export default function SideBar(props: any) {
         setUser(resData);
       })
       .catch((err) => {
-        console.error("Error caught: ", err);
+        alert(err.message);
       });
   };
 
   const refreshTokens = async () => {
-    await fetch(`http://127.0.0.1:3001/refresh`, {
+    await fetch(api_url + `/refresh`, {
       method: "GET",
       credentials: "include",
       referrerPolicy: "same-origin",
@@ -145,7 +139,7 @@ export default function SideBar(props: any) {
         }
       })
       .catch((err) => {
-        console.error("Error caught: ", err);
+        alert(err.message);
       });
   };
 
@@ -154,7 +148,6 @@ export default function SideBar(props: any) {
     refreshTokens();
   }, [update]);
 
-  
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -167,134 +160,115 @@ export default function SideBar(props: any) {
     setAnchorEl(event.currentTarget);
   };
 
-  //const mdTheme = createTheme();
-
   if (!user) {
     return <Fragment />;
   } else {
     return (
       <Fragment>
-          <Box sx={{ display: "flex" }}>
-            <CssBaseline />
-            <AppBar position="absolute" open={open}>
-              <Toolbar
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          <AppBar position="absolute" open={open}>
+            <Toolbar
+              sx={{
+                pr: "24px", // keep right padding when drawer closed
+              }}
+            >
+              <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                onClick={toggleDrawer}
                 sx={{
-                  pr: "24px", // keep right padding when drawer closed
+                  marginRight: "36px",
+                  ...(open && { display: "none" }),
                 }}
               >
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="open drawer"
-                  onClick={toggleDrawer}
-                  sx={{
-                    marginRight: "36px",
-                    ...(open && { display: "none" }),
+                <MenuIcon />
+              </IconButton>
+              <Typography
+                component="h1"
+                variant="h6"
+                color="inherit"
+                noWrap
+                sx={{ flexGrow: 1 }}
+              >
+                Welcome to Transcendence!
+              </Typography>
+              {user && (
+                <Button
+                  variant="outlined"
+                  style={{ textTransform: "none", margin: 1 }}
+                  onClick={() => {
+                    navigate("/profile");
                   }}
                 >
-                  <MenuIcon />
-                </IconButton>
-                <Typography
-                  component="h1"
-                  variant="h6"
-                  color="inherit"
-                  noWrap
-                  sx={{ flexGrow: 1 }}
-                >
-                  Welcome to Transcendence!
-                </Typography>
-                {/* Notification clochette en haut a droite
-                            <IconButton color="inherit">
-                            <Badge badgeContent={4} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                            
-                            </IconButton>
-                
-                            */}
-                {user && (
-                  <Typography sx={{ margin: 1 }}>{user.id_pseudo}</Typography>
-                )}
-                <Divider orientation="vertical" sx={{ margin: 1 }} />
-                {user && <Avatar src={user.avatar}></Avatar>}
+                  <Typography sx={{ color: "#FFFFFF", margin: 1 }}>
+                    {user.id_pseudo}
+                  </Typography>
+                  <Avatar src={user.avatar} style={{ margin: 1 }} />
+                </Button>
+              )}
 
-                <Divider orientation="vertical" sx={{ margin: 1 }} />
-                {user && (
-                  <Fragment>
-                    <Context.Provider
-                      value={{
-                        user: user,
-                        update: update,
-                        setUpdate: setUpdate,
+              <Divider orientation="vertical" sx={{ margin: 1 }} />
+              {user && (
+                <Fragment>
+                  <Context.Provider
+                    value={{
+                      user: user,
+                      update: update,
+                      setUpdate: setUpdate,
+                    }}
+                  >
+                    <Button
+                      size="small"
+                      style={{
+                        border: "1px solid white",
+                        color: "#FFFFFF",
+                        margin: 1,
                       }}
+                      startIcon={<EditIcon />}
+                      onClick={handleEditOpen}
                     >
-                      {" "}
-                      <Button
-                        style={{ border: "1px solid white", color: "#FFFFFF" }}
-                        startIcon={<EditIcon />}
-                        onClick={handleEditOpen}
-                      >
-                        Edit
-                      </Button>
-                      <Menu
-                        id="simple-menu"
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleEditClose}
-                      >
-                        <MenuItem onClick={() => setPseudoModal(true)}>
-                          Pseudo
-                        </MenuItem>
-                        <InfoModal
-                          modalState={pseudoModal}
-                          setModal={setPseudoModal}
-                        />
-                        <MenuItem onClick={() => setAvatarModal(true)}>
-                          Avatar
-                        </MenuItem>
-                        <AvatarModal
-                          modalState={avatarModal}
-                          setModal={setAvatarModal}
-                        />
-                        <MenuItem onClick={() => setTwofaModal(true)}>
-                          Two Factors
-                        </MenuItem>
-                        <TwoFAModal
-                          modalState={twofaModal}
-                          setModal={setTwofaModal}
-                        />
-                      </Menu>
-                    </Context.Provider>
-                  </Fragment>
-                )}
-              </Toolbar>
-            </AppBar>
+                      Edit
+                    </Button>
+                    <Menu
+                      id="simple-menu"
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={handleEditClose}
+                    >
+                      <MenuItem onClick={() => navigate("/edit")}>
+                        {" "}
+                        Profile{" "}
+                      </MenuItem>
+                      <MenuItem onClick={() => setTwofaModal(true)}>
+                        Two Factors
+                      </MenuItem>
+                      <TwoFAModal
+                        modalState={twofaModal}
+                        setModal={setTwofaModal}
+                      />
+                    </Menu>
+                  </Context.Provider>
+                </Fragment>
+              )}
+            </Toolbar>
+          </AppBar>
 
-            <Drawer variant="permanent" open={open}>
-              <Toolbar
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  px: [1],
-                }}
-              >
-                <IconButton onClick={toggleDrawer}>
-                  <ChevronLeftIcon />
-                </IconButton>
-              </Toolbar>
-              <Divider />
-              <Context.Provider
-                value={{
-                  user: user,
-                  update: update,
-                  setUpdate: setUpdate,
-                }}
-              >
-                <MainListItems />
-              </Context.Provider>
-              <Divider />
-            </Drawer>
+          <Drawer variant="permanent" open={open}>
+            <Toolbar
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                px: [1],
+              }}
+            >
+              <IconButton onClick={toggleDrawer}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </Toolbar>
+            <Divider />
             <Context.Provider
               value={{
                 user: user,
@@ -302,9 +276,20 @@ export default function SideBar(props: any) {
                 setUpdate: setUpdate,
               }}
             >
-              <Outlet />
+              <MainListItems />
             </Context.Provider>
-          </Box>
+            <Divider />
+          </Drawer>
+          <Context.Provider
+            value={{
+              user: user,
+              update: update,
+              setUpdate: setUpdate,
+            }}
+          >
+            <Outlet />
+          </Context.Provider>
+        </Box>
       </Fragment>
     );
   }

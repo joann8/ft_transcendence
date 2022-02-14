@@ -9,13 +9,10 @@ import {
   Chip,
 } from "@mui/material";
 import React, { Fragment, useContext, useEffect, useState } from "react";
-import { LockOpenTwoTone, LockTwoTone } from "@mui/icons-material";
 import { useNavigate } from "react-router";
-import NotificationAddIcon from "@mui/icons-material/NotificationAdd";
 import MatchModal from "./MatchModal";
 import profileStyle from "./profileStyle";
 import { IUser } from "./profileStyle";
-import FriendRequestModal from "./FriendRequestModal";
 import { Context } from "../MainCompo/SideBars";
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import StarsIcon from '@mui/icons-material/Stars';
@@ -30,19 +27,13 @@ export default function Profile() {
     avatar: false,
     friend: false,
   });
-  const [update, setUpdate] = useState(0);
-  //   const [userData, setUserData] = useState(defaultUser)
   const [userData, setUserData] = useState<IUser>(context.user);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    //  console.log("Search bar : ", searchInput)
-  });
 
   useEffect(
     () => {
-      //    getUserData()
       setUserData(context.user);
     },
     [context.user] /*[value, update]*/
@@ -57,9 +48,7 @@ export default function Profile() {
     setSearchInput(event.target.value);
   };
 
-  const handleAuth = () => {
-    context.setUpdate(!context.update);
-  };
+
 
   return (
     <Fragment>
@@ -87,59 +76,37 @@ export default function Profile() {
             </Box>
 
             <Box sx={profileStyle.profileBlock}>
-              <Box sx={profileStyle.content_2}>
+              <Box sx={profileStyle.leftRightBox}>
                 <Avatar
                   src={userData.avatar}
                   style={{
+                    border: "2px solid rgba(125, 125, 125)",
                     width: "125px",
                     height: "125px",
-                    overflow: "hidden",
                   }}
                 />
               </Box>
-              <Divider
-                orientation="vertical"
-                sx={{ height: "50%", backgroundColor: "rgba(191, 85, 236, 1)" }}
-              />
-              <Box sx={profileStyle.content_1}>
-                <Typography style={profileStyle.textBox}>
+
+              <Divider orientation="vertical" sx={profileStyle.divider} />
+
+              <Box sx={profileStyle.middleBox}>
+                <Typography style={profileStyle.text}>
                   {userData.id_pseudo}
                 </Typography>
-                <Typography style={profileStyle.textBox}>
-                  {userData.elo}
-                </Typography>
-                <Typography style={profileStyle.textBox}>
+                <Typography style={profileStyle.text}>
                   {userData.email}
                 </Typography>
+                <Typography style={profileStyle.text}>
+                  Rank : {userData.elo}
+                </Typography>
+           
               </Box>
-              <Divider
-                orientation="vertical"
-                sx={{
-                  height: "50%",
-                  backgroundColor: "rgba(191, 85, 236, 1)",
-                }}
-              />
-              <Box sx={profileStyle.content_2}>
-                { context.user.achievement1 ? <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" color="success" /> :  <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" variant="outlined" color="secondary" /> }
-                { context.user.achievement2 ? <Chip icon={<EmojiEventsIcon />} label="Win 3 times" color="success" /> : <Chip icon={<EmojiEventsIcon />} label="Win 3 times" variant="outlined" color="secondary" /> }              
-                <Button
-                  variant="contained"
-                  startIcon={<NotificationAddIcon color="error" />}
-                  onClick={() => {
-                    setModal({ ...modalState, friend: true });
-                  }}
-                >
-                  Friend Request
-                </Button>
-                {modalState.friend ? (
-                  <FriendRequestModal
-                    user={userData}
-                    modalState={modalState.friend}
-                    setModal={setModal}
-                    update={update}
-                    setUpdate={setUpdate}
-                  />
-                ) : null}
+              <Divider orientation="vertical" sx={profileStyle.divider} />
+              <Box sx={profileStyle.leftRightBox}>
+                {context.user.achievement1 ? <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" color="success" /> : <Chip icon={<StarsIcon />} label="Win with Max Score (3-0)" variant="outlined" color="secondary" />}
+                {context.user.achievement2 ? <Chip icon={<EmojiEventsIcon />} label="Win 3 times" color="success" /> : <Chip icon={<EmojiEventsIcon />} label="Win 3 times" variant="outlined" color="secondary" />}
+
+
               </Box>
             </Box>
 
