@@ -59,8 +59,10 @@ export default function MatchModal({ setModal, modalState, user }) {
       method: "GET",
     })
       .then((res) => {
-        if (res.status === 401)
-          navigate("/login");
+        if (res.status === 401) {
+          navigate("/login")
+         throw new Error("You must login")
+        }
         else if (!res.ok)
           throw new Error(res.statusText);
         return res.json();
@@ -80,7 +82,7 @@ export default function MatchModal({ setModal, modalState, user }) {
         setHistory(resData);
       })
       .catch((err) => {
-        alert(`GetMatchHistory : ${err}`);
+        alert(`${err}`);
         handleClose()
       });
   };

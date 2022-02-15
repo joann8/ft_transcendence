@@ -78,8 +78,10 @@ export default function EditPage() {
         body: JSON.stringify(updatePseudo),
       })
         .then(res => {
-          if (res.status === 401) {
-            navigate("/login")
+          if (res.status === 401) 
+          {
+            navigate("/login");
+            throw new Error("You must login")
           }
           else if (!res.ok) {
             if (res.status === 409)
@@ -89,13 +91,14 @@ export default function EditPage() {
           }
         })
     }
+    
     const handleSubmit = async (evt: any) => {
       evt.preventDefault()
       try {
         await updatePseudo()
       }
       catch (error) {
-        alert(`${error}`)
+        alert(`Pseudo Update Failed : ${error}`)
         return
       }
       context.setUpdate(!context.update)
@@ -144,14 +147,16 @@ export default function EditPage() {
           body: formData
         })
           .then(res => {
-            if (res.status === 401) {
-              navigate("/login")
+            if (res.status === 401) 
+            {
+              navigate("/login");
+              throw new Error("You must login")
             }
             else if (!res.ok)
               throw new Error(res.statusText)
           })
           .catch(err => {
-            throw new Error(`Avatar Upload Failed : [${err}]`)
+            throw new Error(`${err}`)
           })
       }
     }
