@@ -267,6 +267,8 @@ export class ChannelService {
 			where: { channel: channel },
 			relations: ['channel', 'author'],
 		});
+		// get the list au block
+		// filter
 		return list;
 	}
 
