@@ -22,11 +22,11 @@ export class RelationService {
 
   //returns ALL the RELATIONSHIPS
   async findAll() {
-    return this.relationsRepository.find({ relations: ["userId1", "userId2"] });
+    return await this.relationsRepository.find({ relations: ["userId1", "userId2"] });
   }
 
   async findAllMyFriend(userId: number) {
-    return this.relationsRepository.find({
+    return await this.relationsRepository.find({
       where: [
         { userId1: userId, relation1: 3, relation2: 3 },
         { userId2: userId, relation1: 3, relation2: 3 },
@@ -38,8 +38,26 @@ export class RelationService {
     })
   }
 
+  async findAllBlocked(userId: number) {
+    //userId == LoggedUser
+    let blockList = await this.relationsRepository.find({
+      where: [
+        { userId1: userId, relation1: 4, relation2: 5 },
+        { userId2: userId, relation1: 5, relation2: 4 },
+      ],
+      relations : ["userId1", "userId2"]
+    })
+    const endList = blockList.map((item) => {
+      if (item.relation2 === 5)
+        return item.userId2bis
+      else
+      return item.userId1bis
+    })
+    return endList
+  }
+
   async findAllMyFriendRequest(userId: number) {
-    return this.relationsRepository.find({
+    return await this.relationsRepository.find({
       where: [
         { userId1: userId, relation1: 2 },
         { userId2: userId, relation2: 2 }
