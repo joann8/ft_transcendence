@@ -20,6 +20,8 @@ services:
       - "3001:3001"
     depends_on:
       - postgres
+    env_file:
+      - .env.backend
 
   frontend:
     build:
@@ -29,6 +31,8 @@ services:
     depends_on:
       - postgres
       - backend
+    env_file:
+      - .env.front
 
   pgadmin:
     container_name: pgadmin4_container
