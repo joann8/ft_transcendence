@@ -61,20 +61,22 @@ export default function OtherUser() {
     })
       .then((res) => {
         if (res.status === 401) {
-          navigate("/login");
-        } else if (!res.ok) {
+          navigate("/login")
+          throw new Error("You must login")
+        }
+        else if (res.status === 404)
+          return null
+        else if (!res.ok) {
           throw new Error(res.statusText);
         }
         return res.json();
       })
       .then((resData) => {
-        //  alert(`User [${resData.id_pseudo}] was found`)
         setOtherUserData(resData);
         return resData;
       })
       .catch((err) => {
-        setOtherUserData(null);
-        //alert(`Error while searching for user : [${err}]`)
+        alert(err)
       });
     setLoaded(true);
     return tmpOtherUserData;
@@ -90,7 +92,10 @@ export default function OtherUser() {
       }
     )
       .then((res) => {
-        if (res.status === 401) navigate("/login");
+        if (res.status === 401) {
+          navigate("/login")
+          throw new Error("You must login")
+        }
         else if (!res.ok) {
           throw new Error(res.statusText);
         }
@@ -112,7 +117,7 @@ export default function OtherUser() {
         return resData;
       })
       .catch((err) => {
-        alert(`GetRelation : ${err}`);
+        alert(err);
       });
     return relationData;
   };
@@ -136,15 +141,17 @@ export default function OtherUser() {
       }),
     })
       .then((res) => {
-        if (res.status === 401) 
-          navigate("/login");
-        else if (!res.ok) 
+        if (res.status === 401) {
+          navigate("/login")
+          throw new Error("You must login")
+        }
+        else if (!res.ok)
           throw new Error(res.statusText);
-        else 
+        else
           return true;
       })
       .catch((err) => {
-        alert(`UpdateRelation: ${err}`);
+        alert(`${err}`);
         return false;
       });
     return ret;

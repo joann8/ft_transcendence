@@ -1,10 +1,9 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
-import { Fragment, useContext, useEffect, useState } from 'react';
-import { Grid, TextField, BottomNavigation, IconButton, Avatar, styled, MobileStepper, useTheme, Paper } from '@mui/material';
-import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera, SentimentSatisfiedOutlined } from '@mui/icons-material';
+import { Fragment, useContext, useState } from 'react';
+import { Grid, TextField, BottomNavigation, Avatar, styled, MobileStepper, useTheme, Paper } from '@mui/material';
+import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import validator from 'validator'
 import registrationBg from "../Images/registrationBg.jpg"
@@ -79,8 +78,10 @@ export default function EditPage() {
         body: JSON.stringify(updatePseudo),
       })
         .then(res => {
-          if (res.status === 401) {
-            navigate("/login")
+          if (res.status === 401) 
+          {
+            navigate("/login");
+            throw new Error("You must login")
           }
           else if (!res.ok) {
             if (res.status === 409)
@@ -90,13 +91,14 @@ export default function EditPage() {
           }
         })
     }
+    
     const handleSubmit = async (evt: any) => {
       evt.preventDefault()
       try {
         await updatePseudo()
       }
       catch (error) {
-        alert(`${error}`)
+        alert(`Pseudo Update Failed : ${error}`)
         return
       }
       context.setUpdate(!context.update)
@@ -145,14 +147,16 @@ export default function EditPage() {
           body: formData
         })
           .then(res => {
-            if (res.status === 401) {
-              navigate("/login")
+            if (res.status === 401) 
+            {
+              navigate("/login");
+              throw new Error("You must login")
             }
             else if (!res.ok)
               throw new Error(res.statusText)
           })
           .catch(err => {
-            throw new Error(`Avatar Upload Failed : [${err}]`)
+            throw new Error(`${err}`)
           })
       }
     }

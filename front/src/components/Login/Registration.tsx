@@ -1,10 +1,9 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { Grid, TextField, BottomNavigation, IconButton, Avatar, styled, MobileStepper, useTheme, Paper, CircularProgress } from '@mui/material';
-import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera, SentimentSatisfiedOutlined } from '@mui/icons-material';
+import { Grid, TextField, BottomNavigation, Avatar, styled, MobileStepper, useTheme, Paper, CircularProgress } from '@mui/material';
+import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera} from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import validator from 'validator'
 import registrationBg from "../Images/registrationBg.jpg"
@@ -54,8 +53,11 @@ export default function Registration() {
       referrerPolicy: "same-origin"
     })
       .then((res) => {
-        if (res.status === 401)
-          navigate("/login")
+        if (res.status === 401) 
+        {
+          navigate("/login");
+          throw new Error("You must login")
+        }
         else if (!res.ok) {
           throw new Error(res.statusText);
         }
@@ -67,8 +69,8 @@ export default function Registration() {
         setPseudo(resData.id_pseudo)
       })
       .catch((error) => {
-        throw new Error(`User Data Fetching Failed : ${error}`)
-        //alert(`Error while searching for user : [${err}]`)
+        alert(error)
+        navigate("/login")
       })
   }
 
@@ -91,8 +93,10 @@ export default function Registration() {
           body: formData
         })
           .then(res => {
-            if (res.status === 401) {
-              navigate("/login")
+            if (res.status === 401) 
+            {
+              navigate("/login");
+              throw new Error("You must login")
             }
             else if (!res.ok)
               throw new Error(res.statusText)
@@ -128,8 +132,10 @@ export default function Registration() {
         body: JSON.stringify(updatePseudo),
       })
         .then(res => {
-          if (res.status === 401) {
-            navigate("/login")
+          if (res.status === 401) 
+          {
+            navigate("/login");
+            throw new Error("You must login")
           }
           else if (!res.ok) {
             if (res.status === 409)
@@ -139,7 +145,7 @@ export default function Registration() {
           }
         })
         .catch(error => {
-          throw new Error(`Update Pseudo Failed : [${error}]`)
+          throw new Error(error)
         })
     }
 
@@ -226,6 +232,7 @@ export default function Registration() {
       setAvatar(event.target.files[0])
     }
 
+    console.log("avatar:", avatar)
     return (
       <Fragment>
         <Grid container columns={12} spacing={2} style={editLayout}>
