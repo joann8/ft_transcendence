@@ -1,12 +1,13 @@
-import { Container, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useEffect } from "react";
 import * as React from "react";
 import back from "./backConnection";
-
+import { api_url } from "../../ApiCalls/var";
+import { useNavigate } from "react-router";
 import Messages from "./Messages";
 import PostMessage from "./PostMessage";
-import { MessageListProps, Message, Channel } from "./types";
+import { MessageListProps, Message } from "./types";
 
 const useStyle = makeStyles({});
 function MessageList({
@@ -14,14 +15,20 @@ function MessageList({
   currentChannel,
   currentUser,
 }: MessageListProps) {
+  const navigate = useNavigate();
+
   const myRef = React.useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [blockedList, setBlockedList] = React.useState<number[]>([]);
 
   const fetchBlockedList = async () => {
     const result = await back
-      .get(`http://127.0.0.1:3001/relation/blocked`)
-      .catch((error) => alert(error.response.data.message));
+      .get(`${api_url}/relation/blocked`)
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
     if (!result) return;
     console.log(result.data);
     setBlockedList(result.data);
@@ -29,8 +36,12 @@ function MessageList({
 
   const fetchMessages = async () => {
     const result = await back
-      .get(`http://127.0.0.1:3001/channel/${currentChannel.id}/messages`)
-      .catch((error) => alert(error.response.data.message));
+      .get(`${api_url}/channel/${currentChannel.id}/messages`)
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
     if (!result) return;
     setMessages(result.data);
   };

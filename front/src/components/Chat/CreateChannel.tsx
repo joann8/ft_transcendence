@@ -1,8 +1,6 @@
 import {
   Button,
   Typography,
-  Grid,
-  Container,
   Modal,
   TextField,
   FormGroup,
@@ -14,6 +12,8 @@ import { Box } from "@mui/system";
 import * as React from "react";
 import back from "./backConnection";
 import { CreateChannelProps, ThemeOptions, channelType } from "./types";
+import { api_url } from "../../ApiCalls/var";
+import { useNavigate } from "react-router";
 
 const style = {
   position: "absolute" as "absolute",
@@ -44,6 +44,8 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
 }));
 
 function CreateChannel({ fetchChannelList }: CreateChannelProps) {
+  const navigate = useNavigate();
+
   const [open, setOpenCreate] = React.useState(false);
   const [roomName, setRoomName] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
@@ -55,12 +57,16 @@ function CreateChannel({ fetchChannelList }: CreateChannelProps) {
   const handleCloseCreate = () => setOpenCreate(false);
   const fetchPostChannel = async () => {
     const result = await back
-      .post(`http://127.0.0.1:3001/channel`, {
+      .post(`${api_url}/channel`, {
         name: roomName,
         mode: publicMode ? channelType.PUBLIC : channelType.PRIVATE,
         password: password ? password : null,
       })
-      .catch((error) => alert(error.response.data.message));
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
     fetchChannelList();
     setOpenCreate(false);
   };

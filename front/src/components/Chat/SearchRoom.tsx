@@ -1,17 +1,11 @@
-import {
-  Button,
-  Typography,
-  Grid,
-  Container,
-  Modal,
-  TextField,
-} from "@mui/material";
+import { Button, Typography, Modal, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
-import { channel } from "diagnostics_channel";
 import * as React from "react";
 import back from "./backConnection";
 import { Channel, channelType, ThemeOptions } from "./types";
+import { api_url } from "../../ApiCalls/var";
+import { useNavigate } from "react-router";
 
 const style = {
   position: "absolute" as "absolute",
@@ -42,6 +36,8 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
 }));
 
 function SearchRoom({ channelList, fetchChannelListUser, socket }) {
+  const navigate = useNavigate();
+
   const [search, setOpenSearch] = React.useState(false);
   const [currentSearchRoom, setCurrentSearchRoom] = React.useState<Channel>();
   const [content, setContent] = React.useState<string>("");
@@ -56,20 +52,26 @@ function SearchRoom({ channelList, fetchChannelListUser, socket }) {
     setCurrentSearchRoom(allChannelList[0]);
   }, [allChannelList]);
   const fetchChannelList = async () => {
-    const result = await back
-      .get("http://127.0.0.1:3001/channel/")
-      .catch((error) => alert(error.response.data.message));
+    const result = await back.get(`${api_url}/channel/`).catch((error) => {
+      if (error.response.status === 401) navigate("/login");
+      alert(error.response.data.message);
+      return;
+    });
     if (!result) return;
     console.log(result.data);
     setAllChannelList(result.data);
   };
   const fetchJoinRoom = async () => {
     const result = await back
-      .post(`http://127.0.0.1:3001/channel/join/${currentSearchRoom.id}`, {
+      .post(`${api_url}/channel/join/${currentSearchRoom.id}`, {
         mode: currentSearchRoom.mode,
         password: content,
       })
-      .catch((error) => alert(error.response.data.message));
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
     if (!result) return;
     socket.emit("reload", currentSearchRoom);
     fetchChannelListUser();

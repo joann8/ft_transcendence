@@ -1,14 +1,4 @@
-import {
-  Button,
-  Typography,
-  Grid,
-  Modal,
-  Box,
-  TextField,
-  Container,
-  MenuItem,
-  Menu,
-} from "@mui/material";
+import { Button, Grid, MenuItem, Menu } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
   channelRole,
@@ -27,6 +17,7 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useNavigate } from "react-router";
 import back from "./backConnection";
 import { Context } from "../MainCompo/SideBars";
+import { api_url } from "../../ApiCalls/var";
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
   RoleListContainer: () => ({
@@ -91,8 +82,6 @@ function RoleList({
   const open = Boolean(anchorEl);
 
   const onClickDefy = (challenger: User, challengee: User) => {
-    //console.log(`${challenger.id_pseudo} is defying ${challengee.id_pseudo}`);
-    //console.log(`challenger status : ${challenger.status}`);
     if (challenger.status === "IN GAME") alert("Your are already in a game");
     else if (challengee.status === "IN GAME")
       alert(`${challengee.id_pseudo} is busy playing`);
@@ -104,8 +93,6 @@ function RoleList({
   };
 
   const onClickWatch = (watcher: User, watchee: User) => {
-    //console.log(`${watcher.id_pseudo} is watching ${watchee.id_pseudo}`);
-    //console.log(`watchee status : ${watchee.status}`);
     if (watchee.status === "ONLINE" || watchee.status === "IN QUEUE")
       alert(`${watchee.id_pseudo} is not in a game at the moment`);
     else if (watchee.status === "OFFLINE")
@@ -123,17 +110,25 @@ function RoleList({
     if (!targetRole) return;
     const result = await back
       .put(
-        `http://127.0.0.1:3001/channel/${currentChannel.id}/${action}/${targetRole.user.id_pseudo}`
+        `${api_url}/channel/${currentChannel.id}/${action}/${targetRole.user.id_pseudo}`
       )
-      .catch((error) => alert(error.response.data.message));
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
     socket.emit("reload", currentChannel);
     fetchUsers();
   };
 
   const fetchLeaveChannel = async () => {
     const result = await back
-      .get(`http://127.0.0.1:3001/channel/leave/${currentChannel.id}`)
-      .catch((error) => alert(error.response.data.message));
+      .get(`${api_url}/channel/leave/${currentChannel.id}`)
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
     socket.emit("reload", currentChannel);
     fetchChannelList();
   };
@@ -142,15 +137,23 @@ function RoleList({
   };
   const fetchUsers = async () => {
     const result = await back
-      .get(`http://127.0.0.1:3001/channel/${currentChannel.id}/users`)
-      .catch((error) => alert(error.response.data.message));
+      .get(`${api_url}/channel/${currentChannel.id}/users`)
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
     if (!result) return;
     setRoleList(result.data);
   };
   const fetchCurrentRole = async () => {
     const result = await back
-      .get(`http://127.0.0.1:3001/channel/${currentChannel.id}/role/me`)
-      .catch((error) => alert(error.response.data.message));
+      .get(`${api_url}/channel/${currentChannel.id}/role/me`)
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
     if (!result) return;
     if (!result || !result.data || result.data.role === "banned")
       fetchChannelList();

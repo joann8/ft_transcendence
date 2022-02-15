@@ -1,33 +1,15 @@
-import {
-  Button,
-  Typography,
-  Grid,
-  Container,
-  Modal,
-  TextField,
-  ButtonGroup,
-} from "@mui/material";
+import { Button, Grid, ButtonGroup } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Box } from "@mui/system";
 import * as React from "react";
 import back from "./backConnection";
 import CreateChannel from "./CreateChannel";
 import SearchRoom from "./SearchRoom";
-import { User, ChannelListProps, ThemeOptions, Channel } from "./types";
+import { ChannelListProps, ThemeOptions, Channel } from "./types";
 import ClearIcon from "@mui/icons-material/Clear";
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import { api_url } from "../../ApiCalls/var";
+import { useNavigate } from "react-router";
 
-const useStyle = makeStyles((theme: ThemeOptions) => ({
+const useStyle = makeStyles(() => ({
   channelListContainer: () => ({
     margin: "0",
     padding: "0",
@@ -60,30 +42,30 @@ function ChannelList({
   changeChannel,
   currentUser,
   channelList,
-  setChannelList,
   fetchChannelList,
   socket,
 }: ChannelListProps) {
   const classes = useStyle();
+  const navigate = useNavigate();
 
   async function fetchDeleteRoom(channel: Channel) {
     const result = await back
-      .delete(`http://127.0.0.1:3001/channel/${channel.id}`)
-      .catch((error) => alert(error.response.data.message));
-    console.log("back delete completed");
+      .delete(`${api_url}/channel/${channel.id}`)
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
   }
   function handleClick(event: React.MouseEvent) {
     const element = event.currentTarget as HTMLInputElement;
     const id = +element.getAttribute("data-index");
     if (id && currentChannel.id !== id) {
       const channel = channelList.find((channel) => channel.id === id);
-      console.log("change channel");
       changeChannel(channel);
     }
   }
   function handleDelete(event: React.MouseEvent) {
-    console.log("handle delete");
-
     const element = event.currentTarget as HTMLInputElement;
     const id = +element.getAttribute("data-index");
     if (id) {
