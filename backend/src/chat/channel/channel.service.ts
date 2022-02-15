@@ -19,6 +19,7 @@ import {
 import { CheckBann } from './decorators/channel-banned.decorator';
 import { CreateMessageDto } from '../messages/dto/create-message-dto';
 import { use } from 'passport';
+import { JoinChannelDto } from './dto/join-channel-dto';
 const PG_UNIQUE_CONSTRAINT_VIOLATION = '23505';
 @Injectable()
 export class ChannelService {
@@ -262,10 +263,11 @@ export class ChannelService {
 	 */
 	@CheckBann()
 	async findMessagesOfOne(channel: Channel, targetUser: User, user: User) {
-		return await getRepository(Message).find({
+		let list = await getRepository(Message).find({
 			where: { channel: channel },
 			relations: ['channel', 'author'],
 		});
+		return list;
 	}
 
 	@CheckBann()
@@ -297,7 +299,6 @@ export class ChannelService {
 	}
 
 	async createDirectChannel(one: User, two: User) {
-		console.log('la');
 		const newChannel = await this.channelRepository.save(
 			this.channelRepository.create({
 				name: `${one.id_pseudo} - ${two.id_pseudo}`,
@@ -351,8 +352,20 @@ export class ChannelService {
 		return getRepository(userChannelRole).delete(id);
 	}
 
-	async joinChannel(channel: Channel, user: User) {
-		console.log(channel);
+	async joinChannel(
+		channel: Channel,
+		user: User,
+		joinChannelDto: JoinChannelDto,
+	) {
+		if (joinChannelDto.mode === channelType.PRIVATE) {
+			if (
+				(await bcrypt.compare(
+					joinChannelDto.password,
+					channel.password,
+				)) === false
+			)
+				throw new ForbiddenException('Wrong Password');
+		}
 		/* If the user is already in the channel */
 		if (channel.roles.find((elem) => elem.user.id === user.id))
 			throw new ForbiddenException('User already in the channel');

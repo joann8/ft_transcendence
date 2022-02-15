@@ -20,6 +20,7 @@ import { Channel } from './entities/channel.entity';
 import { ParseChannelPipe } from './pipes/parse-channel.pipe';
 import { ParseUserPseudo } from './pipes/parse-user-pseudo.pipe';
 import { MessagesService } from '../messages/messages.service';
+import { JoinChannelDto } from './dto/join-channel-dto';
 
 @Controller('channel')
 export class ChannelController {
@@ -275,10 +276,17 @@ export class ChannelController {
 	 * @returns the entity what we have deleted
 	 */
 
-	@Get('/join/:id')
-	joinOne(@Req() req, @Param('id', ParseChannelPipe) channel: Channel) {
-		console.log(channel);
-		return this.channelService.joinChannel(channel, req.user);
+	@Post('/join/:id')
+	joinOne(
+		@Req() req,
+		@Param('id', ParseChannelPipe) channel: Channel,
+		@Body() joinChannelDto: JoinChannelDto,
+	) {
+		return this.channelService.joinChannel(
+			channel,
+			req.user,
+			joinChannelDto,
+		);
 	}
 
 	@Get('/leave/:id')

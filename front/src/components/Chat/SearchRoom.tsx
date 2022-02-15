@@ -65,7 +65,10 @@ function SearchRoom({ channelList, fetchChannelListUser, socket }) {
   };
   const fetchJoinRoom = async () => {
     const result = await back
-      .get(`http://127.0.0.1:3001/channel/join/${currentSearchRoom.id}`)
+      .post(`http://127.0.0.1:3001/channel/join/${currentSearchRoom.id}`, {
+        mode: currentSearchRoom.mode,
+        password: content,
+      })
       .catch((error) => alert(error.response.data.message));
     if (!result) return;
     socket.emit("reload", currentSearchRoom);
