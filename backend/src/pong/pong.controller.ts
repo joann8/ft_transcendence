@@ -1,5 +1,6 @@
 import { Controller,	Get, HttpException,	HttpStatus, Param, Req} from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
+import { ResultDto } from './dto/resultdto';
 import { Challenge } from './entities/challenge.entity';
 import { Pong } from './entities/pong.entity';
 import { ParsePseudoPipe } from './pipe/parse-pseudo-pipe';
@@ -40,15 +41,11 @@ export class PongController {
 	}
 	
 	// get number of Wins for a user
-	@Get('wins/:id')
-	async getWins(@Param('id', ParsePseudoPipe) user: User): Promise<Number> {
-		return this.pongService.getWinsUser(user);
+	@Get('results/:id')
+	async getWins(@Param('id', ParsePseudoPipe) user: User): Promise<ResultDto> {
+		let result  = <ResultDto>{}
+		result.win = await this.pongService.getWinsUser(user);
+		result.lost = await this.pongService.getLostUser(user);
+		return result;
 	}
-
-	// get number of Lost for a user
-	@Get('lost/:id')
-	async getLost(@Param('id', ParsePseudoPipe) user: User): Promise<Number> {
-		return this.pongService.getLostUser(user);
-	}
-
 }

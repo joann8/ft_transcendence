@@ -1,6 +1,10 @@
 import { Strategy, Profile, VerifyCallback } from 'passport-42';
 import { PassportStrategy } from '@nestjs/passport';
-import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
+import {
+	HttpException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { status, user_role } from 'src/user/entities/user.entity';
 
@@ -29,7 +33,7 @@ export class FortyTwoStrategy extends PassportStrategy(
 		if (!user) {
 			throw new HttpException('User could not be created', 500);
 		} else if (user.status === status.BAN) {
-			throw new ForbiddenException(
+			throw new UnauthorizedException(
 				'You are ban from this website, get out of my sight',
 			);
 		}

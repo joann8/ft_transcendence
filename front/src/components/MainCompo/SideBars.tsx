@@ -1,6 +1,11 @@
 import * as React from "react";
 import { createContext, Fragment, useEffect } from "react";
-import { styled, createTheme, ThemeProvider, useTheme } from "@mui/material/styles";
+import {
+  styled,
+  createTheme,
+  ThemeProvider,
+  useTheme,
+} from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -23,7 +28,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import { IUser } from "../Profile/profileStyle";
 import { api_url } from "../../ApiCalls/var";
 import TwoFAModal from "./TwoFAModal";
-
 
 /* Notification clochette
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -89,34 +93,29 @@ interface IContext {
 export const Context = createContext<IContext>(null);
 
 export default function SideBar(props: any) {
-  /*
-    const eventSource = new EventSource('http://127.0.0.1:3001/sse');
-    eventSource.onmessage = ({data}) => {
-      console.log('New message', JSON.parse(data));
-      console.log('New message', data);
-    };
-  */
   const [open, setOpen] = React.useState(true);
   const [twofaModal, setTwofaModal] = React.useState(false);
   const [update, setUpdate] = React.useState(true);
   const [user, setUser] = React.useState<IUser>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-
   // const { error, isPending, data: user } = useFromApi("/user");
 
   const navigate = useNavigate();
 
   const getUserData = async () => {
-    await fetch(`http://127.0.0.1:3001/user`, {
+    await fetch(api_url + `/user`, {
       method: "GET",
       credentials: "include",
       referrerPolicy: "same-origin",
     })
       .then((res) => {
-        if (res.status === 401) {
-          navigate("/login");
-        } else if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          if (res.status === 403)
+            alert("You are banned from this website")
+          navigate("/login")
+        }
+        else if (!res.ok) {
           throw new Error(res.statusText);
         }
         return res.json();
@@ -125,12 +124,12 @@ export default function SideBar(props: any) {
         setUser(resData);
       })
       .catch((err) => {
-        console.error("Error caught: ", err);
+        alert(err.message);
       });
   };
 
   const refreshTokens = async () => {
-    await fetch(`http://127.0.0.1:3001/refresh`, {
+    await fetch(api_url + `/refresh`, {
       method: "GET",
       credentials: "include",
       referrerPolicy: "same-origin",
@@ -143,7 +142,7 @@ export default function SideBar(props: any) {
         }
       })
       .catch((err) => {
-        console.error("Error caught: ", err);
+        alert(err.message);
       });
   };
 
@@ -152,7 +151,6 @@ export default function SideBar(props: any) {
     refreshTokens();
   }, [update]);
 
-  
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -164,7 +162,6 @@ export default function SideBar(props: any) {
   const handleEditOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
 
   if (!user) {
     return <Fragment />;
@@ -201,12 +198,19 @@ export default function SideBar(props: any) {
                 Welcome to Transcendence!
               </Typography>
               {user && (
-                <Button variant="outlined" style={{ textTransform: "none", margin: 1 }} onClick={() => { navigate("/profile") }}>
-                  <Typography sx={{ color: "#FFFFFF", margin: 1 }}>{user.id_pseudo}</Typography>
+                <Button
+                  variant="outlined"
+                  style={{ textTransform: "none", margin: 1 }}
+                  onClick={() => {
+                    navigate("/profile");
+                  }}
+                >
+                  <Typography sx={{ color: "#FFFFFF", margin: 1 }}>
+                    {user.id_pseudo}
+                  </Typography>
                   <Avatar src={user.avatar} style={{ margin: 1 }} />
                 </Button>
               )}
-
 
               <Divider orientation="vertical" sx={{ margin: 1 }} />
               {user && (
@@ -219,11 +223,11 @@ export default function SideBar(props: any) {
                     }}
                   >
                     <Button
-                    size="small"
-                    style={{ border: "1px solid white", color: "#FFFFFF", margin : 1}}
-                    startIcon={<EditIcon />}
-                    onClick={handleEditOpen}
-                  >
+                      size="small"
+                      style={{ border: "1px solid white", color: "#FFFFFF", margin: 1 }}
+                      startIcon={<EditIcon />}
+                      onClick={handleEditOpen}
+                    >
                       Edit
                     </Button>
                     <Menu
@@ -232,7 +236,10 @@ export default function SideBar(props: any) {
                       open={Boolean(anchorEl)}
                       onClose={handleEditClose}
                     >
-                      <MenuItem onClick={() => navigate("/edit")}> Profile </MenuItem>
+                      <MenuItem onClick={() => navigate("/edit")}>
+                        {" "}
+                        Profile{" "}
+                      </MenuItem>
                       <MenuItem onClick={() => setTwofaModal(true)}>
                         Two Factors
                       </MenuItem>
@@ -242,7 +249,8 @@ export default function SideBar(props: any) {
                       />
                     </Menu>
                   </Context.Provider>
-                </Fragment>)}
+                </Fragment>
+              )}
             </Toolbar>
           </AppBar>
 

@@ -99,7 +99,8 @@ export default function Profile() {
                 <Typography style={profileStyle.text}>
                   Rank : {userData.elo}
                 </Typography>
-           
+
+
               </Box>
               <Divider orientation="vertical" sx={profileStyle.divider} />
               <Box sx={profileStyle.leftRightBox}>

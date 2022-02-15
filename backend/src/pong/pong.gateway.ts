@@ -106,7 +106,10 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             this.challenges.splice(this.challenges.indexOf(challenge));
         }
         else
+        {
+            await this.pongService.deleteChallenge(info.id_challenge);
             client.emit('no_such_challenge');
+        }
     }
 
     @SubscribeMessage('cancel_challenge')

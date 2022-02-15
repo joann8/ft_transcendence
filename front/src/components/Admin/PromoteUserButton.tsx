@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { Fragment } from "react";
 import { Context } from "../MainCompo/SideBars";
 import { IUser } from "../Profile/profileStyle";
+import { useNavigate } from "react-router";
 
 function isSetAdminButtonDisabled(
   row_user: IUser,
@@ -44,6 +45,7 @@ export default function PromoteUserButton(props) {
   const [isAdmin, setIsAdmin] = useState(
     props.params.row.role === "owner" || props.params.row.role === "admin"
   );
+  const naviguate = useNavigate();
 
   const handleSetAdmin = (e) => {
     e.stopPropagation();
@@ -55,6 +57,9 @@ export default function PromoteUserButton(props) {
     })
       .then((res) => {
         if (!res.ok) {
+          if (res.status === 401) {
+            naviguate("/login");
+          }
           res.json().then((data) => {
             enqueueSnackbar(
               props.params.row.id_pseudo +
@@ -98,6 +103,9 @@ export default function PromoteUserButton(props) {
     })
       .then((res) => {
         if (!res.ok) {
+          if (res.status === 401) {
+            naviguate("/login");
+          }
           res.json().then((data) => {
             enqueueSnackbar(
               props.params.row.id_pseudo +

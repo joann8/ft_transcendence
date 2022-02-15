@@ -12,9 +12,6 @@ import {
 	UploadedFile,
 	HttpException,
 	HttpStatus,
-	ValidationPipe,
-	UsePipes,
-	UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -26,9 +23,10 @@ import { ParseUpdateCurrentDto } from './pipes/parseUpdateCurrentDto';
 import { AdminGuard } from 'src/admin/guards/admin.guard';
 import { CreateUserDto } from './dto/createUser.dto';
 
+
 @Controller('user')
 export class UserController {
-	constructor(private readonly userService: UserService) {}
+	constructor(private readonly userService: UserService) { }
 
 	// GET MY PROFILE
 	@Get()
@@ -72,17 +70,23 @@ export class UserController {
 		}),
 	)
 	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File) {
-		const oldAvatarPath = `${process.env.PWD}/avatars/${req.user.avatar
+		const oldAvatarName = `${req.user.avatar
 			.split('/')
-			.pop()}`;
+			.pop()}`
+		const oldAvatarPath = `${process.env.PWD}/avatars/${oldAvatarName}`
+		const fs = require('fs');
+		console.log("OldAvatarName: ", oldAvatarName)
+		//Suppression de l'ancien avatar
+		if (oldAvatarName !== "defaul_img_registration.jpg"){
+			await fs.unlink(oldAvatarPath, function (err) {
+				if (err)
+					throw new HttpException('Could Not Delete Previous Avatar', HttpStatus.INTERNAL_SERVER_ERROR);
+				else
+					console.log('old avatar deleted');
+			});
+		}
 		await this.userService.update(req.user.id, {
 			avatar: `${process.env.BACKEND_URL}/avatars/${file.filename}`,
-		});
-		const fs = require('fs');
-		//Suppression de l'ancien avatar
-		fs.unlink(oldAvatarPath, function (err) {
-			if (err) console.log('Error in avatart deletion: ', err);
-			else console.log('old avatar deleted');
 		});
 		return file;
 	}
