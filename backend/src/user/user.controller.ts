@@ -23,10 +23,14 @@ import { UserService } from './user.service';
 import { ParseUpdateCurrentDto } from './pipes/parseUpdateCurrentDto';
 import { AdminGuard } from 'src/admin/guards/admin.guard';
 import { CreateUserDto } from './dto/createUser.dto';
+import { ChannelService } from 'src/chat/channel/channel.service';
 
 @Controller('user')
 export class UserController {
-	constructor(private readonly userService: UserService) { }
+	constructor(
+		private readonly userService: UserService,
+		private readonly channelService: ChannelService,
+	) {}
 
 	// GET MY PROFILE
 	@Get()
@@ -75,10 +79,8 @@ export class UserController {
 		const fs = require('fs');
 		//Suppression de l'ancien avatar
 		await fs.unlink(oldAvatarPath, function (err) {
-			if (err)
-				console.log(`Avatar : ${oldAvatarName} was not deleted`)
-			else
-				console.log('old avatar deleted');
+			if (err) console.log(`Avatar : ${oldAvatarName} was not deleted`);
+			else console.log('old avatar deleted');
 		});
 		await this.userService.update(req.user.id, {
 			avatar: `http://127.0.0.1:3001/avatars/${file.filename}`,
@@ -92,7 +94,15 @@ export class UserController {
 		@Req() req,
 		@Body(ParseUpdateCurrentDto) updateCurrentUserDto: UpdateCurrentUserDto,
 	): Promise<User> {
+		const id = req.user.id;
+		const prevPseudo = req.user.id_pseudo;
+		const newPSeudo = updateCurrentUserDto.id_pseudo;
 		await this.userService.update(req.user.id, updateCurrentUserDto);
+		await this.channelService.updateDirectChannel(
+			id,
+			prevPseudo,
+			newPSeudo,
+		);
 		return this.userService.findOne(req.user.id.toString());
 	}
 

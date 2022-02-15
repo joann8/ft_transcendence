@@ -243,6 +243,8 @@ export class ChannelService {
 			this.channelRepository.create({
 				name: `${one.id_pseudo} - ${two.id_pseudo}`,
 				mode: channelType.DIRECT,
+				idOne: one.id,
+				idTwo: two.id,
 				password: null,
 			}),
 		);
@@ -355,5 +357,19 @@ export class ChannelService {
 	async removeAll() {
 		const entities = await this.findAll();
 		return this.channelRepository.delete(entities.map((elem) => elem.id));
+	}
+
+	async updateDirectChannel(
+		id: number,
+		prevPseudo: string,
+		newPSeudo: string,
+	) {
+		const directChannels = await this.channelRepository.find({
+			where: [{ idOne: id }, { idTwo: id }],
+		});
+		for (let channel of directChannels) {
+			channel.name = channel.name.replace(prevPseudo, newPSeudo);
+			await this.channelRepository.save(channel);
+		}
 	}
 }
