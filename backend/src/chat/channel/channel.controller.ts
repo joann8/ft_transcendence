@@ -21,12 +21,14 @@ import { ParseChannelPipe } from './pipes/parse-channel.pipe';
 import { ParseUserPseudo } from './pipes/parse-user-pseudo.pipe';
 import { MessagesService } from '../messages/messages.service';
 import { JoinChannelDto } from './dto/join-channel-dto';
+import { RelationService } from 'src/relation/relation.service';
 
 @Controller('channel')
 export class ChannelController {
 	constructor(
 		private readonly channelService: ChannelService,
 		private messageService: MessagesService,
+		private readonly relationService: RelationService,
 	) {}
 
 	/**
@@ -186,7 +188,7 @@ export class ChannelController {
 	 * @returns All the channels that exist
 	 */
 	@Get('/me')
-	findAllofMe(@Req() req) {
+	async findAllofMe(@Req() req) {
 		return this.channelService.findAllofMe(req.user);
 	}
 
@@ -240,11 +242,19 @@ export class ChannelController {
 	 */
 
 	@Get(':id/messages')
-	findChannelOfOne(
+	async findChannelOfOne(
 		@Req() req,
 		@Param('id', ParseChannelPipe) channel: Channel,
 	) {
-		return this.channelService.findMessagesOfOne(channel, null, req.user);
+		const blockedAuthor = await this.relationService.findAllBlocked(
+			req.user.id,
+		);
+		return this.channelService.findMessagesOfOne(
+			channel,
+			null,
+			req.user,
+			blockedAuthor,
+		);
 	}
 
 	/**

@@ -13,6 +13,8 @@ import {
 	UsePipes,
 	ValidationPipe,
 	Req,
+	Inject,
+	forwardRef,
 } from '@nestjs/common';
 import { RelationService } from './relation.service';
 import { RelationDto } from './dto/relation.dto';
@@ -31,6 +33,7 @@ import { ChannelService } from 'src/chat/channel/channel.service';
 export class RelationController {
 	constructor(
 		private readonly relationService: RelationService,
+		@Inject(forwardRef(() => ChannelService))
 		private readonly channelService: ChannelService,
 	) {}
 
@@ -222,5 +225,10 @@ export class RelationController {
 		);
 		await this.channelService.deleteDirectChannel(one, two);
 		return await this.relationService.remove(relationToRemove.id);
+	}
+
+	@Get('blocked')
+	async getBlockedList(@Req() req): Promise<number[]> {
+		return await this.relationService.findAllBlocked(req.user.id);
 	}
 }

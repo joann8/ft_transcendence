@@ -1,6 +1,8 @@
 import {
 	BadRequestException,
 	ForbiddenException,
+	forwardRef,
+	Inject,
 	Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,13 +23,13 @@ import { CreateMessageDto } from '../messages/dto/create-message-dto';
 import { use } from 'passport';
 import { JoinChannelDto } from './dto/join-channel-dto';
 import { RelationService } from 'src/relation/relation.service';
+import { Relation } from 'src/relation/entities/relation.entity';
 const PG_UNIQUE_CONSTRAINT_VIOLATION = '23505';
 @Injectable()
 export class ChannelService {
 	constructor(
 		@InjectRepository(Channel)
 		private channelRepository: Repository<Channel>,
-		private relationService: RelationService,
 	) {}
 
 	async hashPassword(password): Promise<string> {
@@ -264,13 +266,17 @@ export class ChannelService {
 	 * TODO: TODO: CHECK ROLES && EXISTANCE
 	 */
 	@CheckBann()
-	async findMessagesOfOne(channel: Channel, targetUser: User, user: User) {
+	async findMessagesOfOne(
+		channel: Channel,
+		targetUser: User,
+		user: User,
+		blockedAuthor: number[],
+	) {
 		let list = await getRepository(Message).find({
 			where: { channel: channel },
 			relations: ['channel', 'author'],
 		});
-		const blockedAuthor = this.relationService.findAllBlocked(user.id);
-		list.filter((elem) => elem.author.id);
+		list = list.filter((elem) => !blockedAuthor.includes(elem.author.id));
 		return list;
 	}
 

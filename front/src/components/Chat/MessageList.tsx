@@ -16,6 +16,16 @@ function MessageList({
 }: MessageListProps) {
   const myRef = React.useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = React.useState<Message[]>([]);
+  const [blockedList, setBlockedList] = React.useState<number[]>([]);
+
+  const fetchBlockedList = async () => {
+    const result = await back
+      .get(`http://127.0.0.1:3001/relation/blocked`)
+      .catch((error) => alert(error.response.data.message));
+    if (!result) return;
+    console.log(result.data);
+    setBlockedList(result.data);
+  };
 
   const fetchMessages = async () => {
     const result = await back
@@ -42,9 +52,9 @@ function MessageList({
   function postMessage(content: string) {
     socket.emit("message", currentUser, currentChannel, content);
   }
-
   useEffect(() => {
     const messageListener = (channel, message) => {
+      if (blockedList.includes(message.author.id)) return;
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages, message];
         return newMessages;
@@ -60,7 +70,11 @@ function MessageList({
       socket.off("message", messageListener);
       socket.off("exception", exceptionListener);
     };
-  }, [socket]);
+  }, [blockedList]);
+
+  useEffect(() => {
+    fetchBlockedList();
+  }, []);
 
   return (
     <Grid item xs={12} md={4} lg={6}>
