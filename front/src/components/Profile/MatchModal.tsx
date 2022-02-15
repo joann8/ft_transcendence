@@ -47,8 +47,8 @@ interface IMatch {
 }
 
 interface IResult {
-    win: number,
-    lost: number
+  win: number,
+  lost: number
 }
 
 export default function MatchModal({ setModal, modalState, user }) {
@@ -56,19 +56,20 @@ export default function MatchModal({ setModal, modalState, user }) {
   const navigate = useNavigate();
 
   const getHistory = async () => {
-    await setTimeout(() => {}, 30000);
+    await setTimeout(() => { }, 30000);
     await fetch(api_url + `/game/history/${user.id_pseudo}`, {
       credentials: "include",
       referrerPolicy: "same-origin",
       method: "GET",
     })
       .then((res) => {
-        if (res.status === 401) navigate("/login");
-        else if (!res.ok) throw new Error(res.statusText);
+        if (res.status === 401)
+          navigate("/login");
+        else if (!res.ok)
+          throw new Error(res.statusText);
         return res.json();
       })
       .then((resData) => {
-        console.log("History : ", resData);
         //Met le joueur au player one
         for (let i = 0; i < resData.length; i++) {
           if (user.id_pseudo != resData[i].player1.id_pseudo) {
@@ -79,19 +80,17 @@ export default function MatchModal({ setModal, modalState, user }) {
             resData[i].player2 = tmpPlayer;
             resData[i].scorePlayer2 = tmpScore;
           }
-          console.log("match: ", resData[i]);
         }
         setHistory(resData);
       })
       .catch((err) => {
-        alert(err);
+        alert(`GetMatchHistory : ${err}`);
+        handleClose()
       });
-    console.log("Fetching finished");
   };
 
   useEffect(() => {
     getHistory();
-    console.log("UseEffect log");
   }, []);
 
   function getMyDate(dbDate: Date): string {

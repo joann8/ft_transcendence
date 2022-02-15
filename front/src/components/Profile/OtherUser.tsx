@@ -94,8 +94,10 @@ export default function OtherUser() {
         else if (!res.ok) {
           throw new Error(res.statusText);
         }
-        if (res.status === 204) return 0;
-        else return res.json();
+        if (res.status === 204)
+          return 0;
+        else
+          return res.json();
       })
       .then((resData) => {
         //ResData = Relation
@@ -107,11 +109,10 @@ export default function OtherUser() {
               : resData.relation2;
         else resData = 0;
         setRelation(resData);
-        console.log("Relation state : ", resData);
         return resData;
       })
       .catch((err) => {
-        alert(`GetRelation : Error : ${err}`);
+        alert(`GetRelation : ${err}`);
       });
     return relationData;
   };
@@ -135,12 +136,15 @@ export default function OtherUser() {
       }),
     })
       .then((res) => {
-        if (res.status === 401) navigate("/login");
-        else if (!res.ok) throw new Error(res.statusText);
-        else return true;
+        if (res.status === 401) 
+          navigate("/login");
+        else if (!res.ok) 
+          throw new Error(res.statusText);
+        else 
+          return true;
       })
       .catch((err) => {
-        alert(`updateRelation: ${err}`);
+        alert(`UpdateRelation: ${err}`);
         return false;
       });
     return ret;
