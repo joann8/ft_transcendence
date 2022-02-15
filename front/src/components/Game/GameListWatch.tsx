@@ -32,8 +32,10 @@ export default function GameList(props: PropsWatch) {
       referrerPolicy: "same-origin",
     })
       .then((res) => {
-        if (res.status === 401) console.log("oupsy");
-        else if (!res.ok) throw new Error(res.statusText);
+        if (res.status === 401)
+          navigate("/login");
+        else if (!res.ok)
+          throw new Error(res.statusText);
         return res.json();
       })
       .then((resJson) => {
@@ -52,10 +54,12 @@ export default function GameList(props: PropsWatch) {
       referrerPolicy: "same-origin",
     })
       .then((res) => {
-        if (!res.ok) throw new Error(res.statusText);
+        if (res.status === 401)
+          navigate("/login");
+        else if (!res.ok)
+          throw new Error(res.statusText);
         else if (res.status === 204) {
-          // pas de jeu en cours
-          return {};
+          return {}; // pas de jeu en cours
         } else return res.json();
       })
       .then((resJson) => {
