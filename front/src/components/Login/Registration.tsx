@@ -65,7 +65,6 @@ export default function Registration() {
       })
       .then((resData: IUser) => {
         setUser(resData)
-        setAvatar(resData.avatar)
         setPseudo(resData.id_pseudo)
       })
       .catch((error) => {
@@ -237,7 +236,7 @@ export default function Registration() {
       <Fragment>
         <Grid container columns={12} spacing={2} style={editLayout}>
           <Grid item xs={4} >
-            <Avatar src={avatar} style={{
+            <Avatar src={avatar ? URL.createObjectURL(avatar) : user.avatar} style={{
               minWidth: "100px",
               minHeight: "100px",
               flexGrow: 1,
