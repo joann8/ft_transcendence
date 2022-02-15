@@ -136,14 +136,16 @@ function RoleList({
     fetchLeaveChannel();
   };
   const fetchUsers = async () => {
+    let error = false;
     const result = await back
       .get(`${api_url}/channel/${currentChannel.id}/users`)
       .catch((error) => {
         if (error.response.status === 401) navigate("/login");
         alert(error.response.data.message);
+        error = true;
         return;
       });
-    if (!result) return;
+    if (!result || error) return;
     setRoleList(result.data);
   };
   const fetchCurrentRole = async () => {
@@ -165,6 +167,7 @@ function RoleList({
       fetchCurrentRole();
     }
   }, [currentChannel]);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const element = event.currentTarget as HTMLInputElement;
     const id = +element.getAttribute("data-index");
@@ -186,11 +189,11 @@ function RoleList({
     return () => {
       socket.off("reload", reloadListener);
     };
-  }, [socket]);
+  }, [currentChannel]);
 
   const classes = useStyle();
   return (
-    <Grid item xs={12} md={4} lg={3} className={classes.RoleListContainer}>
+    <Grid item xs={3} md={3} lg={3} className={classes.RoleListContainer}>
       {roleList.map((role, index) => {
         if (role.role === "owner")
           return (
@@ -262,19 +265,22 @@ function RoleList({
           "aria-labelledby": "basic-button",
         }}
       >
-        {currentRole?.role === channelRole.owner && (
-          <MenuItem
-            onClick={() => {
-              fetchPostAction("admin");
-              handleClose();
-              return;
-            }}
-          >
-            Set Admin
-          </MenuItem>
-        )}
-        {(currentRole?.role === channelRole.owner ||
-          currentRole?.role === channelRole.admin) && (
+        {currentRole?.role === channelRole.owner &&
+          targetRole?.role !== channelRole.owner && (
+            <MenuItem
+              onClick={() => {
+                fetchPostAction("admin");
+                handleClose();
+                return;
+              }}
+            >
+              Set Admin
+            </MenuItem>
+          )}
+        {((currentRole?.role === channelRole.owner &&
+          targetRole?.role !== channelRole.owner) ||
+          (currentRole?.role === channelRole.admin &&
+            targetRole?.role !== channelRole.owner)) && (
           <MenuItem
             onClick={() => {
               fetchPostAction("reset-as-user");
@@ -285,8 +291,10 @@ function RoleList({
             Reset User
           </MenuItem>
         )}
-        {(currentRole?.role === channelRole.owner ||
-          currentRole?.role === channelRole.admin) && (
+        {((currentRole?.role === channelRole.owner &&
+          targetRole?.role !== channelRole.owner) ||
+          (currentRole?.role === channelRole.admin &&
+            targetRole?.role !== channelRole.owner)) && (
           <MenuItem
             onClick={() => {
               fetchPostAction("mute");
@@ -297,8 +305,10 @@ function RoleList({
             Mute
           </MenuItem>
         )}
-        {(currentRole?.role === channelRole.owner ||
-          currentRole?.role === channelRole.admin) && (
+        {((currentRole?.role === channelRole.owner &&
+          targetRole?.role !== channelRole.owner) ||
+          (currentRole?.role === channelRole.admin &&
+            targetRole?.role !== channelRole.owner)) && (
           <MenuItem
             onClick={() => {
               fetchPostAction("bann");
@@ -309,8 +319,10 @@ function RoleList({
             Bann
           </MenuItem>
         )}
-        {(currentRole?.role === channelRole.owner ||
-          currentRole?.role === channelRole.admin) && (
+        {((currentRole?.role === channelRole.owner &&
+          targetRole?.role !== channelRole.owner) ||
+          (currentRole?.role === channelRole.admin &&
+            targetRole?.role !== channelRole.owner)) && (
           <MenuItem
             onClick={() => {
               fetchPostAction("kick");
