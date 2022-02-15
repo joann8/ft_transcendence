@@ -7,7 +7,7 @@ import { AppModule } from './app.module';
 declare const module: any;
 
 async function bootstrap() {
-	console.log
+	console.log;
 	/* HTTPS application params
 	const httpsOptions = {
 		key: fs.readFileSync('./secrets/private-key.pem'),
@@ -19,13 +19,13 @@ async function bootstrap() {
 		// httpsOptions,
 	});
 	// Enable CORS
-	
+
 	app.enableCors({
-		origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_BIS],
+		origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_LOCALHOST],
 		credentials: true,
 	});
-	
-/*
+
+	/*
 	app.enableCors();
 	// cookieParser middleware as global for parsing cookies
 	*/
