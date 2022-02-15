@@ -54,7 +54,9 @@ export default function Registration() {
       referrerPolicy: "same-origin"
     })
       .then((res) => {
-        if (!res.ok) {
+        if (res.status === 401)
+          navigate("/login")
+        else if (!res.ok) {
           throw new Error(res.statusText);
         }
         return res.json();
@@ -89,9 +91,7 @@ export default function Registration() {
           body: formData
         })
           .then(res => {
-            if (res.status === 401 || res.status === 403) {
-              if (res.status === 403)
-                alert("You are banned from this website")
+            if (res.status === 401) {
               navigate("/login")
             }
             else if (!res.ok)
@@ -128,9 +128,7 @@ export default function Registration() {
         body: JSON.stringify(updatePseudo),
       })
         .then(res => {
-          if (res.status === 401 || res.status === 403) {
-            if (res.status === 403)
-              alert("You are banned from this website")
+          if (res.status === 401) {
             navigate("/login")
           }
           else if (!res.ok) {
