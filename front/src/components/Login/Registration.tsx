@@ -1,10 +1,9 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { Grid, TextField, BottomNavigation, IconButton, Avatar, styled, MobileStepper, useTheme, Paper, CircularProgress } from '@mui/material';
-import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera, SentimentSatisfiedOutlined } from '@mui/icons-material';
+import { Grid, TextField, BottomNavigation, Avatar, styled, MobileStepper, useTheme, Paper, CircularProgress } from '@mui/material';
+import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera} from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import validator from 'validator'
 import registrationBg from "../Images/registrationBg.jpg"

@@ -1,13 +1,11 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import {
   Avatar,
   CircularProgress,
-  getBreadcrumbsUtilityClass,
   Paper,
   Table,
   TableBody,
@@ -17,8 +15,6 @@ import {
   TableRow,
 } from "@mui/material";
 import { IUser } from "./profileStyle";
-import { match } from "assert";
-import Badge from "@mui/material/Badge";
 import { api_url } from "../../ApiCalls/var";
 
 const style = {
