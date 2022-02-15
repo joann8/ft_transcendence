@@ -20,12 +20,14 @@ import { CheckBann } from './decorators/channel-banned.decorator';
 import { CreateMessageDto } from '../messages/dto/create-message-dto';
 import { use } from 'passport';
 import { JoinChannelDto } from './dto/join-channel-dto';
+import { RelationService } from 'src/relation/relation.service';
 const PG_UNIQUE_CONSTRAINT_VIOLATION = '23505';
 @Injectable()
 export class ChannelService {
 	constructor(
 		@InjectRepository(Channel)
 		private channelRepository: Repository<Channel>,
+		private relationService: RelationService,
 	) {}
 
 	async hashPassword(password): Promise<string> {
@@ -267,8 +269,8 @@ export class ChannelService {
 			where: { channel: channel },
 			relations: ['channel', 'author'],
 		});
-		// get the list au block
-		// filter
+		const blockedAuthor = this.relationService.findAllBlocked(user.id);
+		list.filter((elem) => elem.author.id);
 		return list;
 	}
 
