@@ -58,7 +58,6 @@ function SearchRoom({ channelList, fetchChannelListUser, socket }) {
       return;
     });
     if (!result) return;
-    console.log(result.data);
     setAllChannelList(result.data);
   };
   const fetchJoinRoom = async () => {

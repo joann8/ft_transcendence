@@ -30,7 +30,6 @@ function MessageList({
         return;
       });
     if (!result) return;
-    console.log(result.data);
     setBlockedList(result.data);
   };
 
@@ -72,7 +71,6 @@ function MessageList({
       });
     };
     const exceptionListener = (exception: string) => {
-      console.log(exception);
       alert(exception);
     };
     socket.on("message", messageListener);
