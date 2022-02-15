@@ -1,8 +1,11 @@
-import { Button, Typography, Grid, Modal, Box, TextField } from "@mui/material";
+import { Button, Typography, Modal, Box, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { AddUserProps, RoleListProps, ThemeOptions } from "./types";
+import { AddUserProps, ThemeOptions } from "./types";
 import * as React from "react";
 import back from "./backConnection";
+import { api_url } from "../../ApiCalls/var";
+import { useNavigate } from "react-router";
+
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -15,7 +18,7 @@ const style = {
   p: 4,
 };
 
-const useStyle = makeStyles((theme: ThemeOptions) => ({
+const useStyle = makeStyles(() => ({
   elem: () => ({
     width: "100%",
     margin: "0",
@@ -32,18 +35,22 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function AddUser({ fetchUsers, currentChannel, socket }: AddUserProps) {
+function AddUser({ currentChannel, socket }: AddUserProps) {
+  const navigate = useNavigate();
+
   const [open, setOpen] = React.useState(false);
   const [content, setContent] = React.useState<string>("");
-
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const classes = useStyle();
   const fetchPostUser = async (pseudo: string) => {
     const result = await back
-      .put(`http://127.0.0.1:3001/channel/${currentChannel.id}/add/${pseudo}`)
-      .catch((error) => alert(error.response.data.message));
-    //fetchUsers();
+      .put(`${api_url}/channel/${currentChannel.id}/add/${pseudo}`)
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
     socket.emit("reload", currentChannel);
     setOpen(false);
   };

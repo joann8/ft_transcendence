@@ -1,29 +1,20 @@
 import { Container, Grid } from "@mui/material";
-import { Box, margin } from "@mui/system";
+import { Box } from "@mui/system";
 import Toolbar from "@mui/material/Toolbar";
 import * as React from "react";
 import MessageList from "./MessageList";
 import ChannelList from "./ChannelList";
-import {
-  Message,
-  Channel,
-  userChannelRole,
-  User,
-  ServerToClientEvents,
-  ClientToServerEvents,
-} from "./types";
+import { Channel, ServerToClientEvents, ClientToServerEvents } from "./types";
 import RoleList from "./RoleList";
 import back from "./backConnection";
 import CreateChannel from "./CreateChannel";
 import { io, Socket } from "socket.io-client";
 import { Context } from "../MainCompo/SideBars";
 import SearchRoom from "./SearchRoom";
+import { api_url } from "../../ApiCalls/var";
+import { useNavigate } from "react-router";
 
 function Chat() {
-  /*
-   *   REFS
-   */
-
   /*
    *   STATES
    */
@@ -32,14 +23,16 @@ function Chat() {
   const [channelList, setChannelList] = React.useState<Channel[]>([]);
   const [currentChannel, setCurrentChannel] = React.useState<Channel>();
   const currentUser = React.useContext(Context).user;
+  const navigate = useNavigate();
   /** BACK END CALLS */
 
   const fetchChannelList = async () => {
-    const result = await back
-      .get("http://127.0.0.1:3001/channel/me")
-      .catch((error) => alert(error.response.data.message));
+    const result = await back.get(`${api_url}/channel/me`).catch((error) => {
+      if (error.response.status === 401) navigate("/login");
+      alert(error.response.data.message);
+      return;
+    });
     if (!result) return;
-    console.log(result.data);
     setChannelList(result.data);
     setCurrentChannel(result.data[0]);
   };
@@ -53,7 +46,7 @@ function Chat() {
   }, []);
 
   React.useEffect(() => {
-    const newSocket = io(`http://127.0.0.1:3001/channel`);
+    const newSocket = io(`${api_url}/channel`);
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();

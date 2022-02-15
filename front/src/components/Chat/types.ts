@@ -30,22 +30,6 @@ type Message = {
   date: Date;
 };
 
-/*type User = {
-  id: number;
-  id_pseudo: string;
-  avatar: string;
-  email: string;
-  role: user_role;
-  elo: number;
-  status: status;
-  two_factor_enabled: boolean;
-  two_factor_secret: string;
-  refresh_token: string;
-  achievement1: boolean;
-  achievement2: boolean;
-  roles: userChannelRole[];
-};*/
-
 interface User {
   id: number;
   id_pseudo: string;
