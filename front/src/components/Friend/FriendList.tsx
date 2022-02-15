@@ -16,6 +16,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import FriendRequestModal from "./FriendRequestModal"
 import NotificationAddIcon from "@mui/icons-material/NotificationAdd";
+import { api_url } from '../../ApiCalls/var';
 
 const backEndUrl = "http://127.0.0.1:3001"
 
@@ -35,7 +36,7 @@ export default function FriendList() {
     const [modal, setModal] = useState(false)
 
     const getFriends = async () => {
-        await fetch("http://127.0.0.1:3001/relation/friends",
+        await fetch(api_url + "/relation/friends",
             {
                 method: "GET",
                 credentials: "include",
@@ -63,7 +64,7 @@ export default function FriendList() {
 
 
     const removeRelation = async (otherUserPseudo: string) => {
-        const ret = await fetch(`${backEndUrl}/relation/remove`, {
+        const ret = await fetch(api_url + "/relation/remove", {
             credentials: "include",
             referrerPolicy: "same-origin",
             method: "DELETE",
