@@ -5,14 +5,16 @@ import { AppService } from './app.service';
 import { User } from './user/entities/user.entity';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
-import { ChatModule } from './chat/chat.module';
-import { ChatService } from './chat/chat.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { Chat } from './chat/chat.entity';
+import { Channel } from './chat/channel/entities/channel.entity';
+import { Message } from './chat/messages/entities/message.entity';
+import { ChatModule } from './chat/chat.module';
 import { AdminModule } from './admin/admin.module';
-import { PongModule } from './pong/pong.module';
+import { userChannelRole } from './chat/channel/entities/userChannelRole.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ChannelService } from './chat/channel/channel.service';
+import { PongModule } from './pong/pong.module';
 import { PongService } from './pong/pong.service';
 import { Pong } from './pong/entities/pong.entity';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -34,14 +36,22 @@ import { Challenge } from './pong/entities/challenge.entity';
 			username: process.env.DATABASE_USERNAME,
 			password: process.env.DATABASE_PASSWORD,
 			database: process.env.DATABASE_NAME,
-			entities: [User, Chat, Pong, Challenge, Relation],
+			entities: [
+				User,
+				Channel,
+				Message,
+				userChannelRole,
+				Pong,
+				Challenge,
+				Relation,
+			],
 			// FIXME: REMOVE THOSE IN PRODUCTION
 			synchronize: true,
 			keepConnectionAlive: true,
 		}),
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '..', '/avatars/'),
-			serveRoot: "/avatars/"
+			serveRoot: '/avatars/',
 		}),
 		UserModule,
 		ChatModule,
@@ -58,7 +68,7 @@ import { Challenge } from './pong/entities/challenge.entity';
 		},
 		AppService,
 		UserService,
-		ChatService,
+		ChannelService,
 		PongService,
 		RelationService,
 	],

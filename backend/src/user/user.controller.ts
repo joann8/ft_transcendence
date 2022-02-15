@@ -8,6 +8,7 @@ import {
 	Put,
 	Redirect,
 	Post,
+	ParseIntPipe,
 	UseInterceptors,
 	UploadedFile,
 	HttpException,
@@ -23,10 +24,9 @@ import { ParseUpdateCurrentDto } from './pipes/parseUpdateCurrentDto';
 import { AdminGuard } from 'src/admin/guards/admin.guard';
 import { CreateUserDto } from './dto/createUser.dto';
 
-
 @Controller('user')
 export class UserController {
-	constructor(private readonly userService: UserService) { }
+	constructor(private readonly userService: UserService) {}
 
 	// GET MY PROFILE
 	@Get()
@@ -70,19 +70,19 @@ export class UserController {
 		}),
 	)
 	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File) {
-		const oldAvatarName = `${req.user.avatar
-			.split('/')
-			.pop()}`
-		const oldAvatarPath = `${process.env.PWD}/avatars/${oldAvatarName}`
+		const oldAvatarName = `${req.user.avatar.split('/').pop()}`;
+		const oldAvatarPath = `${process.env.PWD}/avatars/${oldAvatarName}`;
 		const fs = require('fs');
-		console.log("OldAvatarName: ", oldAvatarName)
+		console.log('OldAvatarName: ', oldAvatarName);
 		//Suppression de l'ancien avatar
-		if (oldAvatarName !== "defaul_img_registration.jpg"){
+		if (oldAvatarName !== 'defaul_img_registration.jpg') {
 			await fs.unlink(oldAvatarPath, function (err) {
 				if (err)
-					throw new HttpException('Could Not Delete Previous Avatar', HttpStatus.INTERNAL_SERVER_ERROR);
-				else
-					console.log('old avatar deleted');
+					throw new HttpException(
+						'Could Not Delete Previous Avatar',
+						HttpStatus.INTERNAL_SERVER_ERROR,
+					);
+				else console.log('old avatar deleted');
 			});
 		}
 		await this.userService.update(req.user.id, {

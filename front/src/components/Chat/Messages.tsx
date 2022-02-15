@@ -1,16 +1,15 @@
 import { Container, Typography, Avatar, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { CurrentChatProps, MessageProps, ThemeOptions } from "./types";
+import { MessagesProps, MessageProps, ThemeOptions } from "./types";
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
   messagesContainer: () => ({
     margin: "0",
     padding: "5px",
     width: "100%",
-    height: "500px",
+    height: "70vh",
     backgroundColor: "white",
     borderRadius: "10px",
-    //border: "solid",
     overflowY: "scroll",
     overflowX: "hidden",
   }),
@@ -40,7 +39,17 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
   }),
 }));
 
-function Message({ message }: MessageProps) {
+function Message({ message, currentUser }: MessageProps) {
+  function formatDate(date: Date) {
+    var theMinutesNow = new Date().getTime() / (1000 * 60);
+    var theMinutesMessage = new Date(date).getTime() / (1000 * 60);
+    return `${
+      Math.ceil(theMinutesNow - theMinutesMessage - 60) < 60
+        ? `${Math.ceil(theMinutesNow - theMinutesMessage - 60)} min ago`
+        : new Date(date).toLocaleDateString()
+    }`;
+  }
+
   const classes = useStyle();
   return (
     <Grid
@@ -48,22 +57,21 @@ function Message({ message }: MessageProps) {
       columnSpacing={3}
       rowSpacing={0}
       className={classes.message}
-      justifyContent="flex-end"
     >
       <Grid item xs={12} md={12} lg={12}>
         <Typography component="p" align="center" variant="caption">
-          {message.hour}
+          {formatDate(message.date)}
         </Typography>
       </Grid>
-      {message.user !== "Thib" ? (
+      {message.author.id_pseudo !== currentUser.id_pseudo ? (
         <Grid item xs={1} md={3} lg={1}>
-          <Avatar>{message.user[0]}</Avatar>
+          <Avatar src={message.author.avatar}></Avatar>
         </Grid>
       ) : (
         <div></div>
       )}
       <Grid item xs={11} md={9} lg={11}>
-        {message.user === "Thib" ? (
+        {message.author.id_pseudo === currentUser.id_pseudo ? (
           <Container className={classes.typo}>
             <Typography
               component="div"
@@ -73,7 +81,9 @@ function Message({ message }: MessageProps) {
           </Container>
         ) : (
           <Container className={classes.typo}>
-            <Typography variant="subtitle1">{message.user}</Typography>
+            <Typography variant="subtitle1">
+              {message.author.id_pseudo}
+            </Typography>
             <Typography
               component="div"
               color="white"
@@ -85,13 +95,13 @@ function Message({ message }: MessageProps) {
     </Grid>
   );
 }
-function Messages({ messageList, innerref }: CurrentChatProps) {
+function Messages({ messageList, innerref, currentUser }: MessagesProps) {
   const classes = useStyle();
 
   return (
     <Container className={classes.messagesContainer}>
       {messageList.map((elem, key) => (
-        <Message key={key} message={elem}></Message>
+        <Message key={key} message={elem} currentUser={currentUser}></Message>
       ))}
       <div ref={innerref}></div>
     </Container>
