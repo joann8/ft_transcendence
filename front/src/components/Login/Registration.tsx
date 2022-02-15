@@ -232,6 +232,7 @@ export default function Registration() {
       setAvatar(event.target.files[0])
     }
 
+    console.log("avatar:", avatar)
     return (
       <Fragment>
         <Grid container columns={12} spacing={2} style={editLayout}>

@@ -120,7 +120,7 @@ export default function SideBar(props: any) {
         setUser(resData);
       })
       .catch((err) => {
-        alert(err);
+        //alert(err);
       });
   };
 
@@ -141,7 +141,7 @@ export default function SideBar(props: any) {
         }
       })
       .catch((err) => {
-        alert(err);
+        //alert(err);
       });
   };
 
