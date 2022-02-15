@@ -19,12 +19,10 @@ export default function Homepage(props: any) {
     },
   };
 
-  
   let navigate = useNavigate();
   return (
     <Fragment>
       <Paper style={styles.backgroundImage}>
-        {/*} <Toolbar />*/}
         <Grid
           container
           alignItems="center"
