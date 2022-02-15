@@ -74,7 +74,7 @@ function ChannelList({
     }
   }
   return (
-    <Grid item xs={12} md={4} lg={3} className={classes.channelListContainer}>
+    <Grid item xs={3} md={3} lg={3} className={classes.channelListContainer}>
       {channelList.map((room, index) => {
         const ownerRole = room.roles.find((role) => role.role === "owner");
         const ownerUser = ownerRole.user;
