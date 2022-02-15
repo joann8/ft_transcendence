@@ -42,9 +42,7 @@ export default function FriendList() {
         referrerPolicy: "same-origin"
       })
       .then(res => {
-        if (res.status === 401 || res.status === 403) {
-          if (res.status === 403)
-            alert("You are banned from this website")
+        if (res.status === 401) {
           navigate("/login")
         }
         else if (!res.ok)
@@ -53,7 +51,6 @@ export default function FriendList() {
       })
       .then(resArray => {    // FIN AJOUT JOANN
         setFriendArray(resArray)
-        console.log("Friend Array : ", friendArray)
       })
       .catch(err => {
         alert(`GetFriends :  ${err}`)
@@ -74,9 +71,7 @@ export default function FriendList() {
         id_pseudo: otherUserPseudo
       })
     }).then(res => {
-      if (res.status === 401 || res.status === 403) {
-        if (res.status === 403)
-          alert("You are banned from this website")
+      if (res.status === 401) {
         navigate("/login")
       }
       else if (!res.ok)
@@ -105,9 +100,7 @@ export default function FriendList() {
       })
     })
       .then(res => {
-        if (res.status === 401 || res.status === 403) {
-          if (res.status === 403)
-            alert("You are banned from this website")
+        if (res.status === 401) {
           navigate("/login")
         }
         else if (!res.ok)
@@ -127,8 +120,6 @@ export default function FriendList() {
 
 
   const handleRemove = async (friend: IFriend) => {
-    console.log("Remove called")
-
     try {
       await removeRelation(friend.user.id_pseudo)
     }

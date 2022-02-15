@@ -110,9 +110,7 @@ export default function SideBar(props: any) {
       referrerPolicy: "same-origin",
     })
       .then((res) => {
-        if (res.status === 401 || res.status === 403) {
-          if (res.status === 403)
-            alert("You are banned from this website")
+        if (res.status === 401) {
           navigate("/login")
         }
         else if (!res.ok) {
