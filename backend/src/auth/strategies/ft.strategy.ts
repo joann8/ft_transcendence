@@ -15,11 +15,9 @@ export class FortyTwoStrategy extends PassportStrategy(
 ) {
 	constructor(private authService: AuthService) {
 		super({
-			clientID:
-				'1f8537877222f60ace53005c32c16aca6011f033aee8fd27fc9b05c9c29ee9be',
-			clientSecret:
-				'd3d95f37b797b1cd54afe9eced1c9bb2e999cc8720acade02138bd3610450e96',
-			callbackURL: 'http://127.0.0.1:3001/login/42/redirect',
+			clientID: process.env.FT_CLIENT_ID,
+			clientSecret: process.env.FT_CLIENT_SECRET,
+			callbackURL: process.env.FT_CALLBACK_URL,
 		});
 	}
 

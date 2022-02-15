@@ -20,7 +20,7 @@ import { RefreshJwtStrategy } from './strategies/refreshjwt.strategy';
 		UserModule,
 		PassportModule,
 		JwtModule.register({
-			secret: 'csd5d4c1dc16za5s4d5thib65la2314merguez!sc16q5d1s21pidvnpyouski',
+			secret: process.env.JWT_SECRET,
 			signOptions: { expiresIn: '1h' },
 		}),
 	],

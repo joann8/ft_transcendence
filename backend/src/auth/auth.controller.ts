@@ -30,7 +30,7 @@ export class AuthController {
 	@Get('login/42/redirect')
 	@UseGuards(FortyTwoAuthGuard)
 	async redir(@Req() req, @Res({ passthrough: true }) res) {
-		let red_url = process.env.FRONTEND_URL;
+		let red_url = 'process.env.FRONTEND_URL';
 		const { user, created } = req.user;
 		const { access_token, refresh_token } = await this.authService.ft_login(
 			user,

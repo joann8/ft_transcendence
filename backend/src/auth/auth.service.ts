@@ -91,7 +91,7 @@ export class AuthService {
 				isTwoFa: isTwoFa,
 			},
 			{
-				secret: '1704pas00les11doigts22sur33les44ecrans88svp99qmdnodedemon22qldj',
+				secret: process.env.REFRESH_SECRET,
 				expiresIn: '1d',
 			},
 		);
@@ -128,7 +128,7 @@ export class AuthService {
 		const secret = user.two_factor_secret || authenticator.generateSecret();
 		const otpauthUrl = authenticator.keyuri(
 			user.email,
-			'Transcendence',
+			process.env.TWO_FACTOR_AUTH_APP_NAME,
 			secret,
 		);
 		await this.userService.update(user.id, {

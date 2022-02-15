@@ -23,8 +23,7 @@ export class RefreshJwtStrategy extends PassportStrategy(
 				}
 				return req.cookies.refresh_token;
 			},
-			secretOrKey:
-				'1704pas00les11doigts22sur33les44ecrans88svp99qmdnodedemon22qldj',
+			secretOrKey: process.env.REFRESH_SECRET,
 			ignoreExpiration: false,
 			passReqToCallback: true,
 		});

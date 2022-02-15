@@ -31,11 +31,11 @@ import { Challenge } from './pong/entities/challenge.entity';
 		}),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
-			host: '127.0.0.1',
-			port: 5432,
-			username: 'root',
-			password: 'root',
-			database: 'transcendence_backend_db',
+			host: process.env.DATABASE_HOST,
+			port: parseInt(process.env.DATABASE_PORT),
+			username: process.env.DATABASE_USERNAME,
+			password: process.env.DATABASE_PASSWORD,
+			database: process.env.DATABASE_NAME,
 			entities: [
 				User,
 				Channel,
