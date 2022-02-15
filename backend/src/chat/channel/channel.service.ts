@@ -75,6 +75,9 @@ export class ChannelService {
 
 	async removeOne(id: number) {
 		const channel = await this.channelRepository.findOne(id);
+		if (channel.mode === channelType.DIRECT) {
+			throw new ForbiddenException(`You cant delete a direct channel`);
+		}
 		const roles = await getRepository(userChannelRole).find({
 			where: {
 				channel: channel,

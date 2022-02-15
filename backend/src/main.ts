@@ -20,7 +20,7 @@ async function bootstrap() {
 	// Enable CORS
 
 	app.enableCors({
-		origin: [process.env.FRONTEND_URL, process.env.BACKEND_URL],
+		origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_LOCALHOST],
 		credentials: true,
 	});
 

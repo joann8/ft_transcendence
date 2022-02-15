@@ -38,7 +38,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
 function SearchRoom({ channelList, fetchChannelListUser, socket }) {
   const navigate = useNavigate();
 
-  const [search, setOpenSearch] = React.useState(false);
+  const [open, setOpenSearch] = React.useState(false);
   const [currentSearchRoom, setCurrentSearchRoom] = React.useState<Channel>();
   const [content, setContent] = React.useState<string>("");
   const [channelListId, setChannelListId] = React.useState<number[]>();
@@ -72,6 +72,8 @@ function SearchRoom({ channelList, fetchChannelListUser, socket }) {
         setContent("");
         return;
       });
+    setOpenSearch(false);
+
     if (!result) return;
     socket.emit("reload", currentSearchRoom);
     fetchChannelListUser();
@@ -91,7 +93,7 @@ function SearchRoom({ channelList, fetchChannelListUser, socket }) {
         JOIN ROOM
       </Button>
       <Modal
-        open={search}
+        open={open}
         onClose={handleCloseSearch}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
