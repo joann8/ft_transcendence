@@ -86,7 +86,7 @@ export class UserController {
 			});
 		}
 		await this.userService.update(req.user.id, {
-			avatar: `${process.env.BACKEND_URL}/avatars/${file.filename}`,
+			avatar: `http://127.0.0.1:3001/avatars/${file.filename}`,
 		});
 		return file;
 	}

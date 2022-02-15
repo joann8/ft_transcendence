@@ -22,7 +22,8 @@ export class TwoFaJwtStrategy extends PassportStrategy(
 				}
 				return req.cookies.access_token;
 			},
-			secretOrKey: process.env.JWT_SECRET,
+			secretOrKey:
+				'csd5d4c1dc16za5s4d5thib65la2314merguez!sc16q5d1s21pidvnpyouski',
 			ignoreExpiration: true,
 		});
 	}

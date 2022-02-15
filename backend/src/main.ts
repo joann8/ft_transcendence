@@ -20,7 +20,7 @@ async function bootstrap() {
 	// Enable CORS
 
 	app.enableCors({
-		origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_LOCALHOST],
+		origin: ['http://127.0.0.1:3000', 'http://localhost:3000'],
 		credentials: true,
 	});
 
@@ -37,7 +37,7 @@ async function bootstrap() {
 			skipMissingProperties: false,
 		}),
 	);
-	await app.listen(process.env.BACKEND_PORT);
+	await app.listen(3001);
 
 	// FIXME: NOT IN PRODUCTION (HOT RELOAD)
 	if (module.hot) {

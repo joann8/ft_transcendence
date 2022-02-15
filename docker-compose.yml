@@ -1,8 +1,8 @@
 version: "3.7"
-
 services:
   postgres:
     image: postgres:10.5
+    restart: always
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
@@ -10,38 +10,5 @@ services:
     ports:
       - "5432:5432"
     volumes:
+      #Reel:#Virtuel
       - /var/pg_db:/var/pg_db
-    restart: always
-
-  backend:
-    build:
-      context: "./backend"
-    ports:
-      - "3001:3001"
-    depends_on:
-      - postgres
-    env_file:
-      - .env.backend
-
-  frontend:
-    build:
-      context: "./front"
-    ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
-      - backend
-    env_file:
-      - .env.front
-
-  pgadmin:
-    container_name: pgadmin4_container
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
