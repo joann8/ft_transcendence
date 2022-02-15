@@ -54,7 +54,7 @@ export default function TwoFAModal(props: any) {
 
   const handleEnableSubmit = async () => {
     setIsPending(true);
-    fetch("http://127.0.0.1:3001/2fa/turn-on", {
+    fetch(api_url + "/2fa/turn-on", {
       method: "PUT",
       credentials: "include",
       referrerPolicy: "same-origin",
@@ -83,7 +83,7 @@ export default function TwoFAModal(props: any) {
 
   const handleDisableSubmit = async () => {
     setIsPending(true);
-    fetch("http://127.0.0.1:3001/2fa/turn-off", {
+    fetch(api_url + "/2fa/turn-off", {
       method: "PUT",
       credentials: "include",
       referrerPolicy: "same-origin",

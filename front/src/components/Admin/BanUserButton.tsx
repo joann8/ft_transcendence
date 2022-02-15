@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { Fragment } from "react";
 import { Context } from "../MainCompo/SideBars";
 import { IUser } from "../Profile/profileStyle";
+import { useNavigate } from "react-router";
 
 function isBannableButtonDisabled(
   row_user: IUser,
@@ -43,6 +44,7 @@ export default function BanUserButton(props) {
     isUnbannableButtonDisabled(props.params.row, user)
   );
   const [isBan, setIsBan] = useState(props.params.row.status === "BAN");
+  const naviguate = useNavigate();
 
   const handleBan = (e) => {
     e.stopPropagation();
@@ -54,6 +56,9 @@ export default function BanUserButton(props) {
     })
       .then((res) => {
         if (!res.ok) {
+          if (res.status === 401) {
+            naviguate("/login");
+          }
           res.json().then((data) => {
             enqueueSnackbar(
               props.params.row.id_pseudo +
@@ -95,6 +100,9 @@ export default function BanUserButton(props) {
     })
       .then((res) => {
         if (!res.ok) {
+          if (res.status === 401) {
+            naviguate("/login");
+          }
           res.json().then((data) => {
             enqueueSnackbar(
               props.params.row.id_pseudo + " is still ban: " + data.message,

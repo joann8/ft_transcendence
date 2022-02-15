@@ -37,7 +37,7 @@ export class TwoFaJwtStrategy extends PassportStrategy(
 				'Token does not match any user in DB',
 			);
 		} else if (user.status === status.BAN) {
-			throw new ForbiddenException(
+			throw new UnauthorizedException(
 				'You are ban from this website, get out of my sight',
 			);
 		}
