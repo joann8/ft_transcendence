@@ -1,13 +1,11 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import {
   Avatar,
   CircularProgress,
-  getBreadcrumbsUtilityClass,
   Paper,
   Table,
   TableBody,
@@ -17,8 +15,6 @@ import {
   TableRow,
 } from "@mui/material";
 import { IUser } from "./profileStyle";
-import { match } from "assert";
-import Badge from "@mui/material/Badge";
 import { api_url } from "../../ApiCalls/var";
 
 const style = {
@@ -63,8 +59,10 @@ export default function MatchModal({ setModal, modalState, user }) {
       method: "GET",
     })
       .then((res) => {
-        if (res.status === 401)
-          navigate("/login");
+        if (res.status === 401) {
+          navigate("/login")
+         throw new Error("You must login")
+        }
         else if (!res.ok)
           throw new Error(res.statusText);
         return res.json();
@@ -84,7 +82,7 @@ export default function MatchModal({ setModal, modalState, user }) {
         setHistory(resData);
       })
       .catch((err) => {
-        alert(`GetMatchHistory : ${err}`);
+        alert(`${err}`);
         handleClose()
       });
   };

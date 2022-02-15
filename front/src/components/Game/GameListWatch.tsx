@@ -32,8 +32,11 @@ export default function GameList(props: PropsWatch) {
       referrerPolicy: "same-origin",
     })
       .then((res) => {
-        if (res.status === 401)
+        if (res.status === 401) 
+        {
           navigate("/login");
+          throw new Error("You must login")
+        }
         else if (!res.ok)
           throw new Error(res.statusText);
         return res.json();
@@ -42,7 +45,7 @@ export default function GameList(props: PropsWatch) {
         setGames(resJson);
       })
       .catch((err) => {
-        console.log("Error caught: ", err);
+        alert(err);
       });
   };
 
@@ -54,8 +57,11 @@ export default function GameList(props: PropsWatch) {
       referrerPolicy: "same-origin",
     })
       .then((res) => {
-        if (res.status === 401)
+        if (res.status === 401) 
+        {
           navigate("/login");
+          throw new Error("You must login")
+        }
         else if (!res.ok)
           throw new Error(res.statusText);
         else if (res.status === 204) {
@@ -67,7 +73,7 @@ export default function GameList(props: PropsWatch) {
         setOneGame(resJson);
       })
       .catch((err) => {
-        console.log("Error caught: ", err);
+        alert(err);
       });
   };
 

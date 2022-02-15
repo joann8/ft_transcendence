@@ -42,8 +42,10 @@ export default function FriendList() {
         referrerPolicy: "same-origin"
       })
       .then(res => {
-        if (res.status === 401) {
-          navigate("/login")
+        if (res.status === 401) 
+        {
+          navigate("/login");
+          throw new Error("You must login")
         }
         else if (!res.ok)
           throw new Error(res.statusText)
@@ -53,7 +55,7 @@ export default function FriendList() {
         setFriendArray(resArray)
       })
       .catch(err => {
-        alert(`GetFriends :  ${err}`)
+        alert(err)
       })
     setReady(true)
   }
@@ -71,8 +73,10 @@ export default function FriendList() {
         id_pseudo: otherUserPseudo
       })
     }).then(res => {
-      if (res.status === 401) {
-        navigate("/login")
+      if (res.status === 401) 
+      {
+        navigate("/login");
+        throw new Error("You must login")
       }
       else if (!res.ok)
         throw new Error(res.statusText)
@@ -100,8 +104,10 @@ export default function FriendList() {
       })
     })
       .then(res => {
-        if (res.status === 401) {
-          navigate("/login")
+        if (res.status === 401) 
+        {
+          navigate("/login");
+          throw new Error("You must login")
         }
         else if (!res.ok)
           throw new Error(res.statusText)
@@ -124,7 +130,7 @@ export default function FriendList() {
       await removeRelation(friend.user.id_pseudo)
     }
     catch (error) {
-      alert(`Remove Failed : ${error}`)
+      alert(error)
       return
     }
 
@@ -141,7 +147,7 @@ export default function FriendList() {
       await updateRelation(friend.user.id_pseudo, 4, 5)
     }
     catch (error) {
-      alert(`Block Failed : ${error}`)
+      alert(error)
       return
     }
     let newArray = [...friendArray]

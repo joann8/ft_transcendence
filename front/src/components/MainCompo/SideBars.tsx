@@ -2,9 +2,6 @@ import * as React from "react";
 import { createContext, Fragment, useEffect } from "react";
 import {
   styled,
-  createTheme,
-  ThemeProvider,
-  useTheme,
 } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
@@ -112,6 +109,7 @@ export default function SideBar(props: any) {
       .then((res) => {
         if (res.status === 401) {
           navigate("/login")
+         throw new Error("You must login")
         }
         else if (!res.ok) {
           throw new Error(res.statusText);
@@ -122,7 +120,7 @@ export default function SideBar(props: any) {
         setUser(resData);
       })
       .catch((err) => {
-        alert(err.message);
+        //alert(err);
       });
   };
 
@@ -133,14 +131,17 @@ export default function SideBar(props: any) {
       referrerPolicy: "same-origin",
     })
       .then((res) => {
-        if (res.status === 401) {
+        if (res.status === 401) 
+        {
           navigate("/login");
-        } else if (!res.ok) {
+          throw new Error("You must login")
+        }
+        else if (!res.ok) {
           throw new Error(res.statusText);
         }
       })
       .catch((err) => {
-        alert(err.message);
+        //alert(err);
       });
   };
 

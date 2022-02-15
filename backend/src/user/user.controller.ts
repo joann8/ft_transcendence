@@ -26,7 +26,7 @@ import { CreateUserDto } from './dto/createUser.dto';
 
 @Controller('user')
 export class UserController {
-	constructor(private readonly userService: UserService) {}
+	constructor(private readonly userService: UserService) { }
 
 	// GET MY PROFILE
 	@Get()
@@ -73,18 +73,13 @@ export class UserController {
 		const oldAvatarName = `${req.user.avatar.split('/').pop()}`;
 		const oldAvatarPath = `${process.env.PWD}/avatars/${oldAvatarName}`;
 		const fs = require('fs');
-		console.log('OldAvatarName: ', oldAvatarName);
 		//Suppression de l'ancien avatar
-		if (oldAvatarName !== 'defaul_img_registration.jpg') {
-			await fs.unlink(oldAvatarPath, function (err) {
-				if (err)
-					throw new HttpException(
-						'Could Not Delete Previous Avatar',
-						HttpStatus.INTERNAL_SERVER_ERROR,
-					);
-				else console.log('old avatar deleted');
-			});
-		}
+		await fs.unlink(oldAvatarPath, function (err) {
+			if (err)
+				console.log(`Avatar : ${oldAvatarName} was not deleted`)
+			else
+				console.log('old avatar deleted');
+		});
 		await this.userService.update(req.user.id, {
 			avatar: `${process.env.BACKEND_URL}/avatars/${file.filename}`,
 		});

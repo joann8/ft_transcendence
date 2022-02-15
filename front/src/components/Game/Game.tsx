@@ -41,7 +41,11 @@ export default function Game(props: any) {
       referrerPolicy: "same-origin",
     })
       .then((res) => {
-        if (res.status === 401) navigate("/login");
+        if (res.status === 401) 
+        {
+          navigate("/login");
+          throw new Error("You must login")
+        }
         else if (res.status === 404) {
           alert(`Pseudo "${pseudo}" not found`);
           navigate("/game");
@@ -55,7 +59,7 @@ export default function Game(props: any) {
         return resJson;
       })
       .catch((err) => {
-        console.log("Error caught: ", err);
+        alert(err);
       });
     return data;
   };
