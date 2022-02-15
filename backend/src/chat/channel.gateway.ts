@@ -8,7 +8,7 @@ import {
 import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
 import { OnGatewayConnection } from '@nestjs/websockets';
-import { BadRequestException, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { Channel } from './channel/entities/channel.entity';
 import { ChannelService } from './channel/channel.service';
@@ -78,7 +78,6 @@ export class ChannelGateway
 		const ret = await this.channelService.postMessage(channel, null, user, {
 			content: content,
 		});
-		console.log(ret);
 
 		if (ret) {
 			client.emit('exception', ret);
