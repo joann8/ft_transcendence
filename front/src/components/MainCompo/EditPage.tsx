@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router';
 import validator from 'validator'
 import registrationBg from "../Images/registrationBg.jpg"
 import { Context } from './SideBars';
+import { api_url } from '../../ApiCalls/var';
 
 
 const style = {
