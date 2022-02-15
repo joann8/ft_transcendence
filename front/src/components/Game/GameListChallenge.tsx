@@ -23,11 +23,13 @@ import gameStyles from "./GameStyles";
 import GamePong from "./GamePong";
 import { Context } from "../MainCompo/SideBars";
 import { api_url } from "../../ApiCalls/var";
+import { useNavigate } from "react-router";
 
 export default function GameListChallenge(props: PropsGame) {
   let context = useContext(Context);
-
   let socket = props.socket;
+  const navigate = useNavigate();
+
 
   const updateStatus = async (newStatus: string) => {
     await fetch(api_url + `/user`, {
@@ -38,7 +40,10 @@ export default function GameListChallenge(props: PropsGame) {
       body: JSON.stringify({ status: `${newStatus}` }),
     })
       .then((res) => {
-        if (!res.ok) throw new Error(res.statusText);
+        if (res.status === 401)
+          navigate("/login");
+        else if (!res.ok)
+          throw new Error(res.statusText);
         return res.json();
       })
       .catch((err) => {
@@ -57,7 +62,10 @@ export default function GameListChallenge(props: PropsGame) {
         referrerPolicy: "same-origin",
       })
         .then((res) => {
-          if (!res.ok) throw new Error(res.statusText);
+          if (res.status === 401)
+            navigate("/login");
+          else if (!res.ok)
+            throw new Error(res.statusText);
           return res.json();
         })
         .then((resJson) => {

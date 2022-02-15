@@ -38,7 +38,10 @@ export default function GameChallenge(props: PropsChallenge) {
       body: JSON.stringify({ status: `${newStatus}` }),
     })
       .then((res) => {
-        if (!res.ok) throw new Error(res.statusText);
+        if (res.status === 401)
+          navigate("/login");
+        else if (!res.ok)
+          throw new Error(res.statusText);
         return res.json();
       })
       .catch((err) => {

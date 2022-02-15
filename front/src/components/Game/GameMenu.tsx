@@ -19,10 +19,12 @@ import gameStyles from "./GameStyles";
 import { PropsInit } from "./GameTypes";
 import GameListChallenge from "./GameListChallenge";
 import { api_url } from "../../ApiCalls/var";
+import { useNavigate } from "react-router";
 
 export default function GameMenu(props: PropsInit) {
   let socket = props.socket;
   let userID = props.user;
+  const navigate = useNavigate();
 
   const [openGame, setOpenGame] = useState(false);
   const handleOpenGame = async () => {
@@ -38,7 +40,10 @@ export default function GameMenu(props: PropsInit) {
       body: JSON.stringify({ status: `${newStatus}` }),
     })
       .then((res) => {
-        if (!res.ok) throw new Error(res.statusText);
+        if (res.status === 401)
+          navigate("/login");
+        else if (!res.ok)
+          throw new Error(res.statusText);
         return res.json();
       })
       .catch((err) => {
