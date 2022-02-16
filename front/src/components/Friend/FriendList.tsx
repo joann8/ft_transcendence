@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { IUser } from '../Profile/profileStyle'
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Avatar, Button, ButtonGroup, Typography } from '@mui/material';
 import { Context } from '../MainCompo/SideBars';
@@ -34,7 +34,11 @@ export default function FriendList() {
 
   const [modal, setModal] = useState(false)
 
-  const getFriends = async () => {
+  useEffect(() => {
+    getFriends.current()
+  }, [modal])
+
+  const getFriends = useRef(async () => {
     await fetch(api_url + "/relation/friends",
       {
         method: "GET",
@@ -58,7 +62,7 @@ export default function FriendList() {
         alert(err)
       })
     setReady(true)
-  }
+  })
 
 
   const removeRelation = async (otherUserPseudo: string) => {
@@ -120,9 +124,7 @@ export default function FriendList() {
     return ret
   }
 
-  useEffect(() => {
-    getFriends()
-  }, [modal])
+ 
 
 
   const handleRemove = async (friend: IFriend) => {

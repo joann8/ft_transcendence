@@ -69,7 +69,6 @@ export default function GameList(props: PropsWatch) {
         } else return res.json();
       })
       .then((resJson) => {
-        console.log(resJson);
         setOneGame(resJson);
       })
       .catch((err) => {

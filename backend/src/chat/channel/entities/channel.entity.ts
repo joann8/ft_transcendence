@@ -32,6 +32,12 @@ export class Channel {
 	@Column({ nullable: true })
 	password?: string;
 
+	@Column({ nullable: true })
+	idOne?: number;
+
+	@Column({ nullable: true })
+	idTwo?: number;
+
 	@OneToMany((type) => Message, (message) => message.channel, {
 		cascade: true,
 	})
