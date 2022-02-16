@@ -62,7 +62,6 @@ export default function Dashboard() {
           centered
         >
           <Tab label="Users admin" {...a11yProps(0)} />
-          <Tab label="Chat admin" {...a11yProps(1)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>

@@ -106,7 +106,11 @@ function SearchRoom({ channelList, fetchChannelListUser, socket }) {
           </Typography>
           {currentSearchRoom &&
             allChannelList.map((channel, key) => {
-              if (channelListId.includes(channel.id)) return;
+              if (
+                channelListId.includes(channel.id) ||
+                channel.mode === channelType.DIRECT
+              )
+                return;
               if (channel.id === currentSearchRoom.id)
                 return (
                   <Button key={key} variant="contained">

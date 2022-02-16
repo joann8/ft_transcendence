@@ -42,10 +42,6 @@ interface IMatch {
   date: Date;
 }
 
-interface IResult {
-  win: number,
-  lost: number
-}
 
 export default function MatchModal({ setModal, modalState, user }) {
   const [history, setHistory] = useState<IMatch[]>(null);
@@ -70,7 +66,7 @@ export default function MatchModal({ setModal, modalState, user }) {
       .then((resData) => {
         //Met le joueur au player one
         for (let i = 0; i < resData.length; i++) {
-          if (user.id_pseudo != resData[i].player1.id_pseudo) {
+          if (user.id_pseudo !== resData[i].player1.id_pseudo) {
             const tmpPlayer = resData[i].player1;
             const tmpScore = resData[i].scorePlayer1;
             resData[i].player1 = resData[i].player2;

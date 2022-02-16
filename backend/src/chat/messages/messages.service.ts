@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
-import { getRepository, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Channel } from '../channel/entities/channel.entity';
 import { CreateMessageDto } from './dto/create-message-dto';
 import { Message } from './entities/message.entity';
@@ -17,7 +17,6 @@ export class MessagesService {
 		user: User,
 		createMessageDto: CreateMessageDto,
 	) {
-		console.log('here');
 		const newMessage = this.messageRepository.create({
 			author: user,
 			channel: channel,

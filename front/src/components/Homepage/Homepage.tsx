@@ -9,7 +9,7 @@ import { useNavigate } from "react-router";
 export default function Homepage(props: any) {
   const styles = {
     backgroundImage: {
-      backgroundImage: `url(` + `${Image}` + ")",
+      backgroundImage: `url(${Image})`,
       backgroundPosition: "left",
       backgroundRepeat: "no-repeat",
       backgroundSize: "cover",

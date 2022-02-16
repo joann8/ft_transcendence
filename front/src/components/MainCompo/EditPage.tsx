@@ -140,7 +140,7 @@ export default function EditPage() {
       if (avatar) {
         const formData = new FormData()
         formData.append("avatar", avatar, avatar.name)
-        const response = await fetch(api_url + "/user/upload", {
+        await fetch(api_url + "/user/upload", {
           method: "POST",
           credentials: "include",
           referrerPolicy: "same-origin",
