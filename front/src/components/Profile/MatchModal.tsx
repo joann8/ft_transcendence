@@ -1,7 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   Avatar,
@@ -47,7 +47,7 @@ export default function MatchModal({ setModal, modalState, user }) {
   const [history, setHistory] = useState<IMatch[]>(null);
   const navigate = useNavigate();
 
-  const getHistory = async () => {
+  const getHistory = useRef(async () => {
     await setTimeout(() => { }, 30000);
     await fetch(api_url + `/game/history/${user.id_pseudo}`, {
       credentials: "include",
@@ -81,10 +81,10 @@ export default function MatchModal({ setModal, modalState, user }) {
         alert(`${err}`);
         handleClose()
       });
-  };
+  })
 
   useEffect(() => {
-    getHistory();
+    getHistory.current();
   }, []);
 
   function getMyDate(dbDate: Date): string {
