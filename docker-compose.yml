@@ -13,31 +13,19 @@ services:
       - /var/pg_db:/var/pg_db
     restart: always
 
-  #  backend:
-  #    build:
-  #      context: "./backend"
-  #    ports:
-  #      - "3001:3001"
-  #    depends_on:
-  #      - postgres
-  #
-  #  frontend:
-  #    build:
-  #      context: "./front"
-  #    ports:
-  #      - "3000:3000"
-  #    depends_on:
-  #      - postgres
-  #      - backend
-
-  pgadmin:
-    container_name: pgadmin4_container
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
+  backend:
+    build:
+      context: "./backend"
     ports:
-      - "5050:80"
+      - "3001:3001"
     depends_on:
       - postgres
+
+  frontend:
+    build:
+      context: "./front"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - backend

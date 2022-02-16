@@ -27,7 +27,7 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
 	imports: [
 		ConfigModule.forRoot({
-			envFilePath: '.env.backend',
+			envFilePath: '.env',
 		}),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
@@ -45,9 +45,6 @@ import { ConfigModule } from '@nestjs/config';
 				Challenge,
 				Relation,
 			],
-			// FIXME: REMOVE THOSE IN PRODUCTION
-			synchronize: true,
-			keepConnectionAlive: true,
 		}),
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '..', '/avatars/'),
