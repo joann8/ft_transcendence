@@ -86,7 +86,7 @@ export class UserService {
 	async getLeaderboard(): Promise<User[]> {
 		const leaders = await this.usersRepository.find({
 			order: { elo: 'DESC' },
-			take: 2, //a modifier, combien de données veut-on dans le tableau lead?
+			take: 10, //a modifier, combien de données veut-on dans le tableau lead?
 		});
 		return leaders;
 	}
