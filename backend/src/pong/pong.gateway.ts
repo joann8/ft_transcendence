@@ -17,7 +17,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @WebSocketServer()
     server: Server;
     
-    private logger: Logger = new Logger("*** Pong Interface ***");
+    //private logger: Logger = new Logger("*** Pong Interface ***");
     private queue: Map<Socket, User> = new Map<Socket, User>(); // clients dans la queue
     private matches: Game[] = []; // liste des matches en cours
     private challenges: Challenge[] = []; // liste des matches en cours
@@ -25,15 +25,15 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     // Fonctions de base
 
     afterInit(server: Server) {
-        this.logger.log("Initialized!");
+        //this.logger.log("Initialized!");
     }
 
     handleConnection(client: Socket) {
-        this.logger.log(`New client connected : ${client.id}`);
+        //this.logger.log(`New client connected : ${client.id}`);
     }
 
     handleDisconnect(client: Socket) {
-        this.logger.log(`HANDLE DISCONNECT A client disconnected : ${client.id}`);
+        //this.logger.log(`HANDLE DISCONNECT A client disconnected : ${client.id}`);
         this.disconnectClient(client);
     }
 
