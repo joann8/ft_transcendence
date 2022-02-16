@@ -23,9 +23,10 @@ export default function Game(props: any) {
   const [socket, setSocket] = useState<Socket>();
 
   useEffect(() => {
-    const newSocket = io(api_url + "/game", {
+    const newSocket = io(api_url + "/game")
+    /*, {
       reconnectionDelayMax: 2000,
-    });
+    });*/
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
@@ -47,9 +48,8 @@ export default function Game(props: any) {
           throw new Error("You must login")
         }
         else if (res.status === 404) {
-          alert(`Pseudo "${pseudo}" not found`);
           navigate("/game");
-          throw new Error(res.statusText);
+          throw new Error(`Pseudo "${pseudo}" not found`);
         } else if (!res.ok && res.status !== 404)
           throw new Error(res.statusText);
         return res.json();
