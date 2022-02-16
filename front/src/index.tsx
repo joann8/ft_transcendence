@@ -37,7 +37,6 @@ const mdTheme = createTheme({
 
 function Root() {
   const [cookies, setCookie] = useCookies(["access_token"]);
-  console.log(cookies);
 
   React.useEffect(() => {
     if (cookies.access_token) {
@@ -54,6 +53,7 @@ function Root() {
             if (!res.ok) {
               throw new Error(res.statusText);
             }
+            return undefined;
           })
           .catch((err) => {
             console.error(err.message);

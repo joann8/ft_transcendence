@@ -1,5 +1,4 @@
 version: "3.7"
-
 services:
   postgres:
     image: postgres:10.5
@@ -13,26 +12,22 @@ services:
       - /var/pg_db:/var/pg_db
     restart: always
 
-  backend:
-    build:
-      context: "./backend"
-    ports:
-      - "3001:3001"
-    depends_on:
-      - postgres
-    env_file:
-      - ./backend/.env.backend
-
-  frontend:
-    build:
-      context: "./front"
-    ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
-      - backend
-    env_file:
-      - ./front/.env.front
+  #  backend:
+  #    build:
+  #      context: "./backend"
+  #    ports:
+  #      - "3001:3001"
+  #    depends_on:
+  #      - postgres
+  #
+  #  frontend:
+  #    build:
+  #      context: "./front"
+  #    ports:
+  #      - "3000:3000"
+  #    depends_on:
+  #      - postgres
+  #      - backend
 
   pgadmin:
     container_name: pgadmin4_container

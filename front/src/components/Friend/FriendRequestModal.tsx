@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -42,7 +42,7 @@ export default function FriendRequestModal(props: any) {
   const [requestArray, setRequestArray] = useState(null)
 
 
-  const getFriendRequest = async () => {
+  const getFriendRequest = useRef(async () => {
     await fetch(api_url + "/relation/request", {
       method: "GET",
       credentials: "include",
@@ -66,7 +66,7 @@ export default function FriendRequestModal(props: any) {
       .catch(err => {
         alert(err)
       })
-  }
+  })
 
   const updateRelation = async (otherUserPseudo: string, newRelation1: number, newRelation2: number) => {
     const ret = await fetch(api_url + "/relation/update", {
@@ -131,7 +131,7 @@ export default function FriendRequestModal(props: any) {
   }
 
   useEffect(() => {
-    getFriendRequest()
+    getFriendRequest.current()
   }, [])
 
   const handleAccept = async (friend: IUser) => {

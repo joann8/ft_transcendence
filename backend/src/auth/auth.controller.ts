@@ -35,8 +35,8 @@ export class AuthController {
 		const { access_token, refresh_token } = await this.authService.ft_login(
 			user,
 		);
-		res.cookie('access_token', access_token, {sameSite: "Lax"});
-		res.cookie('refresh_token', refresh_token, {sameSite: "Lax"});
+		res.cookie('access_token', access_token, { sameSite: 'Lax' });
+		res.cookie('refresh_token', refresh_token, { sameSite: 'Lax' });
 		if (created) {
 			red_url += '/registration';
 		} else if (user.two_factor_enabled) {
@@ -56,8 +56,8 @@ export class AuthController {
 	) {
 		const { access_token, refresh_token } =
 			await this.authService.two_fa_login(req.user, secret);
-		res.cookie('access_token', access_token, {sameSite: "Lax"});
-		res.cookie('refresh_token', refresh_token, {sameSite: "Lax"});
+		res.cookie('access_token', access_token, { sameSite: 'Lax' });
+		res.cookie('refresh_token', refresh_token, { sameSite: 'Lax' });
 	}
 	// LOGOUT FROM MY PROFILE
 	@Get('logout')
@@ -89,8 +89,8 @@ export class AuthController {
 	) {
 		const { access_token, refresh_token } =
 			await this.authService.turnOnTwoFaAuth(req.user, secret);
-		res.cookie('access_token', access_token, {sameSite: "Lax"});
-		res.cookie('refresh_token', refresh_token, {sameSite: "Lax"});
+		res.cookie('access_token', access_token, { sameSite: 'Lax' });
+		res.cookie('refresh_token', refresh_token, { sameSite: 'Lax' });
 	}
 	// DISABLE 2FA FOR CURRENT USER - Access token still valid
 	@Put('2fa/turn-off')
@@ -106,6 +106,6 @@ export class AuthController {
 		const access_token = await this.authService.refresh_access_token(
 			req.user,
 		);
-		res.cookie('access_token', access_token, {sameSite: "Lax"});
+		res.cookie('access_token', access_token, { sameSite: 'Lax' });
 	}
 }

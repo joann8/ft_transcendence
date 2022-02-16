@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { Grid, TextField, BottomNavigation, Avatar, styled, MobileStepper, useTheme, Paper, CircularProgress } from '@mui/material';
-import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera} from '@mui/icons-material';
+import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import validator from 'validator'
 import registrationBg from "../Images/registrationBg.jpg"
@@ -37,6 +37,7 @@ const editLayout = {
 }
 
 
+
 export default function Registration() {
 
   const [user, setUser] = useState<IUser>(null)
@@ -46,15 +47,15 @@ export default function Registration() {
 
   const navigate = useNavigate()
 
-  const getUser = async () => {
+
+  const getUser = useRef(async () => {
     await fetch(api_url + "/user/", {
       method: "GET",
       credentials: "include",
       referrerPolicy: "same-origin"
     })
       .then((res) => {
-        if (res.status === 401) 
-        {
+        if (res.status === 401) {
           navigate("/login");
           throw new Error("You must login")
         }
@@ -65,17 +66,17 @@ export default function Registration() {
       })
       .then((resData: IUser) => {
         setUser(resData)
-        setAvatar(resData.avatar)
         setPseudo(resData.id_pseudo)
       })
       .catch((error) => {
         alert(error)
         navigate("/login")
       })
-  }
+  })
+
 
   useEffect(() => {
-    setTimeout(getUser, 1000)
+   getUser.current()
   }, [])
 
   //INTERNAL COMPONENT
@@ -86,15 +87,14 @@ export default function Registration() {
       if (avatar) {
         const formData = new FormData()
         formData.append("avatar", avatar, avatar.name)
-        const response = await fetch(api_url + "/user/upload", {
+        await fetch(api_url + "/user/upload", {
           method: "POST",
           credentials: "include",
           referrerPolicy: "same-origin",
           body: formData
         })
           .then(res => {
-            if (res.status === 401) 
-            {
+            if (res.status === 401) {
               navigate("/login");
               throw new Error("You must login")
             }
@@ -111,7 +111,6 @@ export default function Registration() {
 
       if (!pseudo) {
         throw new Error("Pseudo cannot be empty")
-        return
       }
       if (pseudo) {
         if (!(validator.isAlpha(pseudo[0]) && validator.isAlphanumeric(pseudo)))
@@ -132,8 +131,7 @@ export default function Registration() {
         body: JSON.stringify(updatePseudo),
       })
         .then(res => {
-          if (res.status === 401) 
-          {
+          if (res.status === 401) {
             navigate("/login");
             throw new Error("You must login")
           }
@@ -152,9 +150,9 @@ export default function Registration() {
 
     const handleCompleteRegistration = async () => {
       try {
-        if (user.avatar != avatar)
+        if (user.avatar !== avatar)
           await updateAvatar()
-        if (user.id_pseudo != pseudo)
+        if (user.id_pseudo !== pseudo)
           await updatePseudo()
       }
       catch (error) {
@@ -231,13 +229,11 @@ export default function Registration() {
         return alert("jpeg | jpg | png | gif File only")
       setAvatar(event.target.files[0])
     }
-
-    console.log("avatar:", avatar)
     return (
       <Fragment>
         <Grid container columns={12} spacing={2} style={editLayout}>
           <Grid item xs={4} >
-            <Avatar src={avatar} style={{
+            <Avatar src={avatar ? URL.createObjectURL(avatar) : user.avatar} style={{
               minWidth: "100px",
               minHeight: "100px",
               flexGrow: 1,

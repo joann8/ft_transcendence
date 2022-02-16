@@ -8,7 +8,7 @@ import friendBg from "../Images/friendBg.jpeg"
 
 
 const layout = {
-    backgroundImage: `url(` + `${friendBg}` + ')',
+    backgroundImage: `url(${friendBg})`,
     backgroundPosition: 'center',
     backgroundRepeat: 'repeat',
     backgroundSize: 'cover',
@@ -17,18 +17,6 @@ const layout = {
     overflow: "auto"
 }
 
-const style = {
-    position: 'relative',
-    top: '55%',
-    left: '55%',
-    maxHeight: "40vh",
-    maxWidth: "50vw",
-    transform: 'translate(-50%, -50%)',
-    bgcolor: 'rgba(250, 250, 250)',
-    border: '2px solid #000',
-    display: "flex",
-    p: 4,
-};
 
 const boxWrapper = {
     position: "relative",

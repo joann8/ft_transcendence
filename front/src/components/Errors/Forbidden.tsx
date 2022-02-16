@@ -6,13 +6,6 @@ import { Toolbar } from "@mui/material";
 import { Grid } from "@mui/material";
 
 function ForbiddenCompo() {
-  const styles = {
-    defaultStyle: {
-      backgroundColor: "blue",
-      width: "100%",
-      height: "100vh",
-    },
-  };
 
   return (
     <Fragment>

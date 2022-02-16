@@ -10,9 +10,13 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { TwoFaJwtAuthGuard } from './guards/twofajwt_auth.guard';
 import { TwoFaJwtStrategy } from './strategies/twofajwt.strategy';
 import { RefreshJwtStrategy } from './strategies/refreshjwt.strategy';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
 	imports: [
+		ConfigModule.forRoot({
+			envFilePath: '.env.backend',
+		}),
 		UserModule,
 		PassportModule,
 		JwtModule.register({
