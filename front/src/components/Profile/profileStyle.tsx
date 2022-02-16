@@ -22,7 +22,7 @@ export interface IUser {
 
 const profileStyle = {
   layout: {
-    backgroundImage: `url(` + `${backGround}` + ")",
+    backgroundImage: `url(${backGround})`,
     backgroundPosition: "center",
     backgroundRepeat: "repeat",
     backgroundSize: "cover",

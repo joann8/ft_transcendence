@@ -1,7 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   Avatar,
@@ -42,16 +42,12 @@ interface IMatch {
   date: Date;
 }
 
-interface IResult {
-  win: number,
-  lost: number
-}
 
 export default function MatchModal({ setModal, modalState, user }) {
   const [history, setHistory] = useState<IMatch[]>(null);
   const navigate = useNavigate();
 
-  const getHistory = async () => {
+  const getHistory = useRef(async () => {
     await setTimeout(() => { }, 30000);
     await fetch(api_url + `/game/history/${user.id_pseudo}`, {
       credentials: "include",
@@ -70,7 +66,7 @@ export default function MatchModal({ setModal, modalState, user }) {
       .then((resData) => {
         //Met le joueur au player one
         for (let i = 0; i < resData.length; i++) {
-          if (user.id_pseudo != resData[i].player1.id_pseudo) {
+          if (user.id_pseudo !== resData[i].player1.id_pseudo) {
             const tmpPlayer = resData[i].player1;
             const tmpScore = resData[i].scorePlayer1;
             resData[i].player1 = resData[i].player2;
@@ -85,10 +81,10 @@ export default function MatchModal({ setModal, modalState, user }) {
         alert(`${err}`);
         handleClose()
       });
-  };
+  })
 
   useEffect(() => {
-    getHistory();
+    getHistory.current();
   }, []);
 
   function getMyDate(dbDate: Date): string {
