@@ -83,7 +83,7 @@ export class UserController {
 			else console.log('old avatar deleted');
 		});
 		await this.userService.update(req.user.id, {
-			avatar: `http://127.0.0.1:3001/avatars/${file.filename}`,
+			avatar: `${process.env.BACKEND_URL}/avatars/${file.filename}`,
 		});
 		return file;
 	}

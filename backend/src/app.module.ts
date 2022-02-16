@@ -45,6 +45,9 @@ import { ConfigModule } from '@nestjs/config';
 				Challenge,
 				Relation,
 			],
+			// FIXME: REMOVE THOSE IN PRODUCTION
+			synchronize: true,
+			keepConnectionAlive: true,
 		}),
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '..', '/avatars/'),
