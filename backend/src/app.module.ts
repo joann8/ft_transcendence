@@ -6,7 +6,6 @@ import { User } from './user/entities/user.entity';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
 import { Channel } from './chat/channel/entities/channel.entity';
 import { Message } from './chat/messages/entities/message.entity';
 import { ChatModule } from './chat/chat.module';
@@ -26,9 +25,6 @@ import { Challenge } from './pong/entities/challenge.entity';
 
 @Module({
 	imports: [
-		ConfigModule.forRoot({
-			envFilePath: 'config.env',
-		}),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
 			host: process.env.DATABASE_HOST,

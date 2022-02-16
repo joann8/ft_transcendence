@@ -21,7 +21,7 @@ services:
     depends_on:
       - postgres
     env_file:
-      - .env.backend
+      - ./backend/.env.backend
 
   frontend:
     build:
@@ -32,7 +32,7 @@ services:
       - postgres
       - backend
     env_file:
-      - .env.front
+      - ./front/.env.front
 
   pgadmin:
     container_name: pgadmin4_container
