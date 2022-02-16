@@ -54,6 +54,7 @@ function Root() {
             if (!res.ok) {
               throw new Error(res.statusText);
             }
+            return undefined;
           })
           .catch((err) => {
             console.error(err.message);
