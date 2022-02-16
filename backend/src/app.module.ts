@@ -22,9 +22,13 @@ import { RelationModule } from './relation/relation.module';
 import { Relation } from './relation/entities/relation.entity';
 import { RelationService } from './relation/relation.service';
 import { Challenge } from './pong/entities/challenge.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
 	imports: [
+		ConfigModule.forRoot({
+			envFilePath: '.env.backend',
+		}),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
 			host: process.env.DATABASE_HOST,
