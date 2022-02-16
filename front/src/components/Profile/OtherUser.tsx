@@ -10,7 +10,7 @@ import {
   Chip,
   ButtonGroup,
 } from "@mui/material";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
 import Badge from "@mui/material/Badge";
 import { useNavigate, useParams } from "react-router";
 import MatchModal from "./MatchModal";
@@ -43,15 +43,17 @@ export default function OtherUser() {
   });
   const [update, setUpdate] = useState(false);
 
-  useEffect(() => {
-    getAllInfo();
-  }, [idPseudo, update, context.user]);
-
-  const getAllInfo = async () => {
+  const getAllInfo = useRef(async () => {
     const tmpOtherUserData = await getOtherUserData(idPseudo);
     if (!tmpOtherUserData) return;
     await getRelation(context.user.id_pseudo, tmpOtherUserData.id_pseudo);
-  };
+  })
+  
+  useEffect(() => {
+    getAllInfo.current();
+  }, [idPseudo, update, context.user]);
+
+
 
   const getOtherUserData = async (id_pseudo: string) => {
     const tmpOtherUserData = await fetch(api_url + `/user/${id_pseudo}`, {
