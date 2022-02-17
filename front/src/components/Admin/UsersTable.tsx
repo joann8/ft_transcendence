@@ -1,17 +1,8 @@
 import * as React from "react";
-import {
-  DataGrid,
-  GridApi,
-  GridCellValue,
-  GridColDef,
-  GridRowParams,
-  GridToolbar,
-  GridValueSetterParams,
-} from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import useFromApi from "../../ApiCalls/useFromApi";
-import { Box, Button, CircularProgress } from "@mui/material";
-import { api_url } from "../../ApiCalls/var";
-import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import { Box, CircularProgress } from "@mui/material";
+import { SnackbarProvider } from "notistack";
 import BanUserButton from "./BanUserButton";
 import PromoteUserButton from "./PromoteUserButton";
 
