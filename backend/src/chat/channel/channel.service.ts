@@ -284,6 +284,8 @@ export class ChannelService {
 				},
 			],
 		});
+		if (!directChannel)
+			return 
 		const roles = await getRepository(userChannelRole).find({
 			where: {
 				channel: directChannel,
