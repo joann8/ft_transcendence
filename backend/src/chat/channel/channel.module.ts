@@ -6,7 +6,6 @@ import { Channel } from './entities/channel.entity';
 import { userChannelRole } from './entities/userChannelRole.entity';
 import { MessagesModule } from '../messages/messages.module';
 import { RelationModule } from 'src/relation/relation.module';
-import { RelationService } from 'src/relation/relation.service';
 
 @Module({
 	imports: [

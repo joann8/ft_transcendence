@@ -11,7 +11,6 @@ import { authenticator } from 'otplib';
 import { Response } from 'express';
 import { toFileStream } from 'qrcode';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from 'src/user/dto/createUser.dto';
 
 @Injectable()
 export class AuthService {

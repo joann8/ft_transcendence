@@ -18,7 +18,7 @@ import {
 } from '@nestjs/common';
 import { RelationService } from './relation.service';
 import { RelationDto } from './dto/relation.dto';
-import { Relation, relation } from './entities/relation.entity';
+import { Relation } from './entities/relation.entity';
 import { UpdateRelationDto } from './dto/updateRelation.dto';
 import { FindRelationDto } from './dto/findRelationdto';
 import { GetRelationDto } from './dto/getRelationDto.dto';

@@ -1,14 +1,15 @@
-import { Controller, Get, Req, Sse } from '@nestjs/common';
-import { interval, map, Observable } from 'rxjs';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Public } from './auth/decorators/public.decorator';
-import { User } from './user/entities/user.entity';
 import { UserService } from './user/user.service';
 
 @Controller()
 @Public()
 export class AppController {
-	constructor(private userService : UserService, private readonly appService: AppService) {}
+	constructor(
+		private userService: UserService,
+		private readonly appService: AppService,
+	) {}
 
 	@Get()
 	getHello(): string {

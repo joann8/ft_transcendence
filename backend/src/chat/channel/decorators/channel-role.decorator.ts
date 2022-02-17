@@ -1,8 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import {
-	channelRole,
-	userChannelRole,
-} from '../entities/userChannelRole.entity';
+import { userChannelRole } from '../entities/userChannelRole.entity';
 
 export function CheckRoles(action: string) {
 	return function (
