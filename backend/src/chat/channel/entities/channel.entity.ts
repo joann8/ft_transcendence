@@ -1,15 +1,5 @@
 import { Message } from 'src/chat/messages/entities/message.entity';
-import { User } from 'src/user/entities/user.entity';
-import {
-	Column,
-	Entity,
-	JoinTable,
-	ManyToMany,
-	ManyToOne,
-	OneToMany,
-	PrimaryGeneratedColumn,
-} from 'typeorm';
-import { CreateChannelDto } from '../dto/create-channel-dto';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { userChannelRole } from './userChannelRole.entity';
 
 export enum channelType {

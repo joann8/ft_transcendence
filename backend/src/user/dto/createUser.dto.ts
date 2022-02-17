@@ -5,8 +5,6 @@ import {
 	IsPositive,
 	Min,
 } from 'class-validator';
-import { Channel } from 'src/chat/channel/entities/channel.entity';
-import { Message } from 'src/chat/messages/entities/message.entity';
 import { status, user_role } from '../entities/user.entity';
 
 export class CreateUserDto {
@@ -22,7 +20,6 @@ export class CreateUserDto {
 	@IsOptional()
 	@IsNotEmpty()
 	avatar: string;
-
 
 	@IsOptional()
 	role: user_role;

@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Relation } from './entities/relation.entity';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import { ChannelService } from 'src/chat/channel/channel.service';
 import { ChannelModule } from 'src/chat/channel/channel.module';
 
 @Module({
