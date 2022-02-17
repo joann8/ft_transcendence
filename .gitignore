@@ -2,7 +2,6 @@
 /backend/dist
 /backend/node_modules
 /node_modules
-package-lock.json
 
 # Logs
 /backend/logs
