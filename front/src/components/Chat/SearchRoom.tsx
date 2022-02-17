@@ -49,7 +49,7 @@ function SearchRoom({ channelList, fetchChannelListUser, socket }) {
     setChannelListId(channelList.map((elem) => elem.id));
   }, [channelList]);
   React.useEffect(() => {
-    setCurrentSearchRoom(allChannelList[0]);
+    setCurrentSearchRoom(null);
   }, [allChannelList]);
   const fetchChannelList = async () => {
     const result = await back.get(`${api_url}/channel/`).catch((error) => {
@@ -61,6 +61,10 @@ function SearchRoom({ channelList, fetchChannelListUser, socket }) {
     setAllChannelList(result.data);
   };
   const fetchJoinRoom = async () => {
+    if (!currentSearchRoom) {
+      setOpenSearch(false);
+      return;
+    }
     const result = await back
       .post(`${api_url}/channel/join/${currentSearchRoom.id}`, {
         mode: currentSearchRoom.mode,
@@ -107,14 +111,14 @@ function SearchRoom({ channelList, fetchChannelListUser, socket }) {
           >
             SELECT A ROOM
           </Typography>
-          {currentSearchRoom &&
+          {allChannelList &&
             allChannelList.map((channel, key) => {
               if (
                 channelListId.includes(channel.id) ||
                 channel.mode === channelType.DIRECT
               )
                 return;
-              if (channel.id === currentSearchRoom.id)
+              if (currentSearchRoom && channel.id === currentSearchRoom.id)
                 return (
                   <Button key={key} variant="contained">
                     {channel.name}

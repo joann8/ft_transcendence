@@ -191,8 +191,6 @@ export class RelationController {
 				const two = await getRepository(User).findOne(
 					relationRequest.userId2bis,
 				);
-				console.log('one :', one);
-				console.log('two :', two);
 				await this.channelService.createDirectChannel(one, two);
 			}
 			const upDatedRelation = await this.relationService.findOne(

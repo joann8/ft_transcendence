@@ -11,7 +11,7 @@ import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
 import * as React from "react";
 import back from "./backConnection";
-import { CreateChannelProps, ThemeOptions, channelType } from "./types";
+import { CreateChannelProps, channelType } from "./types";
 import { api_url } from "../../ApiCalls/var";
 import { useNavigate } from "react-router";
 
@@ -26,7 +26,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-const useStyle = makeStyles((theme: ThemeOptions) => ({
+const useStyle = makeStyles(() => ({
   elem: () => ({
     width: "100%",
     margin: "0",

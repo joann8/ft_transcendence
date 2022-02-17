@@ -44,7 +44,7 @@ function AddUser({ currentChannel, socket }: AddUserProps) {
   const handleClose = () => setOpen(false);
   const classes = useStyle();
   const fetchPostUser = async (pseudo: string) => {
-      await back
+    await back
       .put(`${api_url}/channel/${currentChannel.id}/add/${pseudo}`)
       .catch((error) => {
         if (error.response.status === 401) navigate("/login");
