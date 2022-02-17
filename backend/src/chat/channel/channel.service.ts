@@ -233,6 +233,7 @@ export class ChannelService {
 	}
 
 	async createDirectChannel(one: User, two: User) {
+		if (!one || !two) return;
 		const newChannel = await this.channelRepository.save(
 			this.channelRepository.create({
 				name: `${one.id_pseudo} - ${two.id_pseudo}`,
@@ -258,6 +259,8 @@ export class ChannelService {
 	}
 
 	async deleteDirectChannel(one: User, two: User) {
+		if (!one || !two) return;
+
 		const directChannel = await this.channelRepository.findOne({
 			where: [
 				{
@@ -358,6 +361,8 @@ export class ChannelService {
 		prevPseudo: string,
 		newPSeudo: string,
 	) {
+		if (!prevPseudo || !newPSeudo || !id) return;
+
 		const directChannels = await this.channelRepository.find({
 			where: [{ idOne: id }, { idTwo: id }],
 		});
