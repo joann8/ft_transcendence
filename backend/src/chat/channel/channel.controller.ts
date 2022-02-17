@@ -19,6 +19,7 @@ import { ParseUserPseudo } from './pipes/parse-user-pseudo.pipe';
 import { MessagesService } from '../messages/messages.service';
 import { JoinChannelDto } from './dto/join-channel-dto';
 import { RelationService } from 'src/relation/relation.service';
+import { UpdateChannelDto } from './dto/update-channel-dto';
 
 @Controller('channel')
 export class ChannelController {
@@ -172,5 +173,14 @@ export class ChannelController {
 	@Get('/leave/:id')
 	leaveOne(@Req() req, @Param('id', ParseChannelPipe) channel: Channel) {
 		return this.channelService.leaveChannel(channel, req.user);
+	}
+
+	@Post('/:id/update')
+	updateOne(
+		@Param('id', ParseChannelPipe) channel: Channel,
+		@Body() updateChannelDto: UpdateChannelDto,
+	) {
+		console.log(updateChannelDto);
+		return this.channelService.updateChannel(channel, updateChannelDto);
 	}
 }

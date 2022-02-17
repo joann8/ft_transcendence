@@ -77,7 +77,7 @@ function SearchRoom({ channelList, fetchChannelListUser, socket }) {
         return;
       });
     setOpenSearch(false);
-
+    setContent("");
     if (!result) return;
     socket.emit("reload", currentSearchRoom);
     fetchChannelListUser();

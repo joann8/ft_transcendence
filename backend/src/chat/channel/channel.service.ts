@@ -15,6 +15,8 @@ import {
 import { CheckBann } from './decorators/channel-banned.decorator';
 import { CreateMessageDto } from '../messages/dto/create-message-dto';
 import { JoinChannelDto } from './dto/join-channel-dto';
+import { UpdateChannelDto } from './dto/update-channel-dto';
+import passport from 'passport';
 const PG_UNIQUE_CONSTRAINT_VIOLATION = '23505';
 @Injectable()
 export class ChannelService {
@@ -373,5 +375,20 @@ export class ChannelService {
 			);
 			await this.channelRepository.save(channel);
 		}
+	}
+
+	async updateChannel(channel: Channel, updateChannelDto: UpdateChannelDto) {
+		console.log(updateChannelDto);
+		if (channel.mode === channelType.DIRECT) return;
+		if (updateChannelDto.mode === channelType.PRIVATE) {
+			channel.mode = updateChannelDto.mode;
+			channel.password = await this.hashPassword(
+				updateChannelDto.password,
+			);
+		} else if (updateChannelDto.mode === channelType.PUBLIC) {
+			channel.mode = updateChannelDto.mode;
+			channel.password = null;
+		}
+		return await this.channelRepository.save(channel);
 	}
 }
