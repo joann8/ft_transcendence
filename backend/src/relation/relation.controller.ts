@@ -18,7 +18,7 @@ import {
 } from '@nestjs/common';
 import { RelationService } from './relation.service';
 import { RelationDto } from './dto/relation.dto';
-import { Relation, relation } from './entities/relation.entity';
+import { Relation } from './entities/relation.entity';
 import { UpdateRelationDto } from './dto/updateRelation.dto';
 import { FindRelationDto } from './dto/findRelationdto';
 import { GetRelationDto } from './dto/getRelationDto.dto';
@@ -191,6 +191,8 @@ export class RelationController {
 				const two = await getRepository(User).findOne(
 					relationRequest.userId2bis,
 				);
+				console.log('one :', one);
+				console.log('two :', two);
 				await this.channelService.createDirectChannel(one, two);
 			}
 			const upDatedRelation = await this.relationService.findOne(

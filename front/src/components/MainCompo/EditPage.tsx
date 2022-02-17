@@ -56,6 +56,8 @@ export default function EditPage() {
 
     const updatePseudo = async () => {
 
+      if (pseudo === context.user.id_pseudo)
+        return
       if (!pseudo) {
         throw new Error("Pseudo cannot be empty")
       }
@@ -133,8 +135,6 @@ export default function EditPage() {
 
   //EDIT AVATAR
   function AvatarDisplay() {
-
-
 
     const uploadAvatar = async () => {
       if (avatar) {

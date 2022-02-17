@@ -1,12 +1,10 @@
 import {
 	IsEmail,
-	isNotEmpty,
 	IsNotEmpty,
 	IsOptional,
 	IsPositive,
 	Min,
 } from 'class-validator';
-import { Channel } from '../../chat/channel/entities/channel.entity';
 import { status, user_role } from '../entities/user.entity';
 
 export class UpdateUserDto {
@@ -24,7 +22,6 @@ export class UpdateUserDto {
 	@IsOptional()
 	@IsNotEmpty()
 	avatar: string;
-
 
 	@IsOptional()
 	role: user_role;

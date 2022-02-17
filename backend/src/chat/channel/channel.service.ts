@@ -1,10 +1,4 @@
-import {
-	BadRequestException,
-	ForbiddenException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getRepository, In, Repository } from 'typeorm';
 import { Channel, channelType } from './entities/channel.entity';
@@ -20,10 +14,7 @@ import {
 } from './entities/userChannelRole.entity';
 import { CheckBann } from './decorators/channel-banned.decorator';
 import { CreateMessageDto } from '../messages/dto/create-message-dto';
-import { use } from 'passport';
 import { JoinChannelDto } from './dto/join-channel-dto';
-import { RelationService } from 'src/relation/relation.service';
-import { Relation } from 'src/relation/entities/relation.entity';
 const PG_UNIQUE_CONSTRAINT_VIOLATION = '23505';
 @Injectable()
 export class ChannelService {
