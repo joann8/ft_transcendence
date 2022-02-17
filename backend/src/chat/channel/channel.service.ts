@@ -15,6 +15,8 @@ import {
 import { CheckBann } from './decorators/channel-banned.decorator';
 import { CreateMessageDto } from '../messages/dto/create-message-dto';
 import { JoinChannelDto } from './dto/join-channel-dto';
+import { UpdateChannelDto } from './dto/update-channel-dto';
+import passport from 'passport';
 const PG_UNIQUE_CONSTRAINT_VIOLATION = '23505';
 @Injectable()
 export class ChannelService {
@@ -125,13 +127,24 @@ export class ChannelService {
 
 	@CheckBann()
 	@CheckRoles('muted')
-	async muteOneUser(channel: Channel, targetUser: User, user: User) {
+	async muteOneUser(
+		channel: Channel,
+		targetUser: User,
+		user: User,
+		minutes: number,
+	) {
 		const targetUserRole = targetUser.roles.find(
 			(elem) => elem.channel.id === channel.id,
 		);
 		/** MUTE */
+		let prevRole = targetUserRole.role;
 		targetUserRole.role = channelRole.muted;
 		getRepository(userChannelRole).save(targetUserRole);
+
+		setTimeout(() => {
+			targetUserRole.role = prevRole;
+			getRepository(userChannelRole).save(targetUserRole);
+		}, minutes * 60000);
 		return channel;
 	}
 
@@ -373,5 +386,20 @@ export class ChannelService {
 			);
 			await this.channelRepository.save(channel);
 		}
+	}
+
+	async updateChannel(channel: Channel, updateChannelDto: UpdateChannelDto) {
+		console.log(updateChannelDto);
+		if (channel.mode === channelType.DIRECT) return;
+		if (updateChannelDto.mode === channelType.PRIVATE) {
+			channel.mode = updateChannelDto.mode;
+			channel.password = await this.hashPassword(
+				updateChannelDto.password,
+			);
+		} else if (updateChannelDto.mode === channelType.PUBLIC) {
+			channel.mode = updateChannelDto.mode;
+			channel.password = null;
+		}
+		return await this.channelRepository.save(channel);
 	}
 }

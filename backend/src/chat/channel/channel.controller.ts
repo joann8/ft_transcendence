@@ -19,6 +19,7 @@ import { ParseUserPseudo } from './pipes/parse-user-pseudo.pipe';
 import { MessagesService } from '../messages/messages.service';
 import { JoinChannelDto } from './dto/join-channel-dto';
 import { RelationService } from 'src/relation/relation.service';
+import { UpdateChannelDto } from './dto/update-channel-dto';
 
 @Controller('channel')
 export class ChannelController {
@@ -61,13 +62,19 @@ export class ChannelController {
 		return this.channelService.kickOneUser(channel, targetUser, req.user);
 	}
 
-	@Put(':id/mute/:targetPseudo')
+	@Put(':id/mute/:targetPseudo/:minutes')
 	muteOneUser(
 		@Req() req,
 		@Param('id', ParseChannelPipe) channel: Channel,
 		@Param('targetPseudo', ParseUserPseudo) targetUser: User,
+		@Param('minutes', ParseIntPipe) minutes: number,
 	) {
-		return this.channelService.muteOneUser(channel, targetUser, req.user);
+		return this.channelService.muteOneUser(
+			channel,
+			targetUser,
+			req.user,
+			minutes,
+		);
 	}
 
 	@Put(':id/admin/:targetPseudo')
@@ -172,5 +179,14 @@ export class ChannelController {
 	@Get('/leave/:id')
 	leaveOne(@Req() req, @Param('id', ParseChannelPipe) channel: Channel) {
 		return this.channelService.leaveChannel(channel, req.user);
+	}
+
+	@Post('/:id/update')
+	updateOne(
+		@Param('id', ParseChannelPipe) channel: Channel,
+		@Body() updateChannelDto: UpdateChannelDto,
+	) {
+		console.log(updateChannelDto);
+		return this.channelService.updateChannel(channel, updateChannelDto);
 	}
 }
