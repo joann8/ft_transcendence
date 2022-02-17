@@ -30,14 +30,11 @@ export class FortyTwoStrategy extends PassportStrategy(
 		let { user, created } = await this.authService.findOrCreate42User(
 			profile,
 		);
-		if (!user) {
-			throw new HttpException('User could not be created', 500);
-		} else if (user.status === status.BAN) {
-			throw new UnauthorizedException(
-				'You are ban from this website, get out of my sight',
-			);
+		let error = false;
+		if (!user || user.status === status.BAN) {
+			error = true;
 		}
 		user = await this.authService.set_online(user);
-		return { user, created };
+		return { user, created, error };
 	}
 }

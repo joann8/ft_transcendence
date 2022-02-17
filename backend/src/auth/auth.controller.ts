@@ -9,6 +9,7 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { status } from 'src/user/entities/user.entity';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { SecretDto } from './dto/secret.dto';
@@ -31,13 +32,15 @@ export class AuthController {
 	@UseGuards(FortyTwoAuthGuard)
 	async redir(@Req() req, @Res({ passthrough: true }) res) {
 		let red_url = process.env.FRONTEND_URL;
-		const { user, created } = req.user;
+		const { user, created, error } = req.user;
 		const { access_token, refresh_token } = await this.authService.ft_login(
 			user,
 		);
 		res.cookie('access_token', access_token, { sameSite: 'Lax' });
 		res.cookie('refresh_token', refresh_token, { sameSite: 'Lax' });
-		if (created) {
+		if (error) {
+			red_url += '/login';
+		} else if (created) {
 			red_url += '/registration';
 		} else if (user.two_factor_enabled) {
 			red_url += '/login/twofa';
