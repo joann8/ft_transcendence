@@ -4,8 +4,7 @@ import { MessagesProps, MessageProps, ThemeOptions } from "./types";
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
   messagesContainer: () => ({
-    margin: "0",
-    padding: "5px",
+    //padding: "5px",
     width: "100%",
     height: "70vh",
     backgroundColor: "white",
@@ -17,6 +16,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
     width: "100%",
   }),
   messageContentRight: () => ({
+    overflowWrap: "break-word",
     marginLeft: "auto",
     marginRight: "0",
     maxWidth: "fit-content",
@@ -26,6 +26,7 @@ const useStyle = makeStyles((theme: ThemeOptions) => ({
     paddingRight: "5px",
   }),
   messageContentLeft: () => ({
+    overflowWrap: "break-word",
     maxWidth: "fit-content",
     backgroundColor: theme.palette.primary.main,
     borderRadius: "10px",
@@ -45,7 +46,7 @@ function Message({ message, currentUser }: MessageProps) {
     var theMinutesMessage = new Date(date).getTime() / (1000 * 60);
     return `${
       Math.ceil(theMinutesNow - theMinutesMessage - 60) < 60
-        ? `${Math.ceil(theMinutesNow - theMinutesMessage - 60)} min ago`
+        ? `${Math.ceil(theMinutesNow - theMinutesMessage)} min ago`
         : new Date(date).toLocaleDateString()
     }`;
   }
@@ -54,7 +55,7 @@ function Message({ message, currentUser }: MessageProps) {
   return (
     <Grid
       container
-      columnSpacing={3}
+      columnSpacing={5}
       rowSpacing={0}
       className={classes.message}
     >
@@ -64,13 +65,13 @@ function Message({ message, currentUser }: MessageProps) {
         </Typography>
       </Grid>
       {message.author.id_pseudo !== currentUser.id_pseudo ? (
-        <Grid item xs={1} md={3} lg={1}>
+        <Grid item xs={1} md={1} lg={1}>
           <Avatar src={message.author.avatar}></Avatar>
         </Grid>
       ) : (
         <div></div>
       )}
-      <Grid item xs={11} md={9} lg={11}>
+      <Grid item xs={11} md={11} lg={11}>
         {message.author.id_pseudo === currentUser.id_pseudo ? (
           <Container className={classes.typo}>
             <Typography
