@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createContext, Fragment, useEffect, useRef } from "react";
+import { createContext, Fragment, useEffect } from "react";
 import {
   styled,
 } from "@mui/material/styles";
@@ -100,7 +100,7 @@ export default function SideBar(props: any) {
 
   const navigate = useNavigate();
 
-  const getUserData = useRef(async () => {
+  const getUserData = async () => {
     await fetch(api_url + `/user`, {
       method: "GET",
       credentials: "include",
@@ -122,9 +122,9 @@ export default function SideBar(props: any) {
       .catch((err) => {
         //alert(err);
       });
-  })
+  }
 
-  const refreshTokens = useRef(async () => {
+  const refreshTokens = async () => {
     await fetch(api_url + `/refresh`, {
       method: "GET",
       credentials: "include",
@@ -143,11 +143,11 @@ export default function SideBar(props: any) {
       .catch((err) => {
         //alert(err);
       });
-  })
+  }
 
   useEffect(() => {
-    getUserData.current();
-    refreshTokens.current();
+    getUserData();
+    refreshTokens();
   }, [update]);
 
   const toggleDrawer = () => {
