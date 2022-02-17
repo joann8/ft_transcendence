@@ -106,6 +106,10 @@ function RoleList({
   const handleWatch = () => {
     onClickWatch(currentUser, targetRole.user);
   };
+  const handleNavigateProfile = () => {
+    if (!targetRole) return;
+    navigate(`/profile/${targetRole.user.id_pseudo}`);
+  };
   const fetchPostAction = async (action: string) => {
     if (!targetRole) return;
     await back
@@ -288,7 +292,7 @@ function RoleList({
               return;
             }}
           >
-            Reset User
+            Reset as a user
           </MenuItem>
         )}
         {((currentRole?.role === channelRole.owner &&
@@ -335,6 +339,7 @@ function RoleList({
         )}
         {<MenuItem onClick={handleDuel}>Duel</MenuItem>}
         {<MenuItem onClick={handleWatch}>Watch</MenuItem>}
+        {<MenuItem onClick={handleNavigateProfile}>go to profile</MenuItem>}
       </Menu>
       {currentChannel.mode !== channelType.DIRECT && (
         <AddUser
