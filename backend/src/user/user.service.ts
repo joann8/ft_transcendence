@@ -35,13 +35,9 @@ export class UserService {
 	}
 
 	async findMe(id: number): Promise<User> {
-		const user = await this.usersRepository.findOne(id, {
+		return await this.usersRepository.findOne(id, {
 			relations: ['roles'],
 		});
-		if (!user) {
-			throw new NotFoundException('This user does not exist1');
-		}
-		return user;
 	}
 
 	async createOne(createUserDto: CreateUserDto): Promise<User> {
@@ -50,18 +46,11 @@ export class UserService {
 		);
 	}
 	async findOne(user_pseudo: string): Promise<User> {
-		// correction ?
-		// 		return await this.usersRepository.findOne({id_pseudo : user_pseudo});
 		return await this.usersRepository.findOne(user_pseudo, {
 			relations: ['roles', 'roles.channel'],
 		});
 	}
 
-	/*async findOne(id: number): Promise<User> {
-		return await this.usersRepository.findOne(id, {
-			relations: ['roles', 'roles.channel'],
-		});
-	}*/
 	async deleteOne(id: number): Promise<User> {
 		const user = await this.usersRepository.findOne(id, {
 			relations: ['roles'],

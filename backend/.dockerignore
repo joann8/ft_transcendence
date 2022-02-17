@@ -1,0 +1,6 @@
+./dist
+./node_modules
+.prettierrc
+README.md
+webpack-hmr.config.js
+package-lock.json

@@ -39,7 +39,7 @@ async function bootstrap() {
 	);
 	await app.listen(process.env.BACKEND_PORT);
 
-	// FIXME: NOT IN PRODUCTION (HOT RELOAD)
+	// DEV (HOT RELOAD)
 	if (module.hot) {
 		module.hot.accept();
 		module.hot.dispose(() => app.close());
