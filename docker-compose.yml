@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - /var/pg_db:/var/pg_db
+      - /tmp/pg_db:/var/pg_db
     restart: always
 
   backend:
