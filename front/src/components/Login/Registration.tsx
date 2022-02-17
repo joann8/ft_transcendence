@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Grid, TextField, BottomNavigation, Avatar, styled, MobileStepper, useTheme, Paper, CircularProgress } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight, PhotoCamera } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
@@ -48,7 +48,7 @@ export default function Registration() {
   const navigate = useNavigate()
 
 
-  const getUser = useRef(async () => {
+  const getUser = async () => {
     await fetch(api_url + "/user/", {
       method: "GET",
       credentials: "include",
@@ -72,11 +72,11 @@ export default function Registration() {
         alert(error)
         navigate("/login")
       })
-  })
+  }
 
 
   useEffect(() => {
-   getUser.current()
+   getUser()
   }, [])
 
   //INTERNAL COMPONENT
