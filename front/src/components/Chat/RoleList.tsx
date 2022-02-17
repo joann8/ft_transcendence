@@ -2,6 +2,7 @@ import { Button, Grid, MenuItem, Menu } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
   channelRole,
+  channelType,
   RoleListProps,
   ThemeOptions,
   User,
@@ -335,20 +336,24 @@ function RoleList({
         {<MenuItem onClick={handleDuel}>Duel</MenuItem>}
         {<MenuItem onClick={handleWatch}>Watch</MenuItem>}
       </Menu>
-      <AddUser
-        fetchUsers={fetchUsers}
-        currentChannel={currentChannel}
-        socket={socket}
-      ></AddUser>
-      {currentRole?.role !== channelRole.owner && (
-        <Button
-          variant="contained"
-          onClick={handleClickLeave}
-          className={classes.elem2}
-        >
-          LEAVE
-        </Button>
+      {currentChannel.mode !== channelType.DIRECT && (
+        <AddUser
+          fetchUsers={fetchUsers}
+          currentChannel={currentChannel}
+          socket={socket}
+        ></AddUser>
       )}
+
+      {currentChannel.mode !== channelType.DIRECT &&
+        currentRole?.role !== channelRole.owner && (
+          <Button
+            variant="contained"
+            onClick={handleClickLeave}
+            className={classes.elem2}
+          >
+            LEAVE
+          </Button>
+        )}
     </Grid>
   );
 }

@@ -44,7 +44,7 @@ export class ChannelService {
 			}
 			const newChannel = await this.channelRepository.save(
 				this.channelRepository.create({
-					name: createChannelDto.name,
+					name: createChannelDto.name.toUpperCase(),
 					mode: createChannelDto.mode,
 					password: hash,
 				}),
@@ -236,7 +236,7 @@ export class ChannelService {
 		if (!one || !two) return;
 		const newChannel = await this.channelRepository.save(
 			this.channelRepository.create({
-				name: `${one.id_pseudo} - ${two.id_pseudo}`,
+				name: `${one.id_pseudo.toUpperCase()} - ${two.id_pseudo.toUpperCase()}`,
 				mode: channelType.DIRECT,
 				idOne: one.id,
 				idTwo: two.id,
@@ -264,10 +264,10 @@ export class ChannelService {
 		const directChannel = await this.channelRepository.findOne({
 			where: [
 				{
-					name: `${one.id_pseudo} - ${two.id_pseudo}`,
+					name: `${one.id_pseudo.toUpperCase()} - ${two.id_pseudo.toUpperCase()}`,
 				},
 				{
-					name: `${two.id_pseudo} - ${one.id_pseudo}`,
+					name: `${two.id_pseudo.toUpperCase()} - ${one.id_pseudo.toUpperCase()}`,
 				},
 			],
 		});
@@ -367,7 +367,10 @@ export class ChannelService {
 			where: [{ idOne: id }, { idTwo: id }],
 		});
 		for (let channel of directChannels) {
-			channel.name = channel.name.replace(prevPseudo, newPSeudo);
+			channel.name = channel.name.replace(
+				prevPseudo.toUpperCase(),
+				newPSeudo.toUpperCase(),
+			);
 			await this.channelRepository.save(channel);
 		}
 	}
