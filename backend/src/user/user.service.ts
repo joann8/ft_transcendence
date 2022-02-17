@@ -1,8 +1,4 @@
-import {
-	BadRequestException,
-	Injectable,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userChannelRole } from 'src/chat/channel/entities/userChannelRole.entity';
 import { getRepository, Repository, UpdateResult } from 'typeorm';

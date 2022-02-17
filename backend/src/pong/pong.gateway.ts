@@ -1,6 +1,5 @@
 import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer} from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
-import { Logger } from "@nestjs/common";
 import { Game } from "./classes/pong.game";
 import { PongService } from "./pong.service";
 import { User } from "src/user/entities/user.entity";

@@ -3,9 +3,7 @@ import {
 	Column,
 	Entity,
 	JoinColumn,
-	ManyToMany,
 	ManyToOne,
-	PrimaryColumn,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Channel } from './channel.entity';
