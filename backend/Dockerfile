@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package.json /usr/src/app
-RUN npm update -S && npm install
+RUN npm install -g npm@8.5.0 && npm update -S && npm install
 
 # Bundle app source
 COPY . /usr/src/app
