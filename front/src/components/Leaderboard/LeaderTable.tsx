@@ -1,7 +1,7 @@
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
@@ -25,12 +25,10 @@ export default function LeaderTable() {
         referrerPolicy: "same-origin",
       })
         .then((res) => {
-          if (res.status === 401) 
-          {
+          if (res.status === 401) {
             navigate("/login");
-            throw new Error("You must login")
-          }
-          else if (!res.ok) throw new Error(res.statusText);
+            throw new Error("You must login");
+          } else if (!res.ok) throw new Error(res.statusText);
           return res.json();
         })
         .then((resJson) => {
