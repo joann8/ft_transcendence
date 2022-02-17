@@ -37,7 +37,7 @@ export class User {
 	@Column({ default: user_role.USER })
 	role?: user_role;
 
-	@Column({ default: 3000 })
+	@Column({ default: 0 })
 	elo?: number;
 
 	@Column({ default: status.OFFLINE })

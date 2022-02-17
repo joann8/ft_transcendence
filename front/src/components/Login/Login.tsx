@@ -49,6 +49,7 @@ export default function Login(props: any) {
       body: JSON.stringify({ secret: secret }),
     })
       .then((res) => {
+        setIsPending(false);
         if (!res.ok) {
           setTitleError(true);
           res.json().then((data) => {
@@ -57,8 +58,8 @@ export default function Login(props: any) {
         } else {
           setOpen(false);
           nav("/");
+          return
         }
-        setIsPending(false);
       })
       .catch((err) => {
         setTitleError(err.message);
