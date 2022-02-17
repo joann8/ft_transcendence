@@ -99,8 +99,10 @@ function RoleList({
   const [targetRole, setTargetRole] = React.useState<userChannelRole>();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [openManageRoom, setOpenManageRoom] = React.useState(false);
+  const [openMuteTime, setOpenMuteTime] = React.useState(false);
   const [publicSelectionned, setPublicSelectionned] = React.useState(false);
   const [newPassword, setNewPassword] = React.useState("");
+  const [muteTime, setMuteTime] = React.useState("");
 
   const open = Boolean(anchorEl);
 
@@ -132,6 +134,36 @@ function RoleList({
   const handleNavigateProfile = () => {
     if (!targetRole) return;
     navigate(`/profile/${targetRole.user.id_pseudo}`);
+  };
+  const fetchPostMute = async () => {
+    let minutes = Math.ceil(+muteTime);
+    if (!targetRole || !muteTime) return;
+    if (isNaN(minutes)) {
+      alert("not a number");
+      setMuteTime("");
+      return;
+    } else {
+      if (minutes <= 0 || minutes > 60) {
+        alert("between 0 and 60");
+        setMuteTime("");
+        return;
+      }
+    }
+    await back
+      .put(
+        `${api_url}/channel/${currentChannel.id}/mute/${targetRole.user.id_pseudo}/${minutes}`
+      )
+      .catch((error) => {
+        if (error.response.status === 401) navigate("/login");
+        alert(error.response.data.message);
+        return;
+      });
+    socket.emit("reload", currentChannel);
+    setTimeout(() => {
+      socket.emit("reload", currentChannel);
+    }, minutes * 60100);
+    fetchUsers();
+    setMuteTime("");
   };
   const fetchPostAction = async (action: string) => {
     if (!targetRole) return;
@@ -337,7 +369,7 @@ function RoleList({
             targetRole?.role !== channelRole.owner)) && (
           <MenuItem
             onClick={() => {
-              fetchPostAction("mute");
+              setOpenMuteTime(true);
               handleClose();
               return;
             }}
@@ -469,6 +501,47 @@ function RoleList({
             </Modal>
           </>
         )}
+      <Modal
+        open={openMuteTime}
+        onClose={() => {
+          setOpenMuteTime(false);
+          setMuteTime("");
+        }}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography
+            align="center"
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+          >
+            SELECT NUMBER OF MINUTES TO MUTE (BETWEEN 0 AND 60)
+          </Typography>
+          <TextField
+            className={classes.name}
+            id="outlined-basic"
+            label="minutes of mute"
+            variant="outlined"
+            value={muteTime}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setMuteTime(e.currentTarget.value)
+            }
+          />
+
+          <Button
+            className={classes.button}
+            variant="contained"
+            onClick={() => {
+              fetchPostMute();
+              setOpenMuteTime(false);
+            }}
+          >
+            MUTE
+          </Button>
+        </Box>
+      </Modal>
     </Grid>
   );
 }

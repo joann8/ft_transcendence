@@ -62,13 +62,19 @@ export class ChannelController {
 		return this.channelService.kickOneUser(channel, targetUser, req.user);
 	}
 
-	@Put(':id/mute/:targetPseudo')
+	@Put(':id/mute/:targetPseudo/:minutes')
 	muteOneUser(
 		@Req() req,
 		@Param('id', ParseChannelPipe) channel: Channel,
 		@Param('targetPseudo', ParseUserPseudo) targetUser: User,
+		@Param('minutes', ParseIntPipe) minutes: number,
 	) {
-		return this.channelService.muteOneUser(channel, targetUser, req.user);
+		return this.channelService.muteOneUser(
+			channel,
+			targetUser,
+			req.user,
+			minutes,
+		);
 	}
 
 	@Put(':id/admin/:targetPseudo')

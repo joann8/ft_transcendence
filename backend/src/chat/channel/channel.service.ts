@@ -127,13 +127,24 @@ export class ChannelService {
 
 	@CheckBann()
 	@CheckRoles('muted')
-	async muteOneUser(channel: Channel, targetUser: User, user: User) {
+	async muteOneUser(
+		channel: Channel,
+		targetUser: User,
+		user: User,
+		minutes: number,
+	) {
 		const targetUserRole = targetUser.roles.find(
 			(elem) => elem.channel.id === channel.id,
 		);
 		/** MUTE */
+		let prevRole = targetUserRole.role;
 		targetUserRole.role = channelRole.muted;
 		getRepository(userChannelRole).save(targetUserRole);
+
+		setTimeout(() => {
+			targetUserRole.role = prevRole;
+			getRepository(userChannelRole).save(targetUserRole);
+		}, minutes * 60000);
 		return channel;
 	}
 
