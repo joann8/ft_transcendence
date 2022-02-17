@@ -10,12 +10,13 @@ import {
   Chip,
   ButtonGroup,
 } from "@mui/material";
-import React, { Fragment, useContext, useEffect,  useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import Badge from "@mui/material/Badge";
 import { useNavigate, useParams } from "react-router";
 import MatchModal from "./MatchModal";
 import profileStyle from "./profileStyle";
 import {
+  LockOpenTwoTone,
   LockTwoTone,
   Pending,
   PersonAdd,
@@ -48,7 +49,7 @@ export default function OtherUser() {
     if (!tmpOtherUserData) return;
     await getRelation(context.user.id_pseudo, tmpOtherUserData.id_pseudo);
   }
-  
+
   useEffect(() => {
     getAllInfo();
   }, [idPseudo, update, context.user]);
@@ -137,9 +138,9 @@ export default function OtherUser() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id_pseudo2: otherUserPseudo,
         relation1: newRelation1,
         relation2: newRelation2,
+        id_pseudo2: otherUserPseudo,
       }),
     })
       .then((res) => {
@@ -181,16 +182,56 @@ export default function OtherUser() {
 
   function FriendButton({ status }) {
     //FRIEND
-    //MAKE BUTTON MENU
+    //OTHER is BLOCKED
+    const removeRelation = async (otherUserPseudo: string) => {
+      const ret = await fetch(api_url + "/relation/remove", {
+        credentials: "include",
+        referrerPolicy: "same-origin",
+        method: "DELETE",
+        headers: {
+          'Content-Type': "application/json"
+        },
+        body: JSON.stringify({
+          id_pseudo: otherUserPseudo
+        })
+      }).then(res => {
+        if (res.status === 401) {
+          navigate("/login");
+          throw new Error("You must login")
+        }
+        else if (!res.ok)
+        {
+          throw new Error(res.statusText)
+        }
+        else
+          return true
+      })
+        .catch((error) => {
+          throw new Error(`${error}`)
+        })
+      return ret
+    }
+
+    const handleUnblock = async () => {
+      try {
+        await removeRelation(otherUserData.id_pseudo)
+      }
+      catch (error) {
+        alert(error)
+      }
+      context.setUpdate(!context.update)
+    }
+
     if (status === 4) {
       return (
         <Fragment>
-          <Button sx={{ margin: "2px" }} variant="contained" color="error" startIcon={<LockTwoTone />}>
-            BLOCKED
+          <Button sx={{ margin: "2px" }} variant="contained" color="warning" onClick={() => handleUnblock()} startIcon={<LockOpenTwoTone />}>
+            UNBLOCK ?
           </Button>
         </Fragment >
       )
     }
+    //OTHER is FRIEND
     if (status === 3) {
       return (
         <Fragment>
@@ -216,11 +257,31 @@ export default function OtherUser() {
             color: "rgba(0,0,0,1)"
           }}
           startIcon={(status === 2) ? <QuestionMark /> : (status === 0 ? <PersonAdd /> : <Pending />)}
-          onClick={() => { handleAddFriend(status) }}>
+          onClick={() => handleAddFriend(status)}>
           {addButton}
         </Button>
       )
     }
+  }
+
+  function BlockingButton({ status }) {
+
+    const handleBlock = async () => {
+      await updateRelation(otherUserData.id_pseudo, 4, 5)
+      context.setUpdate(!context.update)
+    }
+
+    return (
+      <Fragment>
+        {status !== 4 ?
+          <Button style={{ margin: "2px" }} variant="contained" color="error" startIcon={<LockTwoTone/>} onClick={() => handleBlock()}>
+            BLOCK
+          </Button>
+          :
+          null}
+      </Fragment>
+    )
+
   }
 
   function ButtonBlock({ status }) {
@@ -229,6 +290,7 @@ export default function OtherUser() {
         {otherUserData.achievement1 ? <Chip sx={{ margin: "2px" }} icon={<StarsIcon />} label="Win with Max Score (3-0)" color="success" /> : <Chip sx={{ margin: "2px" }} icon={<StarsIcon />} label="Win with Max Score (3-0)" variant="outlined" color="secondary" />}
         {otherUserData.achievement2 ? <Chip sx={{ margin: "2px" }} icon={<EmojiEventsIcon />} label="Win 3 times" color="success" /> : <Chip sx={{ margin: "2px" }} icon={<EmojiEventsIcon />} label="Win 3 times" variant="outlined" color="secondary" />}
         {otherUserData.id !== context.user.id && <FriendButton status={status} />}
+        {otherUserData.id !== context.user.id && <BlockingButton status={status} />}
       </Fragment>
     )
   }

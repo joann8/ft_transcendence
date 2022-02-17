@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import { IUser } from '../Profile/profileStyle'
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Avatar, Button, ButtonGroup, Typography } from '@mui/material';
+import { Avatar, Button, ButtonGroup, Chip, Typography } from '@mui/material';
 import { Context } from '../MainCompo/SideBars';
 import { LockOpenTwoTone, LockTwoTone } from '@mui/icons-material';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -206,6 +206,7 @@ export default function FriendList() {
           <TableHead>
             <TableRow>
               <TableCell colSpan={2} align="center">Friends</TableCell>
+              <TableCell align="center"> Status </TableCell>
               <TableCell align="right">
                 <Button
                   variant="contained"
@@ -238,6 +239,9 @@ export default function FriendList() {
                 </TableCell>
                 <TableCell align="left">
                   <Avatar src={friend.user.avatar} />
+                </TableCell>
+                <TableCell align="center">
+                  <Chip label={friend.user.status} />
                 </TableCell>
                 <TableCell align="left">
                   <ButtonGroup size="small" variant="contained">

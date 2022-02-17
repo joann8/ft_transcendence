@@ -191,7 +191,13 @@ export class RelationController {
 				const two = await getRepository(User).findOne(
 					relationRequest.userId2bis,
 				);
+				try {
 				await this.channelService.createDirectChannel(one, two);
+				}
+				catch (error)
+				{
+					throw new HttpException("Database Conflict, could not delete channel", HttpStatus.CONFLICT)
+				}
 			}
 			const upDatedRelation = await this.relationService.findOne(
 				findRelationRequest,
