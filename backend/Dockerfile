@@ -5,8 +5,9 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # Install app dependencies
+RUN npm install -g npm@8.5.0
 COPY package.json /usr/src/app
-RUN npm install -g npm@8.5.0 && npm update -S && npm install
+RUN npm install --legacy-peer-deps
 
 # Bundle app source
 COPY . /usr/src/app

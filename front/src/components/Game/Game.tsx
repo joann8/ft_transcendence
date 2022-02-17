@@ -45,7 +45,7 @@ export default function Game(props: any) {
         if (res.status === 401) 
         {
           navigate("/login");
-          throw new Error("You must login")
+          throw new Error("Unauthorized")
         }
         else if (res.status === 404) {
           navigate("/game");

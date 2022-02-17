@@ -27,7 +27,7 @@ export default function LeaderTable() {
         .then((res) => {
           if (res.status === 401) {
             navigate("/login");
-            throw new Error("You must login");
+            throw new Error("Unauthorized");
           } else if (!res.ok) throw new Error(res.statusText);
           return res.json();
         })
