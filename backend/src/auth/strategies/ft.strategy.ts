@@ -6,7 +6,7 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-import { status, user_role } from 'src/user/entities/user.entity';
+import { status } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(

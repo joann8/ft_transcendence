@@ -8,7 +8,6 @@ import {
 	Put,
 	Redirect,
 	Post,
-	ParseIntPipe,
 	UseInterceptors,
 	UploadedFile,
 	HttpException,
@@ -21,8 +20,6 @@ import { UpdateCurrentUserDto } from './dto/updateCurrentUser.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { ParseUpdateCurrentDto } from './pipes/parseUpdateCurrentDto';
-import { AdminGuard } from 'src/admin/guards/admin.guard';
-import { CreateUserDto } from './dto/createUser.dto';
 import { ChannelService } from 'src/chat/channel/channel.service';
 
 @Controller('user')
