@@ -4,7 +4,7 @@ import * as React from "react";
 import back from "./backConnection";
 import CreateChannel from "./CreateChannel";
 import SearchRoom from "./SearchRoom";
-import { ChannelListProps, ThemeOptions, Channel } from "./types";
+import { ChannelListProps, Channel } from "./types";
 import ClearIcon from "@mui/icons-material/Clear";
 import { api_url } from "../../ApiCalls/var";
 import { useNavigate } from "react-router";
@@ -49,7 +49,7 @@ function ChannelList({
   const navigate = useNavigate();
 
   async function fetchDeleteRoom(channel: Channel) {
-    const result = await back
+      await back
       .delete(`${api_url}/channel/${channel.id}`)
       .catch((error) => {
         if (error.response.status === 401) navigate("/login");

@@ -121,7 +121,7 @@ export default function TwoFAModal(props: any) {
                 </Typography>
               </Grid>
               <Grid item xs={5}>
-                <img src={api_url + "/2fa/generate"}></img>
+                <img src={api_url + "/2fa/generate"} alt="qrcode"></img>
               </Grid>
               <Grid item xs={7}>
                 <Box sx={subboxStyle} textAlign="center">

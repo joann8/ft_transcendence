@@ -1,6 +1,6 @@
 import { Button, Typography, Modal, Box, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { AddUserProps, ThemeOptions } from "./types";
+import { AddUserProps } from "./types";
 import * as React from "react";
 import back from "./backConnection";
 import { api_url } from "../../ApiCalls/var";
@@ -44,7 +44,7 @@ function AddUser({ currentChannel, socket }: AddUserProps) {
   const handleClose = () => setOpen(false);
   const classes = useStyle();
   const fetchPostUser = async (pseudo: string) => {
-    const result = await back
+      await back
       .put(`${api_url}/channel/${currentChannel.id}/add/${pseudo}`)
       .catch((error) => {
         if (error.response.status === 401) navigate("/login");

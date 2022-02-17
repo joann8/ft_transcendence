@@ -2,7 +2,7 @@ import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { MessagePostProps, Message } from "./types";
+import { MessagePostProps } from "./types";
 import { useState } from "react";
 
 const useStyle = makeStyles({

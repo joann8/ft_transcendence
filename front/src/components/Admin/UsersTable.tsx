@@ -82,7 +82,7 @@ const columns: GridColDef[] = [
 ];
 
 export default function UsersTable() {
-  const { error, isPending, data: users } = useFromApi("/admin/users");
+  const { isPending, data: users } = useFromApi("/admin/users");
 
   return (
     <Box sx={{ width: "100%", "& .grid-header-theme": { fontWeight: "bold" } }}>

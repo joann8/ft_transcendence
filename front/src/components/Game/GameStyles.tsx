@@ -2,7 +2,7 @@ import Image from '../Images/game.jpg'
 
 const gameStyles = {
     backgroundImage: {
-      backgroundImage: `url(`+ `${Image}` + ')',
+      backgroundImage: `url(${Image})`,
       backgroundPosition: 'left',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'cover',

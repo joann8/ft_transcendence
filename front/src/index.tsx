@@ -36,7 +36,7 @@ const mdTheme = createTheme({
 });
 
 function Root() {
-  const [cookies, setCookie] = useCookies(["access_token"]);
+  const cookies : any = useCookies(["access_token"]);
 
   React.useEffect(() => {
     if (cookies.access_token) {

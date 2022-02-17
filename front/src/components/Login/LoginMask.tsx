@@ -1,5 +1,5 @@
 import Particles from "react-tsparticles";
-import { PolygonMaskType, ResponsiveMode } from "tsparticles";
+import { PolygonMaskType } from "tsparticles";
 import transcendence from "./transcendenceSVG.svg";
 
 export default function LoginParticlesTitle() {

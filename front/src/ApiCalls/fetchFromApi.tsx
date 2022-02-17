@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router";
 import { api_url, api_req_init } from "./var";
 
 export async function fetchFromApi(

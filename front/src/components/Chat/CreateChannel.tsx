@@ -56,7 +56,7 @@ function CreateChannel({ fetchChannelList }: CreateChannelProps) {
   const handleOpenCreate = () => setOpenCreate(true);
   const handleCloseCreate = () => setOpenCreate(false);
   const fetchPostChannel = async () => {
-    const result = await back
+    await back
       .post(`${api_url}/channel`, {
         name: roomName,
         mode: publicMode ? channelType.PUBLIC : channelType.PRIVATE,
