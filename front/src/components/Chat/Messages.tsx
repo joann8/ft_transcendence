@@ -4,7 +4,6 @@ import { MessagesProps, MessageProps, ThemeOptions } from "./types";
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
   messagesContainer: () => ({
-    //padding: "5px",
     width: "100%",
     height: "70vh",
     backgroundColor: "white",

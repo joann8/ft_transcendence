@@ -9,7 +9,6 @@ import Messages from "./Messages";
 import PostMessage from "./PostMessage";
 import { MessageListProps, Message } from "./types";
 
-const useStyle = makeStyles({});
 function MessageList({
   socket,
   currentChannel,

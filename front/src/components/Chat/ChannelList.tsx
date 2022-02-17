@@ -4,7 +4,7 @@ import * as React from "react";
 import back from "./backConnection";
 import CreateChannel from "./CreateChannel";
 import SearchRoom from "./SearchRoom";
-import { ChannelListProps, ThemeOptions, Channel } from "./types";
+import { ChannelListProps, Channel, channelType } from "./types";
 import ClearIcon from "@mui/icons-material/Clear";
 import { api_url } from "../../ApiCalls/var";
 import { useNavigate } from "react-router";
@@ -49,13 +49,11 @@ function ChannelList({
   const navigate = useNavigate();
 
   async function fetchDeleteRoom(channel: Channel) {
-    const result = await back
-      .delete(`${api_url}/channel/${channel.id}`)
-      .catch((error) => {
-        if (error.response.status === 401) navigate("/login");
-        alert(error.response.data.message);
-        return;
-      });
+    await back.delete(`${api_url}/channel/${channel.id}`).catch((error) => {
+      if (error.response.status === 401) navigate("/login");
+      alert(error.response.data.message);
+      return;
+    });
   }
   function handleClick(event: React.MouseEvent) {
     const element = event.currentTarget as HTMLInputElement;
@@ -78,7 +76,10 @@ function ChannelList({
       {channelList.map((room, index) => {
         const ownerRole = room.roles.find((role) => role.role === "owner");
         const ownerUser = ownerRole.user;
-        if (ownerUser.id === currentUser.id) {
+        if (
+          room.mode !== channelType.DIRECT &&
+          ownerUser.id === currentUser.id
+        ) {
           return (
             <ButtonGroup variant="text" key={index} className={classes.elem}>
               {room.id !== currentChannel.id && (
@@ -102,6 +103,7 @@ function ChannelList({
                   {room.name}
                 </Button>
               )}
+
               <Button
                 style={{ width: "20%", border: "none" }}
                 startIcon={<ClearIcon></ClearIcon>}

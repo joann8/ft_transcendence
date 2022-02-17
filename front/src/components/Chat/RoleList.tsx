@@ -16,7 +16,6 @@ import BlockIcon from "@mui/icons-material/Block";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useNavigate } from "react-router";
 import back from "./backConnection";
-import { Context } from "../MainCompo/SideBars";
 import { api_url } from "../../ApiCalls/var";
 
 const useStyle = makeStyles((theme: ThemeOptions) => ({
@@ -108,7 +107,7 @@ function RoleList({
   };
   const fetchPostAction = async (action: string) => {
     if (!targetRole) return;
-    const result = await back
+    await back
       .put(
         `${api_url}/channel/${currentChannel.id}/${action}/${targetRole.user.id_pseudo}`
       )
@@ -122,7 +121,7 @@ function RoleList({
   };
 
   const fetchLeaveChannel = async () => {
-    const result = await back
+    await back
       .get(`${api_url}/channel/leave/${currentChannel.id}`)
       .catch((error) => {
         if (error.response.status === 401) navigate("/login");
