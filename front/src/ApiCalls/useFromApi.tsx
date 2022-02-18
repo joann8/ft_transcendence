@@ -10,6 +10,7 @@ const useFromApi = (url: string, init: RequestInit = api_req_init): any => {
 
   let nav = useNavigate();
   useEffect(() => {
+    let bol = true;
     const fecthData = async () => {
       fetch(api_url + url, api_req_init)
         .then((res) => {
@@ -22,15 +23,20 @@ const useFromApi = (url: string, init: RequestInit = api_req_init): any => {
           return res.json();
         })
         .then((data) => {
+          if (!bol) return;
           setIsPending(false);
           setData(data);
         })
         .catch((err) => {
+          if (!bol) return;
           setIsPending(false);
           setError(err.message);
         });
     };
     fecthData();
+    return () => {
+      bol = false;
+    };
   }, [url]);
   return { data, isPending, error };
 };
