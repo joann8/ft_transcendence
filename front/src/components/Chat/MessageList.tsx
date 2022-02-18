@@ -19,6 +19,7 @@ function MessageList({
   const myRef = React.useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [blockedList, setBlockedList] = React.useState<number[]>([]);
+  let bol = true;
 
   const fetchBlockedList = async () => {
     const result = await back
@@ -29,7 +30,8 @@ function MessageList({
         return;
       });
     if (!result) return;
-    setBlockedList(result.data);
+    if (bol)
+      setBlockedList(result.data);
   };
 
   const fetchMessages = async () => {
@@ -41,7 +43,8 @@ function MessageList({
         return;
       });
     if (!result) return;
-    setMessages(result.data);
+    if (bol)
+      setMessages(result.data);
   };
 
   useEffect(() => {
@@ -50,11 +53,17 @@ function MessageList({
       myRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
     socket.emit("channelConnect", currentChannel);
+    return () =>{
+      bol = false;
+    }
   }, [currentChannel]);
 
   useEffect(() => {
     if (myRef && myRef.current) {
       myRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+    return () =>{
+      bol = false;
     }
   }, [messages]);
 
@@ -64,17 +73,21 @@ function MessageList({
   useEffect(() => {
     const messageListener = (channel, message) => {
       if (blockedList.includes(message.author.id)) return;
-      setMessages((prevMessages) => {
-        const newMessages = [...prevMessages, message];
-        return newMessages;
-      });
+      if(bol) {
+        setMessages((prevMessages) => {
+          const newMessages = [...prevMessages, message];
+          return newMessages;
+        });
+      }
     };
+
     const exceptionListener = (exception: string) => {
       alert(exception);
     };
     socket.on("message", messageListener);
     socket.on("exception", exceptionListener);
     return () => {
+      bol = false;
       socket.off("message", messageListener);
       socket.off("exception", exceptionListener);
     };
@@ -82,6 +95,9 @@ function MessageList({
 
   useEffect(() => {
     fetchBlockedList();
+    return () =>{
+      bol = false;
+    }
   }, []);
 
   return (

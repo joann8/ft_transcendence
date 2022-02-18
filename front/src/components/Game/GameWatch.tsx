@@ -12,12 +12,14 @@ export default function GameWatch(props: PropsGame) {
   const socket = props.socket;
   const ref = useRef<HTMLCanvasElement>(null!);
   const [game, setGame] = useState(gameStateInit);
+  let bol = true;
 
   useEffect(() => {
     socket.on("updateState", (updateState: any) => {
-      setGame(updateState);
+      if (bol) setGame(updateState);
     });
     return () => {
+      bol = false;
       socket.removeAllListeners("updateState");
     };
   });

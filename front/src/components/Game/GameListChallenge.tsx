@@ -30,6 +30,7 @@ export default function GameListChallenge(props: PropsGame) {
   let socket = props.socket;
   const navigate = useNavigate();
 
+  let bol = true;
 
   const updateStatus = async (newStatus: string) => {
     await fetch(api_url + `/user`, {
@@ -75,7 +76,8 @@ export default function GameListChallenge(props: PropsGame) {
           return res.json();
         })
         .then((resJson) => {
-          setChallenges(resJson);
+          if (bol)
+            setChallenges(resJson);
         })
         .catch((err) => {
           alert(err);
@@ -134,6 +136,7 @@ export default function GameListChallenge(props: PropsGame) {
       alert("Challenger cancelled the challenge");
     });
     return () => {
+      bol = false;
       socket.removeAllListeners("no_such_challenge");
     };
   }, []);

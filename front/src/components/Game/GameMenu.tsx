@@ -25,6 +25,7 @@ export default function GameMenu(props: PropsInit) {
   let socket = props.socket;
   let userID = props.user;
   const navigate = useNavigate();
+  let bol = true;
 
   const [openGame, setOpenGame] = useState(false);
   const handleOpenGame = async () => {
@@ -40,8 +41,7 @@ export default function GameMenu(props: PropsInit) {
       body: JSON.stringify({ status: `${newStatus}` }),
     })
       .then((res) => {
-        if (res.status === 401) 
-        {
+        if (res.status === 401) {
           navigate("/login");
           throw new Error("Unauthorized")
         }
@@ -57,7 +57,8 @@ export default function GameMenu(props: PropsInit) {
   useEffect(() => {
     socket.on("allowed", (args: any) => {
       updateStatus("IN QUEUE");
-      setOpenGame(true);
+      if(bol)
+        setOpenGame(true);
     });
     socket.on("not_allowed_playing", (args: any) => {
       alert("You are already playing"); // a faire en plus jolie?
@@ -69,6 +70,7 @@ export default function GameMenu(props: PropsInit) {
       updateStatus("IN GAME");
     });
     return () => {
+      bol = false;
       socket.removeAllListeners("allowed");
       socket.removeAllListeners("not_allowed_playing");
       socket.removeAllListeners("not_allowed_queue");
