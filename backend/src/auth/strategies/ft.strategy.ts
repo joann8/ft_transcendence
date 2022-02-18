@@ -33,8 +33,9 @@ export class FortyTwoStrategy extends PassportStrategy(
 		let error = false;
 		if (!user || user.status === status.BAN) {
 			error = true;
+		} else {
+			user = await this.authService.set_online(user);
 		}
-		user = await this.authService.set_online(user);
 		return { user, created, error };
 	}
 }
