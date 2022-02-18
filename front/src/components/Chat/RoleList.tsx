@@ -106,6 +106,8 @@ function RoleList({
 
   const open = Boolean(anchorEl);
 
+  let bol = true;
+
   const onClickDefy = (challenger: User, challengee: User) => {
     if (challenger.status === "IN GAME") alert("Your are already in a game");
     else if (challengee.status === "IN GAME")
@@ -139,13 +141,17 @@ function RoleList({
     let minutes = Math.ceil(+muteTime);
     if (!targetRole || !muteTime) return;
     if (isNaN(minutes)) {
-      alert("not a number");
-      setMuteTime("");
+      if (bol) {
+        alert("not a number");
+        setMuteTime("");
+      }
       return;
     } else {
       if (minutes <= 0 || minutes > 60) {
-        alert("between 0 and 60");
-        setMuteTime("");
+        if (bol) {
+          alert("between 0 and 60");
+          setMuteTime("");
+        }
         return;
       }
     }
@@ -159,12 +165,15 @@ function RoleList({
         return;
       });
     socket.emit("reload", currentChannel);
-    setTimeout(() => {
-      socket.emit("reload", currentChannel);
-    }, minutes * 60100);
-    fetchUsers();
-    setMuteTime("");
+    if (bol) {
+      setTimeout(() => {
+        socket.emit("reload", currentChannel);
+      }, minutes * 60100);
+      fetchUsers();
+      setMuteTime("");
+    }
   };
+
   const fetchPostAction = async (action: string) => {
     if (!targetRole) return;
     await back
@@ -218,7 +227,7 @@ function RoleList({
         return;
       });
     if (!result || error) return;
-    setRoleList(result.data);
+    if (bol) setRoleList(result.data);
   };
   const fetchCurrentRole = async () => {
     const result = await back
@@ -231,13 +240,16 @@ function RoleList({
     if (!result) return;
     if (!result || !result.data || result.data.role === "banned")
       fetchChannelList();
-    else setCurrentRole(result.data as userChannelRole);
+    else if (bol) setCurrentRole(result.data as userChannelRole);
   };
   React.useEffect(() => {
     if (currentChannel) {
       fetchUsers();
       fetchCurrentRole();
     }
+    return () => {
+      bol = false;
+    };
   }, [currentChannel]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -407,7 +419,7 @@ function RoleList({
         )}
         {<MenuItem onClick={handleDuel}>Duel</MenuItem>}
         {<MenuItem onClick={handleWatch}>Watch</MenuItem>}
-        {<MenuItem onClick={handleNavigateProfile}>go to profile</MenuItem>}
+        {<MenuItem onClick={handleNavigateProfile}>Profile</MenuItem>}
       </Menu>
       {currentChannel.mode !== channelType.DIRECT && (
         <AddUser
@@ -517,7 +529,7 @@ function RoleList({
             variant="h6"
             component="h2"
           >
-            SELECT NUMBER OF MINUTES TO MUTE (BETWEEN 0 AND 60)
+            SELECT NUMBER OF MINUTES TO MUTE (BETWEEN 1 AND 60)
           </Typography>
           <TextField
             className={classes.name}

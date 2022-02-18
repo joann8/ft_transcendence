@@ -19,14 +19,12 @@ export default function Game(props: any) {
   const navigate = useNavigate();
   const context = useContext(Context);
   const userId = context.user;
+  let bol = true;
 
   const [socket, setSocket] = useState<Socket>();
 
   useEffect(() => {
     const newSocket = io(api_url + "/game")
-    /*, {
-      reconnectionDelayMax: 2000,
-    });*/
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
@@ -55,7 +53,8 @@ export default function Game(props: any) {
         return res.json();
       })
       .then((resJson) => {
-        setVisitorId(resJson);
+        if (bol)
+          setVisitorId(resJson);
         return resJson;
       })
       .catch((err) => {
@@ -66,6 +65,9 @@ export default function Game(props: any) {
 
   useEffect(() => {
     if (mode === "challenge" || mode === "watch") getVisitorId(params.id);
+    return () => {
+      bol = false;
+    }
   }, []);
 
   useEffect(() => {

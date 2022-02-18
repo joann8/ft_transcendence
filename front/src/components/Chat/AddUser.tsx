@@ -48,6 +48,7 @@ function AddUser({ currentChannel, socket }: AddUserProps) {
       .put(`${api_url}/channel/${currentChannel.id}/add/${pseudo}`)
       .catch((error) => {
         if (error.response.status === 401) navigate("/login");
+
         alert(error.response.data.message);
         setContent("");
         return;

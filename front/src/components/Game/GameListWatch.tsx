@@ -49,7 +49,8 @@ export default function GameList(props: PropsWatch) {
         } else return res.json();
       })
       .then((resJson) => {
-        setOneGame(resJson);
+        if (bol)
+          setOneGame(resJson);
       })
       .catch((err) => {
         alert(err);
@@ -107,7 +108,7 @@ export default function GameList(props: PropsWatch) {
     });
     socket.on("not_allowed_watch", (args: any) => {
       if (watchee === "") {
-        alert("This match is over"); // a faire en plus jolie?
+        alert("This match is over"); 
         handleUpdate();
       } else {
         alert(`${watchee} is not in a game at the moment`);

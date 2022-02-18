@@ -24,6 +24,8 @@ function Chat() {
   const [currentChannel, setCurrentChannel] = React.useState<Channel>();
   const currentUser = React.useContext(Context).user;
   const navigate = useNavigate();
+
+  let bol = true;
   /** BACK END CALLS */
 
   const fetchChannelList = async () => {
@@ -33,9 +35,10 @@ function Chat() {
       return;
     });
     if (!result) return;
-    console.log("result: ", result)
-    setChannelList(result.data);
-    setCurrentChannel(result.data[0]);
+    if (bol) {
+      setChannelList(result.data);
+      setCurrentChannel(result.data[0]);
+    }
   };
 
   /*
@@ -44,6 +47,9 @@ function Chat() {
 
   React.useEffect(() => {
     fetchChannelList();
+    return () => {
+      bol = false;
+    }
   }, []);
 
   React.useEffect(() => {

@@ -11,6 +11,7 @@ export default function GamePong(props: PropsGame) {
     
     const socket = props.socket;
     const ref = useRef<HTMLCanvasElement>(null!);
+    let bol = true;
     
     useEffect(() => {
         if (props.mode === "random")
@@ -43,17 +44,18 @@ export default function GamePong(props: PropsGame) {
 
     useEffect(() => {
         socket.on("updateState", (updateState : any) => {
-            setGame(updateState);
+            if (bol) setGame(updateState);
         });
         socket.on("ball_on_server", (args : any) => {
-            setBallCheck(true);                    
+            if (bol) setBallCheck(true);                    
         });
 
         socket.on("ball_off_server", (args : any) => {
-            setBallCheck(false);                    
+            if (bol) setBallCheck(false);                    
         });
 
         return () => {
+            bol = false;
             socket.removeAllListeners("updateState");
             socket.removeAllListeners("ball_on_server");
             socket.removeAllListeners("ball_off_server");
