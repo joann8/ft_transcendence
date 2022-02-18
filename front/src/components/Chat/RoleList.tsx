@@ -407,7 +407,7 @@ function RoleList({
         )}
         {<MenuItem onClick={handleDuel}>Duel</MenuItem>}
         {<MenuItem onClick={handleWatch}>Watch</MenuItem>}
-        {<MenuItem onClick={handleNavigateProfile}>go to profile</MenuItem>}
+        {<MenuItem onClick={handleNavigateProfile}>Profile</MenuItem>}
       </Menu>
       {currentChannel.mode !== channelType.DIRECT && (
         <AddUser
@@ -517,7 +517,7 @@ function RoleList({
             variant="h6"
             component="h2"
           >
-            SELECT NUMBER OF MINUTES TO MUTE (BETWEEN 0 AND 60)
+            SELECT NUMBER OF MINUTES TO MUTE (BETWEEN 1 AND 60)
           </Typography>
           <TextField
             className={classes.name}

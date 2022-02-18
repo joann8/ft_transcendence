@@ -18,6 +18,7 @@ export default function LeaderTable() {
   const [leaders, setLeaders] = useState([]);
 
   useEffect(() => {
+    let bol = true;
     const getLeaders = async () => {
       fetch(api_url + "/user/all/leaderboard", {
         method: "GET",
@@ -32,13 +33,18 @@ export default function LeaderTable() {
           return res.json();
         })
         .then((resJson) => {
+          if (!bol) return;
           setLeaders(resJson);
         })
         .catch((err) => {
+          if (!bol) return;
           alert(err);
         });
     };
     getLeaders();
+    return () => {
+      bol = false;
+    };
   }, [update]);
 
   const handleUpdate = () => {

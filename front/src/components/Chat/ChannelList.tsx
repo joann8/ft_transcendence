@@ -55,11 +55,19 @@ function ChannelList({
       return;
     });
   }
-  function handleClick(event: React.MouseEvent) {
+  async function handleClick(event: React.MouseEvent) {
     const element = event.currentTarget as HTMLInputElement;
     const id = +element.getAttribute("data-index");
     if (id && currentChannel.id !== id) {
       const channel = channelList.find((channel) => channel.id === id);
+      const result = await back
+        .get(`${api_url}/channel/${channel.id}/actualise`)
+        .catch((error) => {
+          if (error.response.status === 401) navigate("/login");
+          fetchChannelList();
+          return;
+        });
+      if (!result || !result.data) return;
       changeChannel(channel);
     }
   }

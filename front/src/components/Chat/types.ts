@@ -123,12 +123,14 @@ interface ServerToClientEvents {
   message: (channel: Channel, message: Message) => void;
   exception: (exception: string) => void;
   reload: (channel: Channel) => void;
+  reloadChannels: (channel: Channel) => void;
   channelConnect: (channel: Channel) => void;
 }
 interface ClientToServerEvents {
   message: (user: User, channel: Channel, content: string) => void;
   exception: (exception: string) => void;
   reload: (channel: Channel) => void;
+  reloadChannels: (channel: Channel) => void;
 
   channelConnect: (channel: Channel) => void;
 }

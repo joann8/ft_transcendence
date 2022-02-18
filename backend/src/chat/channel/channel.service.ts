@@ -284,8 +284,7 @@ export class ChannelService {
 				},
 			],
 		});
-		if (!directChannel)
-			return 
+		if (!directChannel) return;
 		const roles = await getRepository(userChannelRole).find({
 			where: {
 				channel: directChannel,
@@ -391,7 +390,6 @@ export class ChannelService {
 	}
 
 	async updateChannel(channel: Channel, updateChannelDto: UpdateChannelDto) {
-		console.log(updateChannelDto);
 		if (channel.mode === channelType.DIRECT) return;
 		if (updateChannelDto.mode === channelType.PRIVATE) {
 			channel.mode = updateChannelDto.mode;
