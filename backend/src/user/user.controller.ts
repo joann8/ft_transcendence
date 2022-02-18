@@ -12,6 +12,7 @@ import {
 	UploadedFile,
 	HttpException,
 	HttpStatus,
+	Logger,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';

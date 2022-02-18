@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - /tmp/pg_db:/var/pg_db
+      - pg_db:/var/pg_db
     restart: always
 
   backend:
@@ -19,6 +19,8 @@ services:
       - "3001:3001"
     depends_on:
       - postgres
+    volumes:
+      - avatars:/usr/src/app/avatars
 
   frontend:
     build:
@@ -28,3 +30,7 @@ services:
     depends_on:
       - postgres
       - backend
+
+volumes:
+  avatars:
+  pg_db:
