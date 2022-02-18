@@ -53,18 +53,14 @@ function MessageList({
       myRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
     socket.emit("channelConnect", currentChannel);
-    return () =>{
-      bol = false;
-    }
+
   }, [currentChannel]);
 
   useEffect(() => {
     if (myRef && myRef.current) {
       myRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-    return () =>{
-      bol = false;
-    }
+
   }, [messages]);
 
   function postMessage(content: string) {
@@ -87,7 +83,6 @@ function MessageList({
     socket.on("message", messageListener);
     socket.on("exception", exceptionListener);
     return () => {
-      bol = false;
       socket.off("message", messageListener);
       socket.off("exception", exceptionListener);
     };

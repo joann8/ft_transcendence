@@ -33,7 +33,10 @@ export class ChannelController {
 	findAll() {
 		return this.channelService.findAll();
 	}
-
+	@Get(':id/actualise')
+	findOne(@Param('id', ParseChannelPipe) channel: Channel) {
+		return channel;
+	}
 	@Post()
 	createOne(@Req() req, @Body() createChannelDto: CreateChannelDto) {
 		return this.channelService.createOne(createChannelDto, req.user);

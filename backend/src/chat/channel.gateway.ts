@@ -70,6 +70,7 @@ export class ChannelGateway
 		//server emit
 		this.server.to(`${channel.name}`).emit('reload');
 	}
+
 	@SubscribeMessage('message')
 	async handleMessage(
 		client: Socket,
