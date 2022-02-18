@@ -77,8 +77,6 @@ export class UserController {
 		const fs = require('fs');
 		//Suppression de l'ancien avatar
 		await fs.unlink(oldAvatarPath, function (err) {
-			if (err) console.log(`Avatar : ${oldAvatarName} was not deleted`);
-			else console.log('old avatar deleted');
 		});
 		await this.userService.update(req.user.id, {
 			avatar: `${process.env.BACKEND_URL}/avatars/${file.filename}`,

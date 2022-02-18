@@ -117,8 +117,8 @@ export default function Registration() {
         throw new Error("Pseudo cannot be empty")
       }
       if (pseudo) {
-        if (!(validator.isAlpha(pseudo[0]) && validator.isAlphanumeric(pseudo)))
-          throw new Error("Pseudo must contain alpha numeric only and START with a letter")
+        if (!(validator.isAlpha(pseudo[0]) && validator.isAlphanumeric(pseudo)) || pseudo.length >= 15 )
+          throw new Error("Pseudo must be < 15 characters, contain alpha numeric only and START with a letter")
       }
 
       const updatePseudo = {

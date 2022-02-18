@@ -56,6 +56,10 @@ function CreateChannel({ fetchChannelList }: CreateChannelProps) {
   const handleOpenCreate = () => setOpenCreate(true);
   const handleCloseCreate = () => setOpenCreate(false);
   const fetchPostChannel = async () => {
+    if (roomName.length > 25){
+      alert("RoomName lenght must be less than 25");
+      return;
+    }
     await back
       .post(`${api_url}/channel`, {
         name: roomName,

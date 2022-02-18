@@ -62,8 +62,8 @@ export default function EditPage() {
         throw new Error("Pseudo cannot be empty")
       }
       if (pseudo) {
-        if (!(validator.isAlpha(pseudo[0]) && validator.isAlphanumeric(pseudo)))
-          throw new Error("Pseudo must contain alpha numeric only and START with a letter")
+        if (!(validator.isAlpha(pseudo[0]) && validator.isAlphanumeric(pseudo)) || pseudo.length >= 15)
+          throw new Error("Pseudo must be < 15 characters, contain alpha numeric only and START with a letter")
       }
 
       const updatePseudo = {
@@ -80,8 +80,7 @@ export default function EditPage() {
         body: JSON.stringify(updatePseudo),
       })
         .then(res => {
-          if (res.status === 401) 
-          {
+          if (res.status === 401) {
             navigate("/login");
             throw new Error("Unauthorized")
           }
@@ -93,7 +92,7 @@ export default function EditPage() {
           }
         })
     }
-    
+
     const handleSubmit = async (evt: any) => {
       evt.preventDefault()
       try {
@@ -147,8 +146,7 @@ export default function EditPage() {
           body: formData
         })
           .then(res => {
-            if (res.status === 401) 
-            {
+            if (res.status === 401) {
               navigate("/login");
               throw new Error("Unauthorized")
             }
