@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -40,6 +40,7 @@ export default function FriendRequestModal(props: any) {
 
   const navigate = useNavigate()
   const [requestArray, setRequestArray] = useState(null)
+  let bol = true;
 
 
   const getFriendRequest = async () => {
@@ -49,19 +50,18 @@ export default function FriendRequestModal(props: any) {
       referrerPolicy: "same-origin"
     })
       .then((res) => {
-        if (res.status === 401) 
-        {
+        if (res.status === 401) {
           navigate("/login");
           throw new Error("Unauthorized")
         }
         else if (!res.ok) {
-          console.log("res : ", res)
           throw new Error(res.statusText)
         }
         return res.json()
       })
       .then(res => {
-        setRequestArray(res)
+        if (bol)
+          setRequestArray(res)
       })
       .catch(err => {
         alert(err)
@@ -83,8 +83,7 @@ export default function FriendRequestModal(props: any) {
       })
     })
       .then(res => {
-        if (res.status === 401) 
-        {
+        if (res.status === 401) {
           navigate("/login");
           throw new Error("Unauthorized")
         }
@@ -113,8 +112,7 @@ export default function FriendRequestModal(props: any) {
       })
     })
       .then(res => {
-        if (res.status === 401) 
-        {
+        if (res.status === 401) {
           navigate("/login");
           throw new Error("Unauthorized")
         }
@@ -132,6 +130,7 @@ export default function FriendRequestModal(props: any) {
 
   useEffect(() => {
     getFriendRequest()
+    return () => { bol = false}
   }, [])
 
   const handleAccept = async (friend: IUser) => {

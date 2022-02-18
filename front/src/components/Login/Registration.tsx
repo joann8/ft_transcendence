@@ -47,6 +47,7 @@ export default function Registration() {
 
   const navigate = useNavigate()
 
+  let bol = true
 
   const getUser = async () => {
     await fetch(api_url + "/user/", {
@@ -65,8 +66,10 @@ export default function Registration() {
         return res.json();
       })
       .then((resData: IUser) => {
-        setUser(resData)
-        setPseudo(resData.id_pseudo)
+        if (bol) {
+          setUser(resData)
+          setPseudo(resData.id_pseudo)
+        }
       })
       .catch((error) => {
         alert(error)
@@ -76,7 +79,8 @@ export default function Registration() {
 
 
   useEffect(() => {
-   getUser()
+    getUser()
+    return () => {bol = false}
   }, [])
 
   //INTERNAL COMPONENT

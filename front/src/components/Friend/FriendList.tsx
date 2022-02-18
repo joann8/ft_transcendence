@@ -33,9 +33,11 @@ export default function FriendList() {
   const [ready, setReady] = useState(false)
 
   const [modal, setModal] = useState(false)
+  let bol = true
 
   useEffect(() => {
     getFriends()
+    return () => {bol = false}
   }, [modal])
 
   const getFriends = async () => {
@@ -55,8 +57,9 @@ export default function FriendList() {
           throw new Error(res.statusText)
         return res.json()
       })
-      .then(resArray => {    // FIN AJOUT JOANN
-        setFriendArray(resArray)
+      .then(resArray => {   
+        if (bol)
+          setFriendArray(resArray)
       })
       .catch(err => {
         alert(err)

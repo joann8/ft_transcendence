@@ -33,6 +33,7 @@ function Chat() {
       return;
     });
     if (!result) return;
+    console.log("result: ", result)
     setChannelList(result.data);
     setCurrentChannel(result.data[0]);
   };

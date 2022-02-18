@@ -100,6 +100,8 @@ export default function SideBar(props: any) {
 
   const navigate = useNavigate();
 
+  let bol = true
+
   const getUserData = async () => {
     await fetch(api_url + `/user`, {
       method: "GET",
@@ -109,7 +111,7 @@ export default function SideBar(props: any) {
       .then((res) => {
         if (res.status === 401) {
           navigate("/login")
-         throw new Error("Unauthorized")
+          throw new Error("Unauthorized")
         }
         else if (!res.ok) {
           throw new Error(res.statusText);
@@ -117,7 +119,8 @@ export default function SideBar(props: any) {
         return res.json();
       })
       .then((resData) => {
-        setUser(resData);
+        if (bol)
+          setUser(resData);
       })
       .catch((err) => {
         //alert(err);
@@ -131,8 +134,7 @@ export default function SideBar(props: any) {
       referrerPolicy: "same-origin",
     })
       .then((res) => {
-        if (res.status === 401) 
-        {
+        if (res.status === 401) {
           navigate("/login");
           throw new Error("Unauthorized")
         }
@@ -148,6 +150,7 @@ export default function SideBar(props: any) {
   useEffect(() => {
     getUserData();
     refreshTokens();
+    return () => {bol = false}
   }, [update]);
 
   const toggleDrawer = () => {

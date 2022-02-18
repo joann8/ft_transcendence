@@ -25,29 +25,9 @@ export default function GameList(props: PropsWatch) {
   const [update, setUpdate] = useState(false);
 
   const [games, setGames] = useState([]);
-  const getGames = async () => {
-    await fetch(api_url + "/game/ongoing", {
-      method: "GET",
-      credentials: "include",
-      referrerPolicy: "same-origin",
-    })
-      .then((res) => {
-        if (res.status === 401) 
-        {
-          navigate("/login");
-          throw new Error("Unauthorized")
-        }
-        else if (!res.ok)
-          throw new Error(res.statusText);
-        return res.json();
-      })
-      .then((resJson) => {
-        setGames(resJson);
-      })
-      .catch((err) => {
-        alert(err);
-      });
-  };
+  let bol = true;
+
+
 
   const [oneGame, setOneGame] = useState(null);
   const getOneGame = async (watchee: string) => {
@@ -76,9 +56,40 @@ export default function GameList(props: PropsWatch) {
       });
   };
 
+
+    const getGames = async () => {
+      await fetch(api_url + "/game/ongoing", {
+        method: "GET",
+        credentials: "include",
+        referrerPolicy: "same-origin",
+      })
+        .then((res) => {
+          if (res.status === 401) 
+          {
+            navigate("/login");
+            throw new Error("Unauthorized")
+          }
+          else if (!res.ok)
+            throw new Error(res.statusText);
+          return res.json();
+        })
+        .then((resJson) => {
+          if (bol)
+            setGames(resJson);
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    };
+
   useEffect(() => {
+    
     if (watchee !== "") getOneGame(watchee);
-    else getGames();
+    else getGames(); 
+    return () => { 
+      bol = false;
+    }
+
   }, [update]); // a voir ???
 
   // GESTION MODAL ET ALERTES

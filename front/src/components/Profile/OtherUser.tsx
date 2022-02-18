@@ -43,6 +43,7 @@ export default function OtherUser() {
     match: false,
   });
   const [update, setUpdate] = useState(false);
+  let bol = true
 
   const getAllInfo = async () => {
     const tmpOtherUserData = await getOtherUserData(idPseudo);
@@ -52,6 +53,7 @@ export default function OtherUser() {
 
   useEffect(() => {
     getAllInfo();
+    return () => { bol = false }
   }, [idPseudo, update, context.user]);
 
 
@@ -75,8 +77,11 @@ export default function OtherUser() {
         return res.json();
       })
       .then((resData) => {
-        setOtherUserData(resData);
-        return resData;
+        if (bol) {
+          setOtherUserData(resData);
+          return resData;
+        }
+        return null
       })
       .catch((err) => {
         alert(err)
@@ -199,8 +204,7 @@ export default function OtherUser() {
           navigate("/login");
           throw new Error("You must login")
         }
-        else if (!res.ok)
-        {
+        else if (!res.ok) {
           throw new Error(res.statusText)
         }
         else
@@ -274,7 +278,7 @@ export default function OtherUser() {
     return (
       <Fragment>
         {status !== 4 ?
-          <Button style={{ margin: "2px" }} variant="contained" color="error" startIcon={<LockTwoTone/>} onClick={() => handleBlock()}>
+          <Button style={{ margin: "2px" }} variant="contained" color="error" startIcon={<LockTwoTone />} onClick={() => handleBlock()}>
             BLOCK
           </Button>
           :
