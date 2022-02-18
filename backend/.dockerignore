@@ -3,3 +3,4 @@
 .prettierrc
 README.md
 webpack-hmr.config.js
+Dockerfile
