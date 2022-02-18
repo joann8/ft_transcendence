@@ -1,6 +1,7 @@
 import {
 	ForbiddenException,
 	Injectable,
+	Logger,
 	UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
@@ -18,6 +19,8 @@ export class AuthService {
 		private userService: UserService,
 		private jwtService: JwtService,
 	) {}
+
+	private logger: Logger = new Logger();
 
 	async findOrCreate42User(profile: Profile): Promise<any> {
 		let created = false;
@@ -38,7 +41,6 @@ export class AuthService {
 					roles: [],
 				});
 			} catch (err) {
-				console.error(err);
 				return null;
 			}
 			created = true;
@@ -48,7 +50,7 @@ export class AuthService {
 
 	async ft_login(user: User) {
 		const { access_token, refresh_token } = await this.generateTokens(user);
-		console.log(`${user.id_pseudo} logged in with 42 intranet !`);
+		this.logger.log(`${user.id_pseudo} logged in with 42 intranet !`);
 		return { access_token, refresh_token };
 	}
 
@@ -65,7 +67,7 @@ export class AuthService {
 			user,
 			true,
 		);
-		console.log(`${user.id_pseudo} authenticate with 2FA !`);
+		this.logger.log(`${user.id_pseudo} authenticate with 2FA !`);
 		return { access_token, refresh_token };
 	}
 
@@ -117,7 +119,7 @@ export class AuthService {
 			status: status.OFFLINE,
 			refresh_token: null,
 		});
-		console.log(`${user.id_pseudo} logged out...`);
+		this.logger.log(`${user.id_pseudo} logged out...`);
 	}
 
 	async generateTwoFactorAuthentificationSecret(user: User) {
@@ -163,7 +165,7 @@ export class AuthService {
 		await this.userService.update(user.id, {
 			two_factor_enabled: true,
 		});
-		console.log(`${user.id_pseudo} turned on 2FA !`);
+		this.logger.log(`${user.id_pseudo} turned on 2FA !`);
 		return { access_token, refresh_token };
 	}
 
@@ -175,7 +177,7 @@ export class AuthService {
 			two_factor_enabled: false,
 			two_factor_secret: null,
 		});
-		console.log(`${user.id_pseudo} turned off 2FA...`);
+		this.logger.log(`${user.id_pseudo} turned off 2FA...`);
 	}
 
 	async refresh_access_token(user: User) {
@@ -183,7 +185,7 @@ export class AuthService {
 			user,
 			user.two_factor_enabled,
 		);
-		console.log(`${user.id_pseudo} refreshed his access_token !`);
+		this.logger.log(`${user.id_pseudo} refreshed his access_token !`);
 		return access_token;
 	}
 }

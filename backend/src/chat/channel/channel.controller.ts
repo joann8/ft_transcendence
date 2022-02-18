@@ -186,7 +186,6 @@ export class ChannelController {
 		@Param('id', ParseChannelPipe) channel: Channel,
 		@Body() updateChannelDto: UpdateChannelDto,
 	) {
-		console.log(updateChannelDto);
 		return this.channelService.updateChannel(channel, updateChannelDto);
 	}
 }

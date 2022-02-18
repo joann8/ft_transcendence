@@ -55,7 +55,6 @@ export default function FriendRequestModal(props: any) {
           throw new Error("Unauthorized")
         }
         else if (!res.ok) {
-          console.log("res : ", res)
           throw new Error(res.statusText)
         }
         return res.json()
